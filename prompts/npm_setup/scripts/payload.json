@@ -1,0 +1,45 @@
+{
+    "project": {
+        "node_roots": [
+            {
+                "path": "client/package.json",
+                "version": "18",
+                "scripts": {
+                    "vscode:prepublish": "yarn run compile",
+                    "compile": "tsc -p ./",
+                    "watch": "tsc -watch -p ./",
+                    "pretest": "yarn run compile && yarn run lint",
+                    "lint": "eslint src --ext ts",
+                    "test": "vscode-test",
+                    "package": "vsce package"
+                }
+            },
+            {
+                "path": "client/desktop-ui/package.json",
+                "version": "18",
+                "scripts": {
+                    "vscode:prepublish": "yarn run compile",
+                    "compile": "tsc -p ./",
+                    "watch": "tsc -watch -p ./",
+                    "pretest": "yarn run compile && yarn run lint",
+                    "lint": "eslint src --ext ts",
+                    "test": "vscode-test",
+                    "package": "vsce package"
+                }
+            },
+            {
+                "path": "client/desktop/package.json",
+                "version": "20",
+                "scripts": {
+                    "vscode:prepublish": "yarn run compile",
+                    "compile": "tsc -p ./",
+                    "watch": "tsc -watch -p ./",
+                    "pretest": "yarn run compile && yarn run lint",
+                    "lint": "eslint src --ext ts",
+                    "test": "vscode-test",
+                    "package": "vsce package"
+                }
+            }
+        ]
+    }
+}
