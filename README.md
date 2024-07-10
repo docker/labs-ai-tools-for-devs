@@ -27,7 +27,7 @@ a GitHub ref.  For example, to test some local prompts in a directory named `my_
 docker run --rm \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=bind,source=$PWD,target=/app/my_prompts \
-           --workdir /app
+           --workdir /app \
            vonwig/prompts:latest $PWD \
                                  jimclark106 \
                                  darwin \
@@ -61,7 +61,7 @@ docker run --rm \
            -it \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=bind,source=$PROMPTS_DIR,target=/app/my_prompts \
-           --workdir /app
+           --workdir /app \
            --mount type=volume,source=docker-prompts,target=/prompts \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
            vonwig/prompts:latest \

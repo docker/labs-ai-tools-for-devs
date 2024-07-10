@@ -11,7 +11,7 @@ functions:
   - name: analyze_project
     description: Analyze a project to determine how it should be built
     type: prompt
-    ref: project_type
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/project_type
   - name: write_files
     description: Write a set of files to my project
     parameters:
