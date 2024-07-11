@@ -200,8 +200,8 @@
                              (dissoc opts :functions)
                              {:command (concat 
                                          []
-                                         (when (:command definition) (:command definition))
-                                         (when json-arg-string [json-arg-string]))}
+                                         (if json-arg-string [json-arg-string] ["{}"])
+                                         (when-let [c (-> definition :container :command)] c))}
                              (when user {:user user})
                              (when pat {:pat pat}))
               {:keys [pty-output exit-code]} (docker/run-function function-call)]

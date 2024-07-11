@@ -11,7 +11,7 @@
       :out))
 
 (try
-  (let [[type json-string] *command-line-args*
+  (let [[json-string type] *command-line-args*
         {:keys [owner name public]} (cheshire.core/parse-string json-string true)]
     (cond
       (= type "repo-create")

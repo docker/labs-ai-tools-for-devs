@@ -14,14 +14,13 @@ docker run --rm \
        --mount type=bind,source=$PWD,target=/project \
        --entrypoint /app/result/bin/entrypoint \
        --workdir /project \
-       -e GITHUB_TOKEN="$(cat ~/.secrets/github-lsp-pat)" \
-       vonwig/github-cli:latest '{"owner":"slimslenderslacks","name":"test1","public":true}' repo-create
+       vonwig/findutils:latest '{"glob":"*.md"}' find "." "-name"
 ```
 
 ## Build
 
 ```sh
-docker build -t vonwig/github-cli:latest .
+docker build -t vonwig/findutils:latest .
 ```
 
 ```sh
@@ -30,8 +29,8 @@ docker build -t vonwig/github-cli:latest .
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag vonwig/github-cli:latest \
+    --tag vonwig/findutils:latest \
     --file Dockerfile \
     --push .
-docker pull vonwig/github-cli:latest
+docker pull vonwig/findutils:latest
 ```
