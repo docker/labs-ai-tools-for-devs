@@ -3,13 +3,23 @@ extractors:
   - name: project-facts
   - image: vonwig/extractor-node:latest
 functions:
-  - name: StandardJS
-    description: Lint a project with StandardJS
+  - name: run-standardjs
+    description: Lints the current project with StandardJS
     parameters:
       type: object
-      description: If TS is needed, set --typescript is the first arg. for fixes, add --fix as the second arg.
+      properties:
+        typescript:
+          type: boolean
+          description: Whether to lint Typescript files
+        fix:
+          type: boolean
+          description: Whether to fix the files
     container:
-        image: vonwig/standardjs:latest
+        image: vonwig/standardjs:local
+        entrypoint:
+          - entrypoint
+        command:
+          - repo-create
 ---
 
 # Description

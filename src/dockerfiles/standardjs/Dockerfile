@@ -7,5 +7,4 @@ COPY lint.sh /lint.sh
 # Install standard and ts-standard
 RUN npm install -g standard ts-standard
 
-# For TS, use ts-standard instead of standard
 CMD [ "bash", "/lint.sh" ]

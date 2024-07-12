@@ -1,33 +1,21 @@
 #!/bin/bash
-PROJECT_DIR="/project"
 
-cd $PROJECT_DIR
+# First arg is json {typescript: boolean, fix: boolean, files: string[]}
+TYPESCRIPT=$(echo $1 | jq -r '.typescript')
 
-# If --typescript not passed, just run standard
-if [ "$1" != "--typescript" ]; then
-	standard "${@:1}"
+# Get boolean value of fix
+FIX=$(echo $1 | jq -r '.fix')
+
+FILES=$(echo $1 | jq -r '.files[]')
+
+# If typescript is false, just run standard
+if [ $TYPESCRIPT == false ]; then
+	# Pass files array as args to standard
+	standard $FILES
 	exit $?
 fi
 
-FIX=False
-
-# If --fix is arg after --typescript
-if [ "$2" == "--fix" ]; then
-	FIX=True
-fi
-
-#All args containing a .ts or .tsx file
-TS_FILES=$(echo $@ | grep -o '\S*\.ts[x]\?\b')
-
-#Make sure all $TS_FILES start with $PROJECT_DIR, or add it
-for TS_FILE in $TS_FILES; do
-	if [[ ! $TS_FILE == $PROJECT_DIR* ]]; then
-		# Escape / in filenames
-		TS_FILE_ESCAPED=$(echo $TS_FILE | sed 's/\//\\\//g')
-		PROJECT_DIR_ESCAPED=$(echo $PROJECT_DIR | sed 's/\//\\\//g')
-		TS_FILES=$(echo $TS_FILES | sed -e "s/$TS_FILE_ESCAPED/$PROJECT_DIR_ESCAPED\/$TS_FILE_ESCAPED/g")
-	fi
-done
+TS_FILES=$(echo $FILES | grep -E "\.ts$|\.tsx$")
 
 TS_ROOTS=$(fd -d 3 tsconfig.json)
 
