@@ -1,3 +1,8 @@
+# AI Tools for Developers
+
+Agentic AI workflows enabled by Docker containers.
+
+Source for many experiments in our [LinkedIn newsletter](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/)
 
 ## Running Prompts
 
@@ -36,6 +41,11 @@ docker run --rm \
 
 ## Running a Conversation Loop
 
+Set OpenAI key
+```sh
+echo $OPENAI_API_KEY > $HOME/.openai-api-key
+```
+Run
 ```sh
 docker run --rm \
            -it \
@@ -56,6 +66,11 @@ If you want to run a conversation loop with local prompts then you need to think
 and the one that contains your prompts (let's call that $PROMPTS_DIR).  Here's a command line for running the prompts when our $PWD is the project root and we've set the environment variable
 $PROMPTS_DIR to point at the directory containing our prompts.
 
+Set OpenAI key
+```sh
+echo $OPENAI_API_KEY > $HOME/.openai-api-key
+```
+Run
 ```sh
 docker run --rm \
            -it \
