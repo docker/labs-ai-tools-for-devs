@@ -3,7 +3,7 @@
 FROM alpine:latest
 
 # Add bash, fd
-RUN apk add --no-cache bash fd
+RUN apk add --no-cache bash fd jq
 
 COPY scripts/detect-eslint.sh /detect-eslint.sh
 

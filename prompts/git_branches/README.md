@@ -2,7 +2,7 @@
 model: gpt-4
 stream: true
 functions:
-- name: git
+  - name: git
     description: Run git branch-related commands against a project
     parameters:
         type: object
@@ -32,12 +32,11 @@ docker run --rm -it \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           --mount type=bind,source=/Users/slim/docker/labs-make-runbook/prompts,target=/my-prompts \
+           --mount type=bind,source=/Users/colinmcneil/Dev/labs-ai-tools-for-devs/prompts,target=/my-prompts \
            --workdir /my-prompts \
            vonwig/prompts:latest run \
                                  $DIR \
                                  $USER \
                                  "$(uname -o)" \
                                  git_branches
-                                 # "github:docker/labs-make-runbook?ref=main&path=prompts/git_branches"
 ```
