@@ -1,21 +1,48 @@
 #!/bin/bash
 
+PROJECT_DIR="/project"
+
+echo "ARGS:"
+
+# First arg
+ARGS="$1"
+
+echo $ARGS
+
 # First arg is json {typescript: boolean, fix: boolean, files: string[]}
-TYPESCRIPT=$(echo $1 | jq -r '.typescript')
+TYPESCRIPT=$(echo $ARGS | jq -r '.typescript')
 
 # Get boolean value of fix
-FIX=$(echo $1 | jq -r '.fix')
+FIX=$(echo $ARGS | jq -r '.fix')
 
-FILES=$(echo $1 | jq -r '.files[]')
+# If files key is not present, just use .
 
-# If typescript is false, just run standard
-if [ $TYPESCRIPT == false ]; then
+if [ $(echo $ARGS | jq -r '.files') == 'null' ]; then
+	FILES="."
+else
+	FILES=$(echo $ARGS | jq -r '.files[]')
+fi
+
+echo "Running eslint with typescript: $TYPESCRIPT, fix: $FIX, files: $FILES"
+
+# If typescript is false, run standard
+if [ $TYPESCRIPT == 'false' ]; then
 	# Pass files array as args to standard
 	standard $FILES
 	exit $?
 fi
 
 TS_FILES=$(echo $FILES | grep -E "\.ts$|\.tsx$")
+
+#Make sure all $TS_FILES start with $PROJECT_DIR, or add it
+for TS_FILE in $TS_FILES; do
+	if [[ ! $TS_FILE == $PROJECT_DIR* ]]; then
+		# Escape / in filenames
+		TS_FILE_ESCAPED=$(echo $TS_FILE | sed 's/\//\\\//g')
+		PROJECT_DIR_ESCAPED=$(echo $PROJECT_DIR | sed 's/\//\\\//g')
+		TS_FILES=$(echo $TS_FILES | sed -e "s/$TS_FILE_ESCAPED/$PROJECT_DIR_ESCAPED\/$TS_FILE_ESCAPED/g")
+	fi
+done
 
 TS_ROOTS=$(fd -d 3 tsconfig.json)
 

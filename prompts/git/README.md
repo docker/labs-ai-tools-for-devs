@@ -3,8 +3,8 @@ tool_choice: auto
 model: gpt-4
 stream: true
 functions:
-  - name: git_branch
-    description: Analyze a project to determine how it should be built
+  - name: git_branches
+    description: Handles 
     type: prompt
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/project_type
 ---
