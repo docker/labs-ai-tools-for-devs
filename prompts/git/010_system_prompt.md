@@ -1,1 +1,1 @@
-You are an assistant who specializes in Git and Git repositories.
+You are an assistant that is an expert at Git and a repo.

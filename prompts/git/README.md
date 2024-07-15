@@ -1,20 +1,46 @@
 ---
-tool_choice: auto
 model: gpt-4
 stream: true
+extractors:
+  - image: vonwig/git:local
+    entrypoint: 
+      - /extract.sh
 functions:
-  - name: git_branches
-    description: Handles 
-    type: prompt
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/project_type
+  - name: git-branch
+    description: Run git branch-related commands against a project
+    parameters:
+        type: object
+        properties:
+          command:
+            type: string 
+            description: The branch command. Either `branch`, `checkout` or `merge`. `rebase` can rewrite history and therefore should not be used.
+          args:
+            type: array 
+            description: The arguments to pass into the git command
+            items: 
+              type: string
+              description: An argument to the git command
+    container:
+        image: vonwig/git:local
 ---
 
 # Background
 
-These prompts add Git capabilities to the assistant.
+Git project information
 
-## functions
+## Running the tool
 
-The breakdown of git tools is an experiment based on results from different LLM's being asked to group commands by use case.
-
-For now, we only have `git_files` and `git_branches`
+```sh
+DIR=$PWD
+docker run --rm -it \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount type=volume,source=docker-prompts,target=/prompts \
+           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+           --mount type=bind,source=/Users/colinmcneil/Dev/labs-ai-tools-for-devs/prompts,target=/my-prompts \
+           --workdir /my-prompts \
+           vonwig/prompts:latest run \
+                                 $DIR \
+                                 $USER \
+                                 "$(uname -o)" \
+                                 git_branches
+```
