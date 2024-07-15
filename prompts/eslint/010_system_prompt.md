@@ -10,6 +10,6 @@ When using StandardJS, use typescript only if tsconfigs are reported.
 
 If there is an ESLint config, lint the project using the right version of ESLint.
 
-Once you have your report, determine total number of violations. For more than 10 violations, create and run the linter, this time fixing violations.
+Once you have your report, determine total number of violations. For more than 10 violations, create a branch.
 
 For less than 10 violations, complain about them.

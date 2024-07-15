@@ -39,6 +39,66 @@ functions:
         - fix
     container:
         image: vonwig/standardjs:latest
+  - name: git-branch
+    description: Handles git branches
+    parameters:
+      type: object
+      properties:
+        command:
+          type: string
+          description: The git command to use `checkout`, `merge`, or `branch`.
+        args:
+          type: string
+          description: The args to use after the command
+      required:
+        - command
+        - args
+    container:
+        image: vonwig/git:latest
+  - name: git-files
+    description: Handles git files
+    parameters:
+      type: object
+      properties:
+        command:
+          type: string
+          description: The git command to use `add`, `rm`, or `mv`.
+        args:
+          type: string
+          description: The args to use after the command
+      required:
+        - command
+        - args
+    container:
+        image: vonwig/git:latest
+  - name: complain
+    description: Complain about a file
+    parameters:
+      type: object
+      properties:
+        start_location:
+          type: array
+          description: "Start location in edit, formatted [row, col]"
+          items:
+            type: number
+            description: The row or column
+        end_location:
+          type: array
+          description: "End location in edit, formatted [row, col]"
+          items:
+            type: number
+            description: The row or column
+        edit:
+          type: string
+          description: The edit to make
+      required:
+        - start_location
+        - end_location
+        - edit
+    container:
+        image: alpine:latest
+        entrypoint:
+          - echo
 ---
 
 # Description
