@@ -17,7 +17,7 @@ functions:
         - args
         - version
     container:
-        image: vonwig/eslint-tool:latest
+        image: vonwig/eslint:latest
   - name: run-standardjs
     description: Lints the current project with StandardJS
     parameters:

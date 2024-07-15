@@ -1,27 +1,24 @@
 ---
-model: gpt-4
-stream: true
 extractors:
   - image: vonwig/git:local
-    entrypoint: 
+    entrypoint:
       - /extract.sh
 functions:
-  - name: git-branch
+  - name: git_branch
     description: Run git branch-related commands against a project
     parameters:
-        type: object
-        properties:
-          command:
-            type: string 
-            description: The branch command. Either `branch`, `checkout` or `merge`. `rebase` can rewrite history and therefore should not be used.
-          args:
-            type: array 
-            description: The arguments to pass into the git command
-            items: 
-              type: string
-              description: An argument to the git command
+      type: object
+      properties:
+        command:
+          type: string 
+          description: The branch command. Either `branch`, `checkout` or `merge`. `rebase` can rewrite history and therefore should not be used.
+        args:
+          type: array
+          items: 
+            type: string
+            description: An argument to the git command
     container:
-        image: vonwig/git:local
+      image: vonwig/git:local
 ---
 
 # Background

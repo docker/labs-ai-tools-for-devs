@@ -18,7 +18,7 @@ OUTPUT="$OUTPUT\n\n$(git --no-pager remote -v)"
 OUTPUT="$OUTPUT\n\n$(git --no-pager branch)"
 
 # Append git log info
-OUTPUT="$OUTPUT\n\n$(git --no-pager log --oneline)"
+OUTPUT="$OUTPUT\n\n$(git --no-pager log -10 --oneline)"
 
 # Echo JSON project.git
 echo $(jq -n \
