@@ -54,23 +54,40 @@ functions:
         - command
         - args
     container:
-        image: vonwig/git:latest
-  - name: git-files
-    description: Handles git files
+        image: vonwig/git:local
+  - name: write_files
+    description: Write a set of files to my project
     parameters:
       type: object
       properties:
-        command:
-          type: string
-          description: The git command to use `add`, `rm`, or `mv`.
-        args:
-          type: string
-          description: The args to use after the command
-      required:
-        - command
-        - args
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                description: the relative path to the file that should be written
+              content:
+                type: string
+                description: the content that should be written to a file
+              executable:
+                type: boolean
+                description: whether to make the file executable
     container:
-        image: vonwig/git:latest
+        image: vonwig/function_write_files:latest
+  - name: read_files
+    description: Reads a set of files back
+    parameters:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            description: Relative path to a file to read.
+    container:
+        image: vonwig/read_files:latest
   - name: complain
     description: Complain about a file
     parameters:
@@ -90,11 +107,10 @@ functions:
             description: The row or column
         edit:
           type: string
-          description: The edit to make
+          description: Code to insert between start_location and end_location which will resolve the violation. Do not include ignore comments.
       required:
         - start_location
         - end_location
-        - edit
     container:
         image: alpine:latest
         entrypoint:
