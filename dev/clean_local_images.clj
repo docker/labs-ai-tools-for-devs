@@ -12,7 +12,11 @@
     "vonwig/codescope"
     "vonwig/pre-commit"
     "markdownlint/markdownlint"
-    "hadolint/hadolint"})
+    "hadolint/hadolint"
+    "vonwig/fasttext"
+    "vonwig/typos"
+    "vonwig/what-is-my-ip"
+    "vonwig/findutils"})
 
 (comment
   (docker/delete-image {:image "vonwig/function_write_files"}))

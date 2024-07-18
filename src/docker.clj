@@ -4,6 +4,7 @@
    [cheshire.core :as json]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as spec]
+   [clojure.string :as string]
    [creds])
   (:import
    [java.util Base64]))
@@ -34,6 +35,13 @@
                     creds creds)
                   (json/generate-string)
                   (encode))}}))
+
+(comment
+  (let [pat (string/trim (slurp "/Users/slim/.secrets/dockerhub-pat-ai-tools-for-devs.txt"))]
+    (pull-image {:image "vonwig/go-linguist:latest"
+                 :creds {:username "jimclark106"
+                         :password pat
+                         :serveraddress "https://index.docker.io/v1/"}})))
 
 (defn list-images [m]
   (curl/get
@@ -147,11 +155,11 @@
 (spec/def ::image string?)
 (spec/def ::command (spec/coll-of string?))
 (spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::pat]
-                                           :req-un [::image]))
+                                            :req-un [::image]))
 
 ;; TODO verify that m is a container-definition
 (defn run-function [m]
-  (when (and (:user m) (or (:pat m) (creds/credential-helper->jwt))) 
+  (when (and (:user m) (and (not (:offline m)) (or (:pat m) (creds/credential-helper->jwt))))
     (pull (assoc m :creds {:username (:user m)
                            :password (or (:pat m) (creds/credential-helper->jwt))
                            :serveraddress "https://index.docker.io/v1/"})))
@@ -169,15 +177,15 @@
 (def extract-facts run-function)
 
 (comment
-  (pprint 
-    (json/parse-string 
-      (extract-facts 
-        (assoc sample 
-               :host-dir "/Users/slim/docker/genai-stack"
-               :user "jimclark106")) keyword))
+  (pprint
+   (json/parse-string
+    (extract-facts
+     (assoc sample
+            :host-dir "/Users/slim/docker/genai-stack"
+            :user "jimclark106")) keyword))
   (docker/delete-image {:image "vonwig/go-linguist:latest"})
-  (extract-facts {:image "vonwig/go-linguist:latest" 
-                  :command ["-json"] 
+  (extract-facts {:image "vonwig/go-linguist:latest"
+                  :command ["-json"]
                   :host-dir "/Users/slim/docker/labs-make-runbook"
                   :user "jimclark106"})
   (pprint

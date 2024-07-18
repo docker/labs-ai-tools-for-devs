@@ -1,17 +1,7 @@
 ---
 extractors:
-  - image: vonwig/go-linguist:latest
-    command:
-      - -json
-    output-handler: linguist
-  - image: docker/lsp:latest
-    entrypoint: /app/result/bin/docker-lsp
-    command:
-      - project-facts
-      - --vs-machine-id
-      - none
-      - --workspace
-      - /docker
+  - name: go-linguist 
+  - name: docker-lsp
 model: gpt-4
 stream: true
 functions:

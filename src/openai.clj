@@ -4,6 +4,7 @@
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.java.io :as io]
+   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [jsonrpc]))
 
@@ -16,45 +17,56 @@
   "get a response
    response stream handled by callback
      returns nil
-     throws exception only if response can't be initiated"
+     throws exception if response can't be initiated or if we get a non 200 status code"
   [request cb]
   (jsonrpc/notify :message {:content "\n## ROLE assistant\n"})
-  (let [response
+  (let [b (merge
+           {:model "gpt-4"
+            :stream true}
+           (dissoc request :url))
+        response
         (http/post
-         "https://api.openai.com/v1/chat/completions"
-         {:body (json/encode (merge
-                              {:model "gpt-4"
-                               :stream true}
-                              request))
-          :headers {"Authorization" (format "Bearer %s" (or
-                                                         (openai-api-key)
-                                                         (System/getenv "OPENAI_API_KEY")))
-                    "Content-Type" "application/json"}
-          :throw false
-          :as :stream})]
+         (or (:url request) "https://api.openai.com/v1/chat/completions")
+         (merge
+          {:body (json/encode b)
+           :headers {"Authorization" (format "Bearer %s" (or
+                                                          (openai-api-key)
+                                                          (System/getenv "OPENAI_API_KEY")))
+                     "Content-Type" "application/json"}
+           :throw false}
+          (when (true? (:stream b))
+            {:as :stream})))]
     (if (= 200 (:status response))
-      (if (false? (:stream request))
+      (if (not (true? (:stream b)))
         (cb (slurp (:body response)))
         (doseq [chunk (line-seq (io/reader (:body response)))]
           (cb chunk)))
       (throw (ex-info "Failed to call OpenAI API" {:body (slurp (:body response))})))))
 
-(defn call-function [function-handler function-name arguments tool-call-id]
+(defn call-function 
+  "  returns channel that will emit one message and then close"
+  [function-handler function-name arguments tool-call-id]
   (let [c (async/chan)]
-    (function-handler
-     function-name
-     arguments
-     {:resolve
-      (fn [output]
-        (jsonrpc/notify :message {:content (format "\n## ROLE tool (%s)\n%s\n" function-name output)})
+    (try
+      (function-handler
+        function-name
+        arguments
+        {:resolve
+         (fn [output]
+           (jsonrpc/notify :message {:content (format "\n## ROLE tool (%s)\n%s\n" function-name output)})
+           (async/go
+             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
+             (async/close! c)))
+         :fail (fn [output]
+                 (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
+                 (async/go
+                   (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
+                   (async/close! c)))})
+      (catch Throwable t
+        ;; function-handlers should handle this on their own but this is just in case
         (async/go
-          (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-          (async/close! c)))
-      :fail (fn [output]
-              (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
-              (async/go
-                (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-                (async/close! c)))})
+          (async/>! c {:content (format "unable to run %s - %s" function-name t) :role "tool" :tool_call_id tool-call-id})
+          (async/close! c))))
     c))
 
 (defn make-tool-calls
@@ -80,14 +92,6 @@
                     (fnil merge {}) (when id {:id id}))))
    m tool-calls))
 
-(comment
-  (reduce
-   (partial update-tool-calls "guid")
-   {}
-   [[{:id "fid" :function {:name "echo"}}]
-    [{:id "fid" :function {:arguments "some"}}]
-    [{:id "fid" :function {:arguments " stuff"}}]]))
-
 (def finish-reasons
   {:stop "stopped normally"
    :length "max response length reached"
@@ -95,9 +99,16 @@
    :content_filter "content filter applied"
    :not_specified "not specified"})
 
+(s/def ::role #{"user" "system" "assistant" "tool"})
+(s/def ::content string?)
+(s/def ::message (s/keys :req-un [::role ::content]))
+(s/def ::messages (s/coll-of ::message))
+(s/def ::finish-reason any?)
+(s/def ::response (s/keys :req-un [::finish-reason ::messages]))
 (defn response-loop
   "handle one response stream that we read from input channel c
-     returns channel that will emit the an event with a finish-reason and a status"
+   adds content or tool_calls while streaming and call any functions when done
+     returns channel that will emit the an event with a ::response"
   [c]
   (let [response (atom {})]
     (async/go-loop
@@ -124,6 +135,7 @@
                          (async/reduce conj messages)))})
           (:content e) (do
                          (swap! response update-in [:content] (fnil str "") (:content e))
+                         (jsonrpc/notify :message {:content (:content e)})
                          (recur))
           :else (let [{:keys [tool_calls finish-reason]} e]
                   (swap! response update-tool-calls tool_calls)
@@ -138,59 +150,51 @@
 
 (defn chunk-handler
   "sets up a response handler loop for use with an OpenAI API call
-    returns [channel handler] - channel will emit the updated chat messages after dispatching any functions"
+    returns [channel openai-handler] - channel will emit the updated chat messages after dispatching any functions"
   [function-handler]
   (let [c (async/chan 1)]
     [(response-loop c)
      (fn [chunk]
        ;; TODO this only supports when there's a single choice
        (let [{[{:keys [delta message finish_reason _role]}] :choices
-              done? :done _completion-id :id}
+              done? :done
+              _completion-id :id}
              ;; only streaming events will be SSE data fields
              (some-> chunk
                      (string/replace #"data: " "")
                      (parse))]
          (try
            (cond
+             ;; TODO validate this works for non-streaming cases
              done? (async/>!!
                     c
                     (merge
                      {:done true :tool-handler function-handler}
                      (when finish_reason {:finish-reason finish_reason})))
+
+             ;; there are deltas when this is streaming
              delta (cond
-                     (:content delta) (do
-                                        (async/>!! c (merge
-                                                      {:content (:content delta)}
-                                                      (when finish_reason {:finish-reason finish_reason})))
-                                        (jsonrpc/notify :message {:content (:content delta)}))
+                     (:content delta) (async/>!! c (merge
+                                                    {:content (:content delta)}
+                                                    (when finish_reason {:finish-reason finish_reason})))
+
                      (:tool_calls delta) (async/>!! c (merge
                                                        delta
                                                        (when finish_reason {:finish-reason finish_reason})))
                      finish_reason (async/>!! c {:finish-reason finish_reason}))
 
+             ;; there are only messages when this isn't streaming
              message (cond
-                       (:content message) (jsonrpc/notify :message {:content (:content message)})
+                       (:content message) (do (async/>!! c (merge
+                                                             {:content (:content delta)}
+                                                             (when finish_reason {:finish-reason finish_reason})))
+                                              (async/>!! c {:done true :tool-handler function-handler}))
                        (:tool_calls message) (do
                                                (async/>!! c (merge
                                                              message
                                                              (when finish_reason {:finish-reason finish_reason})))
-                                               (async/>!! {:done true :tool-handler function-handler})))
+                                               (async/>!! c {:done true :tool-handler function-handler})))
              finish_reason (async/>!! c {:finish-reason finish_reason}))
            (catch Throwable _))))]))
 
-(comment
-  (openai
-   {:messages [{:content "What is the meaning of life?" :role "user"}]}
-   (second (chunk-handler (fn [& args] (println args)))))
-  (openai
-   {:messages [{:content "use a function to echo back to me a 10 line poem" :role "user"}]
-    :tools [{:type "function"
-             :function {:name "echo"
-                        :description "echo something back to me"
-                        :parameters
-                        {:type "object"
-                         :properties
-                         {:content {:type "string"
-                                    :description "the content to echo back"}}}}}]}
-   (second (chunk-handler (fn [& args]
-                            (println "function-handler " args))))))
+

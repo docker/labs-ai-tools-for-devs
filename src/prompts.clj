@@ -3,7 +3,6 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
-   [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
@@ -11,13 +10,17 @@
    creds
    [docker]
    [git]
+   [git.registry]
    [jsonrpc]
+   [logging :refer [warn]]
    [markdown.core :as markdown]
    [medley.core :as medley]
    [openai]
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
-   [selmer.parser :as selmer]))
+   [registry])
+  (:import
+   [java.net ConnectException]))
 
 (defn- facts
   "fix up facts before sending to templates"
@@ -45,22 +48,10 @@
               m
               {:partials (partials/file-partials [prompt-dir] ".md")})} f])
 
-(comment
-  (partials/file-partials ["dockerfiles"] ".md")
-  (selma-render
-   "dockerfiles"
-   {}
-   "dockerfiles/020_system_prompt.md"))
-
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
 (defn- merge-role [[m f]]
   (merge m {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)}))
-
-(defn warn [template data]
-  (binding [*out* *err*]
-    (println
-     (selmer/render template data))))
 
 (defn fact-reducer
   "reduces into m using a container function
@@ -81,26 +72,16 @@
            (json/parse-string pty-output keyword)))))
     (catch Throwable ex
       (warn
-       "unable to render {{ container-definition }} - {{ exception }}"
+       "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
        {:dir dir
-        :container-definition container-definition
-        :exception ex})
+        :container-definition (str container-definition)
+        :exception (str ex)})
       m)))
 
-(comment
-  ;; TODO move this to an assertion
-  (facts
-   (fact-reducer "/Users/slim/docker/labs-make-runbook"
-                 {}
-                 {:image "vonwig/go-linguist:latest"
-                  :command ["-json"]
-                  :output-handler "linguist"
-                  :user "jimclark106"
-                  :pat (creds/credential-helper->jwt)})
-   "jimclark106" "darwin"))
-
 (defn collect-extractors [dir]
-  (let [extractors (-> (markdown/parse-metadata (io/file dir "README.md")) first :extractors)]
+  (let [extractors (->>
+                    (-> (markdown/parse-metadata (io/file dir "README.md")) first :extractors)
+                    (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
       [{:image "docker/lsp:latest"
@@ -112,9 +93,12 @@
 (defn collect-functions [dir]
   (->>
    (-> (markdown/parse-metadata (io/file dir "README.md")) first :functions)
-   (map (fn [m] {:type "function" :function m}))))
+   (map (fn [m] {:type "function" :function (merge (registry/get-function m) m)}))))
 
-(defn collect-metadata [dir]
+(defn collect-metadata
+  "collect metadata from yaml front-matter in README.md
+    skip functions and extractors"
+  [dir]
   (dissoc
    (-> (markdown/parse-metadata (io/file dir "README.md")) first)
    :extractors :functions))
@@ -134,25 +118,6 @@
                             (when user {:user user})
                             (when pat {:pat pat})))))))
 
-;; registry of prompts directories stores in the docker-prompts volumes
-(def registry-file "/prompts/registry.edn")
-
-(defn read-registry
-  "read the from the prompt registry in the current engine volume"
-  []
-  (try
-    (edn/read-string (slurp registry-file))
-    (catch java.io.FileNotFoundException _
-      {:prompts []})
-    (catch Throwable t
-      (warn "Warning (corrupt registry.edn): {{ t }}" {:exception t})
-      {:prompts []})))
-
-(defn update-registry
-  "update the prompt registry in the current engine volume"
-  [f]
-  (spit registry-file (pr-str (f (read-registry)))))
-
 (defn- get-dir
   "returns the prompt directory to use"
   [dir]
@@ -161,7 +126,10 @@
    dir
    "docker"))
 
-(defn get-prompts [& args]
+(defn get-prompts
+  "run extractors and then render prompt templates
+     returns ordered collection of chat messages"
+  [& args]
   (let [[project-root user platform prompts-dir & {:keys [pat]}] args
         ;; TODO the docker default no longer makes sense here
         prompt-dir (get-dir prompts-dir)
@@ -180,8 +148,12 @@
 
 (declare conversation-loop)
 
-(defn function-handler 
-  "call function
+(defn function-handler
+  "make openai tool call
+   supports container tool definitions and prompt tool definitions 
+   (prompt tools can have their own child tools definitions)
+   does not stream - calls resolve or fail only once 
+   should not throw exceptions
      params
        opts - options map for the engine
        function-name - the name of the function that the LLM has selected
@@ -198,35 +170,43 @@
         (let [function-call (merge
                              (:container definition)
                              (dissoc opts :functions)
-                             {:command (concat 
-                                         []
-                                         (if json-arg-string [json-arg-string] ["{}"])
-                                         (when-let [c (-> definition :container :command)] c))}
+                             {:command (concat
+                                        []
+                                        (if json-arg-string [json-arg-string] ["{}"])
+                                        (when-let [c (-> definition :container :command)] c))}
                              (when user {:user user})
                              (when pat {:pat pat}))
               {:keys [pty-output exit-code]} (docker/run-function function-call)]
           (if (= 0 exit-code)
             (resolve pty-output)
             (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))))
-        (= "prompt" (:type definition)) ;; asynchronous call to another agent
-        (let [{:keys [messages _finish-reason] :as m} 
-              (async/<!! (conversation-loop 
-                           (:host-dir opts)
-                           user
-                           (:host-dir opts)
-                           (:ref definition)))]
+        (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
+        ;; TODO set a custom map for prompts in the next conversation loop
+        (let [{:keys [messages _finish-reason] :as m}
+              (async/<!! (conversation-loop
+                          (:host-dir opts)
+                          (:user opts)
+                          (:host-dir opts)
+                          (:ref definition)))]
           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
           (resolve (->> messages
                         (filter #(= "assistant" (:role %)))
                         (last)
-                        :content))))
+                        :content)))
+        :else
+        (fail (format "bad container definition %s" definition)))
       (catch Throwable t
         (fail (format "system failure %s" t))))
     (fail "no function found")))
 
 (defn- run-prompts
+  "call openai compatible chat completion endpoint and handle tool requests
+    params
+      prompts is the conversation history
+      args for extracting functions, host-dir, user, platform
+    returns channel that will contain the final set of messages and a finish-reason"
   [prompts & args]
-  (let [[host-dir user platform prompts-dir & {:keys [pat]}] args
+  (let [[host-dir user platform prompts-dir & {:keys [url pat]}] args
         prompt-dir (get-dir prompts-dir)
         m (collect-metadata prompt-dir)
         functions (collect-functions prompt-dir)
@@ -238,19 +218,35 @@
                                        :user user
                                        :platform platform}
                                       (when pat {:pat pat}))))]
-
-    (openai/openai
-     (merge
-      {:messages prompts}
-      (when (seq functions) {:tools functions})
-      m) h)
+    (try
+      (openai/openai
+       (merge
+        {:messages prompts}
+        (when (seq functions) {:tools functions})
+        (when url {:url url})
+        m) h)
+      (catch ConnectException t
+        ;; when the conversation-loop can not connect to an openai compatible endpoint
+        (async/>!! c {:messages [{:role "assistant" :content "I cannot connect to an openai compatible endpoint."}]
+                      :finish-reason "error"}))
+      (catch Throwable t
+        (async/>!! c {:messages [{:role "assistant" :content (str t)}]
+                      :finish-reason "error"})))
     c))
 
 (defn- conversation-loop
+  "thread loop for an openai compatible endpoint
+     returns messages and done indicator"
   [& args]
   (async/go-loop
-   [prompts (apply get-prompts args)]
-    (let [{:keys [messages finish-reason] :as m} 
+   [thread []]
+    ;; get-prompts can only use extractors - we can't refine
+    ;; them based on output from function calls that the LLM plans
+    (let [prompts (if (not (seq thread))
+                    (apply get-prompts args)
+                    thread)
+
+          {:keys [messages finish-reason] :as m}
           (async/<!! (apply run-prompts prompts args))]
       (if (= "tool_calls" finish-reason)
         (do
@@ -261,6 +257,7 @@
           {:messages (concat prompts messages) :done finish-reason})))))
 
 (defn- -run-command
+  "  returns map result"
   [& args]
   (cond
     (= "prompts" (first args))
@@ -268,39 +265,54 @@
      [{:type "docker" :title "using docker in my project"}
       {:type "lazy_docker" :title "using lazy-docker"}
       {:type "npm_setup" :title "using npm"}]
-     (->> (:prompts (read-registry))
+     (->> (:prompts (git.registry/read-registry))
           (map #(assoc % :saved true))))
 
     (= "register" (first args))
     (if-let [{:keys [owner repo path]} (git/parse-github-ref (second args))]
-      (update-registry (fn [m]
-                         (update-in m [:prompts] (fnil conj [])
-                                    {:type (second args)
-                                     :title (format "%s %s %s"
-                                                    owner repo
-                                                    (if path (str "-> " path) ""))})))
+      (git.registry/update-registry (fn [m]
+                                      (update-in m [:prompts] (fnil conj [])
+                                                 {:type (second args)
+                                                  :title (format "%s %s %s"
+                                                                 owner repo
+                                                                 (if path (str "-> " path) ""))})))
       (throw (ex-info "Bad GitHub ref" {:ref (second args)})))
 
     (= "unregister" (first args))
-    (update-registry
+    (git.registry/update-registry
      (fn [m]
        (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll)))))
 
     (= "run" (first args))
     (select-keys
-      (async/<!! (apply conversation-loop (rest args)))
-      [:done])
+     (async/<!! (apply conversation-loop (rest args)))
+     [:done])
 
     :else
     (apply get-prompts args)))
 
-(defn prompts [& args]
-  (println
-   (json/generate-string (apply -run-command args))))
-
 (def cli-opts [[nil "--jsonrpc" "Output JSON-RPC notifications"]
+               [nil "--url OPENAI_COMPATIBLE_ENDPOINT" "OpenAI compatible endpoint url"]
                [nil "--user USER" "The hub user"]
-               [nil "--pat PAT" "A hub PAT"]])
+               [nil "--pat PAT" "A hub PAT"]
+               [nil "--host-dir DIR" "Project directory"]
+               [nil "--prompts DIR_OR_GITHUB_REF" "prompts"]
+               [nil "--offline" "do not try to pull new images"]
+               [nil "--pretty-print-prompts" "pretty print prompts"]])
+
+(defn- add-arg [options args k]
+  (if-let [v (k options)] (concat args [k v]) args))
+
+(def output-handler (fn [x] (println (json/generate-string x))))
+(defn output-prompts [coll]
+  (println "## Prompts:\n")
+  (->> coll
+       (mapcat (fn [{:keys [role content]}]
+                 [(format "## %s\n" role)
+                  content]))
+       (interpose "\n")
+       (apply str)
+       (println)))
 
 (defn -main [& args]
   (try
@@ -312,9 +324,11 @@
        (fn [_] (if (:jsonrpc options)
                  jsonrpc/-notify
                  jsonrpc/-println)))
-      (apply prompts (concat
-                      arguments
-                      (when-let [pat (:pat options)] [:pat pat]))))
+      ((if (:pretty-print-prompts options) output-prompts output-handler)
+       (apply -run-command (concat
+                            arguments
+                            (reduce (partial add-arg options) [] [:url :pat :host-dir :prompts])
+                            (when (:offline options) [:offline true])))))
     (catch Throwable t
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))

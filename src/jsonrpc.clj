@@ -32,7 +32,9 @@
 #_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn -println [method params]
   (case method
-    :message (do (print (:content params)) (flush))
+    :message (cond 
+               (:content params) (do (print (:content params)) (flush))
+               (:debug params) (println (:debug params)))
     :functions (do (print ".") (flush))
     :functions-done (println params)))
 

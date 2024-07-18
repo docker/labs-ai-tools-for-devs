@@ -1,0 +1,12 @@
+{:registry [{:name "project-facts",
+             :image "docker/lsp:latest",
+             :entrypoint "/app/result/bin/docker-lsp",
+             :command ["project-facts"
+                       "--vs-machine-id"
+                       "none"
+                       "--workspace"
+                       "/docker"]}
+            {:name "go-linguist",
+             :image "vonwig/go-linguist:latest",
+             :command ["-json"],
+             :output-handler "linguist"}]}

@@ -20,6 +20,9 @@ FROM base
 
 WORKDIR /app
 
+COPY ./extractors/registry.edn ./extractors/registry.edn
+COPY ./functions/registry.edn ./functions/registry.edn
+
 COPY --from=build /app/prompts.jar /app/prompts.jar
 
 COPY prompts/docker docker 
