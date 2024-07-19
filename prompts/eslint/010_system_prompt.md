@@ -19,10 +19,7 @@ Do the following to lint a JS/TS project:
 
 2. Run the linter chosen, fixing violations.
 
-3. Determine total number of remaining violations after autofix. 
+3. Evaluate the report of remaining violations after autofix. 
 
-4. Fix the remaining violations
-You must fix files with the following steps:
-    - For less than 10 violations, use `complain`.
-    - For more than 10 violations, use `read_files` to read violating files, and use `write_files` to fix them.
+4. Read files affected and generate fixes for the remaining violations.
     

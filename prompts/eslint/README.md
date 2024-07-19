@@ -55,27 +55,6 @@ functions:
         - args
     container:
         image: vonwig/git:local
-  - name: write_files
-    description: Write a set of files to my project
-    parameters:
-      type: object
-      properties:
-        files:
-          type: array
-          items:
-            type: object
-            properties:
-              path:
-                type: string
-                description: the relative path to the file that should be written
-              content:
-                type: string
-                description: the content that should be written to a file
-              executable:
-                type: boolean
-                description: whether to make the file executable
-    container:
-        image: vonwig/function_write_files:latest
   - name: read_files
     description: Reads a set of files back
     parameters:
@@ -88,33 +67,7 @@ functions:
             description: Relative path to a file to read.
     container:
         image: vonwig/read_files:latest
-  - name: complain
-    description: Complain about a file
-    parameters:
-      type: object
-      properties:
-        start_location:
-          type: array
-          description: "Start location in edit, formatted [row, col]"
-          items:
-            type: number
-            description: The row or column
-        end_location:
-          type: array
-          description: "End location in edit, formatted [row, col]"
-          items:
-            type: number
-            description: The row or column
-        edit:
-          type: string
-          description: Code to insert between start_location and end_location which will resolve the violation. Do not include ignore comments.
-      required:
-        - start_location
-        - end_location
-    container:
-        image: alpine:latest
-        entrypoint:
-          - echo
+  
 ---
 
 # Description
