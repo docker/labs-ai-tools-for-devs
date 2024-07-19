@@ -23,7 +23,7 @@ else
 	FILES=$(echo $ARGS | jq -r '.files[]')
 fi
 
-echo "Running eslint with typescript: $TYPESCRIPT, fix: $FIX, files: $FILES"
+echo "Running StandardJS..."
 
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
@@ -31,6 +31,8 @@ if [ $TYPESCRIPT == 'false' ]; then
 	standard $FILES
 	exit $?
 fi
+
+echo "Running ts-standard..."
 
 TS_FILES=$(echo $FILES | grep -E "\.ts$|\.tsx$")
 
@@ -82,4 +84,5 @@ for TS_ROOT in $TS_ROOTS; do
 done
 
 echo $TS_OUTPUT
+
 exit $EXIT_CODE
