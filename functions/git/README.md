@@ -28,16 +28,5 @@ Git project information
 ## Running the tool
 
 ```sh
-DIR=$PWD
-docker run --rm -it \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=volume,source=docker-prompts,target=/prompts \
-           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           --mount type=bind,source=/Users/colinmcneil/Dev/labs-ai-tools-for-devs/prompts,target=/my-prompts \
-           --workdir /my-prompts \
-           vonwig/prompts:latest run \
-                                 $DIR \
-                                 $USER \
-                                 "$(uname -o)" \
-                                 git_branches
+docker build . -t vonwig/git:local
 ```

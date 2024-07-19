@@ -9,7 +9,7 @@ If there are no ESLint configuration files found, use StandardJS to lint the pro
 
 ## Linter Args
 When using StandardJS, use typescript arg only if tsconfigs are reported.
-If there is an ESLint config, lint the project using the right version of ESLint.
+If there is an ESLint config, lint the project using the right version of ESLint. Use a glob for `.ts`, `.js`, `.tsx`, and `.jsx`
 
 ## Lint Steps
 
