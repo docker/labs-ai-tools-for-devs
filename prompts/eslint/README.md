@@ -54,7 +54,7 @@ functions:
         - command
         - args
     container:
-        image: vonwig/git:local
+        image: vonwig/git:latest
   - name: read_files
     description: Reads a set of files back
     parameters:
