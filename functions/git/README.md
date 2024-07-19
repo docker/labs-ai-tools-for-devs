@@ -1,6 +1,6 @@
 ---
 extractors:
-  - image: vonwig/git:local
+  - image: vonwig/git:latest
     entrypoint:
       - /extract.sh
 functions:
@@ -18,7 +18,7 @@ functions:
             type: string
             description: An argument to the git command
     container:
-      image: vonwig/git:local
+      image: vonwig/git:latest
 ---
 
 # Background

@@ -129,6 +129,6 @@ expressions documented [here](https://github.com/yogthos/Selmer) are supported.
 ```sh
 #docker:command=build
 
-docker build -t vonwig/prompts:local -f Dockerfile .
+docker build -t vonwig/prompts:latest -f Dockerfile .
 ```
 

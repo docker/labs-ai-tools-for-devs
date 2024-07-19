@@ -33,14 +33,6 @@ const line_node = search_node(parsed.rootNode)
 
 const parent = line_node.parent
 
-if (parent) {
-    const start_line = parent.startPosition.row
-    const end_line = parent.endPosition.row
-    // Return codeContent from start_line to end_line
-    const lines = codeContent.split('\n').slice(start_line, end_line + 1)
-    parent.content = lines.join('\n')
-}
-
 console.log({
     offending_line: line_node.text,
     line_node: line_node,
