@@ -85,7 +85,7 @@ docker build . -t vonwig/standardjs:local -f standardjs.Dockerfile
 Push
 
 ```sh
-docker build --push . -t vonwig/eslint:latest
-docker build --push . -t vonwig/extractor-eslint:latest -f extractor.Dockerfile
-docker build --push . -t vonwig/standardjs:latest -f standardjs.Dockerfile
+docker build --push . -t vonwig/eslint:latest --push
+docker build --push . -t vonwig/extractor-eslint:latest -f extractor.Dockerfile --push
+docker build --push . -t vonwig/standardjs:latest -f standardjs.Dockerfile --push
 ```
