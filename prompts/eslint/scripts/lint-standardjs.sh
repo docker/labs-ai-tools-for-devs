@@ -27,8 +27,13 @@ echo "Running StandardJS..."
 
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
+	$LINT_ARGS="$FILES"
+	# If FIX
+	if [ $FIX == "true" ]; then
+		LINT_ARGS="--fix $FILES"
+	fi
 	# Pass files array as args to standard
-	standard $FILES
+	standard $LINT_ARGS
 	exit $?
 fi
 
@@ -70,7 +75,7 @@ for TS_ROOT in $TS_ROOTS; do
 		continue
 	fi
 	# If FIX
-	if [ $FIX == True ]; then
+	if [ $FIX == "true" ]; then
 		LINT_ARGS="--fix $TS_FILES_IN_ROOT"
 	else
 		LINT_ARGS="$TS_FILES_IN_ROOT"
