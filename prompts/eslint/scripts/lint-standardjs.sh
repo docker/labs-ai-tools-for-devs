@@ -1,13 +1,11 @@
 #!/bin/bash
 
-PROJECT_DIR="/project"
+shopt -s globstar
 
-echo "ARGS:"
+PROJECT_DIR="/project"
 
 # First arg
 ARGS="$1"
-
-echo $ARGS
 
 # First arg is json {typescript: boolean, fix: boolean, files: string[]}
 TYPESCRIPT=$(echo $ARGS | jq -r '.typescript')
@@ -15,18 +13,19 @@ TYPESCRIPT=$(echo $ARGS | jq -r '.typescript')
 # Get boolean value of fix
 FIX=$(echo $ARGS | jq -r '.fix')
 
-# If files key is not present, just use .
+# If files key is not present, just use glob
 
 if [ $(echo $ARGS | jq -r '.files') == 'null' ]; then
-	FILES="."
+	# Glob for js, ts, tsx, jsx files
+	FILES=$(fd -e js -e ts -e tsx -e jsx)
 else
 	FILES=$(echo $ARGS | jq -r '.files[]')
 fi
 
-echo "Running StandardJS..."
 
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
+	echo "Running standard"
 	$LINT_ARGS="$FILES"
 	# If FIX
 	if [ $FIX == "true" ]; then
@@ -39,37 +38,28 @@ fi
 
 echo "Running ts-standard..."
 
-TS_FILES=$(echo $FILES | grep -E "\.ts$|\.tsx$")
-
-#Make sure all $TS_FILES start with $PROJECT_DIR, or add it
-for TS_FILE in $TS_FILES; do
-	if [[ ! $TS_FILE == $PROJECT_DIR* ]]; then
-		# Escape / in filenames
-		TS_FILE_ESCAPED=$(echo $TS_FILE | sed 's/\//\\\//g')
-		PROJECT_DIR_ESCAPED=$(echo $PROJECT_DIR | sed 's/\//\\\//g')
-		TS_FILES=$(echo $TS_FILES | sed -e "s/$TS_FILE_ESCAPED/$PROJECT_DIR_ESCAPED\/$TS_FILE_ESCAPED/g")
-	fi
-done
+TS_FILES=$(echo "$FILES" | grep -E "\.ts$|\.tsx$")
 
 TS_ROOTS=$(fd -d 3 tsconfig.json)
 
 # If no node roots found
 if [ -z "$TS_ROOTS" ]; then
-    echo "No Typescript configs found in project"
+    echo "No Typescript configs found in project. Exiting."
 	exit 0
 fi
 
 TS_OUTPUT=""
 EXIT_CODE=0
 
+PROJECT_DIR=$(pwd)
+
 # Run ts-standard in each node root
 for TS_ROOT in $TS_ROOTS; do
-	TS_ROOT="$PROJECT_DIR/$TS_ROOT"
 	root_dirname=$(dirname $TS_ROOT)
 	cd $root_dirname
 	# Filter all TS_FILES in root_dirname
-	TS_FILES_IN_ROOT=$(echo $TS_FILES | grep $root_dirname)
-	
+	TS_FILES_IN_ROOT=$(echo "$TS_FILES" | grep -E $root_dirname)
+	echo "Linting TS Files in $root_dirname"
 	# If no TS_FILES in root_dirname, skip
 	if [ -z "$TS_FILES_IN_ROOT" ]; then
 		continue
@@ -86,6 +76,7 @@ for TS_ROOT in $TS_ROOTS; do
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?
 	fi
+	cd $PROJECT_DIR
 done
 
 echo $TS_OUTPUT
