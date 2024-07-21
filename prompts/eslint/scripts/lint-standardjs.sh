@@ -32,8 +32,7 @@ if [ $TYPESCRIPT == 'false' ]; then
 		LINT_ARGS="--fix $FILES"
 	fi
 	# Pass files array as args to standard
-	standard $LINT_ARGS
-	exit $?
+	standard $LINT_ARGS | standard-json | /remap_lint.sh
 fi
 
 echo "Running ts-standard..."
@@ -71,7 +70,7 @@ for TS_ROOT in $TS_ROOTS; do
 		LINT_ARGS="$TS_FILES_IN_ROOT"
 	fi
 
-	TS_OUTPUT+=$(ts-standard $LINT_ARGS)
+	TS_OUTPUT+=$(ts-standard $LINT_ARGS | standard-json | /remap_lint.sh)
 	# If ts-standard failed and EXIT_CODE is 0, set EXIT_CODE
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?

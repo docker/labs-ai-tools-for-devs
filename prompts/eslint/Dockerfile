@@ -9,5 +9,7 @@ ENTRYPOINT ["/lint.sh"]
 RUN npm install -g eslint@6 eslint@7 eslint@8 eslint@9 typescript typescript-eslint
 
 COPY scripts/lint.sh /lint.sh
+COPY scripts/remap_lint.sh /remap_lint.sh
 
 RUN chmod +x /lint.sh
+RUN chmod +x /remap_lint.sh
