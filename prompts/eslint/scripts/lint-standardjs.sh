@@ -23,6 +23,7 @@ else
 	FILES=$(echo $ARGS | jq -r '.files[]')
 fi
 
+TOTAL_VIOLATIONS=0
 
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
@@ -35,8 +36,11 @@ if [ $TYPESCRIPT == 'false' ]; then
 	# Pass files array as args to standard
 	OUTPUT=$(standard $LINT_ARGS | standard-json)
 
+	# Count total violations
+	TOTAL_VIOLATIONS=$(echo $OUTPUT | jq -r '.results[].messages | length')
+
 	if [ $OUTPUT_LEVEL == "0" ]; then
-		echo "Linting with StandardJS complete."
+		echo "Linting with StandardJS complete. $TOTAL_VIOLATIONS violations found."
 	fi
 
 	if [ $OUTPUT_LEVEL == "1" ]; then
@@ -86,6 +90,9 @@ for TS_ROOT in $TS_ROOTS; do
 	fi
 
 	TS_OUTPUT+=$(ts-standard $LINT_ARGS | standard-json)
+
+	# Count total violations
+	TOTAL_VIOLATIONS=$(echo $TS_OUTPUT | jq -r '.results[].messages | length')
 	# If ts-standard failed and EXIT_CODE is 0, set EXIT_CODE
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?
@@ -95,7 +102,7 @@ done
 
 
 	if [ $OUTPUT_LEVEL == "0" ]; then
-		echo "Linting with StandardJS (TS) complete."
+		echo "Linting with StandardJS (TS) complete. $TOTAL_VIOLATIONS violations found."
 	fi
 
 	if [ $OUTPUT_LEVEL == "1" ]; then

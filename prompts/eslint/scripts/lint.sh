@@ -21,6 +21,7 @@ ESLINT_JSON=$(npx --no-install "eslint@$ESLINT_VERSION" --format json "$ESLINT_A
 
 if [ $OUTPUT_LEVEL == "0" ]; then
     echo "Linting with ESLint v$ESLINT_VERSION complete."
+    TOTAL_VIOLATIONS=$(echo $ESLINT_JSON | jq -r '.[].messages | length')
 fi
 
 if [ $OUTPUT_LEVEL == "1" ]; then
