@@ -23,38 +23,17 @@ else
 	FILES=$(echo $ARGS | jq -r '.files[]')
 fi
 
-TOTAL_VIOLATIONS=0
-
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
-	echo "Running standard"
 	$LINT_ARGS="$FILES"
 	# If FIX
 	if [ $FIX == "true" ]; then
 		LINT_ARGS="--fix $FILES"
 	fi
 	# Pass files array as args to standard
-	OUTPUT=$(standard $LINT_ARGS | standard-json)
-
-	# Count total violations
-	TOTAL_VIOLATIONS=$(echo $OUTPUT | jq -r '.results[].messages | length')
-
-	if [ $OUTPUT_LEVEL == "0" ]; then
-		echo "Linting with StandardJS complete. $TOTAL_VIOLATIONS violations found."
-	fi
-
-	if [ $OUTPUT_LEVEL == "1" ]; then
-		echo "Linting with StandardJS complete. Outputting condensed JSON."
-		echo $OUTPUT | /remap_lint.sh
-	fi
-
-	if [ $OUTPUT_LEVEL == "2" ]; then
-		echo "Linting with StandardJS complete. Outputting JSON."
-		echo $OUTPUT
-	fi
+	echo standard 2>/dev/null | standard-json | /remap_lint.sh "$OUTPUT_LEVEL"
+	exit $?
 fi
-
-echo "Running ts-standard..."
 
 TS_FILES=$(echo "$FILES" | grep -E "\.ts$|\.tsx$")
 
@@ -77,7 +56,6 @@ for TS_ROOT in $TS_ROOTS; do
 	cd $root_dirname
 	# Filter all TS_FILES in root_dirname
 	TS_FILES_IN_ROOT=$(echo "$TS_FILES" | grep -E $root_dirname)
-	echo "Linting TS Files in $root_dirname"
 	# If no TS_FILES in root_dirname, skip
 	if [ -z "$TS_FILES_IN_ROOT" ]; then
 		continue
@@ -88,32 +66,13 @@ for TS_ROOT in $TS_ROOTS; do
 	else
 		LINT_ARGS="$TS_FILES_IN_ROOT"
 	fi
-
-	TS_OUTPUT+=$(ts-standard $LINT_ARGS | standard-json)
-
-	# Count total violations
-	TOTAL_VIOLATIONS=$(echo $TS_OUTPUT | jq -r '.results[].messages | length')
+	TS_OUTPUT+=$(ts-standard 2>/dev/null | standard-json | /remap_lint.sh "$OUTPUT_LEVEL")
 	# If ts-standard failed and EXIT_CODE is 0, set EXIT_CODE
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?
 	fi
 	cd $PROJECT_DIR
 done
-
-
-	if [ $OUTPUT_LEVEL == "0" ]; then
-		echo "Linting with StandardJS (TS) complete. $TOTAL_VIOLATIONS violations found."
-	fi
-
-	if [ $OUTPUT_LEVEL == "1" ]; then
-		echo "Linting with StandardJS (TS) complete. Outputting condensed JSON."
-		echo $TS_OUTPUT | /remap_lint.sh
-	fi
-
-	if [ $OUTPUT_LEVEL == "2" ]; then
-		echo "Linting with StandardJS (TS) complete. Outputting JSON."
-		echo $TS_OUTPUT
-	fi
 
 echo $TS_OUTPUT
 

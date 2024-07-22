@@ -16,20 +16,4 @@ OUTPUT_LEVEL=$(echo $ARGS | jq -r '.outputLevel')
 
 echo "Linting: eslint@$ESLINT_VERSION $ESLINT_ARGS"
 
-ESLINT_JSON=$(npx --no-install "eslint@$ESLINT_VERSION" --format json "$ESLINT_ARGS")
-
-
-if [ $OUTPUT_LEVEL == "0" ]; then
-    echo "Linting with ESLint v$ESLINT_VERSION complete."
-    TOTAL_VIOLATIONS=$(echo $ESLINT_JSON | jq -r '.[].messages | length')
-fi
-
-if [ $OUTPUT_LEVEL == "1" ]; then
-    echo "Linting with ESLint v$ESLINT_VERSION complete. Outputting condensed JSON."
-    echo $ESLINT_JSON | /remap_lint.sh
-fi
-
-if [ $OUTPUT_LEVEL == "2" ]; then
-    echo "Linting with ESLint v$ESLINT_VERSION complete. Outputting JSON."
-    echo $ESLINT_JSON
-fi
+ESLINT_JSON=$(npx --no-install "eslint@$ESLINT_VERSION" --format json "$ESLINT_ARGS" | /remap_lint.sh "$OUTPUT_LEVEL")
