@@ -13,9 +13,13 @@ functions:
         version: 
           type: number
           description: The ESLint version, 7-9 supported. Use 8 if unsure.
+        outputLevel:
+          type: number
+          description: Accepts [0,1,2]. 0 to only output number of violations, 1 is condensed json grouped by violation id, 2 is full lint json grouped by file.
       required:
         - args
         - version
+        - outputLevel
     container:
         image: vonwig/eslint:latest
   - name: run-standardjs
@@ -29,6 +33,9 @@ functions:
         fix:
           type: boolean
           description: Whether to fix the files
+        outputLevel:
+          type: number
+          description: Accepts [0,1,2]. 0 to only output number of violations, 1 is condensed json grouped by violation id, 2 is full lint json grouped by file.
         files:
           type: array
           items:
@@ -37,6 +44,7 @@ functions:
       required:
         - typescript
         - fix
+        - outputLevel
     container:
         image: vonwig/standardjs:latest
   - name: git-branch

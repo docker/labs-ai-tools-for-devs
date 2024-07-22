@@ -1,7 +1,5 @@
 #!/bin/bash
 
-shopt -s globstar
-
 PROJECT_DIR="/project"
 
 # First arg
@@ -12,6 +10,9 @@ TYPESCRIPT=$(echo $ARGS | jq -r '.typescript')
 
 # Get boolean value of fix
 FIX=$(echo $ARGS | jq -r '.fix')
+
+# How verbose to output the linting results
+OUTPUT_LEVEL=$(echo $ARGS | jq -r '.outputLevel')
 
 # If files key is not present, just use glob
 
@@ -32,7 +33,21 @@ if [ $TYPESCRIPT == 'false' ]; then
 		LINT_ARGS="--fix $FILES"
 	fi
 	# Pass files array as args to standard
-	standard $LINT_ARGS | standard-json | /remap_lint.sh
+	OUTPUT=$(standard $LINT_ARGS | standard-json)
+
+	if [ $OUTPUT_LEVEL == "0" ]; then
+		echo "Linting with StandardJS complete."
+	fi
+
+	if [ $OUTPUT_LEVEL == "1" ]; then
+		echo "Linting with StandardJS complete. Outputting condensed JSON."
+		echo $OUTPUT | /remap_lint.sh
+	fi
+
+	if [ $OUTPUT_LEVEL == "2" ]; then
+		echo "Linting with StandardJS complete. Outputting JSON."
+		echo $OUTPUT
+	fi
 fi
 
 echo "Running ts-standard..."
@@ -70,13 +85,28 @@ for TS_ROOT in $TS_ROOTS; do
 		LINT_ARGS="$TS_FILES_IN_ROOT"
 	fi
 
-	TS_OUTPUT+=$(ts-standard $LINT_ARGS | standard-json | /remap_lint.sh)
+	TS_OUTPUT+=$(ts-standard $LINT_ARGS | standard-json)
 	# If ts-standard failed and EXIT_CODE is 0, set EXIT_CODE
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?
 	fi
 	cd $PROJECT_DIR
 done
+
+
+	if [ $OUTPUT_LEVEL == "0" ]; then
+		echo "Linting with StandardJS (TS) complete."
+	fi
+
+	if [ $OUTPUT_LEVEL == "1" ]; then
+		echo "Linting with StandardJS (TS) complete. Outputting condensed JSON."
+		echo $TS_OUTPUT | /remap_lint.sh
+	fi
+
+	if [ $OUTPUT_LEVEL == "2" ]; then
+		echo "Linting with StandardJS (TS) complete. Outputting JSON."
+		echo $TS_OUTPUT
+	fi
 
 echo $TS_OUTPUT
 
