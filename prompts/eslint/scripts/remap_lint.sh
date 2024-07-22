@@ -34,6 +34,8 @@ for index in "${!FILE_PATHS[@]}"; do
             message_parsed=$(echo $message | jq -r -c 'if .endLine == null then .endLine = .line end')
             # If endColumn is null, set it to convert column to number and add 1
             message_parsed=$(echo $message_parsed | jq -r -c 'if .endColumn == null then .endColumn = (.column | tonumber + 1) end')
+            # If severity is null, set it to "error"
+            message_parsed=$(echo $message_parsed | jq -r -c 'if .severity == null then .severity = "error" end')
             COMPLAINT=$(echo $message_parsed | jq -r -c --arg file_path $file_path '{filePath: $file_path, start: [.line, .column], end: [.endLine, .endColumn], message: .message, severity: .severity, ruleId: .ruleId}')
             echo $COMPLAINT
         done
