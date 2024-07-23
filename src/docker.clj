@@ -91,15 +91,15 @@
       :headers {"Content-Type" "application/json"
                 "Content-Length" (count payload)}})))
 
-(defn create-volume [{:keys [thread-volume-name]}]
+(defn create-volume [{:keys [Name]}]
   (curl/post "http://localhost/volumes/create"
              {:raw-args ["--unix-socket" "/var/run/docker.sock"]
               :throw false
-              :body (json/generate-string {:Name thread-volume-name})
+              :body (json/generate-string {:Name Name})
               :headers {"Content-Type" "application/json"}}))
 
-(defn remove-volume [{:keys [thread-volume-name]}]
-  (curl/delete (format "http://localhost/volumes/%s" thread-volume-name)
+(defn remove-volume [{:keys [Name]}]
+  (curl/delete (format "http://localhost/volumes/%s" Name)
              {:raw-args ["--unix-socket" "/var/run/docker.sock"]
               :throw false}))
 
@@ -178,7 +178,6 @@
     (pull (assoc m :creds {:username (:user m)
                            :password (or (:pat m) (creds/credential-helper->jwt))
                            :serveraddress "https://index.docker.io/v1/"})))
-  (when (:thread-volume m) (thread-volume m))
   (let [x (create m)]
     (start x)
     (wait x)
@@ -186,7 +185,6 @@
     (let [s (:body (attach x))
           info (inspect x)]
       (delete x)
-      (when (and (:thread-volume m) (not (true? (:save-thread-volume m)))) (delete-thread-volume m))
       {:pty-output s
        :exit-code (-> info :State :ExitCode)
        :info info})))

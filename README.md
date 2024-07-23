@@ -93,6 +93,13 @@ Prompts are fetched from a GitHub repository.  The mandatory parts of the ref ar
 but optional `path` and `ref` can be added to pull prompts from branches, and to specify a subdirectory
 where the prompt files are located in the repo.
 
+## Function volumes
+
+Every function container will have a shared volume mounted into the container at `/thread`.
+The volume is intended to be ephemeral and will be deleted at the end of the run.  However, the volume
+can be saved for inspection by passing the argument `--save-thread-volume`.  The name of the shared volume
+can also be controlled using `--thread-id <name>` but will normally just be a guid.
+
 ## Output json-rpc notifications
 
 Add the flag `--jsonrpc` to the list of arguments to switch the stdout stream to be a series of `jsonrpc` notifications.  

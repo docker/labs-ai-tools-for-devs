@@ -159,7 +159,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user pat thread-volume save-thread-volume] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user pat thread-id offline] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -175,9 +175,7 @@
                                         (if json-arg-string [json-arg-string] ["{}"])
                                         (when-let [c (-> definition :container :command)] c))}
                              (when user {:user user})
-                             (when pat {:pat pat})
-                             (when thread-volume {:thread-volume thread-volume})
-                             (when (true? save-thread-volume) {:save-thread-volume true}))
+                             (when pat {:pat pat}))
               {:keys [pty-output exit-code]} (docker/run-function function-call)]
           (if (= 0 exit-code)
             (resolve pty-output)
@@ -185,11 +183,15 @@
         (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
         ;; TODO set a custom map for prompts in the next conversation loop
         (let [{:keys [messages _finish-reason] :as m}
-              (async/<!! (conversation-loop
-                          (:host-dir opts)
-                          (:user opts)
-                          (:host-dir opts)
-                          (:ref definition)))]
+              (async/<!! (apply conversation-loop
+                           (concat
+                             [(:host-dir opts)
+                              (:user opts)
+                              (:host-dir opts)
+                              (:ref definition)]
+                             (when pat [:pat pat])
+                             (when offline [:offline true])
+                             [:thread-id thread-id])))]
           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
           (resolve (->> messages
                         (filter #(= "assistant" (:role %)))
@@ -208,7 +210,7 @@
       args for extracting functions, host-dir, user, platform
     returns channel that will contain the final set of messages and a finish-reason"
   [prompts & args]
-  (let [[host-dir user platform prompts-dir & {:keys [url pat save-thread-volume thread-id]}] args
+  (let [[host-dir user platform prompts-dir & {:keys [url pat save-thread-volume offline thread-id]}] args
         prompt-dir (get-dir prompts-dir)
         m (collect-metadata prompt-dir)
         functions (collect-functions prompt-dir)
@@ -221,9 +223,8 @@
                                        :platform platform}
                                       (when pat {:pat pat})
                                       (when save-thread-volume {:save-thread-volume true})
-                                      (if thread-id 
-                                        {:thread-volume thread-id}
-                                        {:thread-volume (str (random-uuid))}))))]
+                                      (when offline {:offline true})
+                                      {:thread-id thread-id})))]
     (try
       (openai/openai
        (merge
@@ -231,7 +232,7 @@
         (when (seq functions) {:tools functions})
         (when url {:url url})
         m) h)
-      (catch ConnectException t
+      (catch ConnectException _
         ;; when the conversation-loop can not connect to an openai compatible endpoint
         (async/>!! c {:messages [{:role "assistant" :content "I cannot connect to an openai compatible endpoint."}]
                       :finish-reason "error"}))
@@ -262,6 +263,15 @@
           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
           {:messages (concat prompts messages) :done finish-reason})))))
 
+(defn- with-volume [f & {:keys [thread-id save-thread-volume]}]
+  (let [thread-id (or thread-id (str (random-uuid)))]
+    (try
+      (docker/thread-volume {:Name thread-id})
+      (f thread-id)
+      (finally
+        (when (not (true? save-thread-volume))
+          (docker/delete-thread-volume {:Name thread-id}))))))
+
 (defn- -run-command
   "  returns map result"
   [& args]
@@ -290,9 +300,12 @@
        (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll)))))
 
     (= "run" (first args))
-    (select-keys
-     (async/<!! (apply conversation-loop (rest args)))
-     [:done])
+    (with-volume
+      (fn [thread-id]
+        (select-keys
+         (async/<!! (apply conversation-loop (concat (rest args) [:thread-id thread-id])))
+         [:done]))
+      (rest args))
 
     :else
     (apply get-prompts args)))
