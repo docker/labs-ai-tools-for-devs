@@ -59,6 +59,6 @@ docker run --rm \
                                  "$(uname -o)" \
                                  local/prompts/eslint \
                                  --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" \
-                                 --jsonrpc
-
+                                 --thread-id "something" \
+                                 --save-thread-volume
 ```

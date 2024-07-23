@@ -300,7 +300,7 @@
        (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll)))))
 
     (= "run" (first args))
-    (with-volume
+    (apply with-volume
       (fn [thread-id]
         (select-keys
          (async/<!! (apply conversation-loop (concat (rest args) [:thread-id thread-id])))
@@ -324,7 +324,7 @@
 (defn- add-arg [options args k]
   (if-let [v (k options)] (concat args [k v]) args))
 
-(def output-handler (fn [x] (jsonrpc/notify {:message {:content (json/generate-string x)}})))
+(def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
 (defn output-prompts [coll]
   (jsonrpc/notify {:message {:content "## Prompts:\n"}})
   (->> coll
@@ -333,7 +333,7 @@
                   content]))
        (interpose "\n")
        (apply str)
-       ((fn [s] (jsonrpc/notify {:message {:content s}})))))
+       ((fn [s] (jsonrpc/notify :message {:content s})))))
 
 (defn -main [& args]
   (try
@@ -348,9 +348,7 @@
       ((if (:pretty-print-prompts options) output-prompts output-handler)
        (apply -run-command (concat
                             arguments
-                            (reduce (partial add-arg options) [] [:url :pat :host-dir :prompts])
-                            (when (:offline options) [:offline true])
-                            (when (:save-thread-volume options) [:save-thread-volume true])))))
+                            (reduce (partial add-arg options) [] [:url :pat :host-dir :prompts :thread-id :offline :save-thread-volume])))))
     (catch Throwable t
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))
