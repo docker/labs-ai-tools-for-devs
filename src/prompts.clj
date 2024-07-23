@@ -159,7 +159,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user pat] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user pat thread-volume save-thread-volume] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -175,7 +175,9 @@
                                         (if json-arg-string [json-arg-string] ["{}"])
                                         (when-let [c (-> definition :container :command)] c))}
                              (when user {:user user})
-                             (when pat {:pat pat}))
+                             (when pat {:pat pat})
+                             (when thread-volume {:thread-volume thread-volume})
+                             (when (true? save-thread-volume) {:save-thread-volume true}))
               {:keys [pty-output exit-code]} (docker/run-function function-call)]
           (if (= 0 exit-code)
             (resolve pty-output)
@@ -206,7 +208,7 @@
       args for extracting functions, host-dir, user, platform
     returns channel that will contain the final set of messages and a finish-reason"
   [prompts & args]
-  (let [[host-dir user platform prompts-dir & {:keys [url pat]}] args
+  (let [[host-dir user platform prompts-dir & {:keys [url pat save-thread-volume thread-id]}] args
         prompt-dir (get-dir prompts-dir)
         m (collect-metadata prompt-dir)
         functions (collect-functions prompt-dir)
@@ -217,7 +219,11 @@
                                        :host-dir host-dir
                                        :user user
                                        :platform platform}
-                                      (when pat {:pat pat}))))]
+                                      (when pat {:pat pat})
+                                      (when save-thread-volume {:save-thread-volume true})
+                                      (if thread-id 
+                                        {:thread-volume thread-id}
+                                        {:thread-volume (str (random-uuid))}))))]
     (try
       (openai/openai
        (merge
@@ -298,21 +304,23 @@
                [nil "--host-dir DIR" "Project directory"]
                [nil "--prompts DIR_OR_GITHUB_REF" "prompts"]
                [nil "--offline" "do not try to pull new images"]
-               [nil "--pretty-print-prompts" "pretty print prompts"]])
+               [nil "--pretty-print-prompts" "pretty print prompts"]
+               [nil "--save-thread-volume" "save the thread volume for debugging"]
+               [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"]])
 
 (defn- add-arg [options args k]
   (if-let [v (k options)] (concat args [k v]) args))
 
-(def output-handler (fn [x] (println (json/generate-string x))))
+(def output-handler (fn [x] (jsonrpc/notify {:message {:content (json/generate-string x)}})))
 (defn output-prompts [coll]
-  (println "## Prompts:\n")
+  (jsonrpc/notify {:message {:content "## Prompts:\n"}})
   (->> coll
        (mapcat (fn [{:keys [role content]}]
                  [(format "## %s\n" role)
                   content]))
        (interpose "\n")
        (apply str)
-       (println)))
+       ((fn [s] (jsonrpc/notify {:message {:content s}})))))
 
 (defn -main [& args]
   (try
@@ -328,7 +336,8 @@
        (apply -run-command (concat
                             arguments
                             (reduce (partial add-arg options) [] [:url :pat :host-dir :prompts])
-                            (when (:offline options) [:offline true])))))
+                            (when (:offline options) [:offline true])
+                            (when (:save-thread-volume options) [:save-thread-volume true])))))
     (catch Throwable t
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))

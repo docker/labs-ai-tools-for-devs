@@ -42,3 +42,23 @@ docker run --rm \
 bb -m clean-local-images
 ```
 
+## https://github.com/docker/labs-eslint-violations.git
+
+```sh
+docker run --rm \
+          -it \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount type=bind,source=$PWD,target=/app/local \
+           --workdir /app \
+           --mount type=volume,source=docker-prompts,target=/prompts \
+           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+           vonwig/prompts:local \
+                                 run \
+                                 /Users/slim/repo/labs-eslint-violations \
+                                 jimclark106 \
+                                 "$(uname -o)" \
+                                 local/prompts/eslint \
+                                 --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" \
+                                 --jsonrpc
+
+```

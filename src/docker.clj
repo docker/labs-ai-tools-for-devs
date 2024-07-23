@@ -67,7 +67,7 @@
 ;; entrypoint is an array of strings
 ;; env is a map
 ;; Env is an array of name=value strings
-(defn create-container [{:keys [image entrypoint command host-dir env]}]
+(defn create-container [{:keys [image entrypoint command host-dir env thread-volume]}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image
@@ -76,8 +76,10 @@
                                        (map (fn [[k v]] (format "%s=%s" (name k) v)))
                                        (into []))})
                   (when host-dir {:HostConfig
-                                  {:Binds [(format "%s:/project:rw" host-dir)
-                                           "docker-lsp:/docker"]}
+                                  {:Binds
+                                   (concat [(format "%s:/project:rw" host-dir)
+                                            "docker-lsp:/docker-lsp"]
+                                           (when thread-volume (format "%s:/thread" thread-volume)))}
                                   :WorkingDir "/project"})
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))]
@@ -88,6 +90,18 @@
       :body payload
       :headers {"Content-Type" "application/json"
                 "Content-Length" (count payload)}})))
+
+(defn create-volume [{:keys [thread-volume-name]}]
+  (curl/post "http://localhost/volumes/create"
+             {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+              :throw false
+              :body (json/generate-string {:Name thread-volume-name})
+              :headers {"Content-Type" "application/json"}}))
+
+(defn remove-volume [{:keys [thread-volume-name]}]
+  (curl/delete (format "http://localhost/volumes/%s" thread-volume-name)
+             {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+              :throw false}))
 
 (defn inspect-container [{:keys [Id]}]
   (curl/get
@@ -133,6 +147,8 @@
       (throw (ex-info (format "%s -- (%d != %s)" s (:status response) code) response)))))
 
 (def create (comp ->json (status? 201 "create-container") create-container))
+(def thread-volume (comp (status? 201 "create-volume") create-volume))
+(def delete-thread-volume (comp (status? 204 "remove-volume") remove-volume))
 (def inspect (comp ->json (status? 200 "inspect container") inspect-container))
 (def start (comp (status? 204 "start-container") start-container))
 (def wait (comp (status? 200 "wait-container") wait-container))
@@ -157,12 +173,12 @@
 (spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::pat]
                                             :req-un [::image]))
 
-;; TODO verify that m is a container-definition
 (defn run-function [m]
   (when (and (:user m) (and (not (:offline m)) (or (:pat m) (creds/credential-helper->jwt))))
     (pull (assoc m :creds {:username (:user m)
                            :password (or (:pat m) (creds/credential-helper->jwt))
                            :serveraddress "https://index.docker.io/v1/"})))
+  (when (:thread-volume m) (thread-volume m))
   (let [x (create m)]
     (start x)
     (wait x)
@@ -170,6 +186,7 @@
     (let [s (:body (attach x))
           info (inspect x)]
       (delete x)
+      (when (and (:thread-volume m) (not (true? (:save-thread-volume m)))) (delete-thread-volume m))
       {:pty-output s
        :exit-code (-> info :State :ExitCode)
        :info info})))

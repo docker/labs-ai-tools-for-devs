@@ -93,6 +93,25 @@ Prompts are fetched from a GitHub repository.  The mandatory parts of the ref ar
 but optional `path` and `ref` can be added to pull prompts from branches, and to specify a subdirectory
 where the prompt files are located in the repo.
 
+## Output json-rpc notifications
+
+Add the flag `--jsonrpc` to the list of arguments to switch the stdout stream to be a series of `jsonrpc` notifications.  
+This is useful if you are running the tool and streaming responses on to a canvas.
+
+Try running the with the `--jsonrpc` to see a full example but the stdout stream will look something like this.
+
+```
+{"jsonrpc":"2.0","method":"message","params":{"content":" consistently"}}Content-Length: 65
+
+{"jsonrpc":"2.0","method":"message","params":{"content":" high"}}Content-Length: 61
+
+{"jsonrpc":"2.0","method":"message","params":{"content":"."}}Content-Length: 52
+
+{"jsonrpc":"2.0","method":"functions","params":null}Content-Length: 57
+
+{"jsonrpc":"2.0","method":"functions-done","params":null}Content-Length: 1703
+```
+
 ### Prompt file layout
 
 Each prompt directory should contain a README.md describing the prompts and their purpose.  Each prompt file
