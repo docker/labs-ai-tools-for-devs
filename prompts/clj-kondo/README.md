@@ -43,3 +43,7 @@ docker run --rm \
                                  --save-thread-volume
 ```
 
+## TODO
+
+- [ ] the clj-kondo function is downloading into an `\?/.m2` repository in the project root.  We can't have this.
+
