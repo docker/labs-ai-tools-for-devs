@@ -1,10 +1,15 @@
-# ESLint Config Extractor
+FROM node:lts-alpine3.20
 
-FROM alpine:latest
+# Add jq and bash
+RUN apk add --no-cache bash jq
 
-# Add bash, fd
-RUN apk add --no-cache bash fd
+ENTRYPOINT ["/lint.sh"]
 
-COPY scripts/detect-eslint.sh /detect-eslint.sh
+# Install eslint versions 6-9
+RUN npm install -g eslint@6 eslint@7 eslint@8 eslint@9 typescript typescript-eslint
 
-CMD ["bash", "/detect-eslint.sh"]
+COPY scripts/lint.sh /lint.sh
+COPY scripts/remap_lint.sh /remap_lint.sh
+
+RUN chmod +x /lint.sh
+RUN chmod +x /remap_lint.sh
