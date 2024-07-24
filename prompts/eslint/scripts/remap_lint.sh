@@ -27,7 +27,7 @@ for index in "${!FILE_PATHS[@]}"; do
     if [ $OUTPUT_MODE == "complaints" ]; then
 
         # Complaint: {filePath: "path", "start": [line, column], "end": [line, column], "message": "message", "severity": "severity", "ruleId": "ruleId"}
-        messages=$(echo $messages | jq -r -c '.[]')
+        messages=$(echo $messages | jq -r -c '.[]' | tr '\n' ' ')
         IFS=$'\n' messages=($messages)
         for message in "${messages[@]}"; do
             # If endLine is null, set it to line
