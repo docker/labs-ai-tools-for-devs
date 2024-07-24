@@ -15,11 +15,7 @@ If there is an ESLint config, lint the project using the right version of ESLint
 
 Do the following to lint a JS/TS project:
 
-1. Create a new branch with git.
+1. Run the linter chosen.
 
-2. Run the linter chosen, fixing violations.
-
-3. Evaluate the report of remaining violations after autofix. 
-
-4. Read files affected and generate fixes for the remaining violations.
+2. Report the violation summary. 
     
