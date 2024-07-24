@@ -47,22 +47,6 @@ functions:
         - outputLevel
     container:
         image: vonwig/standardjs:latest
-  - name: git-branch
-    description: Handles git branches
-    parameters:
-      type: object
-      properties:
-        command:
-          type: string
-          description: The git command to use `checkout`, `merge`, or `branch`.
-        args:
-          type: string
-          description: The args to use after the command
-      required:
-        - command
-        - args
-    container:
-        image: vonwig/git:latest
   - name: read_files
     description: Reads a set of files back
     parameters:
