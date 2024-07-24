@@ -67,7 +67,7 @@
 ;; entrypoint is an array of strings
 ;; env is a map
 ;; Env is an array of name=value strings
-(defn create-container [{:keys [image entrypoint command host-dir env thread-volume]}]
+(defn create-container [{:keys [image entrypoint command host-dir env thread-id]}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image
@@ -79,7 +79,7 @@
                                   {:Binds
                                    (concat [(format "%s:/project:rw" host-dir)
                                             "docker-lsp:/docker-lsp"]
-                                           (when thread-volume (format "%s:/thread" thread-volume)))}
+                                           (when thread-id [(format "%s:/thread:rw" thread-id)]))}
                                   :WorkingDir "/project"})
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))]

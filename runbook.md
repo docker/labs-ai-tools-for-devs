@@ -46,7 +46,7 @@ bb -m clean-local-images
 
 ```sh
 docker run --rm \
-          -it \
+           -it \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=bind,source=$PWD,target=/app/local \
            --workdir /app \

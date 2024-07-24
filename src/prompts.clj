@@ -326,7 +326,7 @@
 
 (def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
 (defn output-prompts [coll]
-  (jsonrpc/notify {:message {:content "## Prompts:\n"}})
+  (jsonrpc/notify :message {:content "## Prompts:\n"})
   (->> coll
        (mapcat (fn [{:keys [role content]}]
                  [(format "## %s\n" role)
