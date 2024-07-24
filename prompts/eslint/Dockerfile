@@ -5,8 +5,19 @@ RUN apk add --no-cache bash jq
 
 ENTRYPOINT ["/lint.sh"]
 
-# Install eslint versions 6-9
-RUN npm install -g eslint@6 eslint@7 eslint@8 eslint@9 typescript typescript-eslint
+# Install node modules to /eslint
+WORKDIR /eslint7
+RUN npm install --save eslint@7 typescript
+
+WORKDIR /eslint8
+RUN npm install --save eslint@8 typescript typescript-eslint
+
+WORKDIR /eslint9
+RUN npm install --save eslint@9 typescript typescript-eslint@8.0.0-alpha.50
+
+
+
+WORKDIR /
 
 COPY scripts/lint.sh /lint.sh
 COPY scripts/remap_lint.sh /remap_lint.sh
