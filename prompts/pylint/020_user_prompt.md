@@ -1,4 +1,4 @@
 
-Lint python files in my project.
+Lint python files in my project using 'condensed' .
 
 Report the response.
