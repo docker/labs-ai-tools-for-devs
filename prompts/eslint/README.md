@@ -35,7 +35,7 @@ functions:
           description: Whether to fix the files
         outputLevel:
           type: number
-          description: Accepts [0,1,2]. 0 to only output number of violations, 1 is condensed json grouped by violation id, 2 is full lint json grouped by file.
+          description: Nullish values return a summary from the linter. `complaint` returns a list of editor complaints. `condensed` returns violations grouped by violation id. `json` returns the raw JSON output from the linter.
         files:
           type: array
           items:
