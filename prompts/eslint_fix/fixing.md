@@ -1,7 +1,16 @@
-To fix a violation:
-1. Take filepath of violation
-2. Use tree_sitter with the filepath and line number to get the code to correct
-3. Make the correction
+1. **Get the line**: Use read_eslint with the `path` arg to get all of the violations for a file.
+2. **Get the code**: Use tree_sitter with the path and line to read the surrounding code if necessary. Repeat for all violations in the file.
+3. **Make the correction** Respond in the following format:
+
+```json
+{
+    "start": [1, 4],
+    "end": [2, 4],
+    "edit": "Lorem ipsum"
+}
+```
+
+Once you have fixed one file, move on to the next.
 
 You are able to fix the following violations:
 

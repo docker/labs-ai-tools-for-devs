@@ -23,6 +23,8 @@ AFFECTED_FILE_COUNT=$(echo $INPUT | jq -r 'length')
 # Iterate over file paths
 for index in "${!FILE_PATHS[@]}"; do
     file_path=${FILE_PATHS[$index]}
+    # Strip $TEMP_DIR from the path
+    file_path=$(echo $file_path | sed "s/\/eslint-temp\///g")
     # Get the messages for the file path
     messages=${ALL_MESSAGES[$index]}
 

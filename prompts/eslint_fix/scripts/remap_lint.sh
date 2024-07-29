@@ -21,6 +21,8 @@ IFS=$'\n' ALL_MESSAGES=($ALL_MESSAGES)
 # Iterate over file paths
 for index in "${!FILE_PATHS[@]}"; do
     file_path=${FILE_PATHS[$index]}
+    # Strip /eslint-temp
+    file_path=$(echo $file_path | sed 's/\/eslint-temp\///g')
     # Get the messages for the file path
     messages=${ALL_MESSAGES[$index]}
 

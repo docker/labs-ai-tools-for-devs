@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 PROJECT_DIR="/project"
 
 THREAD_DIR="/thread"
@@ -9,6 +10,8 @@ ARGS="$1"
 
 # args[eslint_args] args [eslint_version]
 
+set -f
+# Without pathname expansion
 ESLINT_ARGS=$(echo $ARGS | jq -r '.args')
 
 ESLINT_VERSION=$(echo $ARGS | jq -r '.version')
@@ -33,3 +36,10 @@ echo "Running npx with args: $ARGS"
 ESLINT_JSON=$(npx --no-install $ARGS )
 
 echo $ESLINT_JSON | /remap_lint.sh "$OUTPUT_LEVEL"
+echo $ESLINT_JSON > $THREAD_DIR/eslint.json
+
+# If --fix is in args, copy the files back to the project directory
+if [[ $ESLINT_ARGS == *"--fix"* ]]; then
+    cp -r $TEMP_DIR/. $PROJECT_DIR
+fi
+
