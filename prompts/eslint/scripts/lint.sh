@@ -2,6 +2,8 @@
 
 PROJECT_DIR="/project"
 
+THREAD_DIR="/thread"
+
 # First arg
 ARGS="$1"
 

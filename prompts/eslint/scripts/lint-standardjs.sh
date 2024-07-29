@@ -2,6 +2,8 @@
 
 PROJECT_DIR="/project"
 
+THREAD_DIR="/thread"
+
 # First arg
 ARGS="$1"
 
@@ -25,13 +27,15 @@ fi
 
 # If typescript is false, run standard
 if [ $TYPESCRIPT == 'false' ]; then
-	$LINT_ARGS="$FILES"
+	LINT_ARGS="$FILES"
 	# If FIX
 	if [ $FIX == "true" ]; then
 		LINT_ARGS="--fix $FILES"
 	fi
 	# Pass files array as args to standard
-	echo standard 2>/dev/null | standard-json | /remap_lint.sh "$OUTPUT_LEVEL"
+	STANDARD_JSON=$(standard 2>/dev/null | standard-json)
+	echo $STANDARD_JSON | /remap_lint.sh "$OUTPUT_LEVEL"
+	echo $STANDARD_JSON > $THREAD_DIR/eslint.json
 	exit $?
 fi
 
@@ -66,7 +70,9 @@ for TS_ROOT in $TS_ROOTS; do
 	else
 		LINT_ARGS="$TS_FILES_IN_ROOT"
 	fi
-	TS_OUTPUT+=$(ts-standard 2>/dev/null | standard-json | /remap_lint.sh "$OUTPUT_LEVEL")
+	TS_JSON=$(ts-standard 2>/dev/null | standard-json)
+	echo $TS_JSON >> $THREAD_DIR/eslint.json
+	TS_OUTPUT+=$($TS_JSON | /remap_lint.sh "$OUTPUT_LEVEL")
 	# If ts-standard failed and EXIT_CODE is 0, set EXIT_CODE
 	if [ $? -ne 0 ] && [ $EXIT_CODE -eq 0 ]; then
 		EXIT_CODE=$?
