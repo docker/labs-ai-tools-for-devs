@@ -39,7 +39,5 @@ COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
 COPY docker.svg /docker.svg
-COPY --chmod=0755 binary/dist/install .
-COPY --chmod=0755 binary/dist/install.exe .
 COPY --from=client-builder /ui/build ui
 CMD /service -socket /run/guest-services/backend.sock
