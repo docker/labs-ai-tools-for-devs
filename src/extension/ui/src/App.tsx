@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import DelIcon from '@mui/icons-material/Delete';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Divider, FormControlLabel, FormGroup, Grid, Icon, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Paper, Stack, Switch, TextField, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControlLabel, FormGroup, Grid, Icon, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Paper, Stack, Switch, TextareaAutosize, TextField, Tooltip, Typography } from '@mui/material';
 import { getRunArgs } from './args';
-import { on } from 'events';
 
 // Note: This line relies on Docker Desktop's presence as a host application.
 // If you're running this React app in a browser, it won't work properly.
@@ -22,12 +21,12 @@ const debouncedToastSuccess = debounce(client.desktopUI.toast.success, 1000)
 
 export function App() {
   const [projects, setProjects] = React.useState<string[]>(localStorage.getItem('projects') ? JSON.parse(localStorage.getItem('projects')!) : []);
-  const [selectedProject, setSelectedProject] = React.useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = React.useState<string | null>(localStorage.getItem('selectedProject') || null);
 
   const [prompts, setPrompts] = React.useState<string[]>(localStorage.getItem('prompts') ? JSON.parse(localStorage.getItem('prompts')!) : []);
-  const [selectedPrompt, setSelectedPrompt] = React.useState<string | null>(null);
+  const [selectedPrompt, setSelectedPrompt] = React.useState<string | null>(localStorage.getItem('selectedPrompt') || null);
 
-  const [openAIKey, setOpenAIKey] = React.useState<string | null>(null);
+  const [openAIKey, setOpenAIKey] = React.useState<string | null>(localStorage.getItem('openAIKey') || '');
 
   const [promptInput, setPromptInput] = React.useState<string>('');
 
@@ -46,6 +45,14 @@ export function App() {
     localStorage.setItem('openAIKey', openAIKey || '');
   }, [openAIKey]);
 
+  useEffect(() => {
+    localStorage.setItem('selectedProject', selectedProject || '');
+  }, [selectedProject]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedPrompt', selectedPrompt || '');
+  }, [selectedPrompt]);
+
 
   useEffect(() => {
     // URL format: https://github.com/<owner>/<repo>/tree/<branch>/<path>
@@ -63,6 +70,10 @@ export function App() {
     }
   }, [promptInput]);
 
+  const appendToRunOut = (msg: string) => {
+    setRunOut(runOut + '\n' + msg);
+  }
+
   const delim = client.host.platform === 'win32' ? '\\' : '/';
 
   return (
@@ -72,7 +83,7 @@ export function App() {
           <Paper sx={{ padding: 1, pl: 2 }}>
             <Stack direction='row' spacing={2} alignItems={'center'} justifyContent={'space-between'}>
               <Typography sx={{ flex: '1 1 30%' }} variant='h4'>OpenAI Key</Typography>
-              <TextField sx={{ flex: '1 1 70%' }} onChange={e => setOpenAIKey(e.target.value)} value={openAIKey} placeholder='Enter OpenAI API key' type='password' />
+              <TextField sx={{ flex: '1 1 70%' }} onChange={e => setOpenAIKey(e.target.value)} value={openAIKey || ''} placeholder='Enter OpenAI API key' type='password' />
             </Stack>
           </Paper>
         </Grid>
@@ -98,6 +109,7 @@ export function App() {
             <List>
               {projects.map((project) => (
                 <ListItem
+                  key={project}
                   sx={theme => ({ borderLeft: 'solid black 3px', borderColor: selectedProject === project ? theme.palette.success.main : 'none', my: 0.5, padding: 0 })}
                   secondaryAction={
                     <IconButton color='error' onClick={() => {
@@ -140,6 +152,7 @@ export function App() {
             <List>
               {prompts.map((prompt) => (
                 <ListItem
+                  key={prompt}
                   sx={theme => ({
                     borderLeft: 'solid black 3px',
                     borderColor: selectedPrompt === prompt ? theme.palette.success.main : 'none',
@@ -169,49 +182,58 @@ export function App() {
           </Paper>
         </Grid>
         {/* Show row at bottom if selectProject AND selectedPrompt */}
-        {selectedProject && selectedPrompt ? (
+        {selectedProject && selectedPrompt && openAIKey ? (
           <Grid item xs={12}>
             <Paper sx={{ padding: 1 }}>
               <Typography variant="h3" component="h2">Ready</Typography>
-              <Typography><pre>PROJECT={selectedProject}</pre></Typography>
-              <Typography><pre>PROMPT={selectedPrompt}</pre></Typography>
+              <pre>PROJECT={selectedProject}</pre>
+              <pre>PROMPT={selectedPrompt}</pre>
               <Button sx={{ mt: 1, }} color='success' onClick={async () => {
                 // Write openai key to $HOME/.openai-api-key
-                setRunOut('Writing OpenAI key...');
-                await client.extension.vm?.cli.exec('/bin/sh', ['-c', `echo ${openAIKey} > $HOME/.openai-api-key`]);
-                setRunOut('Running...');
+                appendToRunOut('Writing OpenAI key...');
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                // Write openai key to $HOME/.openai-api-key without shell operator
+                const result = await client.docker.cli.exec('volume', ['create', 'openai-key']);
+                appendToRunOut(JSON.stringify(result));
+                // appendToRunOut(runOut + '\nRunning...');
                 client.docker.cli.exec('run', getRunArgs(selectedPrompt, selectedProject, client.host.hostname, client.host.platform), {
                   stream: {
                     onError: (err) => {
-                      setRunOut(runOut + '\n' + err.message);
+                      // appendToRunOut(err.message);
                     },
                     onOutput: ({ stdout, stderr }) => {
-                      setRunOut(runOut + '\n' + (stdout || stderr));
+                      // appendToRunOut(stdout || stderr || '');
                     }
-                  }
+                  },
                 })
               }}>
                 <Typography variant='h3'>Run</Typography>
               </Button>
             </Paper>
-          </Grid>
+          </Grid >
         ) : (
           <Grid item xs={12}>
-            <Paper>
-              You must select a project and a prompt to run.
+            <Paper sx={{ padding: 1 }}>
+              <Typography variant='h3'>Missing:</Typography>
+              {selectedProject?.length ? null : <Typography variant='body1'> - Project</Typography>}
+              {selectedPrompt?.length ? null : <Typography variant='body1'> - Prompt</Typography>}
+              {openAIKey?.length ? null : <Typography variant='body1'> - OpenAI Key</Typography>}
             </Paper>
           </Grid>
-        )}
+        )
+        }
         {/* Show run output */}
-        {runOut && (
-          <Grid item xs={12}>
-            <Paper>
-              <Typography variant='h3'>Run output</Typography>
-              <pre>{runOut}</pre>
-            </Paper>
-          </Grid>
-        )}
-      </Grid>
+        {
+          runOut && (
+            <Grid item xs={12}>
+              <Paper>
+                <Typography variant='h3'>Run output</Typography>
+                <textarea readOnly style={{ width: '100%', minHeight: '100px' }} value={runOut} />
+              </Paper>
+            </Grid>
+          )
+        }
+      </Grid >
     </>
   );
 }
