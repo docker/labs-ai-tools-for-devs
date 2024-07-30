@@ -12,26 +12,5 @@
       "src": "index.html",
       "root": "ui"
     }
-  },
-  "host": {
-    "binaries": [
-      {
-        "darwin": [
-          {
-            "path": "install"
-          }
-        ],
-        "linux": [
-          {
-            "path": "install"
-          }
-        ],
-        "windows": [
-          {
-            "path": "install.exe"
-          }
-        ]
-      }
-    ]
   }
 }
