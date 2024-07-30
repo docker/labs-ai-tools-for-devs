@@ -1,3 +1,7 @@
 services:
   labs-ai-tools-for-devs:
     image: ${DESKTOP_PLUGIN_IMAGE}
+volumes:
+  openai_key:
+    driver: local
+
