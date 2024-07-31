@@ -193,8 +193,15 @@ export function App() {
                 appendToRunOut('Writing OpenAI key...');
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 // Write openai key to $HOME/.openai-api-key without shell operator
-                const result = await client.docker.cli.exec('volume', ['create', 'openai-key']);
-                appendToRunOut(JSON.stringify(result));
+                try {
+                  const result = await client.docker.cli.exec('run', ['-v', 'openai_key:/key', 'alpine', 'sh', '-c', `sed -e 's/.*/derp/' -e 'w\\/key/\\.openai-api-key' -e q '\\/etc\\/os-release'`]);
+                  appendToRunOut(JSON.stringify(result));
+                }
+                catch (err: any) {
+                  appendToRunOut(JSON.stringify(err));
+                }
+
+
                 // appendToRunOut(runOut + '\nRunning...');
                 client.docker.cli.exec('run', getRunArgs(selectedPrompt, selectedProject, client.host.hostname, client.host.platform), {
                   stream: {
