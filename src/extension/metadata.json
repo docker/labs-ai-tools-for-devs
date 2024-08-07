@@ -1,0 +1,16 @@
+{
+  "icon": "docker.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml",
+    "exposes": {
+      "socket": "backend.sock"
+    }
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Labs AI Tools",
+      "src": "index.html",
+      "root": "ui"
+    }
+  }
+}
