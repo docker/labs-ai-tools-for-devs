@@ -1,3 +1,3 @@
-Fix any lint violations you can using the tools provided.
+Fix any `no-async-promise-executer` violations in my project.
 
-Please only fix `no-unused-vars`
+I need fixes in the form of new code to use instead.
