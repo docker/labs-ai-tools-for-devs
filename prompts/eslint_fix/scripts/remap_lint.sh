@@ -18,18 +18,16 @@ ALL_MESSAGES=$(echo $INPUT | jq -r -c '.[].messages')
 # convert to array
 IFS=$'\n' FILE_PATHS=($FILE_PATHS)
 IFS=$'\n' ALL_MESSAGES=($ALL_MESSAGES)
-echo "Peparing output"
-AFFECTED_FILE_COUNT=$(echo $INPUT | jq -r 'length')
 # Iterate over file paths
 for index in "${!FILE_PATHS[@]}"; do
     file_path=${FILE_PATHS[$index]}
-    # Strip $TEMP_DIR from the path
-    file_path=$(echo $file_path | sed "s/\/eslint-temp\///g")
+    # Strip /eslint-temp
+    file_path=$(echo $file_path | sed 's/\/eslint-temp\///g')
     # Get the messages for the file path
     messages=${ALL_MESSAGES[$index]}
 
     if [ $OUTPUT_MODE == "complaints" ]; then
-        echo "complaints"
+
         # Complaint: {filePath: "path", "start": [line, column], "end": [line, column], "message": "message", "severity": "severity", "ruleId": "ruleId"}
         messages=$(echo $messages | jq -r -c '.[]' | tr '\n' ' ')
         IFS=$'\n' messages=($messages)
@@ -44,7 +42,6 @@ for index in "${!FILE_PATHS[@]}"; do
             echo $COMPLAINT
         done
     elif [ $OUTPUT_MODE == "condensed" ]; then
-        echo "condensed"
         # Remove duplicates
         messages=$(echo $messages | jq -r -c 'unique_by(.ruleId)')
         messages=$(echo $messages | jq -r -c '.[]')
@@ -63,7 +60,6 @@ for index in "${!FILE_PATHS[@]}"; do
         done
     elif [ $OUTPUT_MODE == "json" ]; then
         OUTPUT=$(echo $INPUT)
-        break
     else
         # Summary   
         AFFECTED_FILE_COUNT=$(echo $INPUT | jq -r 'length')
@@ -74,7 +70,6 @@ for index in "${!FILE_PATHS[@]}"; do
         else
             OUTPUT="No violations found."
         fi
-        break
     fi
 done
 

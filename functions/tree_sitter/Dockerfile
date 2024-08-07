@@ -15,4 +15,4 @@ FROM node:alpine3.20
 COPY main.js /main.js
 COPY --from=build /tree-sitter/node_modules /node_modules
 
-ENTRYPOINT [ "node", "main.js" ] 
+ENTRYPOINT [ "node", "/main.js" ] 
