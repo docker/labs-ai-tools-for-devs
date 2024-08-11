@@ -6,7 +6,8 @@
    [clojure.java.io :as io]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [jsonrpc]))
+   [jsonrpc]
+   [clojure.pprint :refer [pprint]]))
 
 (defn openai-api-key []
   (try
@@ -21,8 +22,7 @@
   [request cb]
   (jsonrpc/notify :message {:content "\n## ROLE assistant\n"})
   (let [b (merge
-           {:model "gpt-4"
-            :stream true}
+           {:model "gpt-4"}
            (dissoc request :url))
         response
         (http/post
@@ -38,7 +38,9 @@
             {:as :stream})))]
     (if (= 200 (:status response))
       (if (not (true? (:stream b)))
-        (cb (slurp (:body response)))
+        (cb (if (string? (:body response))
+              (:body response)
+              (slurp (:body response))))
         (doseq [chunk (line-seq (io/reader (:body response)))]
           (cb chunk)))
       (throw (ex-info "Failed to call OpenAI API" {:body (slurp (:body response))})))))
@@ -113,7 +115,7 @@
   (let [response (atom {})]
     (async/go-loop
      []
-      (let [e (async/<! c)]
+      (let [{:keys [finish-reason] :as e} (async/<! c)]
         (cond
           (:done e) (let [{calls :tool-calls content :content finish-reason :finish-reason} @response
                           messages [(merge
@@ -122,6 +124,7 @@
                                        {:tool_calls (->> (vals calls)
                                                          (map #(assoc % :type "function")))})
                                      (when content {:content content}))]]
+                      (println (with-out-str (pprint @response)))
                       (jsonrpc/notify :functions-done (vals calls))
                       ;; make-tool-calls returns a channel with results of tool call messages
                       ;; so we can continue the conversation
@@ -135,6 +138,7 @@
                          (async/reduce conj messages)))})
           (:content e) (do
                          (swap! response update-in [:content] (fnil str "") (:content e))
+                         (when finish-reason (swap! response assoc :finish-reason finish-reason))
                          (jsonrpc/notify :message {:content (:content e)})
                          (recur))
           :else (let [{:keys [tool_calls finish-reason]} e]

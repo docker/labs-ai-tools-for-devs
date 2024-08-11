@@ -13,10 +13,10 @@ following command.
 docker run --rm \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
-           vonwig/prompts:latest $PWD \
-                                 jimclark106 \
-                                 darwin \
-                                 "github:docker/labs-make-runbook?ref=main&path=prompts/lazy_docker"
+           vonwig/prompts:latest --host-dir $PWD \
+                                 --user jimclark106 \
+                                 --platform darwin \
+                                 --prompts-dir "github:docker/labs-make-runbook?ref=main&path=prompts/lazy_docker"
 ```
 
 The four arguments are 
@@ -33,10 +33,10 @@ docker run --rm \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=bind,source=$PWD,target=/app/my_prompts \
            --workdir /app \
-           vonwig/prompts:latest $PWD \
-                                 jimclark106 \
-                                 darwin \
-                                 my_prompts
+           vonwig/prompts:latest --host-dir $PWD \
+                                 --user jimclark106 \
+                                 --platform darwin \
+                                 --prompts-dir my_prompts
 ```
 
 ## Running a Conversation Loop
@@ -54,10 +54,10 @@ docker run --rm \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
            vonwig/prompts:latest \
                                  run \
-                                 $PWD \
-                                 $USER \
-                                 "$(uname -o)" \
-                                 "github:docker/labs-githooks?ref=main&path=prompts/git_hooks"
+                                 --host-dir $PWD \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts "github:docker/labs-githooks?ref=main&path=prompts/git_hooks"
 ```
 
 ### Running a Conversation Loop with Local Prompts
@@ -81,15 +81,15 @@ docker run --rm \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
            vonwig/prompts:latest \
                                  run \
-                                 $PWD \
-                                 $USER \
-                                 "$(uname -o)" \
-                                 my_prompts
+                                 --host-dir $PWD \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir my_prompts
 ```
 
 ## GitHub refs
 
-Prompts are fetched from a GitHub repository.  The mandatory parts of the ref are `github:{owner}/{repo}` 
+Prompts can be fetched from a GitHub repository when using the `--prompts` arg.  The mandatory parts of the ref are `github:{owner}/{repo}` 
 but optional `path` and `ref` can be added to pull prompts from branches, and to specify a subdirectory
 where the prompt files are located in the repo.
 
@@ -97,8 +97,7 @@ where the prompt files are located in the repo.
 
 Every function container will have a shared volume mounted into the container at `/thread`.
 The volume is intended to be ephemeral and will be deleted at the end of the run.  However, the volume
-can be saved for inspection by passing the argument `--save-thread-volume`.  The name of the shared volume
-can also be controlled using `--thread-id <name>` but will normally just be a guid.
+can be saved for inspection by passing the argument `--thread-id`.  
 
 ## Output json-rpc notifications
 

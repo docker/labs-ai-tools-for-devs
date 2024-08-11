@@ -1,8 +1,6 @@
 # Running prompts
 
-## Running the docker prompts
-
-### Directly
+### Plain prompt Generation
 
 ```sh
 bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker
@@ -13,7 +11,64 @@ bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin promp
 ```
 
 ```sh
+bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/docker \
+              --pretty-print-prompts
+```
+
+### Running Conversation Loops
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/analyze_project --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+```
+
+```sh
 bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+```
+
+Mistral is kind of doing function calls but not openai compatible ones. It's listing a set of functions to call and not getting the arguments correct.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "mistral:latest" \
+              --pretty-print-prompts
+```
+
+llama3-groq-tool-use:latest is writing functions but with a mix of xml and json markup.  It's not compatible with openai currently.
+Also, the finish-reason is stop, instead of "tool_calls".  So the conversation loop ends too.
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3-groq-tool-use:latest" 
+```
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3.1" \
+              --nostream
+```
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "mistral-nemo" 
 ```
 
 ### Using Container

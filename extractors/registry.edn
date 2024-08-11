@@ -5,7 +5,7 @@
                        "--vs-machine-id"
                        "none"
                        "--workspace"
-                       "/docker"]}
+                       "/project"]}
             {:name "go-linguist",
              :image "vonwig/go-linguist:latest",
              :command ["-json"],
