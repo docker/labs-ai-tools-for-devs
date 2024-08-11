@@ -23,18 +23,18 @@
    :method method
    :params params})
 
-(defn -notify [method params]
+(defn -notify [{:keys [debug]} method params]
   (case method
     :message (write-message (io/output-stream System/out) (notification method params))
     :functions (write-message (io/output-stream System/out) (notification method params))
     :functions-done (write-message (io/output-stream System/out) (notification method params))))
 
 #_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
-(defn -println [method params]
+(defn -println [{:keys [debug]} method params]
   (case method
     :message (cond 
                (:content params) (do (print (:content params)) (flush))
-               (:debug params) (println (:debug params)))
+               (and debug (:debug params)) (do (println "### DEBUG\n") (println (:debug params))))
     :functions (do (print ".") (flush))
     :functions-done (println params)))
 

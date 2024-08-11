@@ -168,14 +168,16 @@
             (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))))
         (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
         ;; TODO set a custom map for prompts in the next conversation loop
-        (let [{:keys [messages _finish-reason] :as m}
-              (async/<!! (conversation-loop
-                           (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
-          (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-          (resolve (->> messages
-                        (filter #(= "assistant" (:role %)))
-                        (last)
-                        :content)))
+        (do
+          (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
+          (let [{:keys [messages _finish-reason] :as m}
+                (async/<!! (conversation-loop
+                             (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
+            (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
+            (resolve (->> messages
+                          (filter #(= "assistant" (:role %)))
+                          (last)
+                          :content))))
         :else
         (fail (format "bad container definition %s" definition)))
       (catch Throwable t
@@ -280,7 +282,8 @@
                 :assoc-fn (fn [m k _] (assoc m k true))]
                [nil "--nostream" "disable streaming" 
                 :id :stream
-                :assoc-fn (fn [m k _] (assoc m k false))]])
+                :assoc-fn (fn [m k _] (assoc m k false))]
+               [nil "--debug" "add debug logging"]])
 
 (def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
 (defn output-prompts [coll]
@@ -370,9 +373,7 @@
         (let [cmd (apply command options arguments)]
           (alter-var-root
            #'jsonrpc/notify
-           (fn [_] (if (:jsonrpc options)
-                     jsonrpc/-notify
-                     jsonrpc/-println)))
+           (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
           ((if (:pretty-print-prompts options) output-prompts output-handler)
            (cmd)))))
     (catch Throwable t

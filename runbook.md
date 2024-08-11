@@ -18,14 +18,38 @@ bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
               --pretty-print-prompts
 ```
 
-### Running Conversation Loops
+### Running prompts/dockerfiles Conversation Loops
+
+Make sure the prompts/project_type prompts work on their own.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/analyze_project --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
 ```
+
+Now, verify that the prompts/dockerfiles prompts work with `gpt-4`.
 
 ```sh
 bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+```
+
+Now, let's do the same thing using gpt-4 but without streaming.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" --nostream --debug
+```
+
+Now, let's try with llama3.1.
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3.1" \
+              --debug \
+              --nostream
 ```
 
 Mistral is kind of doing function calls but not openai compatible ones. It's listing a set of functions to call and not getting the arguments correct.
@@ -50,16 +74,6 @@ bb -m prompts run \
               --model "llama3-groq-tool-use:latest" 
 ```
 
-```sh
-bb -m prompts run \
-              --host-dir /Users/slim/docker/labs-make-runbook \
-              --user jimclark106 \
-              --platform darwin \
-              --prompts-dir prompts/dockerfiles \
-              --url http://localhost:11434/v1/chat/completions \
-              --model "llama3.1" \
-              --nostream
-```
 
 ```sh
 bb -m prompts run \

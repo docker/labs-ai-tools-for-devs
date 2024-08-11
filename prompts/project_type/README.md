@@ -15,7 +15,6 @@ can retrieve the most appropriate knowledge base for working in the project.
 ## Running the tool
 
 ```sh
-DIR=$PWD
 docker run --rm -it \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
@@ -23,9 +22,8 @@ docker run --rm -it \
            --mount type=bind,source=/Users/slim/docker/labs-make-runbook/prompts,target=/my-prompts \
            --workdir /my-prompts \
            vonwig/prompts:latest run \
-                                 $DIR \
-                                 $USER \
-                                 "$(uname -o)" \
-                                 project_type
-                                 # "github:docker/labs-make-runbook?ref=main&path=prompts/project_type"
+                                 --host-dir $PWD \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir "github:docker/labs-make-runbook?ref=main&path=prompts/project_type"
 ```

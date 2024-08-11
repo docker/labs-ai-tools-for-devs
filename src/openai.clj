@@ -124,8 +124,8 @@
                                        {:tool_calls (->> (vals calls)
                                                          (map #(assoc % :type "function")))})
                                      (when content {:content content}))]]
-                      (println (with-out-str (pprint @response)))
-                      (jsonrpc/notify :functions-done (vals calls))
+                      
+                      (jsonrpc/notify :functions-done (or (vals calls) ""))
                       ;; make-tool-calls returns a channel with results of tool call messages
                       ;; so we can continue the conversation
                       {:finish-reason finish-reason
@@ -169,14 +169,13 @@
                      (parse))]
          (try
            (cond
-             ;; TODO validate this works for non-streaming cases
              done? (async/>!!
                     c
                     (merge
                      {:done true :tool-handler function-handler}
                      (when finish_reason {:finish-reason finish_reason})))
 
-             ;; there are deltas when this is streaming
+             ;; streaming
              delta (cond
                      (:content delta) (async/>!! c (merge
                                                     {:content (:content delta)}
@@ -187,10 +186,10 @@
                                                        (when finish_reason {:finish-reason finish_reason})))
                      finish_reason (async/>!! c {:finish-reason finish_reason}))
 
-             ;; there are only messages when this isn't streaming
+             ;; non-streaming
              message (cond
                        (:content message) (do (async/>!! c (merge
-                                                             {:content (:content delta)}
+                                                             message 
                                                              (when finish_reason {:finish-reason finish_reason})))
                                               (async/>!! c {:done true :tool-handler function-handler}))
                        (:tool_calls message) (do
