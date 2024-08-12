@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import DelIcon from '@mui/icons-material/Delete';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Divider, FormControlLabel, FormGroup, Grid, Icon, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Paper, Stack, Switch, TextareaAutosize, TextField, Tooltip, Typography } from '@mui/material';
+import { IconButton, Link, List, ListItem, ListItemButton, ListItemText, Paper, Stack, TextField, Typography } from '@mui/material';
 import { getRunArgs } from './args';
+import Convert from 'ansi-to-html';
+
+const convert = new Convert({ newline: true });
 
 // Note: This line relies on Docker Desktop's presence as a host application.
 // If you're running this React app in a browser, it won't work properly.
@@ -32,12 +35,21 @@ export function App() {
 
   const [runOut, setRunOut] = React.useState<string>('');
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
+    if (!selectedProject && projects.length > 0) {
+      setSelectedProject(projects[0]);
+    }
   }, [projects]);
 
   useEffect(() => {
     localStorage.setItem('prompts', JSON.stringify(prompts));
+    if (!selectedPrompt && prompts.length > 0) {
+      setSelectedPrompt(prompts[0]);
+    }
   }, [prompts]);
 
   useEffect(() => {
@@ -53,14 +65,13 @@ export function App() {
     localStorage.setItem('selectedPrompt', selectedPrompt || '');
   }, [selectedPrompt]);
 
-
   useEffect(() => {
     // URL format: https://github.com/<owner>/<repo>/tree/<branch>/<path>
     // REF format: github.com:<owner>/<repo>?ref=<branch>&path=<path>
     if (promptInput?.startsWith('http')) {
       // Convert URL to REF
       const url = new URL(promptInput);
-      const registry = url.hostname
+      const registry = url.hostname.split('.').reverse().slice(1).reverse().join('.');
       const owner = url.pathname.split('/')[1];
       const repo = url.pathname.split('/')[2];
       const branch = url.pathname.split('/')[4];
@@ -70,177 +81,178 @@ export function App() {
     }
   }, [promptInput]);
 
-  const appendToRunOut = (msg: string) => {
-    setRunOut(runOut + '\n' + msg);
-  }
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [runOut]);
 
   const delim = client.host.platform === 'win32' ? '\\' : '/';
 
+  const startPrompt = async () => {
+    let output = ""
+    const updateOutput = (data: string) => {
+      output += data;
+      setRunOut(output);
+    }
+    updateOutput("Pulling images\n")
+    try {
+      const pullWriteFiles = await client.docker.cli.exec("pull", ["vonwig/function_write_files"]);
+      const pullPrompts = await client.docker.cli.exec("pull", ["vonwig/prompts"]);
+      const writeKey = await client.docker.cli.exec("run", [
+        "-v",
+        "openai_key:/root",
+        "--workdir", "/root",
+        "vonwig/function_write_files",
+        `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
+      ]);
+      updateOutput(JSON.stringify({ pullWriteFiles, pullPrompts, writeKey }));
+    }
+    catch (e) {
+      updateOutput(JSON.stringify(e));
+    }
+    updateOutput("Running prompts\n")
+    const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform)
+    client.docker.cli.exec("run", args, {
+      stream: {
+        onOutput: ({ stdout, stderr }) => {
+          output += stdout || stderr;
+          setRunOut(output);
+        },
+        onError: (err) => {
+          console.error(err);
+          output += err;
+          setRunOut(output);
+        }
+      }
+    });
+  }
+
   return (
-    <>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Paper sx={{ padding: 1, pl: 2 }}>
-            <Stack direction='row' spacing={2} alignItems={'center'} justifyContent={'space-between'}>
-              <Typography sx={{ flex: '1 1 30%' }} variant='h4'>OpenAI Key</Typography>
-              <TextField sx={{ flex: '1 1 70%' }} onChange={e => setOpenAIKey(e.target.value)} value={openAIKey || ''} placeholder='Enter OpenAI API key' type='password' />
-            </Stack>
-          </Paper>
-        </Grid>
+    <div style={{ overflow: 'auto', maxHeight: '100vh' }} ref={scrollRef}>
+      <Stack direction="column" spacing={1}>
+        <Paper sx={{ padding: 1 }}>
+          <Typography variant='h3'>OpenAI Key</Typography>
+          <TextField sx={{ mt: 1, width: '100%' }} onChange={e => setOpenAIKey(e.target.value)} value={openAIKey || ''} placeholder='Enter OpenAI API key' type='password' />
+        </Paper>
         {/* Projects column */}
-        <Grid item xs={6}>
-          <Paper sx={{ padding: 2 }}>
-            <Stack direction='row' spacing={2} alignItems={'center'} justifyContent={'space-between'}>
-              <Typography variant='h2' sx={{ m: 2, display: 'inline' }}>Projects</Typography>
-              <Button sx={{ padding: 1 }} onClick={() => {
-                client.desktopUI.dialog.showOpenDialog({
-                  properties: ['openDirectory', 'multiSelections']
-                }).then((result) => {
-                  if (result.canceled) {
-                    return;
-                  }
-                  const newProjects = result.filePaths
-                  setProjects([...projects, ...newProjects]);
-                });
-              }}>
-                Add project
-              </Button>
-            </Stack>
-            <List>
-              {projects.map((project) => (
-                <ListItem
-                  key={project}
-                  sx={theme => ({ borderLeft: 'solid black 3px', borderColor: selectedProject === project ? theme.palette.success.main : 'none', my: 0.5, padding: 0 })}
-                  secondaryAction={
-                    <IconButton color='error' onClick={() => {
-                      // Confirm
-                      const confirm = window.confirm(`Are you sure you want to remove ${project}?`);
-                      if (!confirm) {
-                        return;
-                      }
-                      setProjects(projects.filter((p) => p !== project));
-                    }}>
-                      <DelIcon />
-                    </IconButton>
-                  }>
-                  <ListItemButton sx={{ padding: 0, pl: 1.5 }} onClick={() => {
-                    setSelectedProject(project);
+        <Paper sx={{ padding: 1 }}>
+          <Typography variant='h3'>Projects</Typography>
+          <Stack direction='row' spacing={1} sx={{ mt: 1 }} alignItems={'center'} justifyContent={'space-between'}>
+            <Button sx={{ padding: 1 }} onClick={() => {
+              client.desktopUI.dialog.showOpenDialog({
+                properties: ['openDirectory', 'multiSelections']
+              }).then((result) => {
+                if (result.canceled) {
+                  return;
+                }
+                const newProjects = result.filePaths
+                setProjects([...projects, ...newProjects]);
+              });
+            }}>
+              Add project
+            </Button>
+          </Stack>
+          <List>
+            {projects.map((project) => (
+              <ListItem
+                key={project}
+                sx={theme => ({ borderLeft: 'solid black 3px', borderColor: selectedProject === project ? theme.palette.success.main : 'none', my: 0.5, padding: 0 })}
+                secondaryAction={
+                  <IconButton color='error' onClick={() => {
+                    // Confirm
+                    const confirm = window.confirm(`Are you sure you want to remove ${project}?`);
+                    if (!confirm) {
+                      return;
+                    }
+                    setProjects(projects.filter((p) => p !== project));
                   }}>
-                    <ListItemText primary={project.split(delim).pop()} secondary={project} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
+                    <DelIcon />
+                  </IconButton>
+                }>
+                <ListItemButton sx={{ padding: 0, pl: 1.5 }} onClick={() => {
+                  setSelectedProject(project);
+                }}>
+                  <ListItemText primary={project.split(delim).pop()} secondary={project} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
         {/* Prompts column */}
-        <Grid item xs={6}>
-          <Paper sx={{ padding: 2 }}>
-            <Typography variant="h2" component="h2">Prompts</Typography>
-            <TextField
-              sx={{ width: '100%' }}
-              placeholder='Enter GitHub ref or URL'
-              value={promptInput}
-              onChange={(e) => setPromptInput(e.target.value)}
-            />
-            {promptInput.length > 0 && (
-              <Button onClick={() => {
-                setPrompts([...prompts, promptInput]);
-                setPromptInput('');
-              }}>Add prompt</Button>
-            )}
-            <List>
-              {prompts.map((prompt) => (
-                <ListItem
-                  key={prompt}
-                  sx={theme => ({
-                    borderLeft: 'solid black 3px',
-                    borderColor: selectedPrompt === prompt ? theme.palette.success.main : 'none',
-                    my: 0.5,
-                    padding: 0
-                  })}
-                  secondaryAction={
-                    <IconButton color='error' onClick={() => {
-                      // Confirm
-                      const confirm = window.confirm(`Are you sure you want to remove ${prompt}?`);
-                      if (!confirm) {
-                        return;
-                      }
-                      setPrompts(prompts.filter((p) => p !== prompt));
-                    }}>
-                      <DelIcon />
-                    </IconButton>
-                  }>
-                  <ListItemButton sx={{ padding: 0, pl: 1.5 }} onClick={() => {
-                    setSelectedPrompt(prompt);
+        <Paper sx={{ padding: 1 }}>
+          <Typography variant="h3">Prompts</Typography>
+          <TextField
+            sx={{ width: '100%', mt: 1 }}
+            placeholder='Enter GitHub ref or URL'
+            value={promptInput}
+            onChange={(e) => setPromptInput(e.target.value)}
+          />
+          {promptInput.length > 0 && (
+            <Button onClick={() => {
+              setPrompts([...prompts, promptInput]);
+              setPromptInput('');
+            }}>Add prompt</Button>
+          )}
+          <List>
+            {prompts.map((prompt) => (
+              <ListItem
+                key={prompt}
+                sx={theme => ({
+                  borderLeft: 'solid black 3px',
+                  borderColor: selectedPrompt === prompt ? theme.palette.success.main : 'none',
+                  my: 0.5,
+                  padding: 0
+                })}
+                secondaryAction={
+                  <IconButton color='error' onClick={() => {
+                    // Confirm
+                    const confirm = window.confirm(`Are you sure you want to remove ${prompt}?`);
+                    if (!confirm) {
+                      return;
+                    }
+                    setPrompts(prompts.filter((p) => p !== prompt));
                   }}>
-                    <ListItemText primary={prompt.split(delim).pop()} secondary={prompt} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-        </Grid>
+                    <DelIcon />
+                  </IconButton>
+                }>
+                <ListItemButton sx={{ padding: 0, pl: 1.5 }} onClick={() => {
+                  setSelectedPrompt(prompt);
+                }}>
+                  <ListItemText primary={prompt.split(delim).pop()} secondary={prompt} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
         {/* Show row at bottom if selectProject AND selectedPrompt */}
         {selectedProject && selectedPrompt && openAIKey ? (
-          <Grid item xs={12}>
-            <Paper sx={{ padding: 1 }}>
-              <Typography variant="h3" component="h2">Ready</Typography>
-              <pre>PROJECT={selectedProject}</pre>
-              <pre>PROMPT={selectedPrompt}</pre>
-              <Button sx={{ mt: 1, }} color='success' onClick={async () => {
-                // Write openai key to $HOME/.openai-api-key
-                appendToRunOut('Writing OpenAI key...');
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                // Write openai key to $HOME/.openai-api-key without shell operator
-                try {
-                  const result = await client.docker.cli.exec('run', ['-v', 'openai_key:/key', 'alpine', 'sh', '-c', `sed -e 's/.*/derp/' -e 'w\\/key/\\.openai-api-key' -e q '\\/etc\\/os-release'`]);
-                  appendToRunOut(JSON.stringify(result));
-                }
-                catch (err: any) {
-                  appendToRunOut(JSON.stringify(err));
-                }
-
-
-                // appendToRunOut(runOut + '\nRunning...');
-                client.docker.cli.exec('run', getRunArgs(selectedPrompt, selectedProject, client.host.hostname, client.host.platform), {
-                  stream: {
-                    onError: (err) => {
-                      // appendToRunOut(err.message);
-                    },
-                    onOutput: ({ stdout, stderr }) => {
-                      // appendToRunOut(stdout || stderr || '');
-                    }
-                  },
-                })
-              }}>
-                <Typography variant='h3'>Run</Typography>
-              </Button>
-            </Paper>
-          </Grid >
+          <Paper sx={{ padding: 1 }}>
+            <Typography variant="h3">Ready</Typography>
+            <pre>PROJECT={selectedProject}</pre>
+            <pre>PROMPT={selectedPrompt}</pre>
+            <Button sx={{ mt: 1, }} color='success' onClick={startPrompt}>
+              Run
+            </Button>
+          </Paper>
         ) : (
-          <Grid item xs={12}>
-            <Paper sx={{ padding: 1 }}>
-              <Typography variant='h3'>Missing:</Typography>
-              {selectedProject?.length ? null : <Typography variant='body1'> - Project</Typography>}
-              {selectedPrompt?.length ? null : <Typography variant='body1'> - Prompt</Typography>}
-              {openAIKey?.length ? null : <Typography variant='body1'> - OpenAI Key</Typography>}
-            </Paper>
-          </Grid>
-        )
-        }
+          <Paper sx={{ padding: 1 }}>
+            <Typography variant='h3'>Missing:</Typography>
+            {selectedProject?.length ? null : <Typography variant='body1'> - Project</Typography>}
+            {selectedPrompt?.length ? null : <Typography variant='body1'> - Prompt</Typography>}
+            {openAIKey?.length ? null : <Typography variant='body1'> - OpenAI Key</Typography>}
+          </Paper>
+        )}
         {/* Show run output */}
         {
           runOut && (
-            <Grid item xs={12}>
-              <Paper>
-                <Typography variant='h3'>Run output</Typography>
-                <textarea readOnly style={{ width: '100%', minHeight: '100px' }} value={runOut} />
-              </Paper>
-            </Grid>
+            <Paper sx={{ p: 1 }}>
+              <Typography variant='h3'>Run output</Typography>
+              <div style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: convert.toHtml(runOut) }} />
+            </Paper>
           )
         }
-      </Grid >
-    </>
-  );
+      </Stack>
+    </div>
+  )
 }

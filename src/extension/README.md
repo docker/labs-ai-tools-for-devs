@@ -42,7 +42,7 @@ This starts a development server that listens on port `3000`.
 You can now tell Docker Desktop to use this as the frontend source. In another terminal run:
 
 ```shell
-  docker extension dev ui-source docker/labs-ai-tools-for-devs:latest http://localhost:3000
+  docker extension dev ui-source vonwig/labs-ai-tools-for-devs:0.0.1 http://localhost:3000
 ```
 
 In order to open the Chrome Dev Tools for your extension when you click on the extension tab, run:
