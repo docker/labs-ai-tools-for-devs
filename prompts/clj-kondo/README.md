@@ -34,16 +34,27 @@ docker run --rm \
            --mount type=bind,source=/Users/slim/docker/labs-ai-tools-for-devs/prompts,target=/app/local \
            --workdir /app \
            vonwig/prompts:local run \
-                                 /Users/slim/docker/labs-ai-tools-for-devs \
-                                 jimclark106 \
-                                 "$(uname -o)" \
-                                 local/clj-kondo \
+                                 --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+                                 --user jimclark106 \
+                                 --platform "$(uname -o)" \
+                                 --prompts local/clj-kondo \
                                  --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" \
-                                 --thread-id "clj-kondo" \
-                                 --save-thread-volume
+                                 --thread-id "clj-kondo"
+```
+
+```sh
+bb -m prompts run \
+                  --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+                  --user jimclark106 \
+                  --platform "$(uname -o)" \
+                  --prompts-dir prompts/clj-kondo \
+                  --url http://localhost:11434/v1/chat/completions \
+                  --model "llama3-groq-tool-use:latest" \
+                  --thread-id "clj-kondo"
 ```
 
 ## TODO
 
 - [ ] the clj-kondo function is downloading into an `\?/.m2` repository in the project root.  We can't have this.
+
 

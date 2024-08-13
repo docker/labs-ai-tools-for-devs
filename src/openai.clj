@@ -6,7 +6,8 @@
    [clojure.java.io :as io]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [jsonrpc]))
+   [jsonrpc]
+   [clojure.pprint :refer [pprint]]))
 
 (defn openai-api-key []
   (try
@@ -21,8 +22,7 @@
   [request cb]
   (jsonrpc/notify :message {:content "\n## ROLE assistant\n"})
   (let [b (merge
-           {:model "gpt-4"
-            :stream true}
+           {:model "gpt-4"}
            (dissoc request :url))
         response
         (http/post
@@ -38,30 +38,32 @@
             {:as :stream})))]
     (if (= 200 (:status response))
       (if (not (true? (:stream b)))
-        (cb (slurp (:body response)))
+        (cb (if (string? (:body response))
+              (:body response)
+              (slurp (:body response))))
         (doseq [chunk (line-seq (io/reader (:body response)))]
           (cb chunk)))
       (throw (ex-info "Failed to call OpenAI API" {:body (slurp (:body response))})))))
 
-(defn call-function 
+(defn call-function
   "  returns channel that will emit one message and then close"
   [function-handler function-name arguments tool-call-id]
   (let [c (async/chan)]
     (try
       (function-handler
-        function-name
-        arguments
-        {:resolve
-         (fn [output]
-           (jsonrpc/notify :message {:content (format "\n## ROLE tool (%s)\n%s\n" function-name output)})
-           (async/go
-             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-             (async/close! c)))
-         :fail (fn [output]
-                 (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
-                 (async/go
-                   (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-                   (async/close! c)))})
+       function-name
+       arguments
+       {:resolve
+        (fn [output]
+          (jsonrpc/notify :message {:content (format "\n## ROLE tool (%s)\n%s\n" function-name output)})
+          (async/go
+            (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
+            (async/close! c)))
+        :fail (fn [output]
+                (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
+                (async/go
+                  (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
+                  (async/close! c)))})
       (catch Throwable t
         ;; function-handlers should handle this on their own but this is just in case
         (async/go
@@ -114,34 +116,38 @@
     (async/go-loop
      []
       (let [e (async/<! c)]
-        (cond
-          (:done e) (let [{calls :tool-calls content :content finish-reason :finish-reason} @response
-                          messages [(merge
-                                     {:role "assistant"}
-                                     (when (seq (vals calls))
-                                       {:tool_calls (->> (vals calls)
-                                                         (map #(assoc % :type "function")))})
-                                     (when content {:content content}))]]
-                      (jsonrpc/notify :functions-done (vals calls))
+        (if (:done e)
+          (let [{calls :tool-calls content :content finish-reason :finish-reason} @response
+                messages [(merge
+                           {:role "assistant"}
+                           (when (seq (vals calls))
+                             {:tool_calls (->> (vals calls)
+                                               (map #(assoc % :type "function")))})
+                           (when content {:content content}))]]
+
+            (jsonrpc/notify :message {:debug (str @response)})
+            (jsonrpc/notify :functions-done (or (vals calls) ""))
                       ;; make-tool-calls returns a channel with results of tool call messages
                       ;; so we can continue the conversation
-                      {:finish-reason finish-reason
-                       :messages
-                       (async/<!
-                        (->>
-                         (make-tool-calls
-                          (:tool-handler e)
-                          (vals calls))
-                         (async/reduce conj messages)))})
-          (:content e) (do
-                         (swap! response update-in [:content] (fnil str "") (:content e))
-                         (jsonrpc/notify :message {:content (:content e)})
-                         (recur))
-          :else (let [{:keys [tool_calls finish-reason]} e]
-                  (swap! response update-tool-calls tool_calls)
-                  (when finish-reason (swap! response assoc :finish-reason finish-reason))
-                  (jsonrpc/notify :functions (->> @response :tool-calls vals))
-                  (recur)))))))
+            {:finish-reason finish-reason
+             :messages
+             (async/<!
+              (->>
+               (make-tool-calls
+                (:tool-handler e)
+                (vals calls))
+               (async/reduce conj messages)))})
+
+          (let [{:keys [content tool_calls finish-reason]} e]
+            (when content
+              (swap! response update-in [:content] (fnil str "") content)
+              (jsonrpc/notify :message {:content content}))
+            (when tool_calls
+              (swap! response update-tool-calls tool_calls)
+              (jsonrpc/notify :functions (->> @response :tool-calls vals)))
+            (when finish-reason (swap! response assoc :finish-reason finish-reason))
+
+            (recur)))))))
 
 (defn parse [s]
   (if (= "[DONE]" (string/trim s))
@@ -163,37 +169,30 @@
              (some-> chunk
                      (string/replace #"data: " "")
                      (parse))]
+         ;; messages will either have a delta, a message, or just a finish_reason,
+         ;; depending on whether it's streaming.  Usually, the finish_reason doesn't
+         ;; occur on it's own.
          (try
            (cond
-             ;; TODO validate this works for non-streaming cases
              done? (async/>!!
                     c
                     (merge
                      {:done true :tool-handler function-handler}
                      (when finish_reason {:finish-reason finish_reason})))
 
-             ;; there are deltas when this is streaming
-             delta (cond
-                     (:content delta) (async/>!! c (merge
-                                                    {:content (:content delta)}
-                                                    (when finish_reason {:finish-reason finish_reason})))
+             ;; streaming
+             delta
+             (async/>!! c (merge
+                           delta
+                           (when finish_reason {:finish-reason finish_reason})))
 
-                     (:tool_calls delta) (async/>!! c (merge
-                                                       delta
-                                                       (when finish_reason {:finish-reason finish_reason})))
-                     finish_reason (async/>!! c {:finish-reason finish_reason}))
-
-             ;; there are only messages when this isn't streaming
-             message (cond
-                       (:content message) (do (async/>!! c (merge
-                                                             {:content (:content delta)}
-                                                             (when finish_reason {:finish-reason finish_reason})))
-                                              (async/>!! c {:done true :tool-handler function-handler}))
-                       (:tool_calls message) (do
-                                               (async/>!! c (merge
-                                                             message
-                                                             (when finish_reason {:finish-reason finish_reason})))
-                                               (async/>!! c {:done true :tool-handler function-handler})))
+             ;; non-streaming
+             message
+             (do
+               (async/>!! c (merge
+                             message
+                             (when finish_reason {:finish-reason finish_reason})))
+               (async/>!! c {:done true :tool-handler function-handler}))
              finish_reason (async/>!! c {:finish-reason finish_reason}))
            (catch Throwable _))))]))
 

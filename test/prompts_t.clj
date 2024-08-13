@@ -1,5 +1,6 @@
 (ns prompts-t
   (:require [clojure.test :as t]
+            [babashka.fs :as fs]
             [prompts]
             [pogonos.partials :as partials]))
 
@@ -46,5 +47,11 @@
     '({:name "go-linguist", :image "vonwig/go-linguist:latest", :command ["-json"], :output-handler "linguist"}))))
 
 (comment
-  (prompts/collect-functions "prompts/dockerfiles"))
+  (prompts/run-extractors
+    {:host-dir "/Users/slim/docker/labs-ai-tools-for-devs/"
+     :user "jimclark106"
+     :prompts-dir (fs/file "prompts/docker")})
+  (prompts/collect-functions (fs/file "prompts/dockerfiles"))
+  (prompts/collect-extractors (fs/file "prompts/docker"))
+  )
 

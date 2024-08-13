@@ -1,8 +1,12 @@
 # Running prompts
 
-## Running the docker prompts
+### help
 
-### Directly
+```sh
+bb -m prompts --help
+```
+
+### Plain prompt Generation
 
 ```sh
 bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker
@@ -13,10 +17,97 @@ bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin promp
 ```
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/docker \
+              --pretty-print-prompts
 ```
 
-### Using Container
+### Running prompts/dockerfiles Conversation Loops
+
+#### test prompts/project_type
+
+Make sure the prompts/project_type prompts work on their own.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --debug
+```
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream
+```
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream \
+              --model "llama3.1" \
+              --url http://localhost:11434/v1/chat/completions
+```
+
+#### test prompts/dockerfiles (which uses prompts/project_type)
+
+Now, verify that the prompts/dockerfiles prompts work with `gpt-4`.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles
+```
+
+Now, let's do the same thing using gpt-4 but without streaming.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --nostream
+```
+
+Now, let's try with llama3.1.
+
+```sh
+# docker:command=llama
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles_llama3.1 \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3.1" \
+              --nostream \
+```
+
+Now, let's try with mistral-nemo
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles_mistral-nemo \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "mistral-nemo" \
+              --nostream \
+```
+
+Mistral is kind of doing function calls but not openai compatible ones. It's listing a set of functions to call and not getting the arguments correct.
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "mistral:latest" \
+              --pretty-print-prompts
+```
+
+llama3-groq-tool-use:latest is writing functions but with a mix of xml and json markup.  It's not compatible with openai currently.
+Also, the finish-reason is stop, instead of "tool_calls".  So the conversation loop ends too.
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3-groq-tool-use:latest" 
+```
+
+#### Using Containerized runner
 
 ```sh
 docker run --rm \
@@ -28,11 +119,10 @@ docker run --rm \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
            vonwig/prompts:local \
                                  run \
-                                 /Users/slim/docker/labs-make-runbook \
-                                 jimclark106 \
-                                 "$(uname -o)" \
-                                 local/prompts/dockerfiles \
-                                 --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+                                 --host-dir /Users/slim/docker/labs-make-runbook \
+                                 --user jimclark106 \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir local/prompts/dockerfiles
 ```
 
 ### Clean up local images

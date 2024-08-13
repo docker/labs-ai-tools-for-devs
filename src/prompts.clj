@@ -5,6 +5,7 @@
    [clojure.core.async :as async]
    [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
+   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.tools.cli :as cli]
    creds
@@ -42,11 +43,11 @@
 (defn- name-matches [re]
   (fn [p] (re-matches re (fs/file-name p))))
 
-(defn- selma-render [prompt-dir m f]
+(defn- selma-render [prompts-dir m f]
   [{:content (stache/render-string
               (slurp f)
               m
-              {:partials (partials/file-partials [prompt-dir] ".md")})} f])
+              {:partials (partials/file-partials [prompts-dir] ".md")})} f])
 
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
@@ -109,38 +110,23 @@
        project-root - the host project root dir
        identity-token - a valid Docker login auth token
        dir - a prompts directory with a valid README.md"
-  [{:keys [host-dir prompts user pat]}]
+  [{:keys [host-dir prompts-dir user pat] :as opts}]
   (reduce
    (partial fact-reducer host-dir)
    {}
-   (->> (collect-extractors prompts)
+   (->> (collect-extractors prompts-dir)
         (map (fn [m] (merge m
                             (when user {:user user})
                             (when pat {:pat pat})))))))
 
-(defn- get-dir
-  "returns the prompt directory to use"
-  [dir]
-  (or
-   (when (string/starts-with? dir "github") (git/prompt-dir dir))
-   dir
-   "docker"))
-
 (defn get-prompts
   "run extractors and then render prompt templates
      returns ordered collection of chat messages"
-  [& args]
-  (let [[project-root user platform prompts-dir & {:keys [pat]}] args
-        ;; TODO the docker default no longer makes sense here
-        prompt-dir (get-dir prompts-dir)
-        m (run-extractors
-           (merge {:host-dir project-root
-                   :prompts prompt-dir
-                   :user user
-                   :platform platform}
-                  (when pat {:pat pat})))
-        renderer (partial selma-render prompt-dir (facts m user platform))
-        prompts (->> (fs/list-dir prompt-dir)
+  [{:keys [prompts-dir user platform] :as opts}]
+  (let [;; TODO the docker default no longer makes sense here
+        m (run-extractors opts)
+        renderer (partial selma-render prompts-dir (facts m user platform))
+        prompts (->> (fs/list-dir prompts-dir)
                      (filter (name-matches prompt-file-pattern))
                      (sort-by fs/file-name)
                      (into []))]
@@ -159,7 +145,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user pat thread-id offline] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user pat] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -182,21 +168,16 @@
             (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))))
         (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
         ;; TODO set a custom map for prompts in the next conversation loop
-        (let [{:keys [messages _finish-reason] :as m}
-              (async/<!! (apply conversation-loop
-                           (concat
-                             [(:host-dir opts)
-                              (:user opts)
-                              (:host-dir opts)
-                              (:ref definition)]
-                             (when pat [:pat pat])
-                             (when offline [:offline true])
-                             [:thread-id thread-id])))]
-          (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-          (resolve (->> messages
-                        (filter #(= "assistant" (:role %)))
-                        (last)
-                        :content)))
+        (do
+          (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
+          (let [{:keys [messages _finish-reason] :as m}
+                (async/<!! (conversation-loop
+                             (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
+            (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
+            (resolve (->> messages
+                          (filter #(= "assistant" (:role %)))
+                          (last)
+                          :content))))
         :else
         (fail (format "bad container definition %s" definition)))
       (catch Throwable t
@@ -209,29 +190,22 @@
       prompts is the conversation history
       args for extracting functions, host-dir, user, platform
     returns channel that will contain the final set of messages and a finish-reason"
-  [prompts & args]
-  (let [[host-dir user platform prompts-dir & {:keys [url pat save-thread-volume offline thread-id]}] args
-        prompt-dir (get-dir prompts-dir)
-        m (collect-metadata prompt-dir)
-        functions (collect-functions prompt-dir)
+  [prompts {:keys [prompts-dir url model stream] :as opts}]
+  (let [m (collect-metadata prompts-dir)
+        functions (collect-functions prompts-dir)
         [c h] (openai/chunk-handler (partial
                                      function-handler
                                      (merge
-                                      {:functions functions
-                                       :host-dir host-dir
-                                       :user user
-                                       :platform platform}
-                                      (when pat {:pat pat})
-                                      (when save-thread-volume {:save-thread-volume true})
-                                      (when offline {:offline true})
-                                      {:thread-id thread-id})))]
+                                      opts
+                                      {:functions functions})))]
     (try
       (openai/openai
        (merge
-        {:messages prompts}
+        m 
+        {:messages prompts :stream stream}
         (when (seq functions) {:tools functions})
         (when url {:url url})
-        m) h)
+        (when model {:model model})) h)
       (catch ConnectException _
         ;; when the conversation-loop can not connect to an openai compatible endpoint
         (async/>!! c {:messages [{:role "assistant" :content "I cannot connect to an openai compatible endpoint."}]
@@ -244,17 +218,16 @@
 (defn- conversation-loop
   "thread loop for an openai compatible endpoint
      returns messages and done indicator"
-  [& args]
+  [opts]
   (async/go-loop
    [thread []]
     ;; get-prompts can only use extractors - we can't refine
     ;; them based on output from function calls that the LLM plans
     (let [prompts (if (not (seq thread))
-                    (apply get-prompts args)
+                    (get-prompts opts)
                     thread)
-
           {:keys [messages finish-reason] :as m}
-          (async/<!! (apply run-prompts prompts args))]
+          (async/<!! (run-prompts prompts opts))]
       (if (= "tool_calls" finish-reason)
         (do
           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
@@ -272,61 +245,49 @@
         (when (not (true? save-thread-volume))
           (docker/delete-thread-volume {:Name thread-id}))))))
 
-(defn- -run-command
-  "  returns map result"
-  [& args]
-  (cond
-    (= "prompts" (first args))
-    (concat
-     [{:type "docker" :title "using docker in my project"}
-      {:type "lazy_docker" :title "using lazy-docker"}
-      {:type "npm_setup" :title "using npm"}]
-     (->> (:prompts (git.registry/read-registry))
-          (map #(assoc % :saved true))))
-
-    (= "register" (first args))
-    (if-let [{:keys [owner repo path]} (git/parse-github-ref (second args))]
-      (git.registry/update-registry (fn [m]
-                                      (update-in m [:prompts] (fnil conj [])
-                                                 {:type (second args)
-                                                  :title (format "%s %s %s"
-                                                                 owner repo
-                                                                 (if path (str "-> " path) ""))})))
-      (throw (ex-info "Bad GitHub ref" {:ref (second args)})))
-
-    (= "unregister" (first args))
-    (git.registry/update-registry
-     (fn [m]
-       (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll)))))
-
-    (= "run" (first args))
-    (apply with-volume
-      (fn [thread-id]
-        (select-keys
-         (async/<!! (apply conversation-loop (concat (rest args) [:thread-id thread-id])))
-         [:done]))
-      (rest args))
-
-    :else
-    (apply get-prompts args)))
-
-(def cli-opts [[nil "--jsonrpc" "Output JSON-RPC notifications"]
+(def cli-opts [;; optional
+               [nil "--jsonrpc" "Output JSON-RPC notifications"]
+               ;; optional
                [nil "--url OPENAI_COMPATIBLE_ENDPOINT" "OpenAI compatible endpoint url"]
+               ;; required if not using positional args
                [nil "--user USER" "The hub user"]
+               ;; only required for internal users
                [nil "--pat PAT" "A hub PAT"]
-               [nil "--host-dir DIR" "Project directory"]
-               [nil "--prompts DIR_OR_GITHUB_REF" "prompts"]
+               ;; required if not using positional args
+               ;; can not validate this without a host helper
+               [nil "--host-dir DIR" "Project directory (on host filesystem)"]
+               ;; required if not using positional args
+               [nil "--platform PLATFORM" "current host platform"
+                :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
+               [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
+                :id :prompts-dir
+                :validate [#(fs/exists? (fs/file %)) "prompts dir does not exist"]
+                :parse-fn #(fs/file %)]
+               [nil "--prompts REF" "git ref to remote prompts directory"
+                :id :prompts-dir
+                :validate [git/parse-github-ref "not a valid github ref"
+                           git/prompt-dir "could not resolve github ref"]
+                :assoc-fn (fn [m k v] (assoc m k (git/prompt-dir v)))]
+               ;; optional
                [nil "--offline" "do not try to pull new images"]
+               ;; optional
                [nil "--pretty-print-prompts" "pretty print prompts"]
-               [nil "--save-thread-volume" "save the thread volume for debugging"]
-               [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"]])
-
-(defn- add-arg [options args k]
-  (if-let [v (k options)] (concat args [k v]) args))
+               ;; optional
+               [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"
+                :assoc-fn (fn [m k v] (assoc m k v :save-thread-volume true))]
+               [nil "--model MODEL" "use this model on the openai compatible endpoint"]
+               [nil "--stream" "stream responses" 
+                :id :stream
+                :default true
+                :assoc-fn (fn [m k _] (assoc m k true))]
+               [nil "--nostream" "disable streaming responses" 
+                :id :stream
+                :assoc-fn (fn [m k _] (assoc m k false))]
+               [nil "--debug" "add debug logging"]
+               [nil "--help" "print option summary"]])
 
 (def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
 (defn output-prompts [coll]
-  (jsonrpc/notify :message {:content "## Prompts:\n"})
   (->> coll
        (mapcat (fn [{:keys [role content]}]
                  [(format "## %s\n" role)
@@ -335,20 +296,91 @@
        (apply str)
        ((fn [s] (jsonrpc/notify :message {:content s})))))
 
+(s/def ::platform (fn [s] (#{:darwin :linux :windows} (keyword (string/lower-case s)))))
+(s/def ::user string?)
+(s/def ::pat string?)
+(s/def ::prompts-dir #(fs/exists? %))
+(s/def ::host-dir string?)
+(s/def ::offline boolean?)
+(s/def ::thread-id string?)
+(s/def ::save-thread-volume boolean?)
+(s/def ::url string?)
+(s/def ::run-args (s/keys :req-un [::platform ::user ::prompts-dir ::host-dir]
+                          :opt-un [::offline ::thread-id ::save-thread-volume ::pat ::url]))
+
+(defn validate [k]
+  (fn [opts]
+    (if (s/valid? k opts)
+      opts
+      (throw (ex-info "invalid args" {:explanation (s/explain-data k opts)})))))
+
+(defn merge-deprecated [opts & args]
+  (let [[host-dir user platform dir-or-ref] args]
+    (merge opts
+           (when (and host-dir user platform dir-or-ref)
+             {:host-dir host-dir
+              :user user
+              :platform platform
+              :prompts-dir (or
+                            (let [f (fs/file dir-or-ref)]
+                              (when (fs/exists? f) f))
+                            (git/prompt-dir dir-or-ref))}))))
+
+(defn command [opts & [c :as args]]
+  (case c
+    "prompts" (fn []
+                (concat
+                 [{:type "docker" :title "using docker in my project"}
+                  {:type "lazy_docker" :title "using lazy-docker"}
+                  {:type "npm_setup" :title "using npm"}]
+                 (->> (:prompts (git.registry/read-registry))
+                      (map #(assoc % :saved true)))))
+    "register" (fn []
+                 (if-let [{:keys [owner repo path]} (git/parse-github-ref (second args))]
+                   (git.registry/update-registry (fn [m]
+                                                   (update-in m [:prompts] (fnil conj [])
+                                                              {:type (second args)
+                                                               :title (format "%s %s %s"
+                                                                              owner repo
+                                                                              (if path (str "-> " path) ""))})))
+                   (throw (ex-info "Bad GitHub ref" {:ref (second args)}))))
+    "unregister" (fn []
+                   (git.registry/update-registry
+                    (fn [m]
+                      (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll))))))
+    "run" (fn []
+            (with-volume
+              (fn [thread-id]
+                (select-keys
+                 (async/<!! ((comp conversation-loop (validate ::run-args))
+                             (-> opts
+                                 (assoc :thread-id thread-id)
+                                 ((fn [opts] (apply merge-deprecated opts (rest args)))))))
+
+                 [:done]))
+              opts))
+    (fn []
+      ((comp get-prompts (validate ::run-args)) (apply merge-deprecated opts args)))))
+
 (defn -main [& args]
   (try
-    (let [{:keys [arguments options]} (cli/parse-opts args cli-opts)]
-      ;; positional args are
-      ;;   host-project-root user platform prompt-dir-or-github-ref & {opts}
-      (alter-var-root
-       #'jsonrpc/notify
-       (fn [_] (if (:jsonrpc options)
-                 jsonrpc/-notify
-                 jsonrpc/-println)))
-      ((if (:pretty-print-prompts options) output-prompts output-handler)
-       (apply -run-command (concat
-                            arguments
-                            (reduce (partial add-arg options) [] [:url :pat :host-dir :prompts :thread-id :offline :save-thread-volume])))))
+    (let [{:keys [arguments options errors summary]} (cli/parse-opts args cli-opts)]
+      (if (seq errors)
+        (do
+          (warn
+           "Errors: {{errors}}\nSummary:\n{{summary}}"
+           {:summary summary :errors (string/join "\n" errors)})
+          (System/exit 1))
+        (if (:help options)
+          (do
+            (println summary)
+            (System/exit 0))
+          (let [cmd (apply command options arguments)]
+            (alter-var-root
+              #'jsonrpc/notify
+              (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
+            ((if (:pretty-print-prompts options) output-prompts output-handler)
+             (cmd))))))
     (catch Throwable t
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))
