@@ -20,36 +20,63 @@ bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
 
 ### Running prompts/dockerfiles Conversation Loops
 
+#### test prompts/project_type
+
 Make sure the prompts/project_type prompts work on their own.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --debug
 ```
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream
+```
+
+```sh
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream \
+              --model "llama3.1" \
+              --url http://localhost:11434/v1/chat/completions
+```
+
+#### test prompts/dockerfiles (which uses prompts/project_type)
 
 Now, verify that the prompts/dockerfiles prompts work with `gpt-4`.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles
 ```
 
 Now, let's do the same thing using gpt-4 but without streaming.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" --nostream --debug
+bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --nostream
 ```
 
 Now, let's try with llama3.1.
+
+```sh
+# docker:command=llama
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/dockerfiles_llama3.1 \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3.1" \
+              --nostream \
+```
+
+Now, let's try with mistral-nemo
 
 ```sh
 bb -m prompts run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
-              --prompts-dir prompts/dockerfiles \
+              --prompts-dir prompts/dockerfiles_mistral-nemo \
               --url http://localhost:11434/v1/chat/completions \
-              --model "llama3.1" \
-              --debug \
-              --nostream
+              --model "mistral-nemo" \
+              --nostream \
 ```
 
 Mistral is kind of doing function calls but not openai compatible ones. It's listing a set of functions to call and not getting the arguments correct.
@@ -74,18 +101,7 @@ bb -m prompts run \
               --model "llama3-groq-tool-use:latest" 
 ```
 
-
-```sh
-bb -m prompts run \
-              --host-dir /Users/slim/docker/labs-make-runbook \
-              --user jimclark106 \
-              --platform darwin \
-              --prompts-dir prompts/dockerfiles \
-              --url http://localhost:11434/v1/chat/completions \
-              --model "mistral-nemo" 
-```
-
-### Using Container
+#### Using Containerized runner
 
 ```sh
 docker run --rm \
@@ -97,11 +113,10 @@ docker run --rm \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
            vonwig/prompts:local \
                                  run \
-                                 /Users/slim/docker/labs-make-runbook \
-                                 jimclark106 \
-                                 "$(uname -o)" \
-                                 local/prompts/dockerfiles \
-                                 --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)"
+                                 --host-dir /Users/slim/docker/labs-make-runbook \
+                                 --user jimclark106 \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir local/prompts/dockerfiles
 ```
 
 ### Clean up local images
