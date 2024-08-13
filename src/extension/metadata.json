@@ -1,5 +1,5 @@
 {
-  "icon": "https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/docker.svg",
+  "icon": "docker.svg",
   "vm": {
     "composefile": "docker-compose.yaml",
     "exposes": {

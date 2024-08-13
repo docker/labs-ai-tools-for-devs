@@ -23,13 +23,13 @@ COPY ui /ui
 RUN npm run build
 
 FROM alpine
-LABEL org.opencontainers.image.title="Labs AI Tools for Devs" \
+LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
     org.opencontainers.image.description="Agentic workflows with Dockerized tools" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
-    com.docker.extension.screenshots='[{"alt":"screenshot", "url":"https://foo.bar/image1.png"}]' \
-    com.docker.desktop.extension.icon="./docker.svg" \
-    com.docker.extension.detailed-description="A tool to quickly install/uninstall early access VSCode extensions from Docker Labs." \
+    com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/screenshot1.png"}, {"alt":"screenshot of the extension output", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/screenshot2.png"}]' \
+    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/docker.svg" \
+    com.docker.extension.detailed-description="Run AI-powered workflows with Dockerized tools in Docker Desktop." \
     com.docker.extension.publisher-url="https://www.docker.com/" \
     com.docker.extension.additional-urls="" \
     com.docker.extension.categories="utility-tools" \
