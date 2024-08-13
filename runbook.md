@@ -1,5 +1,11 @@
 # Running prompts
 
+### help
+
+```sh
+bb -m prompts --help
+```
+
 ### Plain prompt Generation
 
 ```sh

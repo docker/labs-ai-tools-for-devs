@@ -276,14 +276,15 @@
                [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"
                 :assoc-fn (fn [m k v] (assoc m k v :save-thread-volume true))]
                [nil "--model MODEL" "use this model on the openai compatible endpoint"]
-               [nil "--stream" "disable streaming" 
+               [nil "--stream" "stream responses" 
                 :id :stream
                 :default true
                 :assoc-fn (fn [m k _] (assoc m k true))]
-               [nil "--nostream" "disable streaming" 
+               [nil "--nostream" "disable streaming responses" 
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
-               [nil "--debug" "add debug logging"]])
+               [nil "--debug" "add debug logging"]
+               [nil "--help" "print option summary"]])
 
 (def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
 (defn output-prompts [coll]
@@ -370,12 +371,16 @@
            "Errors: {{errors}}\nSummary:\n{{summary}}"
            {:summary summary :errors (string/join "\n" errors)})
           (System/exit 1))
-        (let [cmd (apply command options arguments)]
-          (alter-var-root
-           #'jsonrpc/notify
-           (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
-          ((if (:pretty-print-prompts options) output-prompts output-handler)
-           (cmd)))))
+        (if (:help options)
+          (do
+            (println summary)
+            (System/exit 0))
+          (let [cmd (apply command options arguments)]
+            (alter-var-root
+              #'jsonrpc/notify
+              (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
+            ((if (:pretty-print-prompts options) output-prompts output-handler)
+             (cmd))))))
     (catch Throwable t
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))
