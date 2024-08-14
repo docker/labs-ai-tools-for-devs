@@ -1,6 +1,6 @@
 ---
 extractors:
-  - name: go-linguist 
+  - name: linguist 
   - name: project-facts
 model: gpt-4
 stream: true

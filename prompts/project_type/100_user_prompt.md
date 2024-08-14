@@ -6,9 +6,9 @@ This project contains {{language}} code.
 
 Here is a list of files that are currently versioned in this project:
 
-{{#project.files}}
+{{#project-facts.files}}
 * {{.}}
-{{/project.files}}
+{{/project-facts.files}}
 
 Use this list of files and the languages that we've detected in the project to 
 figure out what kind of projects this is.  It is okay if it appears to be a combination 

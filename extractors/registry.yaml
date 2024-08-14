@@ -8,7 +8,7 @@ registry:
       - none
       - --workspace
       - /docker
-  - name: go-linguist
+  - name: linguist
     image: vonwig/go-linguist:latest
     command:
       - -json

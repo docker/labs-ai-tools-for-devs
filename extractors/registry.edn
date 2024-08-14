@@ -6,7 +6,7 @@
                        "none"
                        "--workspace"
                        "/project"]}
-            {:name "go-linguist",
+            {:name "linguist",
              :image "vonwig/go-linguist:latest",
              :command ["-json"],
              :output-handler "linguist"}]}
