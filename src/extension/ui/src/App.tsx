@@ -113,10 +113,24 @@ export function App() {
     }
     updateOutput("Running prompts\n")
     const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform)
+
     client.docker.cli.exec("run", args, {
       stream: {
+        splitOutputLines: true,
         onOutput: ({ stdout, stderr }) => {
-          output += stdout || stderr;
+          if (stdout && stdout.startsWith('{')) {
+            let rpcMessage = stdout.split('}Content-Length:')[0]
+            if (!rpcMessage.endsWith('}')) {
+              rpcMessage += '}'
+            }
+            const json = JSON.parse(rpcMessage)
+            if (json.params.content) {
+              output += json.params.content
+            }
+          }
+          if (stderr) {
+            output += stderr
+          }
           setRunOut(output);
         },
         onError: (err) => {
