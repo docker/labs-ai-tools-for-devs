@@ -1,8 +1,9 @@
 ---
 extractors:
 tool_choice: auto
-model: gpt-4
-stream: true
+model: llama3.1
+url: http://localhost:11434/v1/chat/completions
+stream: false
 functions:
   - name: docker_scout_tag_recommendation
 ---
@@ -16,14 +17,6 @@ bb -m prompts run \
               --user jimclark106 \
               --platform darwin \
               --prompts-dir prompts/recommended_tags \
-              --url http://localhost:11434/v1/chat/completions \
-              --model "mistral-nemo" \
-              --nostream \
+              --nostream
 ```
 
-
-## functions
-
-These instructions in these prompts rely on 3 functions
-
-3. `docker_scout_tag_recommendation` - uses Docker Scout to improve the choice tag selection during code generation.
