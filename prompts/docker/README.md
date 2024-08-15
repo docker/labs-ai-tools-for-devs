@@ -3,10 +3,24 @@ extractors:
   - name: project-facts
 ---
 
-## Description
+# Background
 
-The prompts for docker rely only on the classic lsp project extraction function.
+Generate a docker runbook for a project.
 
-The output of running this container is a json document that will be merged into the
-context that is provided to the moustache template based prompts.
+## How to run
+
+```sh
+# docker:command=curl
+docker run --rm -it \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount type=volume,source=docker-prompts,target=/prompts \
+           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+           --mount type=bind,source=$PWD,target=/app/local \
+           --workdir /app \
+           vonwig/prompts:latest run \
+                                 --host-dir ~/docker/lsp \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir local
+```
 

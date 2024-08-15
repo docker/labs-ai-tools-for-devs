@@ -24,7 +24,7 @@
     (->>
      (prompts/fact-reducer "/Users/slim/docker/labs-make-runbook"
                            {}
-                           {:name "go-linguist"
+                           {:name "linguist"
                             :image "vonwig/go-linguist:latest"
                             :command ["-json"]
                             :output-handler "linguist"
@@ -40,11 +40,11 @@
   (t/is
    (=
     (prompts/collect-extractors "prompts/docker")
-    '({:name "project-facts", :image "docker/lsp:latest", :entrypoint "/app/result/bin/docker-lsp", :command ["project-facts" "--vs-machine-id" "none" "--workspace" "/docker"]})))
+    '({:name "project-facts", :image "docker/lsp:latest", :entrypoint "/app/result/bin/docker-lsp", :command ["project-facts" "--vs-machine-id" "none" "--workspace" "/project"]})))
   (t/is
    (=
     (prompts/collect-extractors "prompts/dockerfiles")
-    '({:name "go-linguist", :image "vonwig/go-linguist:latest", :command ["-json"], :output-handler "linguist"}))))
+    '({:name "linguist", :image "vonwig/go-linguist:latest", :command ["-json"], :output-handler "linguist"}))))
 
 (comment
   (prompts/run-extractors

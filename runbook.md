@@ -24,6 +24,15 @@ bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
               --pretty-print-prompts
 ```
 
+```sh
+bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/project_type/ \
+              --pretty-print-prompts
+```
+
+
 ### Running prompts/dockerfiles Conversation Loops
 
 #### test prompts/project_type

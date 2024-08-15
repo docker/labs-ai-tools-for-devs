@@ -18,7 +18,7 @@ I'm logged in to Docker Hub as {{username}}
 
 My project has the following Dockerfiles:
 
-{{#project.dockerfiles}}
+{{#project-facts.dockerfiles}}
 --- Dockerfile ---
 Dockerfile at `./{{path}}` contains:
 
@@ -26,11 +26,11 @@ Dockerfile at `./{{path}}` contains:
 {{content}}
 ```
 
-{{/project.dockerfiles}}
+{{/project-facts.dockerfiles}}
 
 --- Docker Compose Files ---
 
-{{#project.composefiles}}
+{{#project-facts.composefiles}}
 --- Compose File ---
 Compose file at `./{{path}}` contains:
 
@@ -38,12 +38,12 @@ Compose file at `./{{path}}` contains:
 {{content}}
 ```
 
-{{/project.composefiles}}
-{{^project.composefiles}}
+{{/project-facts.composefiles}}
+{{^project-facts.composefiles}}
 
 I am not using Docker Compose in this project.
 
-{{/project.composefiles}}
+{{/project-facts.composefiles}}
 
 My project uses the following languages:
 

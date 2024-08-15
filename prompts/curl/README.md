@@ -1,6 +1,6 @@
 ---
 extractors:
-  - name: go-linguist 
+  - name: linguist 
   - name: docker-lsp
 model: gpt-4
 stream: true
@@ -28,20 +28,20 @@ Also, what about defining outcomes and having the tool verify that we actually r
 
 At the end, we should report the command line, and the version of curl that we used.
 
-## Running the tool
+## How to run
 
 ```sh
-DIR=$PWD
+# docker:command=curl
 docker run --rm -it \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
            --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           --mount type=bind,source=/Users/slim/docker/labs-make-runbook/prompts,target=/my-prompts \
-           --workdir /my-prompts \
+           --mount type=bind,source=$PWD,target=/app/local \
+           --workdir /app \
            vonwig/prompts:latest run \
-                                 $DIR \
-                                 $USER \
-                                 "$(uname -o)" \
-                                 project_type
+                                 --host-dir $PWD \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir local
                                  # "github:docker/labs-make-runbook?ref=main&path=prompts/curl"
 ```

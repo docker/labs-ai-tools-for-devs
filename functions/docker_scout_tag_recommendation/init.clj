@@ -1,14 +1,25 @@
 (ns init
   (:require
    [babashka.fs :as fs]
-   [babashka.process :as process]
+   [babashka.http-client :as http]
    [cheshire.core :as json]
    [clojure.string :as string]))
+
+(def language-gateway-endpoint "https://api.scout.docker.com/v1/language-gateway")
+
+(defn- recommendation-request [image]
+  (http/post
+   (format "%s/%s" language-gateway-endpoint "image")
+   {:body (json/generate-string {:image image})}))
+
+(defn- recommendation-response [response]
+  response)
 
 (defn -command [& args]
   (try
     (let [repository (:repository (json/parse-string (second args) true))]
-      (println "22-slim"))
+      (println 
+        ((comp recommendation-response recommendation-request) repository)))
     (catch Throwable t
       (binding [*out* *err*]
         (println t))

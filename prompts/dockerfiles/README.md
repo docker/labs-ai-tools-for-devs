@@ -1,6 +1,6 @@
 ---
 extractors:
-  - name: go-linguist
+  - name: linguist
 tool_choice: auto
 model: gpt-4
 stream: true

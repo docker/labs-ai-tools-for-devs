@@ -29,10 +29,10 @@
   (medley/deep-merge
    {:platform platform
     :username user
-    :project {:files (-> project-facts :project/files)
-              :dockerfiles (-> project-facts :project/dockerfiles)
-              :composefiles (-> project-facts :project/composefiles)
-              :languages (-> project-facts :github/lingust)}
+    :project-facts {:files (-> project-facts :project-facts :project/files)
+                    :dockerfiles (-> project-facts :project-facts :project/dockerfiles)
+                    :composefiles (-> project-facts :project-facts :project/composefiles)
+                    :languages (-> project-facts :project-facts :github/lingust)}
     :languages (->> project-facts
                     :github/linguist
                     keys
@@ -68,9 +68,14 @@
                                            (-> container-definition
                                                (assoc :host-dir dir)))]
        (when (= 0 exit-code)
-         (case (:output-handler container-definition)
-           "linguist" (->> (json/parse-string pty-output keyword) vals (into []) (assoc {} :linguist))
-           (json/parse-string pty-output keyword)))))
+         (let [context
+               (case (:output-handler container-definition)
+                 ;; we have one output-handler registered right now - it extracts the vals from a map
+                 "linguist" (->> (json/parse-string pty-output keyword) vals (into []))
+                 (json/parse-string pty-output keyword))]
+           (if-let [extractor-name (:name container-definition)]
+             {(keyword extractor-name) context}
+             context)))))
     (catch Throwable ex
       (warn
        "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
@@ -85,7 +90,8 @@
                     (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
-      [{:image "docker/lsp:latest"
+      [{:name "project-facts"
+        :image "docker/lsp:latest"
         :entrypoint "/app/result/bin/docker-lsp"
         :command ["project-facts"
                   "--vs-machine-id" "none"
@@ -172,7 +178,7 @@
           (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
           (let [{:keys [messages _finish-reason] :as m}
                 (async/<!! (conversation-loop
-                             (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
+                            (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
             (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
             (resolve (->> messages
                           (filter #(= "assistant" (:role %)))
@@ -201,11 +207,12 @@
     (try
       (openai/openai
        (merge
-        m 
-        {:messages prompts :stream stream}
+        m
+        {:messages prompts}
         (when (seq functions) {:tools functions})
         (when url {:url url})
-        (when model {:model model})) h)
+        (when model {:model model})
+        (when (and stream (nil? (:stream m))) {:stream stream})) h)
       (catch ConnectException _
         ;; when the conversation-loop can not connect to an openai compatible endpoint
         (async/>!! c {:messages [{:role "assistant" :content "I cannot connect to an openai compatible endpoint."}]
@@ -276,11 +283,11 @@
                [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"
                 :assoc-fn (fn [m k v] (assoc m k v :save-thread-volume true))]
                [nil "--model MODEL" "use this model on the openai compatible endpoint"]
-               [nil "--stream" "stream responses" 
+               [nil "--stream" "stream responses"
                 :id :stream
                 :default true
                 :assoc-fn (fn [m k _] (assoc m k true))]
-               [nil "--nostream" "disable streaming responses" 
+               [nil "--nostream" "disable streaming responses"
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
                [nil "--debug" "add debug logging"]
@@ -377,8 +384,8 @@
             (System/exit 0))
           (let [cmd (apply command options arguments)]
             (alter-var-root
-              #'jsonrpc/notify
-              (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
+             #'jsonrpc/notify
+             (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
             ((if (:pretty-print-prompts options) output-prompts output-handler)
              (cmd))))))
     (catch Throwable t

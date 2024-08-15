@@ -8,7 +8,7 @@ functions:
   - name: docker_scout_tag_recommendation
 ---
 
-# Background
+# How to Run
 
 ```sh
 # docker:command=recommended-tags
@@ -20,3 +20,6 @@ bb -m prompts run \
               --nostream
 ```
 
+```clj
+(core.println "hey")
+```
