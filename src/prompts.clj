@@ -338,8 +338,7 @@
     "prompts" (fn []
                 (concat
                  [{:type "docker" :title "using docker in my project"}
-                  {:type "lazy_docker" :title "using lazy-docker"}
-                  {:type "npm_setup" :title "using npm"}]
+                  {:type "lazy_docker" :title "using lazy-docker"}]
                  (->> (:prompts (git.registry/read-registry))
                       (map #(assoc % :saved true)))))
     "register" (fn []

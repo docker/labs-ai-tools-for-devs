@@ -26,7 +26,6 @@ COPY ./functions/registry.edn ./functions/registry.edn
 COPY --from=build /app/prompts.jar /app/prompts.jar
 
 COPY prompts/docker docker 
-COPY prompts/npm_setup npm_setup
 COPY prompts/lazy_docker lazy_docker
 
 # Can't be shell form because we need to pass JSON as an arg
