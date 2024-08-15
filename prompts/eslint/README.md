@@ -59,7 +59,6 @@ functions:
             description: Relative path to a file to read.
     container:
         image: vonwig/read_files:latest
-  
 ---
 
 # Description
