@@ -268,7 +268,6 @@
                 :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
                [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
                 :id :prompts-dir
-                :validate [#(fs/exists? (fs/file %)) "prompts dir does not exist"]
                 :parse-fn #(fs/file %)]
                [nil "--prompts REF" "git ref to remote prompts directory"
                 :id :prompts-dir
