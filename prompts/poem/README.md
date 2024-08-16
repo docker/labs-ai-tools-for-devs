@@ -1,6 +1,7 @@
 ---
 extractors:
   - name: project-facts
+  - name: linguist
 functions:
   - name: write_files
 ---

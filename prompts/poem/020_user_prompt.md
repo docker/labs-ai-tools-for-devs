@@ -1,10 +1,12 @@
 My project uses the following languages:
 
-{{project.languages}}
+{{#linguist}}
+* {{ language }}
+{{/linguist}}
 
 My project has the following files:
 
-{{project.files}}
+{{project-facts.files}}
 
 Write me a poem in the style of Supa Hot Fire.
 
