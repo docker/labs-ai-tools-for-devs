@@ -231,7 +231,9 @@
     ;; get-prompts can only use extractors - we can't refine
     ;; them based on output from function calls that the LLM plans
     (let [prompts (if (not (seq thread))
-                    (get-prompts opts)
+                    (let [new-prompts (get-prompts opts)]
+                      (jsonrpc/notify :prompts {:messages new-prompts})
+                      new-prompts)
                     thread)
           {:keys [messages finish-reason] :as m}
           (async/<!! (run-prompts prompts opts))]

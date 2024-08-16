@@ -1,7 +1,7 @@
 ---
 extractors:
   - name: linguist 
-  - name: docker-lsp
+  - name: project-facts
 model: gpt-4
 stream: true
 functions:

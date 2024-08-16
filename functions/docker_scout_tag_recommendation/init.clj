@@ -19,7 +19,8 @@
   (try
     (let [repository (:repository (json/parse-string (second args) true))]
       (println 
-        ((comp recommendation-response recommendation-request) repository)))
+        #_((comp recommendation-response recommendation-request) repository)
+        "22-slim"))
     (catch Throwable t
       (binding [*out* *err*]
         (println t))

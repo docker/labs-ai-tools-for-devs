@@ -161,3 +161,26 @@ docker run --rm \
                                  --thread-id "something" \
                                  --save-thread-volume
 ```
+
+# Test bad commands
+
+1. remove the openai key
+2. break the url with the --url flag
+3. choose a bad prompts dir
+
+```sh
+docker run --rm \
+           -it \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount type=volume,source=docker-prompts,target=/prompts \
+           --mount type=bind,source=$PWD,target=/app/local \
+           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+           --workdir /app \
+           vonwig/prompts:local \
+                                 run \
+                                 --host-dir $PWD \
+                                 --user $USER \
+                                 --platform "$(uname -o)" \
+                                 --prompts-dir local/prompts/poem \
+```
+

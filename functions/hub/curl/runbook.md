@@ -13,13 +13,13 @@ docker run --rm \
        --mount type=bind,source=$PWD,target=/project \
        --entrypoint /app/result/bin/entrypoint \
        --workdir /project \
-       vonwig/curl:latest '{}'
+       vonwig/curl:latest '{"args": "--help"}'
 ```
 
 ## Build
 
 ```sh
-docker build -t vonwig/fasttext:latest .
+docker build -t vonwig/curl:latest .
 ```
 
 ```sh
@@ -28,8 +28,8 @@ docker build -t vonwig/fasttext:latest .
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag vonwig/fasttext:latest \
+    --tag vonwig/curl:latest \
     --file Dockerfile \
     --push .
-docker pull vonwig/fasttext:latest
+docker pull vonwig/curl:latest
 ```

@@ -23,9 +23,15 @@
    :method method
    :params params})
 
+;; message({:debug ""}) - debug messages are often serialized edn but still meant to be streamed
+;; message({:content ""}) - meant to be streamed
+;; prompts({:messages [{:role "", :content ""}]})
+;; functions("") - meant to be updated in place
+;; functions-done("")
 (defn -notify [{:keys [debug]} method params]
   (case method
     :message (write-message (io/output-stream System/out) (notification method params))
+    :prompts (write-message (io/output-stream System/out) (notification method params))
     :functions (write-message (io/output-stream System/out) (notification method params))
     :functions-done (write-message (io/output-stream System/out) (notification method params))))
 
@@ -36,7 +42,8 @@
                (:content params) (do (print (:content params)) (flush))
                (and debug (:debug params)) (do (println "### DEBUG\n") (println (:debug params))))
     :functions (do (print ".") (flush))
-    :functions-done (println params)))
+    :functions-done (println params)
+    :prompts nil))
 
 (def ^:dynamic notify -notify)
 

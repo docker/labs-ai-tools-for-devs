@@ -7,9 +7,9 @@
   (let [[json-string & args] *command-line-args*
         {llm-args :args} (cheshire.core/parse-string json-string true)]
     (println
-     (-> (apply babashka.process/process
-                {:out :string}
-                "curl" args)
+     (-> (babashka.process/process
+          {:out :string}
+          (str "curl " llm-args))
          (deref)
          (babashka.process/check)
          :out)))
