@@ -18,6 +18,9 @@ type RPCMessage = {
 // If you're running this React app in a browser, it won't work properly.
 const client = createDockerDesktopClient();
 
+const track = (event: string) =>
+  client.extension.vm?.service?.post('/analytics/track', { event });
+
 const debounce = (fn: Function, ms: number) => {
   let timeout: NodeJS.Timeout;
   return function (...args: any) {
@@ -97,6 +100,7 @@ export function App() {
   const delim = client.host.platform === 'win32' ? '\\' : '/';
 
   const startPrompt = async () => {
+    track('start-prompt');
     let output: RPCMessage[] = []
     const updateOutput = (line: RPCMessage) => {
       if (line.method === 'functions') {
@@ -182,6 +186,7 @@ export function App() {
         },
       }
     });
+    track('end-prompt');
   }
 
   return (
@@ -249,6 +254,7 @@ export function App() {
               <Button onClick={() => {
                 setPrompts([...prompts, promptInput]);
                 setPromptInput('');
+                track('add-prompt');
               }}>Add prompt</Button>
             )}
             <Button onClick={() => {
@@ -258,6 +264,7 @@ export function App() {
                 if (result.canceled) {
                   return;
                 }
+                track('add-local-prompt');
                 setPrompts([...prompts, ...result.filePaths.map(p => `local://${p}`)]);
               });
             }}>Add local prompt</Button>
