@@ -43,7 +43,9 @@
               (slurp (:body response))))
         (doseq [chunk (line-seq (io/reader (:body response)))]
           (cb chunk)))
-      (throw (ex-info "Failed to call OpenAI API" {:body (slurp (:body response))})))))
+      (throw (ex-info "Failed to call OpenAI API" {:body (if (string? (:body response))
+                                                           (:body response)
+                                                           (slurp (:body response)))})))))
 
 (defn call-function
   "  returns channel that will emit one message and then close"

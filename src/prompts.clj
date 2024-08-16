@@ -95,7 +95,7 @@
         :entrypoint "/app/result/bin/docker-lsp"
         :command ["project-facts"
                   "--vs-machine-id" "none"
-                  "--workspace" "/docker"]}])))
+                  "--workspace" "/project"]}])))
 
 (defn collect-functions [dir]
   (->>
@@ -268,6 +268,7 @@
                 :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
                [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
                 :id :prompts-dir
+                :validate [#(fs/exists? (fs/file %)) "prompts dir does not a valid directory"]
                 :parse-fn #(fs/file %)]
                [nil "--prompts REF" "git ref to remote prompts directory"
                 :id :prompts-dir
@@ -292,7 +293,10 @@
                [nil "--debug" "add debug logging"]
                [nil "--help" "print option summary"]])
 
-(def output-handler (fn [x] (jsonrpc/notify :message {:content (json/generate-string x)})))
+(def output-handler (fn [x]
+                      (jsonrpc/notify :message {:content (json/generate-string (if (= "error" (:done x))
+                                                                                 (update x :messages last) 
+                                                                                 (select-keys x [:done])))})))
 (defn output-prompts [coll]
   (->> coll
        (mapcat (fn [{:keys [role content]}]
@@ -356,13 +360,11 @@
     "run" (fn []
             (with-volume
               (fn [thread-id]
-                (select-keys
-                 (async/<!! ((comp conversation-loop (validate ::run-args))
-                             (-> opts
-                                 (assoc :thread-id thread-id)
-                                 ((fn [opts] (apply merge-deprecated opts (rest args)))))))
+                (async/<!! ((comp conversation-loop (validate ::run-args))
+                            (-> opts
+                                (assoc :thread-id thread-id)
+                                ((fn [opts] (apply merge-deprecated opts (rest args))))))))
 
-                 [:done]))
               opts))
     (fn []
       ((comp get-prompts (validate ::run-args)) (apply merge-deprecated opts args)))))
