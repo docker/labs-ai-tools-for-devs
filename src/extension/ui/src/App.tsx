@@ -331,13 +331,13 @@ export function App() {
                     if (line.params.debug) {
                       return showDebug ? <Typography key={i} variant='body1' sx={theme => ({ color: theme.palette.docker.grey[400] })}>{line.params.debug}</Typography> : null;
                     }
-                    if (line.params.role === 'assistant') {
-                      return <Typography key={i} variant='body1' sx={theme => ({ color: theme.palette.docker.blue[400] })}>{line.params.content}</Typography>
-                    }
                     return <pre key={i} style={{ whiteSpace: 'pre-wrap', display: 'inline' }} dangerouslySetInnerHTML={{ __html: convert.toHtml(line.params.content) }} />
                   }
                   if (line.method === 'functions') {
-                    return <Typography key={i} variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(line.params, null, 2)}</Typography>
+                    return <Typography key={i} variant='body1' sx={theme => ({ whiteSpace: 'pre-wrap', backgroundColor: theme.palette.docker.grey[300], p: 1 })}>{JSON.stringify(line.params, null, 2)}</Typography>
+                  }
+                  if (line.method === 'functions-done') {
+                    return showDebug ? <Typography key={i} variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(line.params, null, 2)}</Typography> : null;
                   }
                   return <Typography key={i} variant='body1'>{JSON.stringify(line)}</Typography>
                 })}
