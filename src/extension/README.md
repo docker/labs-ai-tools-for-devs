@@ -4,7 +4,17 @@ A Docker Desktop extension to run prompts.
 
 https://github.com/docker/labs-ai-tools-for-devs
 
-![demo image](./image.png)
+## Usage
+
+Install the extension from https://hub.docker.com/extensions/docker/labs-ai-tools-for-devs.
+
+Enter your OpenAI key into the extension.
+
+Add a project by selecting a directory.
+
+Add a prompt by either pasting a git url/ref or selecting a local directory.
+
+Make sure both your prompt and project are selected and then click "Run".
 
 ## Development
 
@@ -13,13 +23,13 @@ You can use `docker` to build, install and push your extension. Also, we provide
 To build the extension, use `make build-extension` **or**:
 
 ```shell
-  docker buildx build -t docker/labs-ai-tools-for-devs:latest . --load
+  docker buildx build -t docker/labs-ai-tools-for-devs:local . --load
 ```
 
 To install the extension, use `make install-extension` **or**:
 
 ```shell
-  docker extension install docker/labs-ai-tools-for-devs:latest
+  docker extension install docker/labs-ai-tools-for-devs:local
 ```
 
 > If you want to automate this command, use the `-f` or `--force` flag to accept the warning message.
@@ -42,19 +52,19 @@ This starts a development server that listens on port `3000`.
 You can now tell Docker Desktop to use this as the frontend source. In another terminal run:
 
 ```shell
-  docker extension dev ui-source vonwig/labs-ai-tools-for-devs:0.0.1 http://localhost:3000
+  docker extension dev ui-source vonwig/labs-ai-tools-for-devs:local http://localhost:3000
 ```
 
 In order to open the Chrome Dev Tools for your extension when you click on the extension tab, run:
 
 ```shell
-  docker extension dev debug docker/labs-ai-tools-for-devs:latest
+  docker extension dev debug docker/labs-ai-tools-for-devs:local
 ```
 
 Each subsequent click on the extension tab will also open Chrome Dev Tools. To stop this behaviour, run:
 
 ```shell
-  docker extension dev reset docker/labs-ai-tools-for-devs:latest
+  docker extension dev reset docker/labs-ai-tools-for-devs:local
 ```
 
 ### Backend development (optional)
@@ -67,7 +77,7 @@ Whenever you make changes in the [backend](./backend) source code, you will need
 Use the `docker extension update` command to remove and re-install the extension automatically:
 
 ```shell
-docker extension update docker/labs-ai-tools-for-devs:latest
+docker extension update docker/labs-ai-tools-for-devs:local
 ```
 
 > If you want to automate this command, use the `-f` or `--force` flag to accept the warning message.
@@ -79,5 +89,5 @@ docker extension update docker/labs-ai-tools-for-devs:latest
 To remove the extension:
 
 ```shell
-docker extension rm docker/labs-ai-tools-for-devs:latest
+docker extension rm docker/labs-ai-tools-for-devs:local
 ```
