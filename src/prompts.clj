@@ -296,9 +296,16 @@
                [nil "--help" "print option summary"]])
 
 (def output-handler (fn [x]
-                      (jsonrpc/notify :message {:content (json/generate-string (if (= "error" (:done x))
-                                                                                 (update x :messages last) 
-                                                                                 (select-keys x [:done])))})))
+                      (jsonrpc/notify
+                       :message
+                       {:content
+                        (json/generate-string
+                          (if (map? x)
+                            (if (= "error" (:done x))
+                              (update x :messages last)
+                              (select-keys x [:done]))
+                            x))})))
+
 (defn output-prompts [coll]
   (->> coll
        (mapcat (fn [{:keys [role content]}]
