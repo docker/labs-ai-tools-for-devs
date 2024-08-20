@@ -1,3 +1,2 @@
-Run the curl command to fetch https://www.example.com
+Run the curl command to fetch gists for user slimslenderslacks from GitHub.
 
-If you get an error, run `curl --help` and use the output to try again.

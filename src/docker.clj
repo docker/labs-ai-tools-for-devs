@@ -25,16 +25,18 @@
 (defn pull-image [{:keys [image identity-token creds]}]
   (curl/post
    (format "http://localhost/images/create?fromImage=%s" image)
-   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
-    :throw false
-    :headers {"X-Registry-Auth"
-              ;; I don't think we'll be pulling images
-              ;; from registries that support identity tokens
-              (-> (cond
-                    identity-token {:identitytoken identity-token}
-                    creds creds)
-                  (json/generate-string)
-                  (encode))}}))
+   (merge
+     {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+      :throw false}
+     (when (or creds identity-token)
+       {:headers {"X-Registry-Auth"
+                  ;; I don't think we'll be pulling images
+                  ;; from registries that support identity tokens
+                  (-> (cond
+                        identity-token {:identitytoken identity-token}
+                        creds creds)
+                      (json/generate-string)
+                      (encode))}}))))
 
 (comment
   (let [pat (string/trim (slurp "/Users/slim/.secrets/dockerhub-pat-ai-tools-for-devs.txt"))]
@@ -100,8 +102,8 @@
 
 (defn remove-volume [{:keys [Name]}]
   (curl/delete (format "http://localhost/volumes/%s" Name)
-             {:raw-args ["--unix-socket" "/var/run/docker.sock"]
-              :throw false}))
+               {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+                :throw false}))
 
 (defn inspect-container [{:keys [Id]}]
   (curl/get
@@ -174,10 +176,13 @@
                                             :req-un [::image]))
 
 (defn run-function [m]
-  (when (and (:user m) (and (not (:offline m)) (or (:pat m) (creds/credential-helper->jwt))))
-    (pull (assoc m :creds {:username (:user m)
-                           :password (or (:pat m) (creds/credential-helper->jwt))
-                           :serveraddress "https://index.docker.io/v1/"})))
+  (pull (merge m
+               {:serveraddress "https://index.docker.io/v1/"}
+               (let [jwt (creds/credential-helper->jwt)]
+                 (when (and (:user m)
+                            (or (:pat m) jwt))
+                   {:creds {:username (:user m)
+                            :password (or (:pat m) jwt)}}))))
   (let [x (create m)]
     (start x)
     (wait x)

@@ -158,8 +158,7 @@ docker run --rm \
                                  "$(uname -o)" \
                                  local/prompts/eslint \
                                  --pat "$(cat ~/.secrets/dockerhub-pat-ai-tools-for-devs.txt)" \
-                                 --thread-id "something" \
-                                 --save-thread-volume
+                                 --thread-id "something"
 ```
 
 # Test bad commands

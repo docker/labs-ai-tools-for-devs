@@ -16,7 +16,14 @@
     "vonwig/fasttext"
     "vonwig/typos"
     "vonwig/what-is-my-ip"
-    "vonwig/findutils"})
+    "vonwig/findutils"
+    "vonwig/qrencode"
+    "vonwig/curl"
+    "vonwig/standardjs"
+    "vonwig/eslint"
+    "vonwig/git"
+    "vonwig/clj-kondo"
+    "vonwig/extractor-eslint"})
 
 (comment
   (docker/delete-image {:image "vonwig/function_write_files"}))
