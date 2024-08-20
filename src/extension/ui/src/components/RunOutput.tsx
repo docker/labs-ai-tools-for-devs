@@ -34,6 +34,9 @@ const RunOutput: React.FC<RunOutputProps> = ({ runOut, showDebug, setShowDebug }
                     if (line.method === 'prompts') {
                         return showDebug ? <Typography key={i} variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(line.params.messages, null, 2)}</Typography> : null;
                     }
+                    if (line.method === 'error') {
+                        return <Typography key={i} variant='body1' sx={theme => ({ whiteSpace: 'pre-wrap', color: theme.palette.docker.red[500] })}>{line.params.content}</Typography>
+                    }
                     return <Typography key={i} variant='body1'>{JSON.stringify(line)}</Typography>
                 })}
             </div>

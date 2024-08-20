@@ -13,6 +13,46 @@ const client = createDockerDesktopClient();
 const track = (event: string) =>
   client.extension.vm?.service?.post('/analytics/track', { event });
 
+class OutputParser {
+  output: any[] = [];
+  callback: (output: any[]) => void;
+  constructor(callback: (output: any[]) => void) {
+    this.output = [];
+    this.callback = callback;
+  }
+  updateOutput = (line: any) => {
+    let output = [...this.output];
+    if (line.method === 'functions') {
+      const functions = line.params;
+      for (const func of functions) {
+        const functionId = func.id;
+        const existingFunction = output.find(o =>
+          o.method === 'functions'
+          &&
+          o.params.find((p: { id: string }) => p.id === functionId)
+        );
+        if (existingFunction) {
+          const existingFunctionParamsIndex = existingFunction.params.findIndex((p: { id: string }) => p.id === functionId);
+          existingFunction.params[existingFunctionParamsIndex] = { ...existingFunction.params[existingFunctionParamsIndex], ...func };
+          output = output.map(
+            o => o.method === 'functions'
+              ?
+              { ...o, params: o.params.map((p: { id: string }) => p.id === functionId ? { ...p, ...func } : p) }
+              :
+              o
+          );
+        } else {
+          output = [...output, line];
+        }
+      }
+    }
+    else {
+      output = [...output, line];
+    }
+    this.callback(output);
+  }
+}
+
 const debounce = (fn: Function, ms: number) => {
   let timeout: NodeJS.Timeout;
   return function (...args: any) {
@@ -39,6 +79,39 @@ export function App() {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   const [showDebug, setShowDebug] = React.useState(false);
+
+  useEffect(() => {
+    const runOutput = new OutputParser(setRunOut);
+    try {
+      client.docker.cli.exec("pull", ["vonwig/function_write_files"]).then(() => {
+        client.docker.cli.exec("run", [
+          "-v",
+          "openai_key:/root",
+          "--workdir", "/root",
+          "vonwig/function_write_files",
+          `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
+        ]);
+      });
+      client.docker.cli.exec("pull", ["vonwig/prompts"], {
+        stream: {
+          onOutput: ({ stdout, stderr }) => {
+            if (stdout) {
+              runOutput.updateOutput({ method: 'message', params: { debug: stdout } });
+            }
+            if (stderr) {
+              runOutput.updateOutput({ method: 'error', params: { content: stderr } });
+            }
+          },
+          onError: (err) => {
+            runOutput.updateOutput({ method: 'error', params: { content: err } });
+          },
+        },
+      });
+    }
+    catch (e) {
+      runOutput.updateOutput({ method: 'message', params: { debug: JSON.stringify(e) } });
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
@@ -94,54 +167,11 @@ export function App() {
 
   const startPrompt = async () => {
     track('start-prompt');
-    let output: any[] = []
-    const updateOutput = (line: any) => {
-      if (line.method === 'functions') {
-        const functions = line.params;
-        for (const func of functions) {
-          const functionId = func.id;
-          const existingFunction = output.find(o =>
-            o.method === 'functions'
-            &&
-            o.params.find((p: { id: string }) => p.id === functionId)
-          );
-          if (existingFunction) {
-            const existingFunctionParamsIndex = existingFunction.params.findIndex((p: { id: string }) => p.id === functionId);
-            existingFunction.params[existingFunctionParamsIndex] = { ...existingFunction.params[existingFunctionParamsIndex], ...func };
-            output = output.map(
-              o => o.method === 'functions'
-                ?
-                { ...o, params: o.params.map((p: { id: string }) => p.id === functionId ? { ...p, ...func } : p) }
-                :
-                o
-            );
-          } else {
-            output = [...output, line];
-          }
-        }
-      }
-      else {
-        output = [...output, line];
-      }
-      setRunOut(output);
-    }
-    updateOutput({ method: 'message', params: { debug: 'Pulling images' } })
-    try {
-      const pullWriteFiles = await client.docker.cli.exec("pull", ["vonwig/function_write_files"]);
-      const pullPrompts = await client.docker.cli.exec("pull", ["vonwig/prompts"]);
-      const writeKey = await client.docker.cli.exec("run", [
-        "-v",
-        "openai_key:/root",
-        "--workdir", "/root",
-        "vonwig/function_write_files",
-        `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
-      ]);
-      updateOutput({ method: 'message', params: { debug: JSON.stringify({ pullWriteFiles, pullPrompts, writeKey }) } });
-    }
-    catch (e) {
-      updateOutput({ method: 'message', params: { debug: JSON.stringify(e) } });
-    }
-    updateOutput({ method: 'message', params: { debug: 'Running prompts...' } })
+
+    const runOutput = new OutputParser(setRunOut);
+    runOutput.updateOutput({ method: 'message', params: { debug: 'Pulling images' } })
+
+    runOutput.updateOutput({ method: 'message', params: { debug: 'Running prompts...' } })
     const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform)
 
     client.docker.cli.exec("run", args, {
@@ -154,15 +184,15 @@ export function App() {
               rpcMessage += '}'
             }
             const json = JSON.parse(rpcMessage)
-            updateOutput(json)
+            runOutput.updateOutput(json)
           }
           if (stderr) {
-            updateOutput({ method: 'message', params: { debug: stderr } });
+            runOutput.updateOutput({ method: 'message', params: { debug: stderr } });
           }
         },
         onError: (err) => {
           console.error(err);
-          updateOutput({ method: 'message', params: { debug: err } });
+          runOutput.updateOutput({ method: 'message', params: { debug: err } });
         },
       }
     });
