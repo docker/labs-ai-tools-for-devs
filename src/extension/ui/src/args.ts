@@ -1,4 +1,4 @@
-export const getRunArgs = (promptRef: string, projectDir: string, username: string, platform: string) => {
+export const getRunArgs = (promptRef: string, projectDir: string, username: string, platform: string, render = false) => {
     const isLocal = promptRef.startsWith('local://');
     let promptArgs: string[] = ["--prompts", promptRef];
     let mountArgs: string[] = [];
@@ -18,9 +18,9 @@ export const getRunArgs = (promptRef: string, projectDir: string, username: stri
         '--mount', 'type=volume,source=docker-prompts,target=/prompts'
     ];
 
-    const runArgs: string[] = [
+    const runArgs: string[] = render ? [] : [
         'vonwig/prompts:latest',
-        'run',
+        ...(render ? [] : ['run']),
         "--host-dir", projectDir,
         "--user", username,
         "--platform", platform,
