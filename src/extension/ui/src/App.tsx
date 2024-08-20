@@ -21,12 +21,11 @@ class OutputParser {
     this.callback = callback;
   }
   updateOutput = (line: any) => {
-    let output = [...this.output];
     if (line.method === 'functions') {
       const functions = line.params;
       for (const func of functions) {
         const functionId = func.id;
-        const existingFunction = output.find(o =>
+        const existingFunction = this.output.find(o =>
           o.method === 'functions'
           &&
           o.params.find((p: { id: string }) => p.id === functionId)
@@ -34,7 +33,7 @@ class OutputParser {
         if (existingFunction) {
           const existingFunctionParamsIndex = existingFunction.params.findIndex((p: { id: string }) => p.id === functionId);
           existingFunction.params[existingFunctionParamsIndex] = { ...existingFunction.params[existingFunctionParamsIndex], ...func };
-          output = output.map(
+          this.output = this.output.map(
             o => o.method === 'functions'
               ?
               { ...o, params: o.params.map((p: { id: string }) => p.id === functionId ? { ...p, ...func } : p) }
@@ -42,14 +41,14 @@ class OutputParser {
               o
           );
         } else {
-          output = [...output, line];
+          this.output = [...this.output, line];
         }
       }
     }
     else {
-      output = [...output, line];
+      this.output = [...this.output, line];
     }
-    this.callback(output);
+    this.callback(this.output);
   }
 }
 
@@ -76,12 +75,14 @@ export function App() {
 
   const [runOut, setRunOut] = React.useState<any[]>([]);
 
+  const runOutput = new OutputParser(setRunOut);
+
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   const [showDebug, setShowDebug] = React.useState(false);
 
   useEffect(() => {
-    const runOutput = new OutputParser(setRunOut);
+
     try {
       client.docker.cli.exec("pull", ["vonwig/function_write_files"]).then(() => {
         client.docker.cli.exec("run", [
@@ -167,8 +168,6 @@ export function App() {
 
   const startPrompt = async () => {
     track('start-prompt');
-
-    const runOutput = new OutputParser(setRunOut);
     runOutput.updateOutput({ method: 'message', params: { debug: 'Pulling images' } })
 
     runOutput.updateOutput({ method: 'message', params: { debug: 'Running prompts...' } })
