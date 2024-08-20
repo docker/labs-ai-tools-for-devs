@@ -6,6 +6,7 @@ import OpenAIKey from './components/OpenAIKey';
 import Projects from './components/Projects';
 import Prompts from './components/Prompts';
 import RunOutput from './components/RunOutput';
+import Runner from './components/Runner'; // Added this import
 
 const client = createDockerDesktopClient();
 
@@ -168,29 +169,20 @@ export function App() {
     track('end-prompt');
   }
 
+  const renderPrompt = async () => {
+    await client.docker.cli.exec("pull", ["vonwig/prompts"]);
+    const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform, true)
+    const render = await client.docker.cli.exec("run", args);
+    console.log(render);
+  }
+
   return (
     <div style={{ overflow: 'auto', maxHeight: '100vh' }} ref={scrollRef}>
       <Stack direction="column" spacing={1}>
         <OpenAIKey openAIKey={openAIKey || ''} setOpenAIKey={setOpenAIKey} />
         <Projects projects={projects} selectedProject={selectedProject} setProjects={setProjects} setSelectedProject={setSelectedProject} />
         <Prompts prompts={prompts} selectedPrompt={selectedPrompt} promptInput={promptInput} setPrompts={setPrompts} setSelectedPrompt={setSelectedPrompt} setPromptInput={setPromptInput} track={track} />
-        {selectedProject && selectedPrompt && openAIKey ? (
-          <Paper sx={{ padding: 1 }}>
-            <Typography variant="h3">Ready</Typography>
-            <pre>PROJECT={selectedProject}</pre>
-            <pre>PROMPT={selectedPrompt}</pre>
-            <Button sx={{ mt: 1, }} color='success' onClick={startPrompt}>
-              Run
-            </Button>
-          </Paper>
-        ) : (
-          <Paper sx={{ padding: 1 }}>
-            <Typography variant='h3'>Missing:</Typography>
-            {selectedProject?.length ? null : <Typography variant='body1'> - Project</Typography>}
-            {selectedPrompt?.length ? null : <Typography variant='body1'> - Prompt</Typography>}
-            {openAIKey?.length ? null : <Typography variant='body1'> - OpenAI Key</Typography>}
-          </Paper>
-        )}
+        <Runner selectedProject={selectedProject} selectedPrompt={selectedPrompt} openAIKey={openAIKey} startPrompt={startPrompt} renderPrompt={renderPrompt} />
         <RunOutput runOut={runOut} showDebug={showDebug} setShowDebug={setShowDebug} />
       </Stack>
     </div>

@@ -31,6 +31,9 @@ const RunOutput: React.FC<RunOutputProps> = ({ runOut, showDebug, setShowDebug }
                     if (line.method === 'functions-done') {
                         return showDebug ? <Typography key={i} variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(line.params, null, 2)}</Typography> : null;
                     }
+                    if (line.method === 'prompts') {
+                        return showDebug ? <Typography key={i} variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(line.params.messages, null, 2)}</Typography> : null;
+                    }
                     return <Typography key={i} variant='body1'>{JSON.stringify(line)}</Typography>
                 })}
             </div>
