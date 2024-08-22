@@ -11,7 +11,7 @@ type RunOutputProps = {
 };
 
 const RunOutput: React.FC<RunOutputProps> = ({ runOut, showDebug, setShowDebug }) => (
-    runOut.length > 0 && (
+    runOut.length > 0 ? (
         <Paper sx={{ p: 1 }}>
             <Stack direction='row' spacing={1} alignItems={'center'} justifyContent={'space-between'}>
                 <Typography variant='h3'>Run output</Typography>
@@ -41,7 +41,7 @@ const RunOutput: React.FC<RunOutputProps> = ({ runOut, showDebug, setShowDebug }
                 })}
             </div>
         </Paper>
-    )
+    ) : null
 );
 
 export default RunOutput;
