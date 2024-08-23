@@ -25,6 +25,11 @@ An extractor is a Docker image that runs against a project and extracts informat
 
 Prompts are stored in a git repo and can be versioned, tracked, and shared. 
 
+## Dockerized Tools
+![dockerized tools](img4.png)
+
+OpenAI API compatiable LLM's already support function calling. This is our workbench to test the same spec, but with functions as Docker images. Our [research](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/) shows that this approach enables siginficantly more powerful that work across a wide range of environments.
+
 # Get Started
 
 ## Basics: Render a Prompt
