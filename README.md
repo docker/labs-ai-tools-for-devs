@@ -28,7 +28,12 @@ Prompts are stored in a git repo and can be versioned, tracked, and shared.
 ## Dockerized Tools
 ![dockerized tools](img4.png)
 
-OpenAI API compatiable LLM's already support function calling. This is our workbench to test the same spec, but with functions as Docker images. Our [research](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/) shows that this approach enables siginficantly more powerful that work across a wide range of environments.
+OpenAI API compatiable LLM's already support function calling. This is our workbench to test the same spec, but with functions as Docker images. Some of the benefits using Docker based on our [research](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/) are enabling the LLM to: 
+- take more complex actions
+- deliver relevant context to the LLM without too many tokens
+- work across a wider range of environments
+- operate in a sandboxed environment
+
 
 # Get Started
 
