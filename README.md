@@ -2,9 +2,32 @@
 
 Agentic AI workflows enabled by Docker containers.
 
+![overall architecture diagram preview](img1.png)
+
 Source for many experiments in our [LinkedIn newsletter](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/)
 
-## Running Prompts
+Docker Desktop Extension: https://hub.docker.com/extensions/docker/labs-ai-tools-for-devs
+
+VSCode Extension: https://github.com/docker/labs-make-runbook
+
+# What is this?
+
+## Project-First Design
+To get help from an assistant in your software development loop, the only context necessary is the project you are working on. 
+
+### Extracting project context
+![extractor architecture](img2.png)
+
+An extractor is a Docker image that runs against a project and extracts information into a JSON context.
+
+## Prompts as a trackable artifact
+![prompts as a trackable artifact](img3.png)
+
+Prompts are stored in a git repo and can be versioned, tracked, and shared. 
+
+# Get Started
+
+## Basics: Render a Prompt
 
 To generate prompts for a project, clone a repo into `$PWD` and run the 
 following command.
