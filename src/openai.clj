@@ -61,11 +61,12 @@
           (async/go
             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
             (async/close! c)))
-        :fail (fn [output]
-                (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
-                (async/go
-                  (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-                  (async/close! c)))})
+        :fail
+        (fn [output]
+          (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
+          (async/go
+            (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
+            (async/close! c)))})
       (catch Throwable t
         ;; function-handlers should handle this on their own but this is just in case
         (async/go
@@ -174,28 +175,26 @@
          ;; messages will either have a delta, a message, or just a finish_reason,
          ;; depending on whether it's streaming.  Usually, the finish_reason doesn't
          ;; occur on it's own.
-         (try
-           (cond
-             done? (async/>!!
-                    c
-                    (merge
-                     {:done true :tool-handler function-handler}
-                     (when finish_reason {:finish-reason finish_reason})))
+         (cond
+           done? (async/>!!
+                  c
+                  (merge
+                   {:done true :tool-handler function-handler}
+                   (when finish_reason {:finish-reason finish_reason})))
 
              ;; streaming
-             delta
-             (async/>!! c (merge
-                           delta
-                           (when finish_reason {:finish-reason finish_reason})))
+           delta
+           (async/>!! c (merge
+                         delta
+                         (when finish_reason {:finish-reason finish_reason})))
 
              ;; non-streaming
-             message
-             (do
-               (async/>!! c (merge
-                             message
-                             (when finish_reason {:finish-reason finish_reason})))
-               (async/>!! c {:done true :tool-handler function-handler}))
-             finish_reason (async/>!! c {:finish-reason finish_reason}))
-           (catch Throwable _))))]))
+           message
+           (do
+             (async/>!! c (merge
+                           message
+                           (when finish_reason {:finish-reason finish_reason})))
+             (async/>!! c {:done true :tool-handler function-handler}))
+           finish_reason (async/>!! c {:finish-reason finish_reason}))))]))
 
 

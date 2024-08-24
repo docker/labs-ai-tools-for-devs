@@ -7,7 +7,10 @@
    [clojure.string :as string]
    [creds])
   (:import
-   [java.util Base64]))
+   [java.net UnixDomainSocketAddress]
+   [java.nio ByteBuffer]
+   [java.nio.channels SocketChannel]
+   [java.util Arrays Base64]))
 
 (defn encode [to-encode]
   (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
@@ -26,17 +29,17 @@
   (curl/post
    (format "http://localhost/images/create?fromImage=%s" image)
    (merge
-     {:raw-args ["--unix-socket" "/var/run/docker.sock"]
-      :throw false}
-     (when (or creds identity-token)
-       {:headers {"X-Registry-Auth"
+    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+     :throw false}
+    (when (or creds identity-token)
+      {:headers {"X-Registry-Auth"
                   ;; I don't think we'll be pulling images
                   ;; from registries that support identity tokens
-                  (-> (cond
-                        identity-token {:identitytoken identity-token}
-                        creds creds)
-                      (json/generate-string)
-                      (encode))}}))))
+                 (-> (cond
+                       identity-token {:identitytoken identity-token}
+                       creds creds)
+                     (json/generate-string)
+                     (encode))}}))))
 
 (comment
   (let [pat (string/trim (slurp "/Users/slim/.secrets/dockerhub-pat-ai-tools-for-devs.txt"))]
@@ -69,11 +72,14 @@
 ;; entrypoint is an array of strings
 ;; env is a map
 ;; Env is an array of name=value strings
-(defn create-container [{:keys [image entrypoint command host-dir env thread-id]}]
+;; Tty wraps the process in a pseudo terminal
+{:StdinOnce true
+ :OpenStdin true}
+(defn create-container [{:keys [image entrypoint command host-dir env thread-id opts] :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
-                  {:Image image
-                   :Tty true}
+                  {:Image image}
+                  opts
                   (when env {:env (->> env
                                        (map (fn [[k v]] (format "%s=%s" (name k) v)))
                                        (into []))})
@@ -132,10 +138,24 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
+(defn attach-container-stdout-logs [{:keys [Id]}]
+  ;; this assumes no Tty so the output will be multiplexed back
+  (curl/post
+   (format "http://localhost/containers/%s/attach?stdout=true&logs=true" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :as :bytes
+    :throw false}))
+
 ;; should be 200 and then will have a StatusCode
 (defn wait-container [{:keys [Id]}]
   (curl/post
    (format "http://localhost/containers/%s/wait?condition=not-running" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :throw false}))
+
+(defn kill-container [{:keys [Id]}]
+  (curl/post
+   (format "http://localhost/containers/%s/kill" Id)
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -196,7 +216,62 @@
 
 (def extract-facts run-function)
 
+(defn write-stdin [container-id content]
+  (let [buf (ByteBuffer/allocate 1024)
+        address (UnixDomainSocketAddress/of "/var/run/docker.sock")
+        client (SocketChannel/open address)]
+
+    ;;(while (not (.finishConnect client)))
+
+    (.configureBlocking client true)
+    (.clear buf)
+    (.put buf (.getBytes (String. (format "POST /containers/%s/attach?stdin=true&stream=true HTTP/1.1\n" container-id))))
+    (.put buf (.getBytes (String. "Host: localhost\nConnection: Upgrade\nUpgrade: tcp\n\n")))
+    (.put buf (.getBytes content))
+    (.flip buf)
+
+    (while (.hasRemaining buf)
+      (.write client buf))
+    client))
+
+(defn docker-stream-format->stdout [bytes]
+  ;; use xxd to look at the bytes
+  #_(try
+    (with-open [w (java.io.BufferedOutputStream. 
+                    (java.io.FileOutputStream. "hey.txt"))]
+     (.write w bytes))
+    
+    (catch Throwable t
+      (println t)))
+  (String. (Arrays/copyOfRange bytes 8 (count bytes))))
+
+(defn function-call-with-stdin [m]
+  (let [x (merge
+           m
+           (create (assoc m
+                          :opts {:StdinOnce true
+                                 :OpenStdin true
+                                 :AttachStdin true})))]
+    (start x)
+    (assoc x :socket (write-stdin (:Id x) (:content m)))))
+
+(defn finish-call
+  "This is a blocking call that waits for the container to finish and then returns the output and exit code."
+  [x]
+  (.close (:socket x))
+  (wait x)
+     ;; body is raw PTY output
+     (let [s (docker-stream-format->stdout 
+               (:body 
+                 (attach-container-stdout-logs x)) )
+        info (inspect x)]
+    (delete x)
+    {:pty-output s
+     :exit-code (-> info :State :ExitCode)
+     :info info}))
+
 (comment
+
   (pprint
    (json/parse-string
     (extract-facts

@@ -48,10 +48,27 @@ bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompt
 ```
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream \
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts/project_type \
+              --nostream \
               --model "llama3.1" \
               --url http://localhost:11434/v1/chat/completions
 ```
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-dir prompts \
+              --nostream \
+              --model "llama3.1" \
+              --url http://localhost:11434/v1/chat/completions
+```
+
 
 #### test prompts/dockerfiles (which uses prompts/project_type)
 

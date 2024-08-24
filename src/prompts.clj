@@ -77,11 +77,14 @@
              {(keyword extractor-name) context}
              context)))))
     (catch Throwable ex
-      (warn
-       "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
-       {:dir dir
-        :container-definition (str container-definition)
-        :exception (str ex)})
+      (jsonrpc/notify
+       :error
+       {:content
+        (logging/render
+         "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
+         {:dir dir
+          :container-definition (str container-definition)
+          :exception (str ex)})})
       m)))
 
 (defn collect-extractors [dir]
@@ -116,7 +119,7 @@
        project-root - the host project root dir
        identity-token - a valid Docker login auth token
        dir - a prompts directory with a valid README.md"
-  [{:keys [host-dir prompts-dir user pat] :as opts}]
+  [{:keys [host-dir prompts-dir user pat]}]
   (reduce
    (partial fact-reducer host-dir)
    {}
@@ -176,7 +179,7 @@
         ;; TODO set a custom map for prompts in the next conversation loop
         (do
           (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
-          (let [{:keys [messages _finish-reason] :as m}
+          (let [{:keys [messages _finish-reason]}
                 (async/<!! (conversation-loop
                             (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
             (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
@@ -226,24 +229,29 @@
   "thread loop for an openai compatible endpoint
      returns messages and done indicator"
   [opts]
-  (async/go-loop
-   [thread []]
-    ;; get-prompts can only use extractors - we can't refine
-    ;; them based on output from function calls that the LLM plans
-    (let [prompts (if (not (seq thread))
-                    (let [new-prompts (get-prompts opts)]
-                      (jsonrpc/notify :prompts {:messages new-prompts})
-                      new-prompts)
-                    thread)
-          {:keys [messages finish-reason] :as m}
-          (async/<!! (run-prompts prompts opts))]
-      (if (= "tool_calls" finish-reason)
-        (do
-          (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-          (recur (concat prompts messages)))
-        (do
-          (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-          {:messages (concat prompts messages) :done finish-reason})))))
+  (try
+    (let [new-prompts (get-prompts opts)]
+      (jsonrpc/notify :prompts {:messages new-prompts})
+      (async/go-loop [thread []]
+                     ;; get-prompts can only use extractors - we can't refine
+                     ;; them based on output from function calls that the LLM plans
+                     (let [prompts (if (not (seq thread))
+                                     new-prompts
+                                     thread)
+                           {:keys [messages finish-reason] :as m}
+                           (async/<!! (run-prompts prompts opts))]
+                       (if (= "tool_calls" finish-reason)
+                         (do
+                           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
+                           (recur (concat prompts messages)))
+                         (do
+                           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
+                           {:messages (concat prompts messages) :done finish-reason})))))
+    (catch Throwable _
+      (let [c (async/promise-chan)]
+        (jsonrpc/notify :error {:content (format "%s is not a valid prompt configuration" opts)})
+        (async/>! c {:messages [] :done "error"})
+        c))))
 
 (defn- with-volume [f & {:keys [thread-id save-thread-volume]}]
   (let [thread-id (or thread-id (str (random-uuid)))]
@@ -300,11 +308,11 @@
                        :message
                        {:content
                         (json/generate-string
-                          (if (map? x)
-                            (if (= "error" (:done x))
-                              (update x :messages last)
-                              (select-keys x [:done]))
-                            x))})))
+                         (if (map? x)
+                           (if (= "error" (:done x))
+                             (update x :messages last)
+                             (select-keys x [:done]))
+                           x))})))
 
 (defn output-prompts [coll]
   (->> coll
