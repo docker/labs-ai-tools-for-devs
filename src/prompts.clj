@@ -272,7 +272,8 @@
                [nil "--pat PAT" "A hub PAT"]
                ;; required if not using positional args
                ;; can not validate this without a host helper
-               [nil "--host-dir DIR" "Project directory (on host filesystem)"]
+               [nil "--host-dir DIR" "Project directory (on host filesystem)"
+                :missing "you must specify a --host-dir option.  This is the directory that will be provided to tool containers as /project."]
                ;; required if not using positional args
                [nil "--platform PLATFORM" "current host platform"
                 :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
