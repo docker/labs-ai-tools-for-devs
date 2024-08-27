@@ -54,8 +54,7 @@
    (filter heading-1-section?)
    (map (comp zip/node zip/up zip/up))
    (filter (partial prompt-section? content))
-   (map (partial node-content content))
-   (pprint)))
+   (map (partial node-content content))))
 
 (defn parse-markdown [content]
   (let [x (docker/function-call-with-stdin
@@ -66,11 +65,13 @@
                                     (docker/finish-call x)))]
     (->> s
          (edn/read-string)
-         (extract-prompts content))))
+         (extract-prompts content)
+         (into []))))
 
 (comment
+  (string/split content #"\n")
 
-  (def content (slurp "test.md"))
+  (def content (slurp "prompts/qrencode/README.md" ))
   (pprint (parse-markdown content))
 
   (def t

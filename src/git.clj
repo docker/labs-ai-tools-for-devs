@@ -52,7 +52,7 @@
                         (fs/create-dirs default-dir)
                         default-dir))))
 
-(defn prompt-dir
+(defn prompt-file
   "returns the path or nil if the github ref does not resolve
    throws if the path in the repo does not exist or if the clone fails"
   [ref]
@@ -85,7 +85,7 @@
   (fs/create-dir prompts-cache)
   (def x "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
   (def git-ref (parse-github-ref x))
-  (prompt-dir "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
+  (prompt-file "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
   (parse-github-ref nil)
   (parse-github-ref "")
   (parse-github-ref "github:docker/labs-make-runbook")

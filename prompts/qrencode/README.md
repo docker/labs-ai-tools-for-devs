@@ -16,3 +16,11 @@ functions:
       image: vonwig/qrencode:latest
 ---
 
+# Prompt user
+
+Generate a QR code for the 
+url https://github.com/docker/labs-ai-tools-for-devs and write it to file `qrcode.png`.
+ 
+# Result
+
+This function generates a QR code for a URL. The QR code is saved as a PNG file.

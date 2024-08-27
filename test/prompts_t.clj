@@ -8,11 +8,10 @@
   (t/is
    (.startsWith
     (->
-     (#'prompts/selma-render
-      "prompts/dockerfiles"
-      {}
-      "prompts/dockerfiles/020_system_prompt.md")
-     first
+      (#'prompts/selma-render
+        (fs/file "prompts/dockerfiles")
+        {}
+        {:role "system" :content (slurp "prompts/dockerfiles/020_system_prompt.md")})
      :content)
     "\nWrite Dockerfiles")))
 
@@ -48,10 +47,9 @@
 
 (comment
   (prompts/run-extractors
-    {:host-dir "/Users/slim/docker/labs-ai-tools-for-devs/"
-     :user "jimclark106"
-     :prompts-dir (fs/file "prompts/docker")})
+   {:host-dir "/Users/slim/docker/labs-ai-tools-for-devs/"
+    :user "jimclark106"
+    :prompts (fs/file "prompts/docker")})
   (prompts/collect-functions (fs/file "prompts/dockerfiles"))
-  (prompts/collect-extractors (fs/file "prompts/docker"))
-  )
+  (prompts/collect-extractors (fs/file "prompts/docker")))
 

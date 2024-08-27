@@ -6,6 +6,12 @@
 bb -m prompts --help
 ```
 
+### run without --host-dir
+
+```sh
+bb -m prompts
+```
+
 ### Plain prompt Generation
 
 ```sh
@@ -57,6 +63,8 @@ bb -m prompts run \
               --model "llama3.1" \
               --url http://localhost:11434/v1/chat/completions
 ```
+
+TODO - this should fail better because the prompts-dir is not valid.
 
 ```sh
 bb -m prompts run \
@@ -132,6 +140,37 @@ bb -m prompts run \
               --url http://localhost:11434/v1/chat/completions \
               --model "llama3-groq-tool-use:latest" 
 ```
+
+#### Test single file prompts
+
+```sh
+rm ~/docker/labs-make-runbook/qrcode.png
+```
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-file prompts/qrencode/README.md
+```
+
+```sh
+open ~/docker/labs-make-runbook/qrcode.png
+```
+
+```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-file prompts/qrencode/README.md \
+              --url http://localhost:11434/v1/chat/completions \
+              --model "llama3.1" \
+              --nostream \
+              --debug
+```
+
 
 #### Using Containerized runner
 

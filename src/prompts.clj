@@ -15,6 +15,7 @@
    [jsonrpc]
    [logging :refer [warn]]
    [markdown.core :as markdown]
+   [markdown :as markdown-parser]
    [medley.core :as medley]
    [openai]
    [pogonos.core :as stache]
@@ -43,30 +44,19 @@
 (defn- name-matches [re]
   (fn [p] (re-matches re (fs/file-name p))))
 
-(defn- selma-render [prompts-dir m f]
-  [{:content (stache/render-string
-              (slurp f)
-              m
-              {:partials (partials/file-partials [prompts-dir] ".md")})} f])
-
-(def prompt-file-pattern #".*_(.*)_.*.md")
-
-(defn- merge-role [[m f]]
-  (merge m {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)}))
-
 (defn fact-reducer
   "reduces into m using a container function
      params
-       dir - the host dir that the container will mount read-only at /project
+       host-dir - the host dir that the container will mount read-only at /project
        m - the map to merge into
        container-definition - the definition for the function"
-  [dir m container-definition]
+  [host-dir m container-definition]
   (try
     (medley/deep-merge
      m
      (let [{:keys [pty-output exit-code]} (docker/extract-facts
                                            (-> container-definition
-                                               (assoc :host-dir dir)))]
+                                               (assoc :host-dir host-dir)))]
        (when (= 0 exit-code)
          (let [context
                (case (:output-handler container-definition)
@@ -82,14 +72,17 @@
        {:content
         (logging/render
          "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
-         {:dir dir
+         {:dir host-dir
           :container-definition (str container-definition)
           :exception (str ex)})})
       m)))
 
-(defn collect-extractors [dir]
+(defn- metadata-file [prompts-file]
+  (if (fs/directory? prompts-file) (io/file prompts-file "README.md") prompts-file))
+
+(defn collect-extractors [f]
   (let [extractors (->>
-                    (-> (markdown/parse-metadata (io/file dir "README.md")) first :extractors)
+                    (-> (markdown/parse-metadata (metadata-file f)) first :extractors)
                     (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
@@ -100,17 +93,17 @@
                   "--vs-machine-id" "none"
                   "--workspace" "/project"]}])))
 
-(defn collect-functions [dir]
+(defn collect-functions [f]
   (->>
-   (-> (markdown/parse-metadata (io/file dir "README.md")) first :functions)
+   (-> (markdown/parse-metadata (metadata-file f)) first :functions)
    (map (fn [m] {:type "function" :function (merge (registry/get-function m) m)}))))
 
 (defn collect-metadata
   "collect metadata from yaml front-matter in README.md
     skip functions and extractors"
-  [dir]
+  [f]
   (dissoc
-   (-> (markdown/parse-metadata (io/file dir "README.md")) first)
+   (-> (markdown/parse-metadata (metadata-file f)) first)
    :extractors :functions))
 
 (defn run-extractors
@@ -119,27 +112,44 @@
        project-root - the host project root dir
        identity-token - a valid Docker login auth token
        dir - a prompts directory with a valid README.md"
-  [{:keys [host-dir prompts-dir user pat]}]
+  [{:keys [host-dir prompts user pat]}]
   (reduce
    (partial fact-reducer host-dir)
    {}
-   (->> (collect-extractors prompts-dir)
+   (->> (collect-extractors prompts)
         (map (fn [m] (merge m
                             (when user {:user user})
                             (when pat {:pat pat})))))))
 
+(defn- selma-render [prompts-file m message]
+  (update message 
+          :content
+          (fn [content]
+            (stache/render-string
+              content
+              m
+              {:partials (partials/file-partials 
+                           [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))] 
+                           ".md")}))))
+
+(def prompt-file-pattern #".*_(.*)_.*.md")
+
 (defn get-prompts
   "run extractors and then render prompt templates
      returns ordered collection of chat messages"
-  [{:keys [prompts-dir user platform] :as opts}]
+  [{:keys [prompts user platform] :as opts}]
   (let [;; TODO the docker default no longer makes sense here
         m (run-extractors opts)
-        renderer (partial selma-render prompts-dir (facts m user platform))
-        prompts (->> (fs/list-dir prompts-dir)
-                     (filter (name-matches prompt-file-pattern))
-                     (sort-by fs/file-name)
-                     (into []))]
-    (map (comp merge-role renderer fs/file) prompts)))
+        renderer (partial selma-render prompts (facts m user platform))
+        prompts (if (fs/directory? prompts)
+                  (->> (fs/list-dir prompts)
+                       (filter (name-matches prompt-file-pattern))
+                       (sort-by fs/file-name)
+                       (map (fn [f] {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)
+                                     :content (slurp (fs/file f))}))
+                       (into []))
+                  (markdown-parser/parse-markdown (slurp prompts)))]
+    (map renderer prompts)))
 
 (declare conversation-loop)
 
@@ -181,7 +191,7 @@
           (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
           (let [{:keys [messages _finish-reason]}
                 (async/<!! (conversation-loop
-                            (assoc opts :prompts-dir (git/prompt-dir (:ref definition)))))]
+                            (assoc opts :prompts (git/prompt-file (:ref definition)))))]
             (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
             (resolve (->> messages
                           (filter #(= "assistant" (:role %)))
@@ -199,9 +209,9 @@
       prompts is the conversation history
       args for extracting functions, host-dir, user, platform
     returns channel that will contain the final set of messages and a finish-reason"
-  [prompts {:keys [prompts-dir url model stream] :as opts}]
-  (let [m (collect-metadata prompts-dir)
-        functions (collect-functions prompts-dir)
+  [messages {:keys [prompts url model stream] :as opts}]
+  (let [m (collect-metadata prompts)
+        functions (collect-functions prompts)
         [c h] (openai/chunk-handler (partial
                                      function-handler
                                      (merge
@@ -211,7 +221,7 @@
       (openai/openai
        (merge
         m
-        {:messages prompts}
+        {:messages messages}
         (when (seq functions) {:tools functions})
         (when url {:url url})
         (when model {:model model})
@@ -235,18 +245,18 @@
       (async/go-loop [thread []]
                      ;; get-prompts can only use extractors - we can't refine
                      ;; them based on output from function calls that the LLM plans
-                     (let [prompts (if (not (seq thread))
-                                     new-prompts
-                                     thread)
-                           {:keys [messages finish-reason] :as m}
-                           (async/<!! (run-prompts prompts opts))]
-                       (if (= "tool_calls" finish-reason)
-                         (do
-                           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-                           (recur (concat prompts messages)))
-                         (do
-                           (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-                           {:messages (concat prompts messages) :done finish-reason})))))
+        (let [prompts (if (not (seq thread))
+                        new-prompts
+                        thread)
+              {:keys [messages finish-reason] :as m}
+              (async/<!! (run-prompts prompts opts))]
+          (if (= "tool_calls" finish-reason)
+            (do
+              (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
+              (recur (concat prompts messages)))
+            (do
+              (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
+              {:messages (concat prompts messages) :done finish-reason})))))
     (catch Throwable _
       (let [c (async/promise-chan)]
         (jsonrpc/notify :error {:content (format "%s is not a valid prompt configuration" opts)})
@@ -272,20 +282,23 @@
                [nil "--pat PAT" "A hub PAT"]
                ;; required if not using positional args
                ;; can not validate this without a host helper
-               [nil "--host-dir DIR" "Project directory (on host filesystem)"
-                :missing "you must specify a --host-dir option.  This is the directory that will be provided to tool containers as /project."]
+               [nil "--host-dir DIR" "Project directory (on host filesystem)"]
                ;; required if not using positional args
                [nil "--platform PLATFORM" "current host platform"
                 :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
                [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
-                :id :prompts-dir
+                :id :prompts
                 :validate [#(fs/exists? (fs/file %)) "prompts dir does not a valid directory"]
                 :parse-fn #(fs/file %)]
+               [nil "--prompts-file PROMPTS_FILE" "path to local prompts file"
+                :id :prompts
+                :validate [#(fs/exists? (fs/file %)) "prompts file does not exist"]
+                :parse-fn #(fs/file %)]
                [nil "--prompts REF" "git ref to remote prompts directory"
-                :id :prompts-dir
+                :id :prompts
                 :validate [git/parse-github-ref "not a valid github ref"
-                           git/prompt-dir "could not resolve github ref"]
-                :assoc-fn (fn [m k v] (assoc m k (git/prompt-dir v)))]
+                           git/prompt-file "could not resolve github ref"]
+                :assoc-fn (fn [m k v] (assoc m k (git/prompt-file v)))]
                ;; optional
                [nil "--offline" "do not try to pull new images"]
                ;; optional
@@ -327,13 +340,13 @@
 (s/def ::platform (fn [s] (#{:darwin :linux :windows} (keyword (string/lower-case s)))))
 (s/def ::user string?)
 (s/def ::pat string?)
-(s/def ::prompts-dir #(fs/exists? %))
+(s/def ::prompts #(fs/exists? %))
 (s/def ::host-dir string?)
 (s/def ::offline boolean?)
 (s/def ::thread-id string?)
 (s/def ::save-thread-volume boolean?)
 (s/def ::url string?)
-(s/def ::run-args (s/keys :req-un [::platform ::user ::prompts-dir ::host-dir]
+(s/def ::run-args (s/keys :req-un [::platform ::user ::prompts ::host-dir]
                           :opt-un [::offline ::thread-id ::save-thread-volume ::pat ::url]))
 
 (defn validate [k]
@@ -349,10 +362,10 @@
              {:host-dir host-dir
               :user user
               :platform platform
-              :prompts-dir (or
-                            (let [f (fs/file dir-or-ref)]
-                              (when (fs/exists? f) f))
-                            (git/prompt-dir dir-or-ref))}))))
+              :prompts (or
+                        (let [f (fs/file dir-or-ref)]
+                          (when (fs/exists? f) f))
+                        (git/prompt-file dir-or-ref))}))))
 
 (defn command [opts & [c :as args]]
   (case c
@@ -401,12 +414,20 @@
             (println summary)
             (System/exit 0))
           (let [cmd (apply command options arguments)]
+            (when (and 
+                    (not (:host-dir options))
+                    (< (count arguments) 2))
+              (warn 
+                "you must specify a --host-dir option.  
+                 This is the directory that will be provided to tool containers as /project." {})
+              (System/exit 1))
             (alter-var-root
              #'jsonrpc/notify
              (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
             ((if (:pretty-print-prompts options) output-prompts output-handler)
              (cmd))))))
     (catch Throwable t
+      (.printStackTrace t)
       (warn "Error: {{ exception }}" {:exception t})
       (System/exit 1))))
 

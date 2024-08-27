@@ -7,7 +7,7 @@
   (:import
    [java.net ConnectException]))
 
-(alter-var-root #'jsonrpc/notify (constantly jsonrpc/-println))
+(alter-var-root #'jsonrpc/notify (partial (constantly jsonrpc/-println) {:debug true}))
 
 (t/deftest update-tool-calls
   (t/is
