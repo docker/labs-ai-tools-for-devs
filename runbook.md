@@ -156,6 +156,16 @@ bb -m prompts run \
 ```
 
 ```sh
+bb -m prompts run \
+              --host-dir /Users/slim/docker/labs-make-runbook \
+              --user jimclark106 \
+              --platform darwin \
+              --prompts-file /Users/slim/docker/labs-ai-tools-for-devs/prompts/curl/README.md \
+              --debug
+```
+
+
+```sh
 open ~/docker/labs-make-runbook/qrcode.png
 ```
 
