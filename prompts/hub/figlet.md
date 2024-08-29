@@ -5,7 +5,7 @@ functions:
 
 # Prompt user
 
-Run figlet on the message `Hey YOU`.
+Run figlet on the message `Docker`.
 
 # Result
 
