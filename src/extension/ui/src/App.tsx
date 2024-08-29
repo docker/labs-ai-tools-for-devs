@@ -7,6 +7,8 @@ import Projects from './components/Projects';
 import Prompts from './components/Prompts';
 import RunOutput from './components/RunOutput';
 import Runner from './components/Runner'; // Added this import
+import { run } from 'node:test';
+import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 const client = createDockerDesktopClient();
 
@@ -62,6 +64,8 @@ const debounce = (fn: Function, ms: number) => {
 
 const debouncedToastSuccess = debounce(client.desktopUI.toast.success, 1000)
 
+let pullImagePromise: Promise<ExecResult> | undefined;
+
 export function App() {
   const [projects, setProjects] = React.useState<string[]>(localStorage.getItem('projects') ? JSON.parse(localStorage.getItem('projects')!) : []);
   const [selectedProject, setSelectedProject] = React.useState<string | null>(localStorage.getItem('selectedProject') || null);
@@ -84,15 +88,7 @@ export function App() {
   useEffect(() => {
 
     try {
-      client.docker.cli.exec("pull", ["vonwig/function_write_files"]).then(() => {
-        client.docker.cli.exec("run", [
-          "-v",
-          "openai_key:/root",
-          "--workdir", "/root",
-          "vonwig/function_write_files",
-          `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
-        ]);
-      });
+      pullImagePromise = client.docker.cli.exec("pull", ["vonwig/function_write_files"])
       client.docker.cli.exec("pull", ["vonwig/prompts"], {
         stream: {
           onOutput: ({ stdout, stderr }) => {
@@ -168,7 +164,16 @@ export function App() {
 
   const startPrompt = async () => {
     track('start-prompt');
-    runOutput.updateOutput({ method: 'message', params: { debug: 'Pulling images' } })
+
+    await pullImagePromise
+
+    client.docker.cli.exec("run", [
+      "-v",
+      "openai_key:/root",
+      "--workdir", "/root",
+      "vonwig/function_write_files",
+      `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
+    ]);
 
     runOutput.updateOutput({ method: 'message', params: { debug: 'Running prompts...' } })
     const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform)
