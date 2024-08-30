@@ -169,8 +169,8 @@ export function App() {
 
     client.docker.cli.exec("run", [
       "-v",
-      "openai_key:/root",
-      "--workdir", "/root",
+      "openai_key:/secret",
+      "--workdir", "/secret",
       "vonwig/function_write_files",
       `'` + JSON.stringify({ files: [{ path: ".openai-api-key", content: openAIKey, executable: false }] }) + `'`
     ]);

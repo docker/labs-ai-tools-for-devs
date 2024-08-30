@@ -14,8 +14,9 @@ export const getRunArgs = (promptRef: string, projectDir: string, username: stri
     const baseArgs: string[] = [
         '--rm',
         '-v', '/var/run/docker.sock:/var/run/docker.sock',
-        '-v', 'openai_key:/root',
-        '--mount', 'type=volume,source=docker-prompts,target=/prompts'
+        '-v', 'openai_key:/secret',
+        '--mount', 'type=volume,source=docker-prompts,target=/prompts',
+        '-e', 'OPENAI_API_KEY_LOCATION=/secret'
     ];
 
     const runArgs: string[] = render ? [] : [
