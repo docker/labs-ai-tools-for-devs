@@ -40,4 +40,4 @@ if [ -f "pnpm-lock.yaml" ]; then
   OUTPUT_JSON=$(echo "$OUTPUT_JSON" | jq -c ".pnpm_lock = true")
 fi
 
-echo -e "{\"npm\": \"$OUTPUT_JSON\"}}"
+echo -e "{\"npm\": $OUTPUT_JSON }"
