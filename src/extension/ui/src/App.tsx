@@ -163,7 +163,7 @@ export function App() {
   }, [runOut]);
 
   const startPrompt = async () => {
-    track('start-prompt');
+    track('DockerPromptsStartPrompt');
 
     await pullImagePromise
 
@@ -200,7 +200,7 @@ export function App() {
         },
       }
     });
-    track('end-prompt');
+    track('DockerPromptsEndPrompt');
   }
 
   const renderPrompt = async () => {

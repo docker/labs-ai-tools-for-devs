@@ -11,7 +11,7 @@
 
 (defn openai-api-key []
   (try
-    (string/trim (slurp (io/file (System/getenv "HOME") ".openai-api-key")))
+    (string/trim (slurp (io/file (or (System/getenv "OPENAI_API_KEY_LOCATION")  (System/getenv "HOME")) ".openai-api-key")))
     (catch Throwable _ nil)))
 
 (defn openai

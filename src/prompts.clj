@@ -96,7 +96,29 @@
 (defn collect-functions [f]
   (->>
    (-> (markdown/parse-metadata (metadata-file f)) first :functions)
-   (map (fn [m] {:type "function" :function (merge (registry/get-function m) m)}))))
+   (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg"} (:name m))]
+                     [{:type "function"
+                       :function
+                       {:name (format "%s-manual" tool)
+                        :description (format "Run the man page for %s" tool)
+                        :container
+                        {:image (format "vonwig/%s:latest" tool)
+                         :command
+                         ["man"]}}}
+                      {:type "function"
+                       :function
+                       {:name tool
+                        :type "function"
+                        :description (format "Run a %s command." tool)
+                        :parameters
+                        {:type "object"
+                         :properties
+                         {:args
+                          {:type "string"
+                           :description (format "The arguments to pass to %s" tool)}}}
+                        :container
+                        {:image (format "vonwig/%s:latest" tool)}}}]
+                     [{:type "function" :function (merge (registry/get-function m) m)}])))))
 
 (defn collect-metadata
   "collect metadata from yaml front-matter in README.md
@@ -122,15 +144,15 @@
                             (when pat {:pat pat})))))))
 
 (defn- selma-render [prompts-file m message]
-  (update message 
+  (update message
           :content
           (fn [content]
             (stache/render-string
-              content
-              m
-              {:partials (partials/file-partials 
-                           [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))] 
-                           ".md")}))))
+             content
+             m
+             {:partials (partials/file-partials
+                         [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
+                         ".md")}))))
 
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
@@ -217,6 +239,7 @@
                                      (merge
                                       opts
                                       {:functions functions})))]
+    (jsonrpc/notify :message {:debug (with-out-str (pprint functions))})
     (try
       (openai/openai
        (merge
@@ -414,11 +437,11 @@
             (println summary)
             (System/exit 0))
           (let [cmd (apply command options arguments)]
-            (when (and 
-                    (not (:host-dir options))
-                    (< (count arguments) 2))
-              (warn 
-                "you must specify a --host-dir option.  
+            (when (and
+                   (not (:host-dir options))
+                   (< (count arguments) 2))
+              (warn
+               "you must specify a --host-dir option.  
                  This is the directory that will be provided to tool containers as /project." {})
               (System/exit 1))
             (alter-var-root

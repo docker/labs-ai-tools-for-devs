@@ -3,16 +3,11 @@ model: gpt-4
 stream: true
 functions:
   - name: curl
-    description: "Run a curl command."
-    parameters:
-      type: object
-      properties:
-        args:
-           type: string
-           description: "The arguments to pass to curl"
-    container:
-      image: vonwig/curl:latest
 ---
+
+# Prompt user
+
+Run the curl command to fetch gists for user slimslenderslacks from GitHub.
 
 # Background
 
@@ -23,4 +18,3 @@ Run curl commands.
 * read man pages
 
 After ragging the above content, do we know enough about curl to create and run curl examples?
-
