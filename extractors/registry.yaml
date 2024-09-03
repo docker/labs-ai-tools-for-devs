@@ -13,5 +13,7 @@ registry:
     command:
       - -json
     output-handler: linguist
+  - name: npm
+    image: vonwig/npm:latest
 
 
