@@ -32,7 +32,7 @@ const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput,
                     <Button onClick={() => {
                         setPrompts([...prompts, promptInput]);
                         setPromptInput('');
-                        track('add-prompt');
+                        track('DockerPromptsAddPrompt');
                     }}>Import prompt</Button>
                 )}
                 <Button onClick={() => {
@@ -42,7 +42,7 @@ const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput,
                         if (result.canceled) {
                             return;
                         }
-                        track('add-local-prompt');
+                        track('DockerPromptsAddLocalPrompt');
                         setPrompts([...prompts, ...result.filePaths.map(p => `local://${p}`)]);
                     });
                 }}>Add local prompt</Button>
