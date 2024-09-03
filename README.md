@@ -44,6 +44,7 @@ following command.
 
 ```sh
 docker run --rm \
+           --pull=always \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
            vonwig/prompts:latest --host-dir $PWD \
@@ -63,6 +64,7 @@ a GitHub ref.  For example, to test some local prompts in a directory named `my_
 
 ```sh
 docker run --rm \
+           --pull=always \
            -v /var/run/docker.sock:/var/run/docker.sock \
            --mount type=bind,source=$PWD,target=/app/my_prompts \
            --workdir /app \
