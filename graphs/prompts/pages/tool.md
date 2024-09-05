@@ -1,0 +1,1 @@
+- A tool is either a [Docker Image](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/), or a prompt file that an LLM might ask us to run on it's behalf.  By describing tools with standard metadata about what they do, and what parameters can be passed to them, we can enhance the capabilities of LLMs through tools.

@@ -1,0 +1,1 @@
+- [Ollama](https://ollama.com/) is a local llm runner. If there's an Ollama server running, prompts can use that server to do prompt completion.  Here's an [example](((66d7f3ff-8769-40b3-b6b5-fc4fceea879e))).  In this example, notice that the metadata contains `stream: false` because Ollama does not support function calling streaming enabed.
