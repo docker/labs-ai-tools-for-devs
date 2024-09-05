@@ -1,0 +1,11 @@
+FROM python:3.12-alpine3.20
+
+COPY extract.py /extract.py
+
+RUN pip install pylint
+
+VOLUME /project 
+
+WORKDIR /project
+
+CMD ["python", "/extract.py"]
