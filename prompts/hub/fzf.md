@@ -1,5 +1,5 @@
 ---
-functions:
+tools:
   - name: fzf
 ---
 
@@ -13,18 +13,11 @@ searching your shell history.
 * `Alt-c` to switch directories
 * `Ctrl-r` to search command history
 
-# Example user
+# Prompt user
 
 Read the man page for `fzf` and summarize what it does.
 
 # Prompt user
 
 Use fzf to search the /project folder for any files that contain the word 'Prompt'
-
-# Result
-
-run a man page
-
-what is fzf for?
-
 

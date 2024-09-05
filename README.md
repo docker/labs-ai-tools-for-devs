@@ -34,45 +34,7 @@ OpenAI API compatiable LLM's already support function calling. This is our workb
 - work across a wider range of environments
 - operate in a sandboxed environment
 
-
 # Get Started
-
-## Basics: Render a Prompt
-
-To generate prompts for a project, clone a repo into `$PWD` and run the 
-following command.
-
-```sh
-docker run --rm \
-           --pull=always \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=volume,source=docker-prompts,target=/prompts \
-           vonwig/prompts:latest --host-dir $PWD \
-                                 --user jimclark106 \
-                                 --platform darwin \
-                                 --prompts-dir "github:docker/labs-make-runbook?ref=main&path=prompts/lazy_docker"
-```
-
-The four arguments are 
-* `project root dir on host`, 
-* `docker login username`, 
-* `platform`, 
-* `github ref` for prompt files.
-
-If you need to test prompts before you push, you can bind a local prompt directory instead of using
-a GitHub ref.  For example, to test some local prompts in a directory named `my_prompts`, run:
-
-```sh
-docker run --rm \
-           --pull=always \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=bind,source=$PWD,target=/app/my_prompts \
-           --workdir /app \
-           vonwig/prompts:latest --host-dir $PWD \
-                                 --user jimclark106 \
-                                 --platform darwin \
-                                 --prompts-dir my_prompts
-```
 
 ## Running a Conversation Loop
 
@@ -82,51 +44,23 @@ echo $OPENAI_API_KEY > $HOME/.openai-api-key
 ```
 Run
 ```sh
-docker run --rm \
-           -it \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=volume,source=docker-prompts,target=/prompts \
-           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           vonwig/prompts:latest \
-                                 run \
-                                 --host-dir $PWD \
-                                 --user $USER \
-                                 --platform "$(uname -o)" \
-                                 --prompts "github:docker/labs-githooks?ref=main&path=prompts/git_hooks"
+docker run 
+  --rm \
+  --pull=always \
+  -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --mount type=volume,source=docker-prompts,target=/prompts \
+  --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+  vonwig/prompts:latest \
+    run \
+    --host-dir $PWD \
+    --user $USER \
+    --platform "$(uname -o)" \
+    --prompts "github:docker/labs-githooks?ref=main&path=prompts/git_hooks"
 ```
 
-### Running a Conversation Loop with Local Prompts
-
-If you want to run a conversation loop with local prompts then you need to think about two different directories, the one that the root of your project ($PWD above), 
-and the one that contains your prompts (let's call that $PROMPTS_DIR).  Here's a command line for running the prompts when our $PWD is the project root and we've set the environment variable
-$PROMPTS_DIR to point at the directory containing our prompts.
-
-Set OpenAI key
-```sh
-echo $OPENAI_API_KEY > $HOME/.openai-api-key
-```
-Run
-```sh
-docker run --rm \
-           -it \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=bind,source=$PROMPTS_DIR,target=/app/my_prompts \
-           --workdir /app \
-           --mount type=volume,source=docker-prompts,target=/prompts \
-           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           vonwig/prompts:latest \
-                                 run \
-                                 --host-dir $PWD \
-                                 --user $USER \
-                                 --platform "$(uname -o)" \
-                                 --prompts-dir my_prompts
-```
-
-## GitHub refs
-
-Prompts can be fetched from a GitHub repository when using the `--prompts` arg.  The mandatory parts of the ref are `github:{owner}/{repo}` 
-but optional `path` and `ref` can be added to pull prompts from branches, and to specify a subdirectory
-where the prompt files are located in the repo.
+See [docs](https://vonwig.github.io/prompts.docs/#/page/running%20the%20prompt%20engine) for more details on how to run the conversation loop, 
+and especially how to use it to run local prompts that are not yet in GitHub.
 
 ## Function volumes
 

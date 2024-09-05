@@ -26,14 +26,17 @@
          (update 0 (fn [s] (.substring s (dec c1))))
          (update (dec (count lines)) (fn [s] (.substring s 0 (- c2 c1))))))))
 
-;; headings that include the word Prompt
-(defn prompt-section? [content node]
-  (string/includes?
-   (-> node (nth 2) (nth 3) (nth 1) (from-range content))
-   "Prompt"))
+(def prompt-pattern #"(?i)\s*prompt\s+(\w+)\s?")
 
 (defn extract-role [s]
-  (-> s (string/replace "Prompt" "") (string/trim)))
+  (second
+   (re-find prompt-pattern s)))
+
+;; headings that include the word Prompt
+(defn prompt-section? [content node]
+  (re-matches
+   prompt-pattern
+   (-> node (nth 2) (nth 3) (nth 1) (from-range content))))
 
 (defn remove-first-line [s]
   (->> (string/split s #"\n")
@@ -45,7 +48,7 @@
   {:role
    (-> node (nth 2) (nth 3) (nth 1) (from-range content) (extract-role))
    :content
-   (remove-first-line (from-range (nth node 1) content))} )
+   (remove-first-line (from-range (nth node 1) content))})
 
 (defn extract-prompts [content ast]
   (->>
@@ -57,7 +60,8 @@
    (map (partial node-content content))))
 
 (defn parse-markdown [content]
-  (let [x (docker/function-call-with-stdin
+  (let [content (str content "\n# END\n\n")
+        x (docker/function-call-with-stdin
            {:image "docker/lsp:treesitter"
             :content content})
         {s :pty-output} (async/<! (async/thread
@@ -71,7 +75,7 @@
 (comment
   (string/split content #"\n")
 
-  (def content (slurp "prompts/qrencode/README.md" ))
+  (def content (slurp "prompts/qrencode/README.md"))
   (pprint (parse-markdown content))
 
   (def t

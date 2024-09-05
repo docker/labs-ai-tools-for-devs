@@ -2,6 +2,7 @@
   (:require
    [babashka.curl :as curl]
    [cheshire.core :as json]
+   [clojure.core.async :as async]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as spec]
    [clojure.string :as string]
@@ -195,7 +196,7 @@
 (spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::pat]
                                             :req-un [::image]))
 
-(defn run-function [m]
+(defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
                (let [jwt (creds/credential-helper->jwt)]
@@ -203,16 +204,30 @@
                             (or (:pat m) jwt))
                    {:creds {:username (:user m)
                             :password (or (:pat m) jwt)}}))))
-  (let [x (create m)]
+  (let [x (create m)
+        finished-channel (async/promise-chan)]
     (start x)
-    (wait x)
+    ;; timeout process
+    (async/go
+      (async/<! (async/timeout timeout))
+      (async/>! finished-channel {:timeout timeout
+                                  :done :timeout
+                                  :kill-container (kill-container x)}))
+    ;; watch the container
+    (async/go 
+      (wait x)
+      (async/>! finished-channel {:done :exited}))
+
     ;; body is raw PTY output
-    (let [s (:body (attach x))
+    (let [finish-reason (async/<!! finished-channel)
+          s (:body (attach x))
           info (inspect x)]
       (delete x)
-      {:pty-output s
-       :exit-code (-> info :State :ExitCode)
-       :info info})))
+      (merge
+        finish-reason
+        {:pty-output s
+         :exit-code (-> info :State :ExitCode)
+         :info info}))))
 
 (def extract-facts run-function)
 
@@ -279,10 +294,12 @@
             :host-dir "/Users/slim/docker/genai-stack"
             :user "jimclark106")) keyword))
   (docker/delete-image {:image "vonwig/go-linguist:latest"})
-  (extract-facts {:image "vonwig/go-linguist:latest"
-                  :command ["-json"]
-                  :host-dir "/Users/slim/docker/labs-make-runbook"
-                  :user "jimclark106"})
+  (pprint
+    (extract-facts {:image "vonwig/go-linguist:latest"
+                    :timeout 100
+                    :command ["-json"]
+                    :host-dir "/Users/slim/docker/labs-make-runbook"
+                    :user "jimclark106"}))
   (pprint
    (json/parse-string
     (extract-facts

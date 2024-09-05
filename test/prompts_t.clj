@@ -2,16 +2,28 @@
   (:require [clojure.test :as t]
             [babashka.fs :as fs]
             [prompts]
+            [markdown]
             [pogonos.partials :as partials]))
+
+(def not-nil? (comp not nil?))
+
+(t/deftest prompt-patterns
+  (t/are [x y] (x y)
+    nil? (re-matches markdown/prompt-pattern "#prompt user ")
+    not-nil? (re-matches markdown/prompt-pattern "prompt user ")
+    not-nil? (re-matches markdown/prompt-pattern "Prompt user ")
+    nil? (re-matches markdown/prompt-pattern "prompt ")
+    not-nil? (re-matches markdown/prompt-pattern "prompt user")
+    nil? (re-matches markdown/prompt-pattern "xprompt user ")))
 
 (t/deftest render-partials
   (t/is
    (.startsWith
     (->
-      (#'prompts/selma-render
-        (fs/file "prompts/dockerfiles")
-        {}
-        {:role "system" :content (slurp "prompts/dockerfiles/020_system_prompt.md")})
+     (#'prompts/selma-render
+      (fs/file "prompts/dockerfiles")
+      {}
+      {:role "system" :content (slurp "prompts/dockerfiles/020_system_prompt.md")})
      :content)
     "\nWrite Dockerfiles")))
 

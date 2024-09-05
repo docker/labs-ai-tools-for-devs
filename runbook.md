@@ -185,19 +185,21 @@ bb -m prompts run \
 #### Using Containerized runner
 
 ```sh
-docker run --rm \
-          -it \
-           -v /var/run/docker.sock:/var/run/docker.sock \
-           --mount type=bind,source=$PWD,target=/app/local \
-           --workdir /app \
-           --mount type=volume,source=docker-prompts,target=/prompts \
-           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
-           vonwig/prompts:local \
-                                 run \
-                                 --host-dir /Users/slim/docker/labs-make-runbook \
-                                 --user jimclark106 \
-                                 --platform "$(uname -o)" \
-                                 --prompts-dir local/prompts/dockerfiles
+docker run 
+  --rm \
+  --pull=always \
+  -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --mount type=bind,source=$PWD,target=/app/local \
+  --workdir /app \
+  --mount type=volume,source=docker-prompts,target=/prompts \
+  --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+  vonwig/prompts:local \
+    run \
+    --host-dir /Users/slim/docker/labs-make-runbook \
+    --user jimclark106 \
+    --platform "$(uname -o)" \
+    --prompts-dir local/prompts/dockerfiles
 ```
 
 ### Clean up local images

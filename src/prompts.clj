@@ -49,7 +49,9 @@
      params
        host-dir - the host dir that the container will mount read-only at /project
        m - the map to merge into
-       container-definition - the definition for the function"
+       container-definition - the definition for the function
+     returns
+       map of json decoded data keyed by the extractor name"
   [host-dir m container-definition]
   (try
     (medley/deep-merge
@@ -93,9 +95,12 @@
                   "--vs-machine-id" "none"
                   "--workspace" "/project"]}])))
 
-(defn collect-functions [f]
+(defn collect-functions 
+  "get either :functions or :tools collection
+    returns collection of openai compatiable tool definitions augmented with container info"
+  [f]
   (->>
-   (-> (markdown/parse-metadata (metadata-file f)) first :functions)
+    (-> (markdown/parse-metadata (metadata-file f)) first (select-keys [:tools :functions]) seq first second)
    (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg"} (:name m))]
                      [{:type "function"
                        :function
@@ -186,7 +191,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user pat] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user pat timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -202,11 +207,18 @@
                                         (if json-arg-string [json-arg-string] ["{}"])
                                         (when-let [c (-> definition :container :command)] c))}
                              (when user {:user user})
-                             (when pat {:pat pat}))
-              {:keys [pty-output exit-code]} (docker/run-function function-call)]
-          (if (= 0 exit-code)
+                             (when pat {:pat pat})
+                             (when timeout {:timeout timeout}))
+              {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)]
+          (cond 
+            (and (= :exited done) (= 0 exit-code))
             (resolve pty-output)
-            (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))))
+            (and (= :exited done) (not= 0 exit-code))
+            (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
+            (= :timeout done)
+            (fail (format "call timed out: %s" (:timeout result)))
+            :else
+            (fail (format "call failed"))))
         (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
         ;; TODO set a custom map for prompts in the next conversation loop
         (do
@@ -238,8 +250,8 @@
                                      function-handler
                                      (merge
                                       opts
+                                      (select-keys m [:timeout])
                                       {:functions functions})))]
-    (jsonrpc/notify :message {:debug (with-out-str (pprint functions))})
     (try
       (openai/openai
        (merge
@@ -280,9 +292,9 @@
             (do
               (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
               {:messages (concat prompts messages) :done finish-reason})))))
-    (catch Throwable _
+    (catch Throwable ex
       (let [c (async/promise-chan)]
-        (jsonrpc/notify :error {:content (format "%s is not a valid prompt configuration" opts)})
+        (jsonrpc/notify :error {:content (format "not a valid prompt configuration: %s" (with-out-str (pprint opts))) :exception (str ex)})
         (async/>! c {:messages [] :done "error"})
         c))))
 
