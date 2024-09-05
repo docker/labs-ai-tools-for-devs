@@ -21,16 +21,18 @@ const Projects: React.FC<ProjectsProps> = ({ projects, selectedProject, setProje
             <Stack direction='row' spacing={1} sx={{ mt: 1 }} alignItems={'center'} justifyContent={'space-between'}>
                 <Button sx={{ padding: 1 }} onClick={() => {
                     client.desktopUI.dialog.showOpenDialog({
-                        properties: ['openDirectory', 'multiSelections']
+                        title: 'Import projects',
+                        properties: ['openDirectory', 'multiSelections'],
                     }).then((result) => {
                         if (result.canceled) {
                             return;
                         }
                         const newProjects = result.filePaths;
                         setProjects([...projects, ...newProjects]);
+                        setSelectedProject(newProjects[0]);
                     });
                 }}>
-                    Import projects
+                    Import project(s)
                 </Button>
             </Stack>
             <List>
@@ -57,7 +59,7 @@ const Projects: React.FC<ProjectsProps> = ({ projects, selectedProject, setProje
                     </ListItem>
                 ))}
             </List>
-        </Paper>
+        </Paper >
     );
 };
 
