@@ -7,7 +7,7 @@ export const getRunArgs = (promptRef: string, projectDir: string, username: stri
         const localPromptPath = promptRef.replace('local://', '');
         const pathSeparator = platform === 'win32' ? '\\' : '/';
         promptRef = localPromptPath.split(pathSeparator).pop() || 'unknown-local-prompt';
-        promptArgs = [isMarkdown ? "--prompt-file" : "--prompts-dir", `/app/${promptRef}`];
+        promptArgs = [isMarkdown ? "--prompts-file" : "--prompts-dir", `/app/${promptRef}`];
         mountArgs = ["--mount", `type=bind,source=${localPromptPath},target=/app/${promptRef}`];
     }
 
