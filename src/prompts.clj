@@ -84,7 +84,13 @@
 
 (defn collect-extractors [f]
   (let [extractors (->>
-                    (-> (markdown/parse-metadata (metadata-file f)) first :extractors)
+                     (-> (try 
+                           (markdown/parse-metadata (metadata-file f)) 
+                           (catch Throwable _ 
+                             ;; files with empty strings will throw assertion failures
+                             nil)) 
+                         first 
+                         :extractors)
                     (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
@@ -95,12 +101,12 @@
                   "--vs-machine-id" "none"
                   "--workspace" "/project"]}])))
 
-(defn collect-functions 
+(defn collect-functions
   "get either :functions or :tools collection
     returns collection of openai compatiable tool definitions augmented with container info"
   [f]
   (->>
-    (-> (markdown/parse-metadata (metadata-file f)) first (select-keys [:tools :functions]) seq first second)
+   (-> (markdown/parse-metadata (metadata-file f)) first (select-keys [:tools :functions]) seq first second)
    (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg"} (:name m))]
                      [{:type "function"
                        :function
@@ -210,7 +216,7 @@
                              (when pat {:pat pat})
                              (when timeout {:timeout timeout}))
               {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)]
-          (cond 
+          (cond
             (and (= :exited done) (= 0 exit-code))
             (resolve pty-output)
             (and (= :exited done) (not= 0 exit-code))
@@ -297,6 +303,19 @@
         (jsonrpc/notify :error {:content (format "not a valid prompt configuration: %s" (with-out-str (pprint opts))) :exception (str ex)})
         (async/>! c {:messages [] :done "error"})
         c))))
+
+(comment
+  ;; for testing conversation-loop in repl
+  (def x {:stream true,
+          :host-dir "/Users/slim/docker/labs-make-runbook",
+          :prompts "/Users/slim/docker/labs-ai-tools-for-devs/prompts/hub/default.md"
+          :platform "darwin", :user "jimclark106",
+          :thread-id "3e61ffe7-840e-4177-b84a-f6f7db58b24d"})
+  (get-prompts x)
+  (run-extractors x)
+  (collect-extractors (:prompts x))
+  (async/<!! (conversation-loop
+              x)))
 
 (defn- with-volume [f & {:keys [thread-id save-thread-volume]}]
   (let [thread-id (or thread-id (str (random-uuid)))]
