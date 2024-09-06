@@ -112,4 +112,16 @@ registry:
           - find
           - .
           - -name
+  - name: read-file
+    description: read a file
+    parameters:
+        type: object
+        properties:
+          path:
+            type: string
+            description: the file path
+    container:
+        image: vonwig/bb:latest
+        command:
+          - "(slurp (:path args))"
 

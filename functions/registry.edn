@@ -63,4 +63,11 @@
                           :properties {:glob {:type "string",
                                               :description "the glob pattern for files that should be found"}}},
              :container {:image "vonwig/findutils:latest",
-                         :command ["find" "." "-name"]}}]}
+                         :command ["find" "." "-name"]}}
+            {:name "read-file",
+             :description "read a file",
+             :parameters {:type "object",
+                          :properties {:path {:type "string",
+                                              :description "the file path"}}},
+             :container {:image "vonwig/bb:latest",
+                         :command ["(slurp (:path args))"]}}]}

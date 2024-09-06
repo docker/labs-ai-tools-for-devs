@@ -107,7 +107,7 @@
   [f]
   (->>
    (-> (markdown/parse-metadata (metadata-file f)) first (select-keys [:tools :functions]) seq first second)
-   (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg"} (:name m))]
+   (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint"} (:name m))]
                      [{:type "function"
                        :function
                        {:name (format "%s-manual" tool)
@@ -300,7 +300,9 @@
               {:messages (concat prompts messages) :done finish-reason})))))
     (catch Throwable ex
       (let [c (async/promise-chan)]
-        (jsonrpc/notify :error {:content (format "not a valid prompt configuration: %s" (with-out-str (pprint opts))) :exception (str ex)})
+        (jsonrpc/notify :error {:content 
+                                (format "not a valid prompt configuration: %s" (with-out-str (pprint opts)))
+                                :exception (str ex)})
         (async/>! c {:messages [] :done "error"})
         c))))
 
