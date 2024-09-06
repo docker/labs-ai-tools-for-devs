@@ -196,14 +196,17 @@
 (spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::pat]
                                             :req-un [::image]))
 
-(defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
+(defn- -pull [m]
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
                (let [jwt (creds/credential-helper->jwt)]
                  (when (and (:user m)
                             (or (:pat m) jwt))
                    {:creds {:username (:user m)
-                            :password (or (:pat m) jwt)}}))))
+                            :password (or (:pat m) jwt)}})))))
+
+(defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
+  (-pull m)
   (let [x (create m)
         finished-channel (async/promise-chan)]
     (start x)
@@ -214,7 +217,7 @@
                                   :done :timeout
                                   :kill-container (kill-container x)}))
     ;; watch the container
-    (async/go 
+    (async/go
       (wait x)
       (async/>! finished-channel {:done :exited}))
 
@@ -224,10 +227,10 @@
           info (inspect x)]
       (delete x)
       (merge
-        finish-reason
-        {:pty-output s
-         :exit-code (-> info :State :ExitCode)
-         :info info}))))
+       finish-reason
+       {:pty-output s
+        :exit-code (-> info :State :ExitCode)
+        :info info}))))
 
 (def extract-facts run-function)
 
@@ -252,15 +255,16 @@
 (defn docker-stream-format->stdout [bytes]
   ;; use xxd to look at the bytes
   #_(try
-    (with-open [w (java.io.BufferedOutputStream. 
-                    (java.io.FileOutputStream. "hey.txt"))]
-     (.write w bytes))
-    
-    (catch Throwable t
-      (println t)))
+      (with-open [w (java.io.BufferedOutputStream.
+                     (java.io.FileOutputStream. "hey.txt"))]
+        (.write w bytes))
+
+      (catch Throwable t
+        (println t)))
   (String. (Arrays/copyOfRange bytes 8 (count bytes))))
 
 (defn function-call-with-stdin [m]
+  (-pull m)
   (let [x (merge
            m
            (create (assoc m
@@ -276,9 +280,9 @@
   (.close (:socket x))
   (wait x)
      ;; body is raw PTY output
-     (let [s (docker-stream-format->stdout 
-               (:body 
-                 (attach-container-stdout-logs x)) )
+  (let [s (docker-stream-format->stdout
+           (:body
+            (attach-container-stdout-logs x)))
         info (inspect x)]
     (delete x)
     {:pty-output s
@@ -295,11 +299,11 @@
             :user "jimclark106")) keyword))
   (docker/delete-image {:image "vonwig/go-linguist:latest"})
   (pprint
-    (extract-facts {:image "vonwig/go-linguist:latest"
-                    :timeout 100
-                    :command ["-json"]
-                    :host-dir "/Users/slim/docker/labs-make-runbook"
-                    :user "jimclark106"}))
+   (extract-facts {:image "vonwig/go-linguist:latest"
+                   :timeout 100
+                   :command ["-json"]
+                   :host-dir "/Users/slim/docker/labs-make-runbook"
+                   :user "jimclark106"}))
   (pprint
    (json/parse-string
     (extract-facts
