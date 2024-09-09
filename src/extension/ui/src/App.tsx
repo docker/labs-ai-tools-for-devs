@@ -176,7 +176,10 @@ export function App() {
     ]);
 
     runOutput.updateOutput({ method: 'message', params: { debug: 'Running prompts...' } })
+
     const args = getRunArgs(selectedPrompt!, selectedProject!, "", client.host.platform)
+
+    runOutput.updateOutput({ method: 'message', params: { debug: `Running prompt image with args ${args}` } })
 
     client.docker.cli.exec("run", args, {
       stream: {

@@ -37,15 +37,18 @@ const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput,
                 )}
                 <Button onClick={() => {
                     client.desktopUI.dialog.showOpenDialog({
-                        properties: ['openDirectory', 'multiSelections']
+                        title: 'Select prompt',
+                        properties: ['openDirectory', 'openFile', 'multiSelections'],
+                        filters: [{ name: 'Markdown', extensions: ['.md'] }],
                     }).then((result) => {
                         if (result.canceled) {
                             return;
                         }
                         track('DockerPromptsAddLocalPrompt');
                         setPrompts([...prompts, ...result.filePaths.map(p => `local://${p}`)]);
+                        setSelectedPrompt(`local://${result.filePaths[0]}`);
                     });
-                }}>Add local prompt</Button>
+                }}>Add local prompt(s)</Button>
             </Stack>
             <List>
                 {prompts.map((prompt) => (
