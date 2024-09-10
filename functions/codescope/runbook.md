@@ -41,5 +41,23 @@ docker build -t vonwig/codescope:latest -f Dockerfile .
 This is containerized so you'll need to bind mount the project path in the container.
 
 ```sh
-docker run -it --rm --mount=type=bind,source=$PWD,target=/project vonwig/codescope:latest /project
+docker run -it --rm \
+           --mount=type=bind,source=/Users/slim/slimslenderslacks/flask-nix-example,target=/project --workdir /project \
+           vonwig/codescope:latest \
+           '{"args": "/project"}'
 ```
+
+```sh
+docker run -it --rm \
+           --mount=type=bind,source=/Users/slim/slimslenderslacks/flask-nix-example,target=/project --workdir /project \
+           vonwig/codescope:latest \
+           '{"args": "-i /project"}'
+```
+
+```sh
+docker run -it --rm \
+           --mount=type=bind,source=/Users/slim/slimslenderslacks/flask-nix-example,target=/project --workdir /project \
+           vonwig/codescope:latest \
+           '{"args": ""}' man
+```
+

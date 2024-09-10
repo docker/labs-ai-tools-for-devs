@@ -26,8 +26,31 @@
         in
         rec {
 
-          packages.clipboard = clipboard;
-          packages.default = pkgs.callPackage ./derivation.nix {inherit clipboard;};
+          packages = rec {
+
+            codescope = pkgs.callPackage ./derivation.nix {inherit clipboard;};
+
+            # this derivation just contains the init.clj script
+            scripts = pkgs.stdenv.mkDerivation {
+              name = "scripts";
+              src = ./.;
+              installPhase = ''
+                cp init.clj $out
+              '';
+            };
+
+            run-entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
+              export PATH=${pkgs.lib.makeBinPath [codescope pkgs.man]}
+              export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
+              /usr/local/bin/bb ${scripts} "$@"
+            '';
+
+            default = pkgs.buildEnv {
+              name = "codescope";
+              paths = [ run-entrypoint ];
+            };
+          };
+
           devShells.default = pkgs.mkShell {
             name = "python";
             nativeBuildInputs = with pkgs;

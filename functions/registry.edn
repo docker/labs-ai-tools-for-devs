@@ -26,13 +26,15 @@
                                                                               :description "the content that should be written to a file"},
                                                                     :executable {:type "boolean",
                                                                                  :description "whether to make the file executable"}}}}}},
-             :container {:image "vonwig/function_write_files:latest"}}
+             :container {:image "vonwig/function_write_files:latest",
+                         :command ["{{raw|safe}}"]}}
             {:name "docker_scout_tag_recommendation",
              :description "get a recommended tag",
              :parameters {:type "object",
                           :properties {:repository {:type "string",
                                                     :description "the name docker image repository"}}},
-             :container {:image "vonwig/docker_scout_tag_recommendation:latest"}}
+             :container {:image "vonwig/docker_scout_tag_recommendation:latest",
+                         :command ["{{raw|safe}}"]}}
             {:name "pr-create",
              :description "create a new pull request",
              :parameters {:type "object",
@@ -41,33 +43,27 @@
                                        :body {:type "string",
                                               :description "the body of the pull request"}}},
              :container {:env {:GITHUB_TOKEN ""},
-                         :image "vonwig/github-cli:latest"}}
-            {:name "git-commit",
-             :description "create a new pull request",
-             :parameters {:type "object",
-                          :properties {:branch {:type "string",
-                                                :description "the title of the pull request"}}},
-             :container {:env {:GITHUB_TOKEN ""},
-                         :image "vonwig/git:latest"}}
-            {:name "typo",
-             :description "check a set of files for typos",
-             :parameters {:type "object",
-                          :properties {:files {:type "array",
-                                               :items {:type "object",
-                                                       :properties {:path {:type "string",
-                                                                           :description "the relative path to files that should be checked"}}}}}},
-             :container {:image "vonwig/typos:latest"}}
+                         :image "vonwig/github-cli:latest",
+                         :command ["{{raw|safe}}"]}}
             {:name "findutils-by-name",
              :description "find files in a project by name",
              :parameters {:type "object",
                           :properties {:glob {:type "string",
                                               :description "the glob pattern for files that should be found"}}},
              :container {:image "vonwig/findutils:latest",
-                         :command ["find" "." "-name"]}}
+                         :command ["{{raw|safe}}" "find" "." "-name"]}}
+            {:name "codescope",
+             :description "run codescope on a project",
+             :parameters {:type "object",
+                          :properties {:path {:type "string",
+                                              :description "the file path"}}},
+             :container {:image "vonwig/codescope:latest",
+                         :command ["{{raw|safe}}"]}}
             {:name "read-file",
              :description "read a file",
              :parameters {:type "object",
                           :properties {:path {:type "string",
                                               :description "the file path"}}},
              :container {:image "vonwig/bb:latest",
-                         :command ["(slurp (:path args))"]}}]}
+                         :command ["{{raw|safe}}"
+                                   "(slurp (:path args))"]}}]}

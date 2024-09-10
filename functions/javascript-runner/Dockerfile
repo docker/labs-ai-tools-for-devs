@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/nix,from=nixos/nix:latest@sha256:3f6c77ee4d2c82e4
   cp -R $(nix-store -qR /tmp/output/result) /tmp/nix-store-closure
 EOF
 
-FROM babashka/babashka:latest@sha256:9e0381fc4c78ee6ff12fd8836352cf343afba289aceb77e36129d92f30a92cc7
+FROM scratch
 
 WORKDIR /app
 

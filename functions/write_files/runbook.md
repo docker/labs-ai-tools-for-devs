@@ -10,7 +10,10 @@ The `write_file` function has wo parameters.
 This function should be given a rw bind mount for the root of a project.
 
 ```sh
-docker run --rm --mount type=bind,source=$PWD,target=/project --workdir /project vonwig/function_write_files:latest "$(echo '{"files":[{"path":"file1.txt","content":"hellow world"}]}')"
+docker run --rm --mount type=bind,source=$PWD,target=/project 
+                --workdir /project 
+                vonwig/function_write_files:latest 
+                "$(echo '{"files":[{"path":"file1.txt","content":"hellow world"}]}')"
 ```
 
 ## Build

@@ -1,0 +1,32 @@
+
+
+## ROLE assistant
+In Node.js, you can access command line arguments via the process.argv array. This will contain the complete command-line.
+
+Here is a simple program that reads a JavaScript string from the first command line argument and then evaluates it.
+
+```javascript
+// current file name will occupy the 0th index, followed by file name (or execution command e.g "node") on 1st index  and user supplied argument from 2nd index onwards
+const args = process.argv.slice(2); 
+
+if(args.length == 0) {
+    console.log("Please provide javascript command as argument.");
+    process.exit();
+}
+
+try {
+    let result = eval(args[0]);
+    console.log(result);
+} catch(e) {
+    console.error("Error in executing provided javascript command:", e.message);
+}
+```
+
+To use this script, you need to write the JavaScript string as a command line argument.
+
+```shell
+node evalScript.js "console.log('Hello, world!')"
+```
+
+Note: Using eval() function can be dangerous because it executes the code it's given with the privileges of the caller. Even, it can be harmful when used with user-provided input, leading to potential code injection vulnerabilities. Be cautious while using eval().
+{"done":"stop"}

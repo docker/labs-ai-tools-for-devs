@@ -14,13 +14,14 @@
    [git.registry]
    [jsonrpc]
    [logging :refer [warn]]
-   [markdown.core :as markdown]
    [markdown :as markdown-parser]
+   [markdown.core :as markdown]
    [medley.core :as medley]
    [openai]
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
-   [registry])
+   [registry]
+   [selmer.parser :as selmer])
   (:import
    [java.net ConnectException]))
 
@@ -84,13 +85,13 @@
 
 (defn collect-extractors [f]
   (let [extractors (->>
-                     (-> (try 
-                           (markdown/parse-metadata (metadata-file f)) 
-                           (catch Throwable _ 
+                    (-> (try
+                          (markdown/parse-metadata (metadata-file f))
+                          (catch Throwable _
                              ;; files with empty strings will throw assertion failures
-                             nil)) 
-                         first 
-                         :extractors)
+                            nil))
+                        first
+                        :extractors)
                     (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
@@ -115,7 +116,7 @@
                         :container
                         {:image (format "vonwig/%s:latest" tool)
                          :command
-                         ["man"]}}}
+                         ["{{raw|safe}}" "man"]}}}
                       {:type "function"
                        :function
                        {:name tool
@@ -128,7 +129,8 @@
                           {:type "string"
                            :description (format "The arguments to pass to %s" tool)}}}
                         :container
-                        {:image (format "vonwig/%s:latest" tool)}}}]
+                        {:image (format "vonwig/%s:latest" tool)
+                         :command ["{{raw|safe}}"]}}}]
                      [{:type "function" :function (merge (registry/get-function m) m)}])))))
 
 (defn collect-metadata
@@ -184,6 +186,9 @@
                   (markdown-parser/parse-markdown (slurp prompts)))]
     (map renderer prompts)))
 
+(defn interpolate [m template]
+  (selmer/render template m {}))
+
 (declare conversation-loop)
 
 (defn function-handler
@@ -205,13 +210,22 @@
     (try
       (cond
         (:container definition) ;; synchronous call to container function
-        (let [function-call (merge
+        (let [arg-context (merge
+                            ;; TODO raw is a bad name when merging
+                           {:raw (if json-arg-string
+                                   json-arg-string
+                                   "{}")}
+                           (when json-arg-string (json/parse-string json-arg-string true)))
+              function-call (merge
                              (:container definition)
                              (dissoc opts :functions)
-                             {:command (concat
-                                        []
-                                        (if json-arg-string [json-arg-string] ["{}"])
-                                        (when-let [c (-> definition :container :command)] c))}
+                             {:command (into []
+                                             (concat
+                                              []
+                                              (->>
+                                               (-> definition :container :command)
+                                               (map (partial interpolate arg-context))
+                                               (into []))))}
                              (when user {:user user})
                              (when pat {:pat pat})
                              (when timeout {:timeout timeout}))
@@ -300,7 +314,7 @@
               {:messages (concat prompts messages) :done finish-reason})))))
     (catch Throwable ex
       (let [c (async/promise-chan)]
-        (jsonrpc/notify :error {:content 
+        (jsonrpc/notify :error {:content
                                 (format "not a valid prompt configuration: %s" (with-out-str (pprint opts)))
                                 :exception (str ex)})
         (async/>! c {:messages [] :done "error"})
