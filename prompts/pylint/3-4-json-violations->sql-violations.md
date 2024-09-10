@@ -21,11 +21,14 @@ It should then iterate over each element of an array with the following schema:
 
 ```json
 [
-  {"message": "some violation", "path": "app.py", "type": "error"}
+  {"message": "some violation", "path": "app.py", "type": "error",
+   "line": 0, "column": 0, "endLine": 1, "endColumn": 1, "path": "src/app.py"}
 ]
 ```
 
-For each element of the array, it should create an INSERT statement for a table named PEOPLE with the properties from the map.
+For each element of the array, it should create two INSERT statements. 
+The first should insert the columns message, path, and type into a table named VIOLATIONS using the properties from the map.
+The second should insert the the columns PATH, START_LINE, END_LINE, START_COLUMN, END_COLUMN into a tabled named RANGE using the properties from the map.
 
 The statement should be printed to the console.
 
