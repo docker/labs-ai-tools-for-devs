@@ -42,7 +42,9 @@ Set OpenAI key
 ```sh
 echo $OPENAI_API_KEY > $HOME/.openai-api-key
 ```
+
 Run
+
 ```sh
 docker run 
   --rm \
