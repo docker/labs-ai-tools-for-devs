@@ -235,7 +235,7 @@
 (def extract-facts run-function)
 
 (defn write-stdin [container-id content]
-  (let [buf (ByteBuffer/allocate 1024)
+  (let [buf (ByteBuffer/allocate (* 2 (count content)))
         address (UnixDomainSocketAddress/of "/var/run/docker.sock")
         client (SocketChannel/open address)]
 
@@ -245,11 +245,14 @@
     (.clear buf)
     (.put buf (.getBytes (String. (format "POST /containers/%s/attach?stdin=true&stream=true HTTP/1.1\n" container-id))))
     (.put buf (.getBytes (String. "Host: localhost\nConnection: Upgrade\nUpgrade: tcp\n\n")))
-    (.put buf (.getBytes content))
-    (.flip buf)
-
-    (while (.hasRemaining buf)
-      (.write client buf))
+    (try
+      (.put buf (.getBytes content))
+      (.flip buf)
+      (while (.hasRemaining buf)
+        (.write client buf))
+      (catch Throwable t
+        (println "could not write to stdin " t)
+        client))
     client))
 
 (defn docker-stream-format->stdout [bytes]
@@ -261,7 +264,11 @@
 
       (catch Throwable t
         (println t)))
-  (String. (Arrays/copyOfRange bytes 8 (count bytes))))
+  (try
+    (String. (Arrays/copyOfRange bytes 8 (count bytes)))
+    (catch Throwable t
+      (println t) 
+      "")))
 
 (defn function-call-with-stdin [m]
   (-pull m)
@@ -276,18 +283,36 @@
 
 (defn finish-call
   "This is a blocking call that waits for the container to finish and then returns the output and exit code."
-  [x]
+  [{:keys [timeout] :or {timeout 10000} :as x}]
+  ;; close stdin socket
   (.close (:socket x))
-  (wait x)
-     ;; body is raw PTY output
-  (let [s (docker-stream-format->stdout
-           (:body
-            (attach-container-stdout-logs x)))
-        info (inspect x)]
-    (delete x)
-    {:pty-output s
-     :exit-code (-> info :State :ExitCode)
-     :info info}))
+  ;; timeout process
+  (let [finished-channel (async/promise-chan)]
+    (async/go
+      (async/<! (async/timeout timeout))
+      (async/>! finished-channel {:timeout timeout
+                                  :done :timeout
+                                  :kill-container (kill-container x)}))
+    ;; watch the container
+    (async/go
+      (wait x)
+      (async/>! finished-channel {:done :exited}))
+    ;; body is raw PTY output
+    (try
+      (let [finish-reason (async/<!! finished-channel)
+            s (docker-stream-format->stdout
+                (:body
+                  (attach-container-stdout-logs x)))
+            info (inspect x)]
+        (delete x)
+        (merge
+          finish-reason
+          {:pty-output s
+           :exit-code (-> info :State :ExitCode)
+           :info info}))
+      (catch Throwable t
+        (delete x)
+        {}))))
 
 (comment
 

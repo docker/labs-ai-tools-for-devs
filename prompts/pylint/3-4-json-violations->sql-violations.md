@@ -21,7 +21,7 @@ It should then iterate over each element of an array with the following schema:
 
 ```json
 [
-  {"name": "hello", "age": 1}
+  {"message": "some violation", "path": "app.py", "type": "error"}
 ]
 ```
 

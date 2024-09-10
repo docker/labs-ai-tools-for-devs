@@ -64,9 +64,9 @@
         x (docker/function-call-with-stdin
            {:image "docker/lsp:treesitter"
             :content content})
-        {s :pty-output} (async/<! (async/thread
-                                    (Thread/sleep 10)
-                                    (docker/finish-call x)))]
+        {s :pty-output} (async/<!! (async/thread
+                                     (Thread/sleep 10)
+                                     (docker/finish-call x)))]
     (->> s
          (edn/read-string)
          (extract-prompts content)
@@ -77,6 +77,8 @@
 
   (def content (slurp "prompts/qrencode/README.md"))
   (pprint (parse-markdown content))
+
+  (parse-markdown (slurp "prompts/pylint/docs.md"))
 
   (def t
     '("section"

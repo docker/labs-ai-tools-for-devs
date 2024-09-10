@@ -19,5 +19,5 @@ docker run -it --rm vonwig/pylint:latest '{}' man
 
 # prompt user
 
-Run pylint with the arguments `-f json --output /thread/violations.json src/app.py`.
+Run pylint with the arguments `-f json --output /thread/violations.json **/*.py`
 
