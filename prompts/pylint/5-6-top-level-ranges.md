@@ -1,19 +1,20 @@
 ---
 tools:
-  - name: run-javascript-sandbox
-    description: execute javascript code
+  - name: run-tree-sitter
+    description: Runs tree sitter in the current directory.
     parameters:
       type: object
       properties:
-        javascript:
+        tree_sitter_args:
           type: string
-          description: the javascript code to run
+          description: The args to pass to tree-sitter-cli
     container:
-      image: vonwig/javascript-runner
+      image: vonwig/tree_sitter
       command:
-        - "{{javascript|safe}}"
+        - "tree-sitter {{tree_sitter_args|safe}}"
 ---
 
 # prompt user
-Use tree-sitter
+
+Use tree-sitter with args `parse '**/*.py' > /thread/ast.txt`
 
