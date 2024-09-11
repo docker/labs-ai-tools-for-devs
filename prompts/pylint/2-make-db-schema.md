@@ -19,12 +19,12 @@ tools:
 ---
 
 # prompt user
-
+ 
 Write a SQL schema for a table named RANGES with columns ID, PATH, START_LINE, END_LINE, START_COLUMN, and 
-END_COLUMN. The ID is the primary key and should be sequenced.
+END_COLUMN. The ID is the primary key and is a STRING type.
 
-Write a SQL schema for a table named VIOLATIONS with a foreign key named RANGE, and columns
-MESSAGE, TYPE, and ID.  The ID is the primary key.
+Write a SQL schema for a table named VIOLATIONS with a foreign key named RANGE of type STRING, and columns
+MESSAGE, TYPE, and ID.  The ID is the primary key and should be sequenced.
 
 Run the sqlite command with the database set to `/thread/db.dqlite` and send the SQL generated above.
 

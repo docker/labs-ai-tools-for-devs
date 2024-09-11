@@ -12,22 +12,6 @@ tools:
       image: vonwig/javascript-runner
       command:
         - "{{javascript|safe}}"
-  - name: sqlite
-    description: run the sqlite command
-    parameters:
-      type: object
-      properties:
-        database:
-          type: string
-          description: the path to the database
-        sql:
-          type: string
-          description: the sql statement to run
-    container:
-      image: vonwig/sqlite:latest
-      command:
-        - "{{database}}"
-        - "{{sql|safe}}"
 ---
 
 # prompt user
@@ -43,8 +27,11 @@ It should then iterate over each element of an array with the following schema:
 ```
 
 For each element of the array, it should create two INSERT statements. 
-The first should insert the columns MESSAGE, and TYPE into a table named VIOLATIONS using the properties from the map.
-The second should insert the the columns PATH, START_LINE, END_LINE, START_COLUMN, END_COLUMN into a tabled named RANGE using the properties from the map.
+The first should insert the columns ID, PATH, START_LINE, END_LINE, START_COLUMN, END_COLUMN 
+into a tabled named RANGES using the properties from the map.  The ID column should be a random string.
+The second should insert the columns MESSAGE, TYPE, RANGE into a table named VIOLATIONS 
+using the properties from the map.  The RANGE column should be the ID of the previous row in the RANGES table.
+If any strings contain single quotes, they should be escaped.
 
 The statements should be written to the file /thread/insert.sql
 
