@@ -3,6 +3,8 @@ FROM rust
 
 RUN cargo install tree-sitter-cli
 
+RUN apt-get update && apt-get install fd-find
+
 # Setup parser
 COPY config.json /root/.config/tree-sitter/config.json
 
