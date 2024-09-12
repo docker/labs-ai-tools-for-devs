@@ -20,8 +20,4 @@ tools:
 
 # prompt user
 
-1. Run `.read /thread/insert.sql` against the database `/thread/db.sqlite`.
-
-2. After executing the SQL, count the number of rows in the `VIOLATIONS` and `RANGES` tables:
-   - `SELECT count(*) FROM VIOLATIONS;`
-   - `SELECT count(*) FROM RANGES;`
+How many rows are in the ranges and violations tables? Use database `/thread/db.sqlite`

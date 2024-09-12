@@ -118,16 +118,16 @@ An example parsed file:
   ``` 
   to get the ranges of each top level node into capturing groups.
   Write the ranges to `/thread/ranges.sql` in the form of sql 
-  `INSERT INTO RANGES (LINE, END_LINE, COLUMN, END_COLUMN, PATH) values (...)`
+  `INSERT INTO RANGES (START_LINE, END_LINE, START_COLUMN, END_COLUMN, PATH) values (...)`
 
 Example output of script would be the creation of file `/thread/ranges.sql` with contents:
 
 ```sql
-INSERT INTO RANGES (LINE, COLUMN, END_LINE, END_COLUMN, NODE_TYPE, PATH) values (0,0,0,21,'comment', 'main.py')
-INSERT INTO RANGES (LINE, COLUMN, END_LINE, END_COLUMN, NODE_TYPE, PATH) values (2,0,2,37,'import_from_statement', 'main.py')
-INSERT INTO RANGES (LINE, COLUMN, END_LINE, END_COLUMN, NODE_TYPE, PATH) values (4,0,5,17,'if_statement', 'main.py')
+INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (0,0,0,21, 'main.py')
+INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (2,0,2,37, 'main.py')
+INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (4,0,5,17, 'main.py')
 ```
 
 5. Execute the code in the javascript sandbox.
 
-6. Finally, run `.read /thread/ranges.sql` in db.sqlite
+6. Finally, run `.read /thread/ranges.sql` in `/thread/db.sqlite`

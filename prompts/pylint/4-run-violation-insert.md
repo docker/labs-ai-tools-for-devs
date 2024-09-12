@@ -8,9 +8,6 @@ tools:
         database:
           type: string
           description: the path to the database
-        sql:
-          type: string
-          description: the sql statement to run
     container:
       image: vonwig/sqlite:latest
       command:
@@ -30,40 +27,40 @@ docker run -it --rm -v thread:/thread \
 ```
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
-           /thread/db.dqlite \
+           /thread/db.sqlite \
            ".schema RANGES"
 ```
 
 ```
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
-           /thread/db.dqlite \
+           /thread/db.sqlite \
            ".schema VIOLATIONS"
 ```
 
 ```
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
-           /thread/db.dqlite \
+           /thread/db.sqlite \
            ".open /thread/insert.sql"
 ```
 
 ```
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
-           /thread/db.dqlite \
+           /thread/db.sqlite \
            "SELECT * FROM VIOLATIONS INNER JOIN RANGES ON VIOLATIONS.RANGE = RANGES.ID WHERE RANGES.PATH = 'src/app.py'"
 ```
 
 ```
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
-           /thread/db.dqlite \
+           /thread/db.sqlite \
            "SELECT * FROM RANGES WHERE RANGES.PATH = 'src/app.py'"
 ```
 
 
 # prompt user
 
-Run the sqlite command with the path to the database set to `/thread/db.dqlite`.
+Run the sqlite command with the path to the database set to `/thread/db.sqlite`.
 
