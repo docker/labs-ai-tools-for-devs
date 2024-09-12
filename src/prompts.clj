@@ -172,9 +172,9 @@
 (defn get-prompts
   "run extractors and then render prompt templates
      returns ordered collection of chat messages"
-  [{:keys [prompts user platform] :as opts}]
+  [{:keys [parameters prompts user platform] :as opts}]
   (let [;; TODO the docker default no longer makes sense here
-        m (run-extractors opts)
+        m (merge (run-extractors opts) parameters)
         renderer (partial selma-render prompts (facts m user platform))
         prompts (if (fs/directory? prompts)
                   (->> (fs/list-dir prompts)
@@ -207,54 +207,56 @@
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
                        :function)]
-    (try
-      (cond
-        (:container definition) ;; synchronous call to container function
-        (let [arg-context (merge
-                            ;; TODO raw is a bad name when merging
-                           {:raw (if json-arg-string
-                                   json-arg-string
-                                   "{}")}
-                           (when json-arg-string (json/parse-string json-arg-string true)))
-              function-call (merge
-                             (:container definition)
-                             (dissoc opts :functions)
-                             {:command (into []
-                                             (concat
-                                              []
-                                              (->>
-                                               (-> definition :container :command)
-                                               (map (partial interpolate arg-context))
-                                               (into []))))}
-                             (when user {:user user})
-                             (when pat {:pat pat})
-                             (when timeout {:timeout timeout}))
-              {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)]
-          (cond
-            (and (= :exited done) (= 0 exit-code))
-            (resolve pty-output)
-            (and (= :exited done) (not= 0 exit-code))
-            (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
-            (= :timeout done)
-            (fail (format "call timed out: %s" (:timeout result)))
-            :else
-            (fail (format "call failed"))))
-        (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
-        ;; TODO set a custom map for prompts in the next conversation loop
-        (do
-          (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
-          (let [{:keys [messages _finish-reason]}
-                (async/<!! (conversation-loop
-                            (assoc opts :prompts (git/prompt-file (:ref definition)))))]
-            (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
-            (resolve (->> messages
-                          (filter #(= "assistant" (:role %)))
-                          (last)
-                          :content))))
-        :else
-        (fail (format "bad container definition %s" definition)))
-      (catch Throwable t
-        (fail (format "system failure %s" t))))
+    (let [arg-context (merge
+                              ;; TODO raw is a bad name when merging
+                       {:raw (if json-arg-string
+                               json-arg-string
+                               "{}")}
+                       (when json-arg-string (json/parse-string json-arg-string true)))]
+      (try
+        (cond
+          (:container definition) ;; synchronous call to container function
+          (let [function-call (merge
+                               (:container definition)
+                               (dissoc opts :functions)
+                               {:command (into []
+                                               (concat
+                                                []
+                                                (->>
+                                                 (-> definition :container :command)
+                                                 (map (partial interpolate arg-context))
+                                                 (into []))))}
+                               (when user {:user user})
+                               (when pat {:pat pat})
+                               (when timeout {:timeout timeout}))
+                {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)]
+            (cond
+              (and (= :exited done) (= 0 exit-code))
+              (resolve pty-output)
+              (and (= :exited done) (not= 0 exit-code))
+              (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
+              (= :timeout done)
+              (fail (format "call timed out: %s" (:timeout result)))
+              :else
+              (fail (format "call failed"))))
+
+          (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
+          (do
+            (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
+            (let [{:keys [messages _finish-reason]}
+                  (async/<!! (conversation-loop
+                              (assoc opts
+                                     :prompts (git/prompt-file (:ref definition))
+                                     :parameters arg-context)))]
+              (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
+              (resolve (->> messages
+                            (filter #(= "assistant" (:role %)))
+                            (last)
+                            :content))))
+          :else
+          (fail (format "bad container definition %s" definition)))
+        (catch Throwable t
+          (fail (format "system failure %s" t)))))
     (fail "no function found")))
 
 (defn- run-prompts

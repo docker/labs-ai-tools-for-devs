@@ -11,9 +11,8 @@ tools:
         violation:
           type: string
           description: the description of the violation
-    prompt:
-      ref: github:docker/labs-ai-tools-for-devs?path=prompts/pylint/fix-violation.md
-  - name: sqlite
+    type: "prompt"
+    ref: "github:docker/labs-ai-tools-for-devs?path=prompts/pylint/fix-violation.md"
 ---
 
 # prompt user
