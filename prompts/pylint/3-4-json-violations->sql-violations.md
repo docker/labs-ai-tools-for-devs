@@ -24,14 +24,17 @@ It should then iterate over each element of an array with the following schema:
   {"message": "some violation", "path": "app.py", "type": "error",
    "line": 0, "column": 0, "endLine": 1, "endColumn": 1, "path": "src/app.py"}
 ]
+
 ```
 
 For each element of the array, it should create two INSERT statements. 
-The first should insert the columns ID, PATH, START_LINE, END_LINE, START_COLUMN, END_COLUMN 
-into a tabled named RANGES using the properties from the map.  The ID column should be a random string.
-The second should insert the columns MESSAGE, TYPE, RANGE into a table named VIOLATIONS 
+The first should insert the columns PATH, START_LINE, END_LINE, START_COLUMN, END_COLUMN 
+into a tabled named RANGES using the properties from the map.
+The second should insert the columns MESSAGE, TYPE, RANGE, VIOLATION_ID into a table named VIOLATIONS 
 using the properties from the map.  The RANGE column should be the ID of the previous row in the RANGES table.
 If any strings contain single quotes, they should be escaped.
+
+Line and column represent START_LINE and START_COLUMN
 
 The statements should be written to the file /thread/insert.sql
 
