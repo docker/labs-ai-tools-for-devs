@@ -57,7 +57,7 @@ By adding tools to prompts during the [authoring process]([[Authoring Prompts]])
   
   When defining a `prompt` type tool, the parameters will be available to be interpolated into the prompt definition before being sent to the model.  For example, the above function definition has parameters `code` and `violation` so the prompt file itself can reference those using moustache template syntax.  For example the prompt file reference above could look like the file below (note the reference `{{code}}` and `{{violation}}` )
   
-  ```
+  ```markdown
   # prompt user
   
   ## Original Code
@@ -70,9 +70,10 @@ By adding tools to prompts during the [authoring process]([[Authoring Prompts]])
   **STRICTLY FOLLOW THE RULES BELOW:**
    generate new code which will resolve the violation
    Return the response in the following format:
-  ```python
+  `` `python
   <corrected code>
+  `` `
   ```
-  
-  Instead of a `ref` in the above definition, users can also define a `prompt-file` which must be a relative path (relative the prompt file that was originally passed to the engine). This `prompt-file` field is useful for developing prompts, because we can use local definitions that have not yet been pushed to git.
-  ```
+  Instead of a `ref` in the above definition, users can also define a `prompt-file` which 
+  must be a relative path (relative the prompt file that was originally passed 
+  to the engine). This `prompt-file` field is useful for developing prompts, because we can use local definitions that have not yet been pushed to git.
