@@ -229,11 +229,14 @@
                                (when user {:user user})
                                (when pat {:pat pat})
                                (when timeout {:timeout timeout}))
-                {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)]
+                {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)
+                exit-code-fail? (if (false? (:exit-code definition))
+                                  false
+                                  (not= 0 exit-code))]
             (cond
-              (and (= :exited done) (= 0 exit-code))
+              (and (= :exited done) (not exit-code-fail?))
               (resolve pty-output)
-              (and (= :exited done) (not= 0 exit-code))
+              (and (= :exited done) exit-code-fail?)
               (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
               (= :timeout done)
               (fail (format "call timed out: %s" (:timeout result)))

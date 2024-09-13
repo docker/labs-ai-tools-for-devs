@@ -1,6 +1,7 @@
 ---
 tools:
   - name: pylint
+    check-exit-code: false
 ---
 
 # Pylint
