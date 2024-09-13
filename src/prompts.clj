@@ -119,18 +119,18 @@
                          ["{{raw|safe}}" "man"]}}}
                       {:type "function"
                        :function
-                       {:name tool
-                        :type "function"
-                        :description (format "Run a %s command." tool)
-                        :parameters
-                        {:type "object"
-                         :properties
-                         {:args
-                          {:type "string"
-                           :description (format "The arguments to pass to %s" tool)}}}
-                        :container
-                        {:image (format "vonwig/%s:latest" tool)
-                         :command ["{{raw|safe}}"]}}}]
+                       (merge
+                        {:description (format "Run a %s command." tool)
+                         :parameters
+                         {:type "object"
+                          :properties
+                          {:args
+                           {:type "string"
+                            :description (format "The arguments to pass to %s" tool)}}}
+                         :container
+                         {:image (format "vonwig/%s:latest" tool)
+                          :command ["{{raw|safe}}"]}}
+                        m)}]
                      [{:type "function" :function (merge (registry/get-function m) m)}])))))
 
 (defn collect-metadata
@@ -230,14 +230,18 @@
                                (when pat {:pat pat})
                                (when timeout {:timeout timeout}))
                 {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)
-                exit-code-fail? (if (false? (:exit-code definition))
+                exit-code-fail? (if (false? (:check-exit-code definition))
                                   false
                                   (not= 0 exit-code))]
             (cond
               (and (= :exited done) (not exit-code-fail?))
-              (resolve pty-output)
+              (do
+                (jsonrpc/notify :message {:content (format "done %s %s %s \n %s \n" (:check-exit-code definition) exit-code-fail? done pty-output)})
+                (resolve pty-output))
               (and (= :exited done) exit-code-fail?)
-              (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
+              (do
+                (jsonrpc/notify :message {:content (format "done %s %s %s \n %s \n" (:check-exit-code definition) exit-code-fail? done pty-output)})
+                (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output)))
               (= :timeout done)
               (fail (format "call timed out: %s" (:timeout result)))
               :else

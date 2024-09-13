@@ -235,7 +235,7 @@
 (def extract-facts run-function)
 
 (defn write-stdin [container-id content]
-  (let [buf (ByteBuffer/allocate (* 2 (count content)))
+  (let [buf (ByteBuffer/allocate (* 4 (count content)))
         address (UnixDomainSocketAddress/of "/var/run/docker.sock")
         client (SocketChannel/open address)]
 
@@ -251,7 +251,6 @@
       (while (.hasRemaining buf)
         (.write client buf))
       (catch Throwable t
-        (println "could not write to stdin " t)
         client))
     client))
 

@@ -1,33 +1,7 @@
 ---
 tools:
   - name: sqlite
-    description: run the sqlite command
-    parameters:
-      type: object
-      properties:
-        database:
-          type: string
-          description: the path to the database
-        sql:
-          type: string
-          description: the sql statement to run
-    container:
-      image: vonwig/sqlite:latest
-      command:
-        - "{{database}}"
-        - "{{sql|safe}}"
   - name: run-javascript-sandbox
-    description: execute javascript code in node
-    parameters:
-      type: object
-      properties:
-        javascript:
-          type: string
-          description: the javascript code to run
-    container:
-      image: vonwig/javascript-runner
-      command:
-        - "{{javascript|safe}}"
 ---
 
 # prompt user

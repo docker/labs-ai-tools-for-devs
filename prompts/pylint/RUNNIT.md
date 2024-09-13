@@ -1,5 +1,0 @@
----
-tools:
-  - name: pylint
-    ref: 
----

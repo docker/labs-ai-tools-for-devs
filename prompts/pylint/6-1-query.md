@@ -1,21 +1,6 @@
 ---
 tools:
   - name: sqlite
-    description: run the sqlite command
-    parameters:
-      type: object
-      properties:
-        database:
-          type: string
-          description: the path to the database
-        sql:
-          type: string
-          description: the sql statement to run
-    container:
-      image: vonwig/sqlite:latest
-      command:
-        - "{{database}}"
-        - "{{sql|safe}}"
 ---
 
 # prompt user

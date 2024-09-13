@@ -117,4 +117,56 @@ registry:
         command:
           - "{{raw|safe}}"
           - "(slurp (:path args))"
+  - name: sqlite
+    description: run the sqlite command
+    parameters:
+      type: object
+      properties:
+        database:
+          type: string
+          description: the path to the database
+        sql:
+          type: string
+          description: the sql statement to run
+    container:
+      image: vonwig/sqlite:latest
+      command:
+        - "{{database}}"
+        - "{{sql|safe}}"
+  - name: run-javascript-sandbox
+    description: execute javascript code
+    parameters:
+      type: object
+      properties:
+        javascript:
+          type: string
+          description: the javascript code to run
+    container:
+      image: vonwig/javascript-runner
+      command:
+        - "{{javascript|safe}}"
+  - name: delete_folder
+    description: Runs rm -rf on a folder
+    parameters:
+      type: object
+      properties:
+        path:
+          type: string
+          description: Path of the folder to delete
+    container:
+      image: vonwig/bash_alpine
+      command:
+        - "rm -rf {{path|safe}}"
+  - name: cat_file
+    description: Runs cat on a file
+    parameters:
+      type: object
+      properties:
+        path:
+          type: string
+          description: Path of the folder to delete
+    container:
+      image: vonwig/bash_alpine
+      command:
+        - "cat {{path|safe}}"
 

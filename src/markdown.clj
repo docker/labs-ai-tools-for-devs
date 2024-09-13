@@ -79,6 +79,7 @@
   (pprint (parse-markdown content))
 
   (parse-markdown (slurp "prompts/pylint/docs.md"))
+  (parse-markdown (slurp "prompts/pylint/4-run-violation-insert.md"))
 
   (def t
     '("section"

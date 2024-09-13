@@ -1,33 +1,7 @@
 ---
 tools:
   - name: sqlite
-    description: run the sqlite command
-    parameters:
-      type: object
-      properties:
-        database:
-          type: string
-          description: the path to the database
-        sql:
-          type: string
-          description: the sql statement to run
-    container:
-      image: vonwig/sqlite:latest
-      command:
-        - "{{database}}"
-        - "{{sql}}"
   - name: delete_folder
-    description: Runs rm -rf on a folder
-    parameters:
-      type: object
-      properties:
-        path:
-          type: string
-          description: Path of the folder to delete
-    container:
-      image: vonwig/bash_alpine
-      command:
-        - "rm -rf {{path|safe}}"
 ---
 
 # prompt user
