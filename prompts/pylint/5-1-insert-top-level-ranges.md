@@ -118,14 +118,16 @@ An example parsed file:
   ``` 
   to get the ranges of each top level node into capturing groups.
   Write the ranges to `/thread/ranges.sql` in the form of sql 
-  `INSERT INTO RANGES (START_LINE, END_LINE, START_COLUMN, END_COLUMN, PATH) values (...)`
+  `INSERT INTO RANGES (ID, START_LINE, END_LINE, START_COLUMN, END_COLUMN, PATH) values (...)`
+
+You need to generate a random string without importing any modules.
 
 Example output of script would be the creation of file `/thread/ranges.sql` with contents:
 
 ```sql
-INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (0,0,0,21, 'main.py')
-INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (2,0,2,37, 'main.py')
-INSERT INTO RANGES (START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values (4,0,5,17, 'main.py')
+INSERT INTO RANGES (ID, START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values ('<random-string>', 0,0,0,21, 'main.py')
+INSERT INTO RANGES (ID, START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values ('<random-string>', 2,0,2,37, 'main.py')
+INSERT INTO RANGES (ID, START_LINE, START_COLUMN, END_LINE, END_COLUMN, PATH) values ('<random-string>', 4,0,5,17, 'main.py')
 ```
 
 5. Execute the code in the javascript sandbox.

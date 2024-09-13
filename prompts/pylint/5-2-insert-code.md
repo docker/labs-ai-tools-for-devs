@@ -61,7 +61,7 @@ where query selects everything from the RANGES table where END_LINE is not null.
 we get something like
 ```csv
 ID,PATH,START_LINE,END_LINE,START_COLUMN,END_COLUMN
-125,wsgi_skylines.py,11,104,0,61
+1234-abcd-1234,wsgi_skylines.py,11,104,0,61
 ```
 
 So, write a JS script to 
@@ -75,6 +75,6 @@ The CODE_AT_RANGE is the sliced content at PATH
 Example `/thread/code_insert/insert_code.sql` file:
 
 ```sql
-INSERT INTO CODE (RANGE_ID, CODE_AT_RANGE) (125, "<Contents of wsgi_skylines from line 11 to 104>")
+INSERT INTO CODE (RANGE_ID, CODE_AT_RANGE) ('1234-abcd-1234', "<Contents of wsgi_skylines from line 11 to 104>")
 ```
 

@@ -49,7 +49,7 @@ docker run -it --rm -v thread:/thread \
 docker run -it --rm -v thread:/thread \
            vonwig/sqlite:latest \
            /thread/db.sqlite \
-           "SELECT * FROM VIOLATIONS INNER JOIN RANGES ON VIOLATIONS.RANGE = RANGES.ID WHERE RANGES.PATH = 'src/app.py'"
+           "SELECT * FROM VIOLATIONS INNER JOIN RANGES ON VIOLATIONS.RANGE_ID = RANGES.ID WHERE RANGES.PATH = 'src/app.py'"
 ```
 
 ```
