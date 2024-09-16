@@ -14,14 +14,13 @@
 
 (defn -command [& args]
   (try
-    (let [coll (:files (json/parse-string (second args) true))]
-      (doseq [{:keys [path executable content]} coll :let [f (fs/file (first args) path)]]
-        ;; TODO what about absolute paths - these won't work
+    (let [coll (:files (json/parse-string (first args) true))]
+      (doseq [{:keys [path executable content]} coll :let [f (fs/file path)]]
         (write f content)
         (when executable
           (make-executable f)))
-      (println (format "wrote %d files: %s" 
-                       (count coll) 
+      (println (format "wrote %d files: %s"
+                       (count coll)
                        (->> coll (map :path) (string/join ",")))))
     (catch Throwable t
       (binding [*out* *err*]
@@ -32,9 +31,8 @@
   (apply -command *command-line-args*))
 
 (comment
-  (let [args ["/Users/slim/project"
-              (json/generate-string {:files [{:path "test.sh" 
-                                              :executable true 
+  (let [args [(json/generate-string {:files [{:path "test.sh"
+                                              :executable true
                                               :content "#!/bin/bash\necho \"Hello, World!\""}]})]]
     (apply -command args)))
 

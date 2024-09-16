@@ -36,9 +36,7 @@
             '';
           };
           entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
-            OLD_PWD="$PWD"
-            cd ${scripts}
-            ${pkgs.babashka}/bin/bb init.clj $OLD_PWD "$@"
+            ${pkgs.babashka}/bin/bb ${scripts} "$@"
           '';
           packages = rec {
             default = pkgs.buildEnv {

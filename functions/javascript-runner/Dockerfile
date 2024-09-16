@@ -1,29 +1,16 @@
-# syntax = docker/dockerfile:1.4
-FROM nixos/nix:latest@sha256:3f6c77ee4d2c82e472e64e6cd7087241dc391421a0b42c22e6849c586d5398d9 AS builder
-
-WORKDIR /tmp/build
-RUN mkdir /tmp/nix-store-closure
-
-# ignore SC2046 because the output of nix-store -qR will never have spaces - this is safe here
-# hadolint ignore=SC2046
-RUN --mount=type=cache,target=/nix,from=nixos/nix:latest@sha256:3f6c77ee4d2c82e472e64e6cd7087241dc391421a0b42c22e6849c586d5398d9,source=/nix \
-    --mount=type=cache,target=/root/.cache \
-    --mount=type=bind,target=/tmp/build \
-    <<EOF
-  nix \
-    --extra-experimental-features "nix-command flakes" \
-    --option filter-syscalls false \
-    --show-trace \
-    --log-format raw \
-    build . --out-link /tmp/output/result
-  cp -R $(nix-store -qR /tmp/output/result) /tmp/nix-store-closure
-EOF
-
-FROM scratch
-
+# The first stage, node dependencies stage - "deps"
+FROM node:22-slim@sha256:377674fd5bb6fc2a5a1ec4e0462c4bfd4cee1c51f705bbf4bda0ec2c9a73af72 AS deps
 WORKDIR /app
+COPY package*.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
-COPY --from=builder /tmp/nix-store-closure /nix/store
-COPY --from=builder /tmp/output/ /app/
+# The second stage - "build"
+FROM deps AS build
+RUN --mount=type=cache,target=/root/.npm npm ci
 
-ENTRYPOINT ["/app/result/bin/entrypoint"]
+# The third stage, selecting a base image recommended by Scout
+FROM node:22-slim@sha256:377674fd5bb6fc2a5a1ec4e0462c4bfd4cee1c51f705bbf4bda0ec2c9a73af72
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY ./main.js ./main.js
+ENTRYPOINT ["node", "/app/main.js"]

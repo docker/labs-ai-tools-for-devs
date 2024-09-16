@@ -102,36 +102,49 @@
                   "--vs-machine-id" "none"
                   "--workspace" "/project"]}])))
 
+(def hub-images
+  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint"})
+
 (defn collect-functions
   "get either :functions or :tools collection
     returns collection of openai compatiable tool definitions augmented with container info"
   [f]
   (->>
-   (-> (markdown/parse-metadata (metadata-file f)) first (select-keys [:tools :functions]) seq first second)
-   (mapcat (fn [m] (if-let [tool (#{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint"} (:name m))]
-                     [{:type "function"
-                       :function
-                       {:name (format "%s-manual" tool)
-                        :description (format "Run the man page for %s" tool)
-                        :container
-                        {:image (format "vonwig/%s:latest" tool)
-                         :command
-                         ["{{raw|safe}}" "man"]}}}
-                      {:type "function"
-                       :function
-                       (merge
-                        {:description (format "Run a %s command." tool)
-                         :parameters
-                         {:type "object"
-                          :properties
-                          {:args
-                           {:type "string"
-                            :description (format "The arguments to pass to %s" tool)}}}
-                         :container
-                         {:image (format "vonwig/%s:latest" tool)
-                          :command ["{{raw|safe}}"]}}
-                        m)}]
-                     [{:type "function" :function (merge (registry/get-function m) m)}])))))
+   (-> 
+     (markdown/parse-metadata (metadata-file f)) 
+     first 
+     (select-keys [:tools :functions]) 
+     seq 
+     first  ;; will take the first either tools or functions randomly 
+     second ;; returns the tools or functions array
+     )
+   (mapcat
+    (fn [m]
+      (if-let [tool (hub-images (:name m))]
+        ;; these come from our own public hub images
+        [{:type "function"
+          :function
+          {:name (format "%s-manual" tool)
+           :description (format "Run the man page for %s" tool)
+           :container
+           {:image (format "vonwig/%s:latest" tool)
+            :command
+            ["{{raw|safe}}" "man"]}}}
+         {:type "function"
+          :function
+          (merge
+           {:description (format "Run a %s command." tool)
+            :parameters
+            {:type "object"
+             :properties
+             {:args
+              {:type "string"
+               :description (format "The arguments to pass to %s" tool)}}}
+            :container
+            {:image (format "vonwig/%s:latest" tool)
+             :command ["{{raw|safe}}"]}}
+           m)}]
+        [{:type "function" :function (merge (registry/get-function m) (dissoc m :image))}])))))
 
 (defn collect-metadata
   "collect metadata from yaml front-matter in README.md
@@ -235,13 +248,9 @@
                                   (not= 0 exit-code))]
             (cond
               (and (= :exited done) (not exit-code-fail?))
-              (do
-                (jsonrpc/notify :message {:content (format "done %s %s %s \n %s \n" (:check-exit-code definition) exit-code-fail? done pty-output)})
-                (resolve pty-output))
+              (resolve pty-output)
               (and (= :exited done) exit-code-fail?)
-              (do
-                (jsonrpc/notify :message {:content (format "done %s %s %s \n %s \n" (:check-exit-code definition) exit-code-fail? done pty-output)})
-                (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output)))
+              (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
               (= :timeout done)
               (fail (format "call timed out: %s" (:timeout result)))
               :else

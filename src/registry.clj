@@ -16,13 +16,22 @@
          (map (fn [m] [(:name m) m]))
          (into {}))))
 
+(defn- get-container-images [f]
+  (when-let [d (f)]
+    (->> (:registry (edn/read-string (slurp (fs/file d "registry.edn") )))
+         (filter #(-> % :container :image))
+         (map (fn [m] [(-> m :container :image) m]))
+         (into {}))))
+
 (comment
   (pprint (get-registry functions-dir)))
 
 (defn get-function 
   "  returns a function definition or nil"
-  [{:keys [name]}]
-  (get (get-registry functions-dir) name))
+  [{:keys [name image]}]
+  (or
+    (get (get-registry functions-dir) name)
+    (get (get-container-images functions-dir) image)))
 
 (defn get-extractor
   "  returns a function definition or nil"

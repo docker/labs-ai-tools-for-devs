@@ -169,4 +169,16 @@ registry:
       image: vonwig/bash_alpine
       command:
         - "cat {{path|safe}}"
+  - name: docker_best_practices
+    description: get docker best practices for a tech stack
+    parameters:
+      type: object
+      properties:
+        stack:
+          type: string
+          description: the tech stack to get best practices for
+    container:
+      image: vonwig/docker-rag:latest
+      command:
+        - "{{raw|safe}}"
 

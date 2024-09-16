@@ -18,6 +18,12 @@ docker push vonwig/javascript-runner:latest
 docker run --rm -v thread:/thread vonwig/javascript-runner:latest "console.log('gorsh');"
 ```
 
+How do you use the javascript uuid function?
+
+```sh
+docker run --rm -v thread:/thread vonwig/javascript-runner:latest "const { v4 } = require('uuid'); console.log(v4());"
+```
+
 # multi-platform build
 
 ```sh
@@ -29,3 +35,12 @@ docker buildx build \
     --push .
 ```
 
+# using node2nix
+
+```sh
+nix shell -i nixpkgs#node2nix
+```
+
+```sh
+node2nix 
+```

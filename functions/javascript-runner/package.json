@@ -1,0 +1,11 @@
+{
+  "name": "javascript-runner",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-csv": "^0.1.2",
+    "uuid": "^10.0.0"
+  }
+}

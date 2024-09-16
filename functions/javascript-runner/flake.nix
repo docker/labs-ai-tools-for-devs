@@ -27,6 +27,8 @@
 
           packages = rec {
 
+            nodeDependencies = (pkgs.callPackage ./default.nix {}).nodeDependencies;
+
             # this derivation just contains the init.clj script
             scripts = pkgs.stdenv.mkDerivation {
               name = "scripts";
