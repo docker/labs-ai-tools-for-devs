@@ -12,8 +12,6 @@ import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 const client = createDockerDesktopClient();
 
-const track = (event: string) =>
-  client.extension.vm?.service?.post('/analytics/track', { event });
 
 class OutputParser {
   output: any[] = [];
@@ -86,7 +84,6 @@ export function App() {
   const [showDebug, setShowDebug] = React.useState(false);
 
   useEffect(() => {
-
     try {
       pullImagePromise = client.docker.cli.exec("pull", ["vonwig/function_write_files"])
       client.docker.cli.exec("pull", ["vonwig/prompts"], {
@@ -131,7 +128,13 @@ export function App() {
   }, [prompts]);
 
   useEffect(() => {
-    debouncedToastSuccess('OpenAI key saved');
+    if (openAIKey) {
+      debouncedToastSuccess('OpenAI key saved');
+    }
+    else {
+      debouncedToastSuccess('OpenAI key deleted');
+    }
+
     localStorage.setItem('openAIKey', openAIKey || '');
   }, [openAIKey]);
 
@@ -163,7 +166,7 @@ export function App() {
   }, [runOut]);
 
   const startPrompt = async () => {
-    track('DockerPromptsStartPrompt');
+    client.desktopUI.toast.success(`Starting Prompt: ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
 
     await pullImagePromise
 
@@ -200,10 +203,11 @@ export function App() {
         onError: (err) => {
           console.error(err);
           runOutput.updateOutput({ method: 'message', params: { debug: err } });
+          client.desktopUI.toast.error(`Error running prompt: ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
         },
       }
     });
-    track('DockerPromptsEndPrompt');
+    client.desktopUI.toast.success(`Prompt finished ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
   }
 
   const renderPrompt = async () => {
@@ -218,7 +222,7 @@ export function App() {
       <Stack direction="column" spacing={1}>
         <OpenAIKey openAIKey={openAIKey || ''} setOpenAIKey={setOpenAIKey} />
         <Projects projects={projects} selectedProject={selectedProject} setProjects={setProjects} setSelectedProject={setSelectedProject} />
-        <Prompts prompts={prompts} selectedPrompt={selectedPrompt} promptInput={promptInput} setPrompts={setPrompts} setSelectedPrompt={setSelectedPrompt} setPromptInput={setPromptInput} track={track} />
+        <Prompts prompts={prompts} selectedPrompt={selectedPrompt} promptInput={promptInput} setPrompts={setPrompts} setSelectedPrompt={setSelectedPrompt} setPromptInput={setPromptInput} />
         <Runner selectedProject={selectedProject} selectedPrompt={selectedPrompt} openAIKey={openAIKey} startPrompt={startPrompt} renderPrompt={renderPrompt} />
         <RunOutput runOut={runOut} showDebug={showDebug} setShowDebug={setShowDebug} />
       </Stack>

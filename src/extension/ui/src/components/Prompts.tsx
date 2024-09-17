@@ -12,10 +12,9 @@ type PromptsProps = {
     setPrompts: (prompts: string[]) => void;
     setSelectedPrompt: (prompt: string) => void;
     setPromptInput: (input: string) => void;
-    track: (event: string) => void;
 };
 
-const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput, setPrompts, setSelectedPrompt, setPromptInput, track }) => {
+const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput, setPrompts, setSelectedPrompt, setPromptInput }) => {
     const delim = client.host.platform === 'win32' ? '\\' : '/';
 
     return (
@@ -32,7 +31,6 @@ const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput,
                     <Button onClick={() => {
                         setPrompts([...prompts, promptInput]);
                         setPromptInput('');
-                        track('DockerPromptsAddPrompt');
                     }}>Import prompt</Button>
                 )}
                 <Button onClick={() => {
@@ -44,7 +42,6 @@ const Prompts: React.FC<PromptsProps> = ({ prompts, selectedPrompt, promptInput,
                         if (result.canceled) {
                             return;
                         }
-                        track('DockerPromptsAddLocalPrompt');
                         setPrompts([...prompts, ...result.filePaths.map(p => `local://${p}`)]);
                         setSelectedPrompt(`local://${result.filePaths[0]}`);
                     });
