@@ -205,9 +205,12 @@ export function App() {
           runOutput.updateOutput({ method: 'message', params: { debug: err } });
           client.desktopUI.toast.error(`Error running prompt: ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
         },
+        onClose: () => {
+          client.desktopUI.toast.success(`Prompt finished ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
+        }
       }
     });
-    client.desktopUI.toast.success(`Prompt finished ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
+
   }
 
   const renderPrompt = async () => {
