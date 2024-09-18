@@ -134,13 +134,13 @@ registry:
         - "{{database}}"
         - "{{sql|safe}}"
   - name: run-javascript-sandbox
-    description: execute javascript code
+    description: Execute javascript in a Node.JS environment.
     parameters:
       type: object
       properties:
         javascript:
           type: string
-          description: the javascript code to run
+          description: the javascript code to run in node (escape for JSON serialization)
     container:
       image: vonwig/javascript-runner
       command:
