@@ -9,7 +9,7 @@ tools:
           type: string
           description: a description of the image that should be generated
     type: prompt
-    ref: "git:docker/labs-ai-tools-for-devs?path=prompts/stable-diffusion/image-generation-service.md&ref=slim/stable-diffusion"
+    ref: "github:docker/labs-ai-tools-for-devs?path=prompts/stable-diffusion/image-generation-service.md&ref=slim/stable-diffusion"
 ---
 
 # prompt user
