@@ -40,6 +40,14 @@ docker --context evolute-stable-diffusion run \
     vonwig/evolute-stable-diffusion:latest
 ```
 
+```sh
+docker --context evolute-stable-diffusion kill evolute-stable-diffusion
+```
+
+```sh
+docker --context evolute-stable-diffusion ps
+```
+
 # Test directly from host
 
 ```sh
@@ -48,7 +56,3 @@ curl -X POST localhost:8000/generate \
      -d '{"prompt": "a photo-realistic picture of a cyclist riding in Iceland. Use the style of Ray man.", "height": 512, "width": 512, "num_inference_steps": 50}'
 ```
 
-# Test using a prompt
-
-```sh
-```
