@@ -166,7 +166,7 @@ export function App() {
   }, [runOut]);
 
   const startPrompt = async () => {
-    client.desktopUI.toast.success(`Starting Prompt: ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
+    client.desktopUI.toast.success(`Starting Prompt: ${selectedPrompt!.includes('local') ? 'LOCAL' : selectedPrompt}`)
 
     await pullImagePromise
 
@@ -203,10 +203,10 @@ export function App() {
         onError: (err) => {
           console.error(err);
           runOutput.updateOutput({ method: 'message', params: { debug: err } });
-          client.desktopUI.toast.error(`Error running prompt: ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
+          client.desktopUI.toast.error(`Error running prompt: ${selectedPrompt!.includes('local') ? 'LOCAL' : selectedPrompt}`)
         },
         onClose: () => {
-          client.desktopUI.toast.success(`Prompt finished ${promptInput.includes('local') ? 'LOCAL' : promptInput}`)
+          client.desktopUI.toast.success(`Prompt finished ${selectedPrompt!.includes('local') ? 'LOCAL' : selectedPrompt}`)
         }
       }
     });
