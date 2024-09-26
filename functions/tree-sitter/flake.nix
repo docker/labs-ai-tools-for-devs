@@ -19,7 +19,49 @@
         {
           packages = rec {
 
+            # darwin versus linux
+            dylibExt = if nixpkgs.lib.hasInfix "darwin" system then "dylib" else "so";  
+
             a = pkgs.tree-sitter.withPlugins (p: [ p.tree-sitter-python p.tree-sitter-markdown ]);
+
+            markdown-grammar-source = pkgs.fetchFromGitHub {
+              owner = "mdeiml";
+              repo = "tree-sitter-markdown";
+              rev = "28aa3baef73bd458d053b613b8bd10fd102b4405";
+              sha256 = "sha256-HSjKYqjrJKPLbdq1UTvk/KnDqsIzVO7k5syCsIpAZpw=";
+            };
+
+            # build the grammar but does this work for macos?
+            markdown-grammar = (pkgs.tree-sitter.buildGrammar {
+              language = "markdown";
+              version = "0.0.1";
+              src = "${markdown-grammar-source}/tree-sitter-markdown";
+            });
+  
+            # derive the parser
+            parser = pkgs.stdenv.mkDerivation {
+              name = "parser";
+              src = ./.;
+              nativeBuildInputs = [ pkgs.gcc
+                                    pkgs.findutils
+                                    pkgs.patchelf ];
+              buildPhase = ''
+                ${pkgs.gcc}/bin/gcc -o parser \
+                  main.c ${markdown-grammar-source}/tree-sitter-markdown/src/*.c \
+                  -I${markdown-grammar-source}/tree-sitter-markdown/src \
+	          -I${pkgs.tree-sitter}/include \
+	          ${pkgs.tree-sitter}/lib/libtree-sitter.${dylibExt};
+	      '';
+
+	      installPhase = ''
+	        mkdir -p $out/bin;
+	        cp parser $out/bin/parser;
+	      '';
+
+              fixupPhase = ''
+                find $out -type f -exec patchelf --shrink-rpath '{}' \; -exec strip '{}' \; 2>/dev/null
+              '';
+            };
 
             # this derivation just contains the init.clj script
             scripts = pkgs.stdenv.mkDerivation {
