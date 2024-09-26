@@ -6,6 +6,9 @@
    [clojure.string :as string]
    [selmer.parser :as selmer]))
 
+(def new-ones
+  "fd")
+
 (def dumb
 
   "docker-gc"
@@ -64,8 +67,6 @@
    ;; the help menu off stderr
    "hclfmt"
    "fop" ;; xml formatter
-   "dnstracer"
-   "undocker"
    "dockfmt"
 
    ;; just doesn't have any help
@@ -262,6 +263,8 @@
            (string/join "," coll)))))
 
 (comment
+
+  (generate "fd")
 
   (doseq [t all-tools]
     (generate t))
