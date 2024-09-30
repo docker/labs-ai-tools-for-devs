@@ -24,7 +24,6 @@ bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin promp
 
 ```sh
 bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
-              --user jimclark106 \
               --platform darwin \
               --prompts-dir prompts/docker \
               --pretty-print-prompts
@@ -32,7 +31,6 @@ bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
 
 ```sh
 bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
-              --user jimclark106 \
               --platform darwin \
               --prompts-dir prompts/project_type/ \
               --pretty-print-prompts
@@ -56,7 +54,6 @@ bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompt
 ```sh
 bb -m prompts run \
               --host-dir /Users/slim/docker/labs-make-runbook \
-              --user jimclark106 \
               --platform darwin \
               --prompts-dir prompts/project_type \
               --nostream \
@@ -69,7 +66,6 @@ TODO - this should fail better because the prompts-dir is not valid.
 ```sh
 bb -m prompts run \
               --host-dir /Users/slim/docker/labs-make-runbook \
-              --user jimclark106 \
               --platform darwin \
               --prompts-dir prompts \
               --nostream \
