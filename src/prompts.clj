@@ -110,14 +110,14 @@
     returns collection of openai compatiable tool definitions augmented with container info"
   [f]
   (->>
-   (-> 
-     (markdown/parse-metadata (metadata-file f)) 
-     first 
-     (select-keys [:tools :functions]) 
-     seq 
-     first  ;; will take the first either tools or functions randomly 
-     second ;; returns the tools or functions array
-     )
+   (->
+    (markdown/parse-metadata (metadata-file f))
+    first
+    (select-keys [:tools :functions])
+    seq
+    first  ;; will take the first either tools or functions randomly 
+    second ;; returns the tools or functions array
+    )
    (mapcat
     (fn [m]
       (if-let [tool (hub-images (:name m))]
@@ -160,14 +160,14 @@
        project-root - the host project root dir
        identity-token - a valid Docker login auth token
        dir - a prompts directory with a valid README.md"
-  [{:keys [host-dir prompts user pat]}]
+  [{:keys [host-dir prompts user jwt]}]
   (reduce
    (partial fact-reducer host-dir)
    {}
    (->> (collect-extractors prompts)
         (map (fn [m] (merge m
                             (when user {:user user})
-                            (when pat {:pat pat})))))))
+                            (when jwt {:jwt jwt})))))))
 
 (defn- selma-render [prompts-file m message]
   (update message
@@ -215,7 +215,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user pat timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user jwt timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -240,7 +240,7 @@
                                                  (map (partial interpolate arg-context))
                                                  (into []))))}
                                (when user {:user user})
-                               (when pat {:pat pat})
+                               (when jwt {:jwt jwt})
                                (when timeout {:timeout timeout}))
                 {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)
                 exit-code-fail? (if (false? (:check-exit-code definition))
@@ -366,8 +366,6 @@
                [nil "--url OPENAI_COMPATIBLE_ENDPOINT" "OpenAI compatible endpoint url"]
                ;; required if not using positional args
                [nil "--user USER" "The hub user"]
-               ;; only required for internal users
-               [nil "--pat PAT" "A hub PAT"]
                ;; required if not using positional args
                ;; can not validate this without a host helper
                [nil "--host-dir DIR" "Project directory (on host filesystem)"]
@@ -427,7 +425,7 @@
 
 (s/def ::platform (fn [s] (#{:darwin :linux :windows} (keyword (string/lower-case s)))))
 (s/def ::user string?)
-(s/def ::pat string?)
+(s/def ::jwt string?)
 (s/def ::prompts #(fs/exists? %))
 (s/def ::host-dir string?)
 (s/def ::offline boolean?)
@@ -435,7 +433,7 @@
 (s/def ::save-thread-volume boolean?)
 (s/def ::url string?)
 (s/def ::run-args (s/keys :req-un [::platform ::user ::prompts ::host-dir]
-                          :opt-un [::offline ::thread-id ::save-thread-volume ::pat ::url]))
+                          :opt-un [::offline ::thread-id ::save-thread-volume ::jwt ::url]))
 
 (defn validate [k]
   (fn [opts]
@@ -454,6 +452,12 @@
                         (let [f (fs/file dir-or-ref)]
                           (when (fs/exists? f) f))
                         (git/prompt-file dir-or-ref))}))))
+
+(defn login-info []
+  (if-let [{:keys [token id]} (docker/get-login-info-from-desktop-backend)]
+    {:jwt token
+     :user id}
+    (warn "Docker Desktop not logged in" {})))
 
 (defn command [opts & [c :as args]]
   (case c
@@ -482,11 +486,15 @@
                 (async/<!! ((comp conversation-loop (validate ::run-args))
                             (-> opts
                                 (assoc :thread-id thread-id)
-                                ((fn [opts] (apply merge-deprecated opts (rest args))))))))
+                                ((fn [opts] (merge 
+                                              (apply merge-deprecated opts (rest args))
+                                              (login-info))))))))
 
               opts))
     (fn []
-      ((comp get-prompts (validate ::run-args)) (apply merge-deprecated opts args)))))
+      ((comp get-prompts (validate ::run-args)) (merge 
+                                                  (apply merge-deprecated opts args)
+                                                  (login-info))))))
 
 (defn -main [& args]
   (try

@@ -2,3 +2,4 @@
 **/result
 .clj-kondo
 .lsp
+/prompts/stable-diffusion/*.png
