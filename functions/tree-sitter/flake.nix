@@ -47,15 +47,18 @@
                                     pkgs.patchelf ];
               buildPhase = ''
                 ${pkgs.gcc}/bin/gcc -o parser \
-                  main.c ${markdown-grammar-source}/tree-sitter-markdown/src/*.c \
+                  main.c \
                   -I${markdown-grammar-source}/tree-sitter-markdown/src \
 	          -I${pkgs.tree-sitter}/include \
-	          ${pkgs.tree-sitter}/lib/libtree-sitter.${dylibExt};
+                  ${pkgs.tree-sitter}/lib/libtree-sitter.${dylibExt} \
+                  ${markdown-grammar}/parser;
 	      '';
 
 	      installPhase = ''
 	        mkdir -p $out/bin;
+                mkdir -p $out/lib;
 	        cp parser $out/bin/parser;
+                cp ${markdown-grammar}/parser $out/lib/parser;
 	      '';
 
               fixupPhase = ''
@@ -74,7 +77,7 @@
 
             # the script must have gh in the PATH
             default = pkgs.writeShellScriptBin "entrypoint" ''
-              export PATH=${pkgs.lib.makeBinPath [pkgs.tree-sitter]}
+              export PATH=${pkgs.lib.makeBinPath [parser]}
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
               ${pkgs.babashka}/bin/bb ${scripts} "$@"
             '';

@@ -1,6 +1,7 @@
 (ns docker
   (:require
    [babashka.curl :as curl]
+   [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.pprint :refer [pprint]]
@@ -41,6 +42,33 @@
                        creds creds)
                      (json/generate-string)
                      (encode))}}))))
+
+(defn unix-socket-file [s]
+  (when (.exists (fs/file s))
+    s))
+
+(defn- get-backend-socket []
+  (let [coll [(or (System/getenv "DOCKER_DESKTOP_SOCKET_PATH") "")
+              (format "%s/Library/Containers/com.docker.docker/Data/backend.sock" (System/getenv "HOME"))]]
+    (some unix-socket-file coll)))
+
+(defn backend-is-logged-in? [_]
+  (curl/get
+   "http://localhost/registry/is-logged-in"
+   {:raw-args ["--unix-socket" (get-backend-socket)]
+    :throw false}))
+
+(defn backend-login-info [_]
+  (curl/get
+    "http://localhost/registry/info"
+    {:raw-args ["--unix-socket" (get-backend-socket)]
+     :throw false}))
+
+(defn backend-get-token [_]
+  (curl/get
+   "http://localhost/registry/token"
+   {:raw-args ["--unix-socket" (get-backend-socket)]
+    :throw false}))
 
 (comment
   (let [pat (string/trim (slurp "/Users/slim/.secrets/dockerhub-pat-ai-tools-for-devs.txt"))]
@@ -169,6 +197,9 @@
       response
       (throw (ex-info (format "%s -- (%d != %s)" s (:status response) code) response)))))
 
+(def is-logged-in? (comp ->json (status? 200 "backend-is-logged-in") backend-is-logged-in?))
+(def get-token (comp ->json (status? 200 "backend-get-token") backend-get-token))
+(def get-login-info (comp ->json (status? 200 "backend-login-info") backend-login-info))
 (def create (comp ->json (status? 201 "create-container") create-container))
 (def thread-volume (comp (status? 201 "create-volume") create-volume))
 (def delete-thread-volume (comp (status? 204 "remove-volume") remove-volume))
@@ -190,20 +221,19 @@
 (spec/def ::host-dir string?)
 (spec/def ::entrypoint string?)
 (spec/def ::user string?)
-(spec/def ::pat string?)
+(spec/def ::jwt string?)
 (spec/def ::image string?)
 (spec/def ::command (spec/coll-of string?))
-(spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::pat]
+(spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::jwt]
                                             :req-un [::image]))
 
 (defn- -pull [m]
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
-               (let [jwt (creds/credential-helper->jwt)]
-                 (when (and (:user m)
-                            (or (:pat m) jwt))
-                   {:creds {:username (:user m)
-                            :password (or (:pat m) jwt)}})))))
+               (when (and (:user m)
+                          (:jwt m))
+                 {:creds {:username (:user m)
+                          :password (:jwt m)}}))))
 
 (defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
   (-pull m)
@@ -266,7 +296,7 @@
   (try
     (String. (Arrays/copyOfRange bytes 8 (count bytes)))
     (catch Throwable t
-      (println t) 
+      (println t)
       "")))
 
 (defn function-call-with-stdin [m]
@@ -300,20 +330,33 @@
     (try
       (let [finish-reason (async/<!! finished-channel)
             s (docker-stream-format->stdout
-                (:body
-                  (attach-container-stdout-logs x)))
+               (:body
+                (attach-container-stdout-logs x)))
             info (inspect x)]
         (delete x)
         (merge
-          finish-reason
-          {:pty-output s
-           :exit-code (-> info :State :ExitCode)
-           :info info}))
+         finish-reason
+         {:pty-output s
+          :exit-code (-> info :State :ExitCode)
+          :info info}))
       (catch Throwable t
         (delete x)
         {}))))
 
+(defn get-login-info-from-desktop-backend
+  "returns token or nil if not logged in or backend.sock is not available"
+  []
+  (try
+    (when (is-logged-in? {})
+      (get-login-info {}))
+    (catch Throwable _)))
+
 (comment
+
+  (is-logged-in? {})
+  (get-token {})
+  (get-login-info {})
+  (get-login-info-from-desktop-backend)
 
   (pprint
    (json/parse-string
