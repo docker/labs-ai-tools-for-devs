@@ -432,8 +432,8 @@
 (s/def ::thread-id string?)
 (s/def ::save-thread-volume boolean?)
 (s/def ::url string?)
-(s/def ::run-args (s/keys :req-un [::platform ::user ::prompts ::host-dir]
-                          :opt-un [::offline ::thread-id ::save-thread-volume ::jwt ::url]))
+(s/def ::run-args (s/keys :req-un [::platform ::prompts ::host-dir]
+                          :opt-un [::offline ::thread-id ::save-thread-volume ::user ::jwt ::url]))
 
 (defn validate [k]
   (fn [opts]
