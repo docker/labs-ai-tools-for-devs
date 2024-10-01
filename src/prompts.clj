@@ -366,7 +366,8 @@
                [nil "--url OPENAI_COMPATIBLE_ENDPOINT" "OpenAI compatible endpoint url"]
                ;; required if not using positional args
                [nil "--user USER" "The hub user"]
-               ;; required if not using positional args
+               ;; optional
+               [nil "--pat PAT" "personal access token"]
                ;; can not validate this without a host helper
                [nil "--host-dir DIR" "Project directory (on host filesystem)"]
                ;; required if not using positional args
@@ -426,6 +427,7 @@
 (s/def ::platform (fn [s] (#{:darwin :linux :windows} (keyword (string/lower-case s)))))
 (s/def ::user string?)
 (s/def ::jwt string?)
+(s/def ::pat string?)
 (s/def ::prompts #(fs/exists? %))
 (s/def ::host-dir string?)
 (s/def ::offline boolean?)
@@ -433,7 +435,7 @@
 (s/def ::save-thread-volume boolean?)
 (s/def ::url string?)
 (s/def ::run-args (s/keys :req-un [::platform ::prompts ::host-dir]
-                          :opt-un [::offline ::thread-id ::save-thread-volume ::user ::jwt ::url]))
+                          :opt-un [::offline ::thread-id ::save-thread-volume ::user ::pat ::jwt ::url]))
 
 (defn validate [k]
   (fn [opts]
@@ -454,10 +456,16 @@
                         (git/prompt-file dir-or-ref))}))))
 
 (defn login-info []
-  (if-let [{:keys [token id]} (docker/get-login-info-from-desktop-backend)]
-    {:jwt token
-     :user id}
-    (warn "Docker Desktop not logged in" {})))
+  (if-let [{:keys [token id is-logged-in?]} (docker/get-login-info-from-desktop-backend)]
+    (cond
+      (and is-logged-in? token id)
+      {:jwt token
+       :user id}
+      is-logged-in?
+      (warn "Docker Desktop logged in but creds not available" {})
+      :else
+      (warn "Docker Desktop not logged in" {}))
+    (warn "unable to check Docker Desktop for login" {})))
 
 (defn command [opts & [c :as args]]
   (case c
@@ -486,15 +494,15 @@
                 (async/<!! ((comp conversation-loop (validate ::run-args))
                             (-> opts
                                 (assoc :thread-id thread-id)
-                                ((fn [opts] (merge 
-                                              (apply merge-deprecated opts (rest args))
-                                              (login-info))))))))
+                                ((fn [opts] (merge
+                                             (apply merge-deprecated opts (rest args))
+                                             (login-info))))))))
 
               opts))
     (fn []
-      ((comp get-prompts (validate ::run-args)) (merge 
-                                                  (apply merge-deprecated opts args)
-                                                  (login-info))))))
+      ((comp get-prompts (validate ::run-args)) (merge
+                                                 (apply merge-deprecated opts args)
+                                                 (login-info))))))
 
 (defn -main [& args]
   (try

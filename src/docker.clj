@@ -7,7 +7,8 @@
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as spec]
    [clojure.string :as string]
-   [creds])
+   [creds]
+   logging)
   (:import
    [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
@@ -231,9 +232,9 @@
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
                (when (and (:user m)
-                          (:jwt m))
+                          (or (:jwt m) (:pat m)))
                  {:creds {:username (:user m)
-                          :password (:jwt m)}}))))
+                          :password (or (:jwt m) (:pat m))}}))))
 
 (defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
   (-pull m)
@@ -348,7 +349,12 @@
   []
   (try
     (when (is-logged-in? {})
-      (get-login-info {}))
+      (merge 
+        {:is-logged-in? true}
+        (try
+          (get-login-info {})
+          (catch Throwable ex 
+            (logging/warn "Unable to extract login info:  {{ex}}" {:ex ex})))))
     (catch Throwable _)))
 
 (comment
