@@ -5,4 +5,5 @@ tools:
 
 # prompt user
 
-Run the curl command to fetch gists for user slimslenderslacks from GitHub.
+Run the curl command, in silent mode, to fetch gists for user slimslenderslacks from GitHub.
+

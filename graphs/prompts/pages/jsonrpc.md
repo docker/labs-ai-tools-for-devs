@@ -41,7 +41,7 @@
   probably represents something like a networking error or a configuration problem.
   
   ```json
-  {"params": {"content": "error message"}}
+  {"params": {"content": "error message", "exception": "..."}}
   ```
 - ### Request Methods
 - #### prompt

@@ -74,10 +74,10 @@
        :error
        {:content
         (logging/render
-         "unable to run extractors \n```\n{{ container-definition }}\n```\n - {{ exception }}"
+         "unable to run extractors \n```\n{{ container-definition }}\n```\n"
          {:dir host-dir
-          :container-definition (str container-definition)
-          :exception (str ex)})})
+          :container-definition (str container-definition)})
+        :exception (str ex)})
       m)))
 
 (defn- metadata-file [prompts-file]
@@ -95,12 +95,7 @@
                     (map (fn [m] (merge (registry/get-extractor m) m))))]
     (if (seq extractors)
       extractors
-      [{:name "project-facts"
-        :image "docker/lsp:latest"
-        :entrypoint "/app/result/bin/docker-lsp"
-        :command ["project-facts"
-                  "--vs-machine-id" "none"
-                  "--workspace" "/project"]}])))
+      [])))
 
 (def hub-images
   #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint"})
@@ -109,50 +104,58 @@
   "get either :functions or :tools collection
     returns collection of openai compatiable tool definitions augmented with container info"
   [f]
-  (->>
-   (->
-    (markdown/parse-metadata (metadata-file f))
-    first
-    (select-keys [:tools :functions])
-    seq
-    first  ;; will take the first either tools or functions randomly 
-    second ;; returns the tools or functions array
-    )
-   (mapcat
-    (fn [m]
-      (if-let [tool (hub-images (:name m))]
-        ;; these come from our own public hub images
-        [{:type "function"
-          :function
-          {:name (format "%s-manual" tool)
-           :description (format "Run the man page for %s" tool)
-           :container
-           {:image (format "vonwig/%s:latest" tool)
-            :command
-            ["{{raw|safe}}" "man"]}}}
-         {:type "function"
-          :function
-          (merge
-           {:description (format "Run a %s command." tool)
-            :parameters
-            {:type "object"
-             :properties
-             {:args
-              {:type "string"
-               :description (format "The arguments to pass to %s" tool)}}}
-            :container
-            {:image (format "vonwig/%s:latest" tool)
-             :command ["{{raw|safe}}"]}}
-           m)}]
-        [{:type "function" :function (merge (registry/get-function m) (dissoc m :image))}])))))
+  (try
+    (->>
+     (->
+      (markdown/parse-metadata (metadata-file f))
+      first
+      (select-keys [:tools :functions])
+      seq
+      first  ;; will take the first either tools or functions randomly 
+      second ;; returns the tools or functions array
+      )
+     (mapcat
+      (fn [m]
+        (if-let [tool (hub-images (:name m))]
+            ;; these come from our own public hub images
+          [{:type "function"
+            :function
+            {:name (format "%s-manual" tool)
+             :description (format "Run the man page for %s" tool)
+             :container
+             {:image (format "vonwig/%s:latest" tool)
+              :command
+              ["{{raw|safe}}" "man"]}}}
+           {:type "function"
+            :function
+            (merge
+             {:description (format "Run a %s command." tool)
+              :parameters
+              {:type "object"
+               :properties
+               {:args
+                {:type "string"
+                 :description (format "The arguments to pass to %s" tool)}}}
+              :container
+              {:image (format "vonwig/%s:latest" tool)
+               :command ["{{raw|safe}}"]}}
+             m)}]
+          [{:type "function" :function (merge (registry/get-function m) (dissoc m :image))}]))))
+    (catch Throwable _
+      ;; TODO warn about empty yaml front matter?
+      [])))
 
 (defn collect-metadata
   "collect metadata from yaml front-matter in README.md
     skip functions and extractors"
   [f]
-  (dissoc
-   (-> (markdown/parse-metadata (metadata-file f)) first)
-   :extractors :functions))
+  (try
+    (dissoc
+     (-> (markdown/parse-metadata (metadata-file f)) first)
+     :extractors :functions)
+    (catch Throwable _
+      ;; TODO warn about empty yaml front matter?
+      {})))
 
 (defn run-extractors
   "returns a map of extracted *math-context*
@@ -190,13 +193,20 @@
         m (merge (run-extractors opts) parameters)
         renderer (partial selma-render prompts (facts m user platform))
         prompts (if (fs/directory? prompts)
+                  ;; directory based prompts
                   (->> (fs/list-dir prompts)
                        (filter (name-matches prompt-file-pattern))
                        (sort-by fs/file-name)
                        (map (fn [f] {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)
                                      :content (slurp (fs/file f))}))
                        (into []))
-                  (markdown-parser/parse-markdown (slurp prompts)))]
+                  ;; file based prompts
+                  (try
+                    (let [p (slurp prompts)]
+                      (markdown-parser/parse-markdown p))
+                    (catch Throwable t
+                      (jsonrpc/notify :error {:content (format "failed to parse prompts from markdown %s" t)})
+                      [])))]
     (map renderer prompts)))
 
 (defn interpolate [m template]
@@ -215,7 +225,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user jwt timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user jwt timeout level] :as opts :or {level 0}} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -258,13 +268,15 @@
 
           (= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
           (do
-            (jsonrpc/notify :message {:content (format "## (%s) sub-prompt" (:ref definition))})
+            (jsonrpc/notify :start {:level level
+                                    :role "tool"
+                                    :content (:ref definition)})
             (let [{:keys [messages _finish-reason]}
                   (async/<!! (conversation-loop
                               (assoc opts
+                                     :level (inc (or (:level opts) 0))
                                      :prompts (git/prompt-file (:ref definition))
                                      :parameters arg-context)))]
-              (jsonrpc/notify :message {:content (format "## (%s) end sub-prompt" (:ref definition))})
               (resolve (->> messages
                             (filter #(= "assistant" (:role %)))
                             (last)
@@ -275,37 +287,44 @@
           (fail (format "system failure %s" t)))))
     (fail "no function found")))
 
+(defn- stop-looping [c s]
+  (jsonrpc/notify :error {:content s})
+  (async/>!! c {:messages [{:role "assistant" :content s}]
+                :finish-reason "error"}))
+
 (defn- run-prompts
   "call openai compatible chat completion endpoint and handle tool requests
     params
       prompts is the conversation history
       args for extracting functions, host-dir, user, platform
     returns channel that will contain the final set of messages and a finish-reason"
-  [messages {:keys [prompts url model stream] :as opts}]
+  [messages {:keys [prompts url model stream level] :as opts :or {level 0}}]
   (let [m (collect-metadata prompts)
         functions (collect-functions prompts)
-        [c h] (openai/chunk-handler (partial
-                                     function-handler
-                                     (merge
-                                      opts
-                                      (select-keys m [:timeout])
-                                      {:functions functions})))]
+        [c h] (openai/chunk-handler
+               level
+               (partial
+                function-handler
+                (merge
+                 opts
+                 (select-keys m [:timeout])
+                 {:functions functions})))]
     (try
-      (openai/openai
-       (merge
-        m
-        {:messages messages}
-        (when (seq functions) {:tools functions})
-        (when url {:url url})
-        (when model {:model model})
-        (when (and stream (nil? (:stream m))) {:stream stream})) h)
+      (if (seq messages)
+        (openai/openai
+         (merge
+          m
+          {:messages messages
+           :level level}
+          (when (seq functions) {:tools functions})
+          (when url {:url url})
+          (when model {:model model})
+          (when (and stream (nil? (:stream m))) {:stream stream})) h)
+        (stop-looping c "This is an empty set of prompts.  Define prompts using h1 sections (eg `# prompt user`)" ))
       (catch ConnectException _
-        ;; when the conversation-loop can not connect to an openai compatible endpoint
-        (async/>!! c {:messages [{:role "assistant" :content "I cannot connect to an openai compatible endpoint."}]
-                      :finish-reason "error"}))
+        (stop-looping c "I cannot connect to an openai compatible endpoint."))
       (catch Throwable t
-        (async/>!! c {:messages [{:role "assistant" :content (str t)}]
-                      :finish-reason "error"})))
+        (stop-looping c (str t))))
     c))
 
 (defn- conversation-loop
@@ -333,7 +352,7 @@
     (catch Throwable ex
       (let [c (async/promise-chan)]
         (jsonrpc/notify :error {:content
-                                (format "not a valid prompt configuration: %s" (with-out-str (pprint opts)))
+                                (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                                 :exception (str ex)})
         (async/>! c {:messages [] :done "error"})
         c))))
@@ -410,9 +429,7 @@
                        {:content
                         (json/generate-string
                          (if (map? x)
-                           (if (= "error" (:done x))
-                             (update x :messages last)
-                             (select-keys x [:done]))
+                           (select-keys x [:done])
                            x))})))
 
 (defn output-prompts [coll]

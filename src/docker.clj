@@ -266,7 +266,7 @@
 (def extract-facts run-function)
 
 (defn write-stdin [container-id content]
-  (let [buf (ByteBuffer/allocate (* 4 (count content)))
+  (let [buf (ByteBuffer/allocate (* 1024 20))
         address (UnixDomainSocketAddress/of "/var/run/docker.sock")
         client (SocketChannel/open address)]
 

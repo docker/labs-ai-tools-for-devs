@@ -3,3 +3,4 @@
 .clj-kondo
 .lsp
 /prompts/stable-diffusion/*.png
+**/.DS_Store

@@ -20,10 +20,10 @@
      returns nil
      throws exception if response can't be initiated or if we get a non 200 status code"
   [request cb]
-  (jsonrpc/notify :message {:content "\n## ROLE assistant\n"})
+  (jsonrpc/notify :start {:level (or (:level request) 0) :role "assistant"})
   (let [b (merge
            {:model "gpt-4"}
-           (dissoc request :url))
+           (dissoc request :url :level))
         response
         (http/post
          (or (:url request) "https://api.openai.com/v1/chat/completions")
@@ -43,13 +43,15 @@
               (slurp (:body response))))
         (doseq [chunk (line-seq (io/reader (:body response)))]
           (cb chunk)))
-      (throw (ex-info "Failed to call OpenAI API" {:body (if (string? (:body response))
-                                                           (:body response)
-                                                           (slurp (:body response)))})))))
+      (let [s (if (string? (:body response))
+                (:body response)
+                (slurp (:body response)))]
+        (jsonrpc/notify :message {:content s})
+        (throw (ex-info "Failed to call OpenAI API" {:body s}))))))
 
 (defn call-function
   "  returns channel that will emit one message and then close"
-  [function-handler function-name arguments tool-call-id]
+  [level function-handler function-name arguments tool-call-id]
   (let [c (async/chan)]
     (try
       (function-handler
@@ -57,13 +59,15 @@
        arguments
        {:resolve
         (fn [output]
-          (jsonrpc/notify :message {:content (format "\n## ROLE tool (%s)\n%s\n" function-name output)})
+          (jsonrpc/notify :start {:level level :role "tool" :content function-name})
+          (jsonrpc/notify :message {:content (format "\n%s\n" output)})
           (async/go
             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
             (async/close! c)))
         :fail
         (fn [output]
-          (jsonrpc/notify :message {:content (format "\n## ROLE tool\n function call %s failed %s" function-name output)})
+          (jsonrpc/notify :start {:level level :role "tool" :content function-name})
+          (jsonrpc/notify :message {:content (format "function call failed %s" output)})
           (async/go
             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
             (async/close! c)))})
@@ -76,10 +80,10 @@
 
 (defn make-tool-calls
   " returns channel with all messages from completed executions of tools"
-  [function-handler tool-calls]
+  [level function-handler tool-calls]
   (->>
    (for [{{:keys [arguments name]} :function tool-call-id :id} tool-calls]
-     (call-function function-handler name arguments tool-call-id))
+     (call-function level function-handler name arguments tool-call-id))
    (async/merge)))
 
 (defn function-merge [m {:keys [name arguments]}]
@@ -114,7 +118,7 @@
   "handle one response stream that we read from input channel c
    adds content or tool_calls while streaming and call any functions when done
      returns channel that will emit the an event with a ::response"
-  [c]
+  [level c]
   (let [response (atom {})]
     (async/go-loop
      []
@@ -137,6 +141,7 @@
              (async/<!
               (->>
                (make-tool-calls
+                level
                 (:tool-handler e)
                 (vals calls))
                (async/reduce conj messages)))})
@@ -160,9 +165,9 @@
 (defn chunk-handler
   "sets up a response handler loop for use with an OpenAI API call
     returns [channel openai-handler] - channel will emit the updated chat messages after dispatching any functions"
-  [function-handler]
+  [level function-handler]
   (let [c (async/chan 1)]
-    [(response-loop c)
+    [(response-loop level c)
      (fn [chunk]
        ;; TODO this only supports when there's a single choice
        (let [{[{:keys [delta message finish_reason _role]}] :choices
