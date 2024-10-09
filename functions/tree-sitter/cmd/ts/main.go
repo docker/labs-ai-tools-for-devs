@@ -13,7 +13,12 @@ import (
 	"github.com/smacker/go-tree-sitter/bash"
 	"github.com/smacker/go-tree-sitter/html"
 	"github.com/smacker/go-tree-sitter/dockerfile"
+	"github.com/smacker/go-tree-sitter/golang"
+	"github.com/smacker/go-tree-sitter/java"
+	"github.com/smacker/go-tree-sitter/javascript"
 	markdown "github.com/smacker/go-tree-sitter/markdown/tree-sitter-markdown"
+	typescript "github.com/smacker/go-tree-sitter/typescript/typescript"
+	tsx "github.com/smacker/go-tree-sitter/typescript/tsx"
 )
 
 func main() {
@@ -52,6 +57,16 @@ func main() {
 		lang = dockerfile.GetLanguage()
 	case "markdown":
 		lang = markdown.GetLanguage()
+	case "golang":
+		lang = golang.GetLanguage()
+	case "java":
+		lang = java.GetLanguage()
+	case "javascript":
+		lang = javascript.GetLanguage()
+	case "typescript":
+		lang = typescript.GetLanguage()
+	case "tsx":
+		lang = tsx.GetLanguage()
 	default:
 		fmt.Printf("Unsupported language: %s\n", language)
 		return

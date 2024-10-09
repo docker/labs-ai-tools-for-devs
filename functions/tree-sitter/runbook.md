@@ -18,6 +18,7 @@ docker buildx build \
     --tag vonwig/tree-sitter:latest \
     --file Dockerfile \
     --push .
+docker pull vonwig/tree-sitter:latest
 ```
 
 ```sh

@@ -43,7 +43,7 @@
               # If you're not using vendored dependencies, compute the hash of your go.mod and go.sum
               # You can get this hash by first setting it to lib.fakeSha256,
               # then running the build and replacing it with the correct hash
-              vendorHash = "sha256-ZAlkGegeFLqvHlGD1oA08NS216r6WsWFkajzxI+jLX4=";
+              vendorHash = "sha256-/X9cuzpVzVOqcON3c2GtUwCXi6gfFzjjQ8r+D0Yhgu8=";
               
               # Specify the package to build if it's not in the root of your project
               subPackages = [ "cmd/ts" ];
