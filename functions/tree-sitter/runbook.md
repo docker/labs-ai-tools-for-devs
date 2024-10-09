@@ -21,13 +21,15 @@ docker buildx build \
 docker pull vonwig/tree-sitter:latest
 ```
 
+## Run
+
 ```sh
-./result/bin/ts -lang python -query "(module (function_definition) @top-level)" < test/resources/hello.py
-./result/bin/ts -lang markdown -query "(document (section (atx_heading (atx_h1_marker))) @h1)" < test/resources/hello.md
+./result/bin/entrypoint -lang python -query "(module (function_definition) @top-level)" < test/resources/hello.py
+./result/bin/entrypoint -lang markdown -query "(document (section (atx_heading (atx_h1_marker))) @h1)" < test/resources/hello.md
 ```
 
 ```sh
-./result/bin/ts -lang markdown < test/resources/hello.md
+./result/bin/entrypoint -lang markdown < test/resources/hello.md
 ```
 
 ```sh

@@ -26,34 +26,28 @@
         in rec {
           packages = rec {
 
+            # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/go/module.nix
             goBinary = pkgs.buildGoModule {
               pname = "tree-sitter-query";
               version = "0.1.0";
               src = ./.; # Assuming your Go code is in the same directory as the flake.nix
 
-              buildInputs = [pkgs.tree-sitter];
-
               CGO_ENABLED = "1";
 
-              CGO_CFLAGS = "-I${pkgs.tree-sitter}/include";
-              
-              # If you have vendored dependencies, use this:
-              # vendorSha256 = null;
-              
               # If you're not using vendored dependencies, compute the hash of your go.mod and go.sum
               # You can get this hash by first setting it to lib.fakeSha256,
               # then running the build and replacing it with the correct hash
               vendorHash = "sha256-/X9cuzpVzVOqcON3c2GtUwCXi6gfFzjjQ8r+D0Yhgu8=";
+
+              postInstall = ''
+                mv $out/bin/ts $out/bin/entrypoint
+              '';
               
               # Specify the package to build if it's not in the root of your project
               subPackages = [ "cmd/ts" ];
             };
 
-            default = pkgs.writeShellScriptBin "entrypoint" ''
-              export PATH=${pkgs.lib.makeBinPath [goBinary]}
-              ts "$@"
-            '';
-
+            default = goBinary;
           };
 
           devShells.default = pkgs.devshell.mkShell {
