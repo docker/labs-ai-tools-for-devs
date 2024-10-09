@@ -10,11 +10,26 @@ docker build -t vonwig/tree-sitter .
 ```
 
 ```sh
-./result/bin/ts python "(module (function_definition) @top-level)" < test/resources/hello.py
-./result/bin/ts markdown "(document (section (atx_heading (atx_h1_marker))) @h1)" < test/resources/hello.md
+# docker:command=release-build
+
+docker buildx build \
+    --builder hydrobuild \
+    --platform linux/amd64,linux/arm64 \
+    --tag vonwig/tree-sitter:latest \
+    --file Dockerfile \
+    --push .
 ```
 
 ```sh
-docker run --rm -i vonwig/tree-sitter python "(module (function_definition) @top-level)" < <(echo "def hello():\n\tprint(\"hello\")")
+./result/bin/ts -lang python -query "(module (function_definition) @top-level)" < test/resources/hello.py
+./result/bin/ts -lang markdown -query "(document (section (atx_heading (atx_h1_marker))) @h1)" < test/resources/hello.md
+```
+
+```sh
+./result/bin/ts -lang markdown < test/resources/hello.md
+```
+
+```sh
+docker run --rm -i vonwig/tree-sitter -lang python -query "(module (function_definition) @top-level)" < <(echo "def hello():\n\tprint(\"hello\")")
 ```
 

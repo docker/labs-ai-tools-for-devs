@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"encoding/json"
 
 	sitter "github.com/smacker/go-tree-sitter"
 	"github.com/smacker/go-tree-sitter/python"
@@ -15,13 +17,22 @@ import (
 )
 
 func main() {
-	// Check if both language and query string are provided as arguments
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: ./program <language> <query_string>")
+	// Define flags
+	languagePtr := flag.String("lang", "", "The programming language to parse (required)")
+	queryPtr := flag.String("query", "", "The query string to execute (required)")
+
+	// Parse flags
+	flag.Parse()
+
+	// Check if required flags are provided
+	if *languagePtr == "" {
+		fmt.Println("Usage: ./program -lang <language> -query <query_string>")
+		flag.PrintDefaults()
 		return
 	}
-	language := os.Args[1]
-	queryString := os.Args[2]
+
+	// language is mandatory
+	language := *languagePtr
 
 	// Create a parser
 	parser := sitter.NewParser()
@@ -58,8 +69,12 @@ func main() {
 	tree := parser.Parse(nil, sourceCode)
 	defer tree.Close()
 
-	// Write the S-expression of the tree to stdout
-	fmt.Println(tree.RootNode().String())
+	queryString := *queryPtr
+	if queryString == "" {
+		// Write the S-expression of the tree to stdout
+		fmt.Println(tree.RootNode().String())
+		return
+	}
 
 	// Create a query
 	query, err := sitter.NewQuery([]byte(queryString), lang)
@@ -85,7 +100,48 @@ func main() {
 		for _, capture := range match.Captures {
 			captureName := query.CaptureNameForId(capture.Index)
 			nodeText := capture.Node.Content(sourceCode)
-			fmt.Printf("Capture: %s, Node: %s\n", captureName, nodeText)
+			
+			captureInfo := struct {
+				CaptureName string `json:"capture_name"`
+				NodeText    string `json:"node_text"`
+				StartByte   uint32 `json:"start_byte"`
+				EndByte     uint32 `json:"end_byte"`
+				StartPoint  struct {
+					Row    uint32 `json:"row"`
+					Column uint32 `json:"column"`
+				} `json:"start_point"`
+				EndPoint struct {
+					Row    uint32 `json:"row"`
+					Column uint32 `json:"column"`
+				} `json:"end_point"`
+			}{
+				CaptureName: captureName,
+				NodeText:    nodeText,
+				StartByte:   capture.Node.StartByte(),
+				EndByte:     capture.Node.EndByte(),
+				StartPoint: struct {
+					Row    uint32 `json:"row"`
+					Column uint32 `json:"column"`
+				}{
+					Row:    capture.Node.StartPoint().Row,
+					Column: capture.Node.StartPoint().Column,
+				},
+				EndPoint: struct {
+					Row    uint32 `json:"row"`
+					Column uint32 `json:"column"`
+				}{
+					Row:    capture.Node.EndPoint().Row,
+					Column: capture.Node.EndPoint().Column,
+				},
+			}
+
+			jsonData, err := json.MarshalIndent(captureInfo, "", "  ")
+			if err != nil {
+				fmt.Println("Error marshaling JSON:", err)
+				continue
+			}
+
+			fmt.Println(string(jsonData))
 		}
 	}
 }

@@ -25,47 +25,6 @@
 
         in rec {
           packages = rec {
-            # darwin versus linux
-            dylibExt = if nixpkgs.lib.hasInfix "darwin" system then "dylib" else "so";  
-
-            lib = pkgs.stdenv.mkDerivation {
-              name = "lib";
-              src = ./.;
-              installPhase = ''
-                mkdir -p $out/lib;
-                cp ${pkgs.tree-sitter}/lib/libtree-sitter.${dylibExt} $out/lib/;
-                cp ${pkgs.tree-sitter-grammars.tree-sitter-markdown}/parser $out/lib/libtree-sitter-markdown.${dylibExt};
-                cp ${pkgs.tree-sitter-grammars.tree-sitter-python}/parser $out/lib/libtree-sitter-python.${dylibExt};
-              '';
-            };
-
-            # derive the parser
-            parser = pkgs.stdenv.mkDerivation {
-              name = "parser";
-              src = ./.;
-              nativeBuildInputs = [
-                pkgs.gcc
-                pkgs.findutils
-                pkgs.patchelf
-              ];
-              buildPhase = ''
-                ${pkgs.gcc}/bin/gcc -o parser \
-                  main.c \
-                  -I${pkgs.tree-sitter}/include \
-                  ${pkgs.tree-sitter-grammars.tree-sitter-markdown}/parser \
-                  ${pkgs.tree-sitter-grammars.tree-sitter-python}/parser \
-                  ${pkgs.tree-sitter}/lib/libtree-sitter.${dylibExt}
-              '';
-
-              installPhase = ''
-                mkdir -p $out/bin;
-                cp parser $out/bin/parser;
-              '';
-
-              fixupPhase = ''
-                find $out -type f -exec patchelf --shrink-rpath '{}' \; -exec strip '{}' \; 2>/dev/null
-              '';
-            };
 
             goBinary = pkgs.buildGoModule {
               pname = "tree-sitter-query";
@@ -90,7 +49,6 @@
               subPackages = [ "cmd/ts" ];
             };
 
-            # the script must have gh in the PATH
             default = pkgs.writeShellScriptBin "entrypoint" ''
               export PATH=${pkgs.lib.makeBinPath [goBinary]}
               ts "$@"
