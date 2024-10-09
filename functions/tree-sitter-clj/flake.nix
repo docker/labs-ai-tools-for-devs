@@ -10,6 +10,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    clj-nix = {
+      url = "github:jlesquembre/clj-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ...}@inputs:
@@ -18,6 +22,9 @@
         let
           overlays = [
             inputs.devshell.overlays.default
+            (self: super: {
+              clj-nix = inputs.clj-nix.packages."${system}";
+            })
           ];
           pkgs = import nixpkgs {
             inherit overlays system;
@@ -37,6 +44,31 @@
                 cp ${pkgs.tree-sitter-grammars.tree-sitter-markdown}/parser $out/lib/libtree-sitter-markdown.${dylibExt};
                 cp ${pkgs.tree-sitter-grammars.tree-sitter-python}/parser $out/lib/libtree-sitter-python.${dylibExt};
               '';
+            };
+
+            clj = pkgs.clj-nix.mkCljBin {
+              name = "tree-sitter-clj-bin";
+              projectSrc = ./.;
+              main-ns = "docker.ts";
+              jdkRunner = pkgs.openjdk22;
+              java-opts = ["--enable-native-access=ALL-UNNAMED"];
+              buildCommand = "clj -T:build uber";
+            };
+            graal = pkgs.clj-nix.mkGraalBin {
+              # lazy lookup of a derivation that will exist
+              cljDrv = self.packages."${system}".clj;
+              graalvmXmx = "-J-Xmx8g";
+              graalvm = pkgs.graalvm-ce;
+              extraNativeImageBuildArgs = [
+                "--native-image-info"
+                "--no-fallback"
+                "-H:-CheckToolchain"
+                #"--initialize-at-build-time"
+                #"--initialize-at-run-time=io.github.treesitter.jtreesitter.internal.TreeSitter"
+                #"--initialize-at-run-time=io.github.treesitter.jtreesitter.internal.TreeSitter$ts_parser_parse_string_encoding"
+                #"--initialize-at-run-time=io.github.treesitter.jtreesitter.internal.TreeSitter$ts_parser_new"
+                #"--initialize-at-run-time=io.github.treesitter.jtreesitter.internal.TreeSitter$ts_parser_set_language"
+              ];
             };
 
             # derive the parser
@@ -67,33 +99,10 @@
               '';
             };
 
-            goBinary = pkgs.buildGoModule {
-              pname = "tree-sitter-query";
-              version = "0.1.0";
-              src = ./.; # Assuming your Go code is in the same directory as the flake.nix
-
-              buildInputs = [pkgs.tree-sitter];
-
-              CGO_ENABLED = "1";
-
-              CGO_CFLAGS = "-I${pkgs.tree-sitter}/include";
-              
-              # If you have vendored dependencies, use this:
-              # vendorSha256 = null;
-              
-              # If you're not using vendored dependencies, compute the hash of your go.mod and go.sum
-              # You can get this hash by first setting it to lib.fakeSha256,
-              # then running the build and replacing it with the correct hash
-              vendorHash = "sha256-ZAlkGegeFLqvHlGD1oA08NS216r6WsWFkajzxI+jLX4=";
-              
-              # Specify the package to build if it's not in the root of your project
-              subPackages = [ "cmd/ts" ];
-            };
-
             # the script must have gh in the PATH
             default = pkgs.writeShellScriptBin "entrypoint" ''
-              export PATH=${pkgs.lib.makeBinPath [goBinary]}
-              ts "$@"
+              export PATH=${pkgs.lib.makeBinPath [parser]}
+              parser "$@"
             '';
 
           };
@@ -107,6 +116,11 @@
               pkgs.go # Added Golang
             ];
             commands = [
+              {
+                name = "lock-clojure-deps";
+                help = "update deps-lock.json whenever deps.edn changes";
+                command = "nix run github:jlesquembre/clj-nix#deps-lock";
+              }
             ];
           };
         }

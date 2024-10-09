@@ -4,3 +4,9 @@
 .lsp
 /prompts/stable-diffusion/*.png
 **/.DS_Store
+/functions/tree-sitter/.cpcache/
+/functions/tree-sitter/.nrepl-port
+/functions/tree-sitter/hs_err_*.log
+/functions/tree-sitter/main
+/functions/tree-sitter-clj/target/
+/functions/tree-sitter-clj/.cpcache/

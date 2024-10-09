@@ -5,6 +5,7 @@
 #include "tree_sitter/parser.h"
 
 extern const TSLanguage *tree_sitter_markdown(void);
+extern const TSLanguage *tree_sitter_python(void);
 
 char *escape_double_quotes(const char *type) {
 	char dq[] = "\"";
@@ -15,6 +16,18 @@ char *escape_double_quotes(const char *type) {
 		return type;
 	}
 }
+
+// Define a simple key-value pair structure
+typedef struct {
+    const char *key;
+    const TSLanguage *(*language_func)(void);
+} LanguageEntry;
+
+// Create the map of TSLanguages
+LanguageEntry language_map[] = {
+    {"markdown", tree_sitter_markdown},
+    {"python", tree_sitter_python},
+};
 
 char *escape_back_slash(const char *type) {
 	char dq[] = "\\";
@@ -29,7 +42,7 @@ char *escape_back_slash(const char *type) {
 // Function to print an S-expression with line and column information
 void print_sexp_with_position(TSNode node, const TSLanguage *lang, const char *source) {
     TSSymbol symbol = ts_node_symbol(node);
-    const char *type = ts_language_symbol_name( lang, symbol);
+    const char *type = ts_language_symbol_name(lang, symbol);
 
     // Get the start position of the node
     TSPoint start_point = ts_node_start_point(node);
@@ -37,11 +50,16 @@ void print_sexp_with_position(TSNode node, const TSLanguage *lang, const char *s
     // Get the end position of the node
     TSPoint end_point = ts_node_end_point(node);
 
-    char *escaped1 = escape_double_quotes(type);
-    char *escaped = escape_back_slash(escaped1);
+    // Check if the node has a field name
+    const char *field_name = ts_node_field_name_for_child(ts_node_parent(node), ts_node_child_index(node));
+    if (field_name != null) {
+	printf(" %s:", field_name);
+    }
 
     // Print the S-expression with line and column information
-    printf("(\"%s\" \"%d:%d-%d:%d\" ", escaped, start_point.row + 1, start_point.column + 1, end_point.row + 1, end_point.column + 1);
+    printf("(%s", type);
+
+    printf(" [%d, %d] - [%d, %d]\n", start_point.row, start_point.column, end_point.row, end_point.column);
 
     // Recursively print child nodes
     for (uint32_t i = 0, child_count = ts_node_child_count(node); i < child_count; i++) {
@@ -56,16 +74,29 @@ int main(int argc, char *argv[]) {
     // Initialize the Tree-sitter library
     TSParser *parser = ts_parser_new();
 
-    // Load the Markdown language
-    const TSLanguage *markdown_language = tree_sitter_markdown();
+    // Default to Markdown if no argument is provided
+    const TSLanguage *selected_language = tree_sitter_markdown();
+    const char *language_name = "markdown";
 
-    if (!markdown_language) {
-        fprintf(stderr, "Error loading Markdown language\n");
+    // Check if a language argument is provided
+    if (argc > 1) {
+        // Look up the language in the language_map
+        for (size_t i = 0; i < sizeof(language_map) / sizeof(language_map[0]); i++) {
+            if (strcmp(argv[1], language_map[i].key) == 0) {
+                selected_language = language_map[i].language_func();
+                language_name = language_map[i].key;
+                break;
+            }
+        }
+    }
+
+    if (!selected_language) {
+        fprintf(stderr, "Error loading %s language\n", language_name);
         return 1;
     }
 
-    // Set the parser's language to Markdown
-    ts_parser_set_language(parser, markdown_language);
+    // Set the parser's language to the selected language
+    ts_parser_set_language(parser, selected_language);
 
     // Read the Markdown input from a file (change this path to your Markdown file)
     /*FILE *input_file = fopen(argv[1], "r");*/
@@ -129,9 +160,10 @@ int main(int argc, char *argv[]) {
 
     // Perform your desired operations with the parsed tree here
     // For example, you can traverse the tree and analyze the Markdown document's structure.
-    const char *root_string = ts_node_string(root_node);
-    print_sexp_with_position(root_node, markdown_language, input_buffer);
+    //const char *root_string = tsc_node_string(root_node);
+    //printf("%s", root_string);
 
+    print_sexp_with_position(root_node, selected_language, input_buffer);
     // Clean up resources
     ts_parser_delete(parser);
     //fclose(input_file);

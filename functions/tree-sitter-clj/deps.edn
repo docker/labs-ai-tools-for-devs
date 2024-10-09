@@ -1,0 +1,9 @@
+{:paths ["src/java" "srs/clojure" "target/classes"]
+ :deps
+ {net.java.dev.jna/jna-platform {:mvn/version "5.15.0"}
+  io.github.tree-sitter/jtreesitter {:mvn/version "0.23.1"}}
+ :aliases
+ {:build
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.9.4" :git/sha "76b78fe"}}
+   :ns-default build}}}
+
