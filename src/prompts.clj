@@ -98,7 +98,7 @@
       [])))
 
 (def hub-images
-  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint"})
+  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick"})
 
 (defn collect-functions
   "get either :functions or :tools collection
@@ -252,7 +252,7 @@
                                (when user {:user user})
                                (when jwt {:jwt jwt})
                                (when timeout {:timeout timeout}))
-                {:keys [pty-output exit-code done] :as result} (docker/run-function function-call)
+                {:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
                 exit-code-fail? (if (false? (:check-exit-code definition))
                                   false
                                   (not= 0 exit-code))]

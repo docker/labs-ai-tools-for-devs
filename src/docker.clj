@@ -61,9 +61,9 @@
 
 (defn backend-login-info [_]
   (curl/get
-    "http://localhost/registry/info"
-    {:raw-args ["--unix-socket" (get-backend-socket)]
-     :throw false}))
+   "http://localhost/registry/info"
+   {:raw-args ["--unix-socket" (get-backend-socket)]
+    :throw false}))
 
 (defn backend-get-token [_]
   (curl/get
@@ -228,6 +228,16 @@
 (spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::jwt]
                                             :req-un [::image]))
 
+(spec/def ::pty-output string?)
+(spec/def ::exit-code integer?)
+(spec/def ::info any?)
+(spec/def ::done #{:timeout :exited})
+(spec/def ::timeout integer?)
+(spec/def ::kill-container any?)
+
+(spec/def ::container-response (spec/keys :req-un [::pty-output ::exit-code ::info ::done]
+                                          :opt-un [::timeout ::kill-container]))
+
 (defn- -pull [m]
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
@@ -236,7 +246,9 @@
                  {:creds {:username (:user m)
                           :password (or (:jwt m) (:pat m))}}))))
 
-(defn run-function [{:keys [timeout] :or {timeout 600000} :as m}]
+(defn run-function 
+  "run container function with no stdin"
+  [{:keys [timeout] :or {timeout 600000} :as m}]
   (-pull m)
   (let [x (create m)
         finished-channel (async/promise-chan)]
@@ -340,21 +352,38 @@
          {:pty-output s
           :exit-code (-> info :State :ExitCode)
           :info info}))
-      (catch Throwable t
+      (catch Throwable _
         (delete x)
         {}))))
+
+(defn run-with-stdin-content 
+  "run container with stdin read from a file"
+  [m]
+  (let [x (docker/function-call-with-stdin
+           (assoc m :content (slurp (-> m :stdin :file))))]
+    (async/<!! (async/thread
+                 (Thread/sleep 10)
+                 (docker/finish-call x)))))
+
+(defn run-container 
+  " params ::container-definition
+     returns ::container-response"
+  [m]
+  (if (-> m :stdin :file)
+    (run-with-stdin-content m)
+    (run-function m)))
 
 (defn get-login-info-from-desktop-backend
   "returns token or nil if not logged in or backend.sock is not available"
   []
   (try
     (when (is-logged-in? {})
-      (merge 
-        {:is-logged-in? true}
-        (try
-          (get-login-info {})
-          (catch Throwable ex 
-            (logging/warn "Unable to extract login info:  {{ex}}" {:ex ex})))))
+      (merge
+       {:is-logged-in? true}
+       (try
+         (get-login-info {})
+         (catch Throwable ex
+           (logging/warn "Unable to extract login info:  {{ex}}" {:ex ex})))))
     (catch Throwable _)))
 
 (comment
