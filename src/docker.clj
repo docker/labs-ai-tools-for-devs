@@ -382,8 +382,7 @@
        {:is-logged-in? true}
        (try
          (get-login-info {})
-         (catch Throwable ex
-           (logging/warn "Unable to extract login info:  {{ex}}" {:ex ex})))))
+         (catch Throwable _))))
     (catch Throwable _)))
 
 (comment
