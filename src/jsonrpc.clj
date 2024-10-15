@@ -126,7 +126,7 @@
     :prompts nil
     (binding [*out* *err*] (println (format "%s\n%s\n" method params)))))
 
-(def ^:dynamic notify -notify)
+(def ^:dynamic notify -println)
 
 (comment
   (notify :message {:content "message"}))

@@ -1,5 +1,6 @@
 (ns graph
   (:require
+   [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.pprint :refer [pprint]]
    jsonrpc
@@ -40,44 +41,106 @@
         (stop-looping c (str t))))
     c))
 
-(defn conversation-loop
-  "thread loop for an openai compatible endpoint
-     returns messages and done indicator"
-  [{:keys [level prompts] :or {level 0} :as opts}]
-  (try
-    (let [m (prompts/collect-metadata prompts)
-          functions (prompts/collect-functions prompts)
-          new-prompts (prompts/get-prompts opts)]
-      (jsonrpc/notify :prompts {:messages new-prompts})
-      (async/go-loop [thread []]
-                     ;; get-prompts can only use extractors - we can't refine
-                     ;; them based on output from function calls that the LLM plans
-        (let [prompts (if (not (seq thread))
-                        new-prompts
-                        thread)
-              {:keys [messages finish-reason] :as m} (async/<! (run-llm prompts m functions opts))]
-          (if (= "tool_calls" finish-reason)
-            (do
-              (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-              (recur
-               (let [x
-                     (async/<! (->> (tools/make-tool-calls
-                                     level
-                                     (partial tools/function-handler (assoc opts :functions functions))
-                                     (-> messages first :tool_calls))
-                                    (async/reduce conj (into [] (concat
-                                                                  prompts messages)))))]
-                 x)))
-            (do
-              (jsonrpc/notify :message {:debug (with-out-str (pprint m))})
-              {:messages (concat prompts messages) :done finish-reason})))))
-    (catch Throwable ex
-      (let [c (async/promise-chan)]
+(defn start [{:keys [prompts] :as opts} _]
+  (let [c (async/promise-chan)]
+    (try
+      (let [new-prompts (prompts/get-prompts opts)]
+        (jsonrpc/notify :prompts {:messages new-prompts})
+        (async/put! c (let [m {:metadata (prompts/collect-metadata prompts)
+                               :functions (prompts/collect-functions prompts)
+                               :messages new-prompts}]
+                        m)))
+      (catch Throwable ex
         (jsonrpc/notify :error {:content
                                 (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                                 :exception (str ex)})
-        (async/>! c {:messages [] :done "error"})
-        c))))
+        (async/put! c {:messages [] :done "error"})))
+    c))
+
+(defn end [state]
+  (let [c (async/promise-chan)]
+    (async/put! c state)
+    c))
+
+(defn completion [state]
+  (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
+
+(defn tool [state]
+  (let [calls (-> (:messages state) last :tool_calls)]
+    (jsonrpc/notify :message {:debug (with-out-str (pprint calls))})
+    (async/go
+      {:messages
+       (into []
+             (async/<!
+               (->> (tools/make-tool-calls
+                      (-> state :opts :level)
+                      (partial tools/function-handler (assoc (:opts state) :functions (:functions state)))
+                      calls)
+                    (async/reduce conj []))))})))
+
+(defn tool-or-end [state]
+  (let [finish-reason (-> state :finish-reason)]
+    (if (= "tool_calls" finish-reason)
+      "tool"
+      "end")))
+
+(defn add-node [graph s f]
+  (assoc-in graph [:nodes s] f))
+(defn add-edge [graph s1 s2]
+  (assoc-in graph [:edges s1] (constantly s2)))
+(defn add-conditional-edges [graph s1 f & [m]]
+  (assoc-in graph [:edges s1] ((or m identity) f)))
+
+(defn each [& fs]
+  (fn [coll]
+    (->> coll
+         (map #(reduce (fn [m f] (f m)) %1 fs)))))
+
+(defn summarize-arguments [m]
+  (update m :arguments (fn [s] (format "... json length %d ..." (count s)))))
+(defn summarize-content [m]
+  (update m :content (fn [c] (format "... %d characters ..." (count c)))))
+(defn summarize-tool-calls [m]
+  (update-in m [:tool_calls] (each summarize-arguments)))
+
+(defn summarize [state]
+  (-> state
+      (update :messages (each summarize-content summarize-tool-calls))))
+
+(defn stream [graph]
+  (async/go-loop
+   [state {}
+    node "start"]
+    (jsonrpc/notify :message {:debug (format "-> entering %s\n%s" node (with-out-str (pprint (summarize state))))})
+    (if (= "end" node)
+      (async/<! ((get-in graph [:nodes node]) state))
+      (let [f (get-in graph [:nodes node])
+            s (async/<! (f state))
+            new-state (-> state
+                          (merge (dissoc s :messages))
+                          (update :messages concat (:messages s)))]
+        (recur new-state ((get-in graph [:edges node]) new-state))))))
+
+(defn chat-with-tools [opts]
+  (-> {}
+      (add-node "start" (partial start opts))
+      (add-node "completion" completion)
+      (add-node "tool" tool)
+      (add-node "end" end)
+      (add-edge "start" "completion")
+      (add-edge "tool" "completion")
+      (add-conditional-edges "completion" tool-or-end)))
+
+(defn conversation-loop
+  "thread loop for an openai compatible endpoint
+     returns messages and done indicator"
+  [opts]
+  (async/<!! (stream (chat-with-tools opts))))
+
+(comment
+  (alter-var-root #'jsonrpc/notify (fn [_] (partial jsonrpc/-println {:debug true})))
+  (let [x {:prompts (fs/file "/Users/slim/docker/labs-ai-tools-for-devs/prompts/curl/README.md") :platform "darwin" :user "jimclark106" :thread-id "thread" :host-dir "/Users/slim"}]
+    (summarize (async/<!! (stream (chat-with-tools x))))))
 
 (comment
   (def x {:stream true,
@@ -85,8 +148,9 @@
           :prompts "/Users/slim/docker/labs-ai-tools-for-devs/prompts/hub/default.md"
           :platform "darwin", :user "jimclark106",
           :thread-id "3e61ffe7-840e-4177-b84a-f6f7db58b24d"})
-  (async/<!! (conversation-loop
-              x)))
+  (summarize
+    (async/<!! (conversation-loop
+                 x))))
 
 (comment
   ;; for testing conversation-loop in repl

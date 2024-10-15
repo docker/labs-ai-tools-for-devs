@@ -152,7 +152,7 @@
     "run" (fn []
             (with-volume
               (fn [thread-id]
-                (async/<!! ((comp graph/conversation-loop (validate ::run-args))
+                (async/<!! ((comp graph/stream graph/chat-with-tools (validate ::run-args))
                             (-> opts
                                 (assoc :thread-id thread-id)
                                 ((fn [opts] (merge
