@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=bb /usr/local/bin/bb /usr/local/bin/bb
 COPY bb.edn bb.edn
 COPY ./src ./src
-RUN bb uberjar prompts.jar -m prompts
+RUN bb uberjar prompts.jar -m main
 
 FROM base
 
