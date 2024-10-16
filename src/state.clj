@@ -16,3 +16,21 @@
   (-> state
       (update :messages (each summarize-content summarize-tool-calls))))
 
+(defn prompt? [m]
+  (= "prompt" (:type m)))
+
+(defn get-function-definition [{:keys [messages functions]}]
+  (when-let [message (last messages)]
+    (->> functions
+         ;; TODO only supports one tool call at a time
+         (filter #(or
+                   (=
+                    (-> message :tool_calls first :function :name)
+                    (-> % :function :name))
+                   (=
+                    (-> message :tool_calls first :function :name)
+                    (-> % :name))))
+         first)))
+
+(def prompt-tool? (comp prompt? get-function-definition))
+

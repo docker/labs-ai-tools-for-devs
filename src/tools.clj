@@ -1,8 +1,7 @@
-(ns tools 
+(ns tools
   (:require
    [cheshire.core :as json]
    [clojure.core.async :as async]
-   [clojure.pprint :as pprint]
    docker
    git
    jsonrpc
@@ -10,6 +9,14 @@
 
 (defn interpolate [m template]
   (selmer/render template m {}))
+
+(defn arg-context [json-arg-string]
+  (merge
+   ;; TODO raw is a bad name when merging
+   {:raw (if json-arg-string
+           json-arg-string
+           "{}")}
+   (when json-arg-string (json/parse-string json-arg-string true))))
 
 (defn function-handler
   "make openai tool call
@@ -27,15 +34,9 @@
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
                        :function)]
-    (let [arg-context (merge
-                              ;; TODO raw is a bad name when merging
-                       {:raw (if json-arg-string
-                               json-arg-string
-                               "{}")}
-                       (when json-arg-string (json/parse-string json-arg-string true)))]
+    (let [arg-context (arg-context json-arg-string)]
       (try
-        (cond
-          (:container definition) ;; synchronous call to container function
+        (if (:container definition) ;; synchronous call to container function
           (let [function-call (merge
                                (:container definition)
                                (dissoc opts :functions)
@@ -63,22 +64,6 @@
               :else
               (fail (format "call failed"))))
 
-          ;(= "prompt" (:type definition)) ;; asynchronous call to another agent - new conversation-loop
-          ;(do
-            ;(jsonrpc/notify :start {:level level
-                                    ;:role "tool"
-                                    ;:content (:ref definition)})
-            ;(let [{:keys [messages _finish-reason]}
-                  ;(async/<!! (graph/conversation-loop
-                              ;(assoc opts
-                                     ;:level (inc (or (:level opts) 0))
-                                     ;:prompts (git/prompt-file (:ref definition))
-                                     ;:parameters arg-context)))]
-              ;(resolve (->> messages
-                            ;(filter #(= "assistant" (:role %)))
-                            ;(last)
-                            ;:content))))
-          :else
           (fail (format "bad container definition %s" definition)))
         (catch Throwable t
           (fail (format "system failure %s" t)))))

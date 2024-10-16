@@ -95,7 +95,7 @@
 
 (defn collect-functions
   "get either :functions or :tools collection
-    returns collection of openai compatiable tool definitions augmented with container info"
+    returns collection of openai compatible tool definitions augmented with container info"
   [f]
   (try
     (->>
