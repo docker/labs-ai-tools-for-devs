@@ -50,7 +50,9 @@
 ; be merged into the conversation state
 ; =====================================================
 
-(defn start [{:keys [prompts] :as opts} _]
+(defn start 
+  "create starting messages, metadata, and functions to bootstrap the thread"
+  [{:keys [prompts] :as opts} _]
   (let [c (async/promise-chan)]
     (try
       (let [new-prompts (prompts/get-prompts opts)]
@@ -66,16 +68,22 @@
         (async/put! c {:messages [] :done "error"})))
     c))
 
-(defn end [state]
+(defn end 
+  "merge the :done signal"
+  [state]
   (let [c (async/promise-chan)]
     ;; this is a normal ending and we try to add a :done key to the state for this
     (async/put! c (assoc state :done (:finish-reason state)))
     c))
 
-(defn completion [state]
+(defn completion 
+  "get the next llm completion"
+  [state]
   (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
 
-(defn tool [state]
+(defn tool 
+  "make docker container tool calls"
+  [state]
   (let [calls (-> (:messages state) last :tool_calls)]
     (async/go
       ;; tool-calls 
@@ -92,29 +100,33 @@
 
 ; tool_calls are maps with an id and a function with arguments an name
 ; look up the full tool definition using the name
-(defn sub-graph [state]
+(defn sub-graph 
+  "answer a tool call by processing a sub-graph"
+  [state]
   (async/go
     (let [definition (state/get-function-definition state)
           arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
                         (tools/arg-context raw-args))
           sub-graph-state
           (async/<!
-            (stream
-              (chat-with-tools
-                (-> (:opts state)
-                    (assoc :level (inc (or (-> state :opts :level) 0))
-                           :prompts (git/prompt-file (-> definition :function :ref))
-                           :parameters arg-context)))))]
-      {:messages [(-> sub-graph-state 
-                      :messages 
-                      last 
+           (stream
+            (chat-with-tools
+             (-> (:opts state)
+                 (assoc :level (inc (or (-> state :opts :level) 0))
+                        :prompts (git/prompt-file (-> definition :function :ref))
+                        :parameters arg-context)))))]
+      {:messages [(-> sub-graph-state
+                      :messages
+                      last
                       (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})))
 
 ; =====================================================
 ; edge functions takes state and returns next node
 ; =====================================================
 
-(defn tool-or-end [state]
+(defn tool-or-end 
+  "after a completion, check whether you need to make a tool call"
+  [state]
   (let [finish-reason (-> state :finish-reason)]
     (cond
       (and
@@ -134,6 +146,13 @@
 (defn add-conditional-edges [graph s1 f & [m]]
   (assoc-in graph [:edges s1] ((or m identity) f)))
 
+(defn state-reducer 
+  "reduce the state with the change from running a node"
+  [state change]
+  (-> state
+      (merge (dissoc change :messages))
+      (update :messages concat (:messages change))))
+
 (defn stream
   "start streaming a conversation"
   [graph]
@@ -141,15 +160,15 @@
    [state {}
     node "start"]
     (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
-    (let [enter-node (get-in graph [:nodes node])]
+    ;; TODO handling bad graphs with missing nodes
+    (let [enter-node (get-in graph [:nodes node])
+          new-state (state-reducer state (async/<! (enter-node state)))]
       (if (= "end" node)
-        (async/<! (enter-node state))
-        (let [s (async/<! (enter-node state))
-              new-state (-> state
-                            (merge (dissoc s :messages))
-                            (update :messages concat (:messages s)))]
-          ;; transition to the next state
-          (recur new-state ((get-in graph [:edges node]) new-state)))))))
+        new-state
+        ;; TODO check for :done keys and possibly bail
+        ;; transition to the next state
+        ;; TODO handling missing edges
+        (recur new-state ((get-in graph [:edges node]) new-state))))))
 
 ; ============================================================
 ; this is the graph we tend to use in our experiments thus far
