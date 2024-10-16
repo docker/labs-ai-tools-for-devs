@@ -77,7 +77,6 @@
 
 (defn tool [state]
   (let [calls (-> (:messages state) last :tool_calls)]
-    (jsonrpc/notify :message {:debug (with-out-str (pprint calls))})
     (async/go
       ;; tool-calls 
       {:messages
@@ -100,13 +99,16 @@
                         (tools/arg-context raw-args))
           sub-graph-state
           (async/<!
-           (stream
-            (chat-with-tools
-             (-> (:opts state)
-                 (assoc :level (inc (or (-> state :opts :level) 0))
-                        :prompts (git/prompt-file (:ref definition))
-                        :parameters arg-context)))))]
-      {:messages (-> sub-graph-state :messages last)})))
+            (stream
+              (chat-with-tools
+                (-> (:opts state)
+                    (assoc :level (inc (or (-> state :opts :level) 0))
+                           :prompts (git/prompt-file (-> definition :function :ref))
+                           :parameters arg-context)))))]
+      {:messages [(-> sub-graph-state 
+                      :messages 
+                      last 
+                      (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})))
 
 ; =====================================================
 ; edge functions takes state and returns next node
@@ -138,7 +140,7 @@
   (async/go-loop
    [state {}
     node "start"]
-    (jsonrpc/notify :message {:debug (format "-> entering %s\n%s" node (with-out-str (pprint (state/summarize state))))})
+    (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
     (let [enter-node (get-in graph [:nodes node])]
       (if (= "end" node)
         (async/<! (enter-node state))
@@ -162,6 +164,7 @@
       (add-node "sub-graph" sub-graph)
       (add-edge "start" "completion")
       (add-edge "tool" "completion")
+      (add-edge "sub-graph" "completion")
       (add-conditional-edges "completion" tool-or-end)))
 
 (comment

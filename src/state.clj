@@ -17,7 +17,7 @@
       (update :messages (each summarize-content summarize-tool-calls))))
 
 (defn prompt? [m]
-  (= "prompt" (:type m)))
+  (= "prompt" (-> m :function :type)))
 
 (defn get-function-definition [{:keys [messages functions]}]
   (when-let [message (last messages)]
@@ -34,3 +34,4 @@
 
 (def prompt-tool? (comp prompt? get-function-definition))
 
+(defn add-tool-call-id [m id] (assoc m :role "tool" :tool_call_id id))

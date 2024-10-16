@@ -1,4 +1,6 @@
-(ns schema)
+(ns schema 
+  (:require
+   [babashka.fs :as fs]))
 
 (def container-function-definition
   {:type "function"
@@ -14,15 +16,18 @@
      :command []}}})
 
 (def prompt-function-definition
-  {:type "prompt"
-   :ref ".."
-   :name ""
-   :description ""
-   :parameters 
-   {}})
+  {:type "function"
+   :function
+   {:type "prompt"
+    :ref ".."
+    :name ""
+    :description ""
+    :parameters 
+    {}}})
 
 (def tool-message
-  {:role "assistant"
+  {:role ""
+   :content ""
    :tool_calls
    [{:id "tool-call-id"
      :function
@@ -36,5 +41,15 @@
 (def state
   {:messages []
    :metadata {}
-   :opts {}
+   :opts 
+   {:jsonrpc true
+    :host-dir ""
+    :debug true
+    :prompts #'fs/file
+    :stream true
+    :jwt ""
+    :save-thread-volume true
+    :thread-id ""
+    :user ""
+    :platform ""}
    :functions []})
