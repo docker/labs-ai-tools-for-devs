@@ -11,6 +11,8 @@
     InputStream
     OutputStream]))
 
+(set! *warn-on-reflection* true)
+
 (def ^:private write-lock (Object.))
 
 (defn ^:private read-n-bytes [^InputStream input content-length charset-s]
@@ -130,3 +132,26 @@
 
 (comment
   (notify :message {:content "message"}))
+
+(comment
+  "tool module
+    :start for container runs or failures
+    :message content for container output or summary of container failure
+   prompts
+    :error when get-prompts or fact-reducers fail
+   openai
+    :start a completion
+    :message :content with body of response if not 200 response
+    :message :content for openai data chunk
+    :functions for openai function chunk
+    :functions-done when stream is done
+    :message :debug when with the final response
+   graph
+    :prompts when we're ready to run!
+    :error when we can't collect the prompts data
+    :error when the llm is not ready to run!
+    :message :debug when entering a new node of the state machine
+   main 
+    :messsage :content for the final output 
+   "
+  )

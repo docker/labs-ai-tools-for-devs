@@ -15,8 +15,10 @@
    [java.nio.channels SocketChannel]
    [java.util Arrays Base64]))
 
+(set! *warn-on-reflection* true)
+
 (defn encode [to-encode]
-  (.encodeToString (Base64/getEncoder) (.getBytes to-encode)))
+  (.encodeToString (Base64/getEncoder) (.getBytes ^String to-encode)))
 
 ;; https://index.docker.io/v1/ does not return IdentityTokens so we 
 ;; probably won't use this endpoint
@@ -289,11 +291,11 @@
     (.put buf (.getBytes (String. (format "POST /containers/%s/attach?stdin=true&stream=true HTTP/1.1\n" container-id))))
     (.put buf (.getBytes (String. "Host: localhost\nConnection: Upgrade\nUpgrade: tcp\n\n")))
     (try
-      (.put buf (.getBytes content))
-      (.flip buf)
+      (.put ^ByteBuffer buf (.getBytes ^String content))
+      (.flip ^ByteBuffer buf)
       (while (.hasRemaining buf)
         (.write client buf))
-      (catch Throwable t
+      (catch Throwable _
         client))
     client))
 
@@ -307,7 +309,7 @@
       (catch Throwable t
         (println t)))
   (try
-    (String. (Arrays/copyOfRange bytes 8 (count bytes)))
+    (String. ^bytes (Arrays/copyOfRange ^bytes bytes 8 (count bytes)))
     (catch Throwable t
       (println t)
       "")))
@@ -327,7 +329,7 @@
   "This is a blocking call that waits for the container to finish and then returns the output and exit code."
   [{:keys [timeout] :or {timeout 10000} :as x}]
   ;; close stdin socket
-  (.close (:socket x))
+  (.close ^SocketChannel (:socket x))
   ;; timeout process
   (let [finished-channel (async/promise-chan)]
     (async/go

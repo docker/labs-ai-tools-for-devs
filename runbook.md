@@ -3,34 +3,34 @@
 ### help
 
 ```sh
-bb -m prompts --help
+clj -M:main --help
 ```
 
 ### run without --host-dir
 
 ```sh
-bb -m prompts
+clj -M:main prompts
 ```
 
 ### Plain prompt Generation
 
 ```sh
-bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker
+clj -M:main /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker
 ```
 
 ```sh
-bb -m prompts /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker --pretty-print-prompts
+clj -M:main /Users/slim/docker/labs-ai-tools-for-devs jimclark106 darwin prompts/docker --pretty-print-prompts
 ```
 
 ```sh
-bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+clj -M:main   --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
               --platform darwin \
               --prompts-dir prompts/docker \
               --pretty-print-prompts
 ```
 
 ```sh
-bb -m prompts --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
+clj -M:main   --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
               --platform darwin \
               --prompts-dir prompts/project_type/ \
               --pretty-print-prompts
@@ -177,7 +177,6 @@ bb -m prompts run \
               --debug
 ```
 
-
 #### Using Containerized runner
 
 ```sh
@@ -247,3 +246,37 @@ docker run --rm \
                                  --prompts-dir local/prompts/poem \
 ```
 
+
+```sh
+docker build -t vonwig/prompts:local .
+```
+
+```sh
+docker run --rm vonwig/prompts:local  --help
+```
+
+```sh
+docker run --rm \
+           -it \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount type=volume,source=docker-prompts,target=/prompts \
+           --mount type=bind,source=$HOME/.openai-api-key,target=/root/.openai-api-key \
+           --mount type=bind,source=$PWD,target=/app/workdir \
+           --workdir /app/workdir \
+           vonwig/prompts:local \
+           run \
+           --user jimclark106 \
+           --host-dir /Users/slim/vonwig/altaservice \
+           --platform $(uname -o) \
+           --prompts-file /app/workdir/prompts/curl/README.md
+```
+
+```sh
+./result/bin/agent-graph \
+           run \
+           --user jimclark106 \
+           --host-dir /Users/slim/vonwig/altaservice \
+           --platform $(uname -o) \
+           --prompts-file /Users/slim/docker/labs-ai-tools-for-devs/prompts/curl/README.md
+
+```

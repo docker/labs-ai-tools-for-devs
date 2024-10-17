@@ -4,6 +4,8 @@
             [babashka.fs :as fs]
             [dir]))
 
+(set! *warn-on-reflection* true)
+
 (defn- functions-dir []
   (dir/get-dir "./functions" "/app/functions"))
 

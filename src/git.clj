@@ -6,6 +6,8 @@
    dir
    [hasch.core :as hasch]))
 
+(set! *warn-on-reflection* true)
+
 (def github-ref-pattern #"github:(.*)/(.*)")
 
 (comment
@@ -45,12 +47,13 @@
   (hashch {:owner "docker" :repo "labs-make-runbook" :ref "main"}))
 
 ;(def prompts-cache (fs/file "/Users/slim/docker/labs-make-runbook/prompts-cache"))
-(def prompts-cache (let [default-dir (fs/file (System/getenv "HOME") ".prompts-cache")]
-                     (or
-                      (dir/get-dir "/prompts" default-dir)
-                      (do
-                        (fs/create-dirs default-dir)
-                        default-dir))))
+(defn prompts-cache []
+  (let [default-dir (fs/file (System/getenv "HOME") ".prompts-cache")]
+    (or
+     (dir/get-dir "/prompts" default-dir)
+     (do
+       (fs/create-dirs default-dir)
+       default-dir))))
 
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
@@ -58,7 +61,7 @@
   [ref]
   (when-let [{:keys [owner repo ref path] :as git-ref-map} (parse-github-ref ref)]
     (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
-          dir (fs/file prompts-cache ref-hash)
+          dir (fs/file (prompts-cache) ref-hash)
           _ (if (fs/exists? dir)
               (-> (apply p/process
                          {:dir dir}
@@ -82,7 +85,7 @@
         dir))))
 
 (comment
-  (fs/create-dir prompts-cache)
+  (fs/create-dir (prompts-cache))
   (def x "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
   (def git-ref (parse-github-ref x))
   (prompt-file "github:docker/labs-make-runbook?ref=main&path=prompts/docker")

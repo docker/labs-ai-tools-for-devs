@@ -12,6 +12,8 @@
   (:import
    [java.net ConnectException]))
 
+(set! *warn-on-reflection* true)
+
 (defn- stop-looping [c s]
   (jsonrpc/notify :error {:content s})
   (async/>!! c {:messages [{:role "assistant" :content s}]
@@ -59,7 +61,7 @@
         (jsonrpc/notify :prompts {:messages new-prompts})
         (async/put! c {:metadata (prompts/collect-metadata prompts)
                        :functions (prompts/collect-functions prompts)
-                       :opts opts
+                       :opts (merge opts {:level (or (:level opts) 0)})
                        :messages new-prompts}))
       (catch Throwable ex
         (jsonrpc/notify :error {:content

@@ -1,0 +1,15 @@
+{:paths ["src" "dev"]
+ :deps {markdown-clj/markdown-clj {:mvn/version "1.12.1"}
+        pogonos/pogonos {:mvn/version "0.2.1"}
+        dev.weavejester/medley {:mvn/version "1.8.0"}
+        io.replikativ/hasch {:mvn/version "0.3.94"}
+        babashka/fs {:mvn/version "0.5.22"}
+        babashka/process {:mvn/version "0.5.22"}
+        babashka/babashka.curl {:mvn/version "0.1.2"}
+        selmer/selmer {:mvn/version "1.12.61"}
+        cheshire/cheshire {:mvn/version "5.13.0"}
+        org.clojure/core.async {:mvn/version "1.6.681"}
+        org.babashka/http-client {:mvn/version "0.4.12"}}
+ :aliases {:main {:main-opts ["-m" "docker.main"]}
+           :build {:ns-default build
+                   :deps {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}}}}

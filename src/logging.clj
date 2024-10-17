@@ -3,6 +3,8 @@
    [selmer.parser :as selmer]
    [selmer.util :refer [without-escaping]]))
 
+(set! *warn-on-reflection* true)
+
 (defn render [template data]
   (without-escaping
    (selmer/render template data)))

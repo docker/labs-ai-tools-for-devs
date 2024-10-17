@@ -5,6 +5,8 @@
     [dir]
     [logging :refer [warn]]))
 
+(set! *warn-on-reflection* true)
+
 ;; registry of prompts directories stores in the docker-prompts volumes
 (def registry-file (fs/file (dir/get-dir "/prompts" (fs/file (System/getenv "HOME") ".prompts-cache")) "registry.edn"))
 

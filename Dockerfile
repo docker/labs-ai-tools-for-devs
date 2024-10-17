@@ -1,32 +1,40 @@
-FROM babashka/babashka:latest@sha256:4bc4beea38406782845ae8effaa9bd2f45345d46a4290ea4c96037970a0ca430 AS bb
+# syntax = docker/dockerfile:1.4
+FROM nixos/nix:2.21.1@sha256:3f6c77ee4d2c82e472e64e6cd7087241dc391421a0b42c22e6849c586d5398d9 AS builder
 
-FROM bb AS base
+WORKDIR /tmp/build
+RUN mkdir /tmp/nix-store-closure
 
-RUN <<EOF
-apt-get update
-apt-get install -y git
+# ignore SC2046 because the output of nix-store -qR will never have spaces - this is safe here
+# hadolint ignore=SC2046
+RUN --mount=type=cache,target=/nix,from=nixos/nix:2.21.1,source=/nix \
+    --mount=type=cache,target=/root/.cache \
+    --mount=type=bind,target=/tmp/build \
+    <<EOF
+  nix \
+    --extra-experimental-features "nix-command flakes" \
+    --option filter-syscalls false \
+    --extra-trusted-substituters "https://cache.iog.io" \
+    --extra-trusted-public-keys "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" \
+    --show-trace \
+    --log-format raw \
+    build . --out-link /tmp/output/result
+  cp -R $(nix-store -qR /tmp/output/result) /tmp/nix-store-closure
 EOF
 
-FROM eclipse-temurin:latest@sha256:ac1545309de7e27001a80d91df2d42865c0bacaec75e016cb4482255d7691187 AS build
+FROM scratch
 
 WORKDIR /app
 
-COPY --from=bb /usr/local/bin/bb /usr/local/bin/bb
-COPY bb.edn bb.edn
-COPY ./src ./src
-RUN bb uberjar prompts.jar -m main
+COPY --from=builder /tmp/nix-store-closure /nix/store
+COPY --from=builder /tmp/output/ /app/
 
-FROM base
+# curl needs the /tmp directory to already exist
+COPY <<EOF /tmp/.blank
+empty
+EOF
 
-WORKDIR /app
+COPY <<EOF /root/.blank
+empty
+EOF
 
-COPY ./extractors/registry.edn ./extractors/registry.edn
-COPY ./functions/registry.edn ./functions/registry.edn
-
-COPY --from=build /app/prompts.jar /app/prompts.jar
-
-COPY prompts/docker docker 
-COPY prompts/lazy_docker lazy_docker
-
-# Can't be shell form because we need to pass JSON as an arg
-ENTRYPOINT [ "bb", "/app/prompts.jar" ]
+ENTRYPOINT ["/app/result/bin/entrypoint"]

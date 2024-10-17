@@ -7,6 +7,8 @@
    jsonrpc
    [selmer.parser :as selmer]))
 
+(set! *warn-on-reflection* true)
+
 (defn interpolate [m template]
   (selmer/render template m {}))
 

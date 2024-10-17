@@ -1,5 +1,0 @@
-{:paths ["src" "dev"]
- :deps {markdown-clj/markdown-clj {:mvn/version "1.12.1"}
-        pogonos/pogonos {:mvn/version "0.2.1"}
-        dev.weavejester/medley {:mvn/version "1.8.0"}
-        io.replikativ/hasch {:mvn/version "0.3.94"}}}

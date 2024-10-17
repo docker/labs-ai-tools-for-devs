@@ -3,6 +3,8 @@
             [babashka.process :as process]
             [cheshire.core :as json]))
 
+(set! *warn-on-reflection* true)
+
 (defn credential-helper 
   "doesn't work without a HOME and docker desktop install"
   [key]

@@ -1,4 +1,4 @@
-(ns main 
+(ns docker.main 
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
@@ -12,7 +12,10 @@
    graph
    jsonrpc
    [logging :refer [warn]]
-   prompts))
+   prompts)
+  (:gen-class))
+
+(set! *warn-on-reflection* true)
 
 (defn- with-volume [f & {:keys [thread-id save-thread-volume]}]
   (let [thread-id (or thread-id (str (random-uuid)))]

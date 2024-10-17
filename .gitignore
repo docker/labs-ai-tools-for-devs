@@ -10,3 +10,4 @@
 /functions/tree-sitter/main
 /functions/tree-sitter-clj/target/
 /functions/tree-sitter-clj/.cpcache/
+/.cpcache/

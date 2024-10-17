@@ -18,6 +18,8 @@
    [pogonos.partials :as partials]
    [registry]))
 
+(set! *warn-on-reflection* true)
+
 (defn- facts
   "fix up facts before sending to templates"
   [project-facts user platform]

@@ -1,5 +1,7 @@
 (ns state)
 
+(set! *warn-on-reflection* true)
+
 (defn each [& fs]
   (fn [coll]
     (->> coll
