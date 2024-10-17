@@ -44,15 +44,15 @@ clj -M:main   --host-dir /Users/slim/docker/labs-ai-tools-for-devs \
 Make sure the prompts/project_type prompts work on their own.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --debug
+clj -M:main run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --debug
 ```
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream
+clj -M:main run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/project_type --nostream
 ```
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --platform darwin \
               --prompts-dir prompts/project_type \
@@ -64,7 +64,7 @@ bb -m prompts run \
 TODO - this should fail better because the prompts-dir is not valid.
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --platform darwin \
               --prompts-dir prompts \
@@ -79,20 +79,20 @@ bb -m prompts run \
 Now, verify that the prompts/dockerfiles prompts work with `gpt-4`.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles
+clj -M:main run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles
 ```
 
 Now, let's do the same thing using gpt-4 but without streaming.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --nostream
+clj -M:main run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles --nostream
 ```
 
 Now, let's try with llama3.1.
 
 ```sh
 # docker:command=llama
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
@@ -105,7 +105,7 @@ bb -m prompts run \
 Now, let's try with mistral-nemo
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
@@ -118,7 +118,7 @@ bb -m prompts run \
 Mistral is kind of doing function calls but not openai compatible ones. It's listing a set of functions to call and not getting the arguments correct.
 
 ```sh
-bb -m prompts run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles \
+clj -M:main run /Users/slim/docker/labs-make-runbook jimclark106 darwin prompts/dockerfiles \
               --url http://localhost:11434/v1/chat/completions \
               --model "mistral:latest" \
               --pretty-print-prompts
@@ -128,7 +128,7 @@ llama3-groq-tool-use:latest is writing functions but with a mix of xml and json 
 Also, the finish-reason is stop, instead of "tool_calls".  So the conversation loop ends too.
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
@@ -144,7 +144,7 @@ rm ~/docker/labs-make-runbook/qrcode.png
 ```
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
@@ -152,7 +152,7 @@ bb -m prompts run \
 ```
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
@@ -166,7 +166,7 @@ open ~/docker/labs-make-runbook/qrcode.png
 ```
 
 ```sh
-bb -m prompts run \
+clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
