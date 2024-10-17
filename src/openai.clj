@@ -6,12 +6,13 @@
    [clojure.java.io :as io]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [jsonrpc]
-   [clojure.pprint :refer [pprint]]))
+   [jsonrpc]))
+
+(set! *warn-on-reflection* true)
 
 (defn openai-api-key []
   (try
-    (string/trim (slurp (io/file (or (System/getenv "OPENAI_API_KEY_LOCATION")  (System/getenv "HOME")) ".openai-api-key")))
+    (string/trim (slurp (io/file (or (System/getenv "OPENAI_API_KEY_LOCATION") (System/getenv "HOME")) ".openai-api-key")))
     (catch Throwable _ nil)))
 
 (defn openai
@@ -49,43 +50,6 @@
         (jsonrpc/notify :message {:content s})
         (throw (ex-info "Failed to call OpenAI API" {:body s}))))))
 
-(defn call-function
-  "  returns channel that will emit one message and then close"
-  [level function-handler function-name arguments tool-call-id]
-  (let [c (async/chan)]
-    (try
-      (function-handler
-       function-name
-       arguments
-       {:resolve
-        (fn [output]
-          (jsonrpc/notify :start {:level level :role "tool" :content function-name})
-          (jsonrpc/notify :message {:content (format "\n%s\n" output)})
-          (async/go
-            (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-            (async/close! c)))
-        :fail
-        (fn [output]
-          (jsonrpc/notify :start {:level level :role "tool" :content function-name})
-          (jsonrpc/notify :message {:content (format "function call failed %s" output)})
-          (async/go
-            (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
-            (async/close! c)))})
-      (catch Throwable t
-        ;; function-handlers should handle this on their own but this is just in case
-        (async/go
-          (async/>! c {:content (format "unable to run %s - %s" function-name t) :role "tool" :tool_call_id tool-call-id})
-          (async/close! c))))
-    c))
-
-(defn make-tool-calls
-  " returns channel with all messages from completed executions of tools"
-  [level function-handler tool-calls]
-  (->>
-   (for [{{:keys [arguments name]} :function tool-call-id :id} tool-calls]
-     (call-function level function-handler name arguments tool-call-id))
-   (async/merge)))
-
 (defn function-merge [m {:keys [name arguments]}]
   (cond-> m
     name (assoc :name name)
@@ -110,41 +74,36 @@
 
 (s/def ::role #{"user" "system" "assistant" "tool"})
 (s/def ::content string?)
-(s/def ::message (s/keys :req-un [::role ::content]))
+(s/def ::message (s/keys :req-un [::role]
+                         :opt-un [::content ::tool-calls]))
 (s/def ::messages (s/coll-of ::message))
 (s/def ::finish-reason any?)
 (s/def ::response (s/keys :req-un [::finish-reason ::messages]))
+
 (defn response-loop
   "handle one response stream that we read from input channel c
    adds content or tool_calls while streaming and call any functions when done
      returns channel that will emit the an event with a ::response"
-  [level c]
+  [c]
   (let [response (atom {})]
     (async/go-loop
      []
       (let [e (async/<! c)]
         (if (:done e)
           (let [{calls :tool-calls content :content finish-reason :finish-reason} @response
-                messages [(merge
-                           {:role "assistant"}
-                           (when (seq (vals calls))
-                             {:tool_calls (->> (vals calls)
-                                               (map #(assoc % :type "function")))})
-                           (when content {:content content}))]]
+                r {:messages [(merge
+                               {:role "assistant"
+                                :content (or content "")}
+                               (when (seq (vals calls))
+                                 {:tool_calls (->> (vals calls)
+                                                   (map #(assoc % :type "function")))}))]
+                   :finish-reason finish-reason}]
 
             (jsonrpc/notify :message {:debug (str @response)})
             (jsonrpc/notify :functions-done (or (vals calls) ""))
-                      ;; make-tool-calls returns a channel with results of tool call messages
-                      ;; so we can continue the conversation
-            {:finish-reason finish-reason
-             :messages
-             (async/<!
-              (->>
-               (make-tool-calls
-                level
-                (:tool-handler e)
-                (vals calls))
-               (async/reduce conj messages)))})
+            ;; make-tool-calls returns a channel with results of tool call messages
+            ;; so we can continue the conversation
+            r)
 
           (let [{:keys [content tool_calls finish-reason]} e]
             (when content
@@ -165,9 +124,9 @@
 (defn chunk-handler
   "sets up a response handler loop for use with an OpenAI API call
     returns [channel openai-handler] - channel will emit the updated chat messages after dispatching any functions"
-  [level function-handler]
+  []
   (let [c (async/chan 1)]
-    [(response-loop level c)
+    [(response-loop c)
      (fn [chunk]
        ;; TODO this only supports when there's a single choice
        (let [{[{:keys [delta message finish_reason _role]}] :choices
@@ -184,7 +143,7 @@
            done? (async/>!!
                   c
                   (merge
-                   {:done true :tool-handler function-handler}
+                   {:done true}
                    (when finish_reason {:finish-reason finish_reason})))
 
              ;; streaming
@@ -199,7 +158,7 @@
              (async/>!! c (merge
                            message
                            (when finish_reason {:finish-reason finish_reason})))
-             (async/>!! c {:done true :tool-handler function-handler}))
+             (async/>!! c {:done true}))
            finish_reason (async/>!! c {:finish-reason finish_reason}))))]))
 
 

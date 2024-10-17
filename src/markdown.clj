@@ -7,6 +7,8 @@
    [clojure.zip :as zip]
    [docker]))
 
+(set! *warn-on-reflection* true)
+
 (defn heading-1-section? [loc]
   (= "atx_h1_marker" (-> loc (zip/next) (zip/node))))
 
@@ -23,8 +25,8 @@
     (string/join
      "\n"
      (-> lines
-         (update 0 (fn [s] (.substring s (dec c1))))
-         (update (dec (count lines)) (fn [s] (.substring s 0 (- c2 c1))))))))
+         (update 0 (fn [s] (.substring ^String s (dec c1))))
+         (update (dec (count lines)) (fn [s] (.substring ^String s 0 (- c2 c1))))))))
 
 (def prompt-pattern #"(?i)\s*prompt\s+(\w+)\s?")
 
