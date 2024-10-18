@@ -6,6 +6,8 @@
     # can't update graal right now - this is from Aug '23
     flake-utils.url = "github:numtide/flake-utils";
     clj-nix = {
+      # for debugging the nix packages
+      # url = "path:/Users/slim/slimslenderslacks/clj-nix";
       url = "github:jlesquembre/clj-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -60,14 +62,15 @@
             custom-jdk = pkgs.clj-nix.customJdk {
               cljDrv = clj;
               jdkBase = pkgs.jdk17_headless;
-              locales = "en";
+              # locales = "en";
               javaOpts = [];
+              extraJdkModules = ["java.security.jgss" "java.security.sasl" "jdk.crypto.ec"];
             };
 
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
               export PATH=${pkgs.lib.makeBinPath [pkgs.curl]}
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
-              ${clj}/bin/agent-graph "$@"
+              ${custom-jdk}/bin/agent-graph "$@"
             '';
 
             default = pkgs.buildEnv {
