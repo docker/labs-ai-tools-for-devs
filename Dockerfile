@@ -28,6 +28,11 @@ WORKDIR /app
 COPY --from=builder /tmp/nix-store-closure /nix/store
 COPY --from=builder /tmp/output/ /app/
 
+COPY ./extractors/registry.edn ./extractors/registry.edn
+COPY ./functions/registry.edn ./functions/registry.edn
+COPY prompts/docker docker
+COPY prompts/lazy_docker lazy_docker
+
 # curl needs the /tmp directory to already exist
 COPY <<EOF /tmp/.blank
 empty
