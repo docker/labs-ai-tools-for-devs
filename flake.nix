@@ -66,7 +66,6 @@
 
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
               export PATH=${pkgs.lib.makeBinPath [pkgs.curl]}
-              export OPENAI_API_KEY_LOCATION="/root"
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
               ${clj}/bin/agent-graph "$@"
             '';
