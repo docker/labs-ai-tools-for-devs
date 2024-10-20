@@ -16,29 +16,23 @@ RUN --mount=type=cache,target=/nix,from=nixos/nix:2.21.1,source=/nix \
     --extra-trusted-substituters "https://cache.iog.io" \
     --extra-trusted-public-keys "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=" \
     --show-trace \
-    --log-format raw \
+    --log-format bar-with-logs \
     build . --out-link /tmp/output/result
   cp -R $(nix-store -qR /tmp/output/result) /tmp/nix-store-closure
 EOF
 
 FROM scratch
 
+# my convention is that images have only two top-level folders
+# /nix/store has all of the software
+# /app/result has symbolic links for any entrypoints needed
 WORKDIR /app
-
 COPY --from=builder /tmp/nix-store-closure /nix/store
 COPY --from=builder /tmp/output/ /app/
 
-COPY ./extractors/registry.edn ./extractors/registry.edn
-COPY ./functions/registry.edn ./functions/registry.edn
-COPY prompts/docker docker
-COPY prompts/lazy_docker lazy_docker
-
-# curl needs the /tmp directory to already exist
+# programs like curl needs the /tmp directory to already exist
+# what is the right way to manage things like this?
 COPY <<EOF /tmp/.blank
-empty
-EOF
-
-COPY <<EOF /root/.blank
 empty
 EOF
 

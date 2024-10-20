@@ -93,7 +93,7 @@
       [])))
 
 (def hub-images
-  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick"})
+  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
 
 (defn collect-functions
   "get either :functions or :tools collection

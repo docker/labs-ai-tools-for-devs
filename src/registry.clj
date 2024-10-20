@@ -7,10 +7,10 @@
 (set! *warn-on-reflection* true)
 
 (defn- functions-dir []
-  (dir/get-dir "./functions" "/app/functions"))
+  (dir/get-dir "./functions" "/app/result/functions" "/app/functions"))
 
 (defn- extractors-dir []
-  (dir/get-dir "./extractors" "/app/extractors"))
+  (dir/get-dir "./extractors" "/app/result/extractors" "/app/extractors"))
 
 (defn- get-registry [f]
   (when-let [d (f)]

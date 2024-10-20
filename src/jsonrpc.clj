@@ -90,7 +90,7 @@
             :else (recur (parse-header line headers))))))
     messages))
 
-(defn ^:private write-message [^OutputStream output msg]
+(defn write-message [^OutputStream output msg]
   (let [content (json/generate-string msg)
         content-bytes (.getBytes content "utf-8")]
     (locking write-lock
@@ -104,6 +104,12 @@
 (defn notification [method params]
   {:jsonrpc "2.0"
    :method method
+   :params params})
+
+(defn request [method params get-id]
+  {:jsonrpc "2.0"
+   :method method
+   :id (get-id)
    :params params})
 
 ;; message({:debug ""}) - debug messages are often serialized edn but still meant to be streamed

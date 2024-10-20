@@ -36,6 +36,8 @@
         in
         {
           packages = rec {
+
+            # build uber jar
             clj = pkgs.clj-nix.mkCljBin {
               name = "agent-graph";
               projectSrc = ./.;
@@ -43,22 +45,8 @@
               buildCommand = "clj -T:build uber";
               jdkRunner = pkgs.jdk17_headless;
             };
-            deps-cache = pkgs.clj-nix.mk-deps-cache {
-              lockfile = ./deps-lock.json;
-            };
-            graal = pkgs.clj-nix.mkGraalBin {
-              # lazy lookup of a derivation that will exist
-              cljDrv = self.packages."${system}".clj;
-              graalvmXmx = "-J-Xmx8g";
-              graalvm = pkgs.graalvm-ce;
-              extraNativeImageBuildArgs = [
-                "--native-image-info"
-                "--initialize-at-build-time"
-                "--enable-http"
-                "--enable-https"
-              ];
-            };
 
+            # create a minimal java runtime for this uberjar
             custom-jdk = pkgs.clj-nix.customJdk {
               cljDrv = clj;
               jdkBase = pkgs.jdk17_headless;
@@ -67,15 +55,30 @@
               extraJdkModules = ["java.security.jgss" "java.security.sasl" "jdk.crypto.ec"];
             };
 
+            # create some resources that will need to be copied into the final image
+            registries = pkgs.stdenv.mkDerivation {
+              name = "registries";
+              src = ./.;
+              installPhase = ''
+                mkdir -p $out/extractors
+                mkdir -p $out/functions
+                cp ./extractors/registry.edn $out/extractors
+                cp ./functions/registry.edn $out/functions
+              '';
+            };
+
+            # our application makes calls to the curl binary
+            #  therefore, wrap the custom-jdk in a script with curl in the PATH
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
               export PATH=${pkgs.lib.makeBinPath [pkgs.curl]}
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
               ${custom-jdk}/bin/agent-graph "$@"
             '';
 
+            # the final entrypoint
             default = pkgs.buildEnv {
               name = "agent-graph-env";
-              paths = [ entrypoint ];
+              paths = [ entrypoint registries ];
             };
           };
 

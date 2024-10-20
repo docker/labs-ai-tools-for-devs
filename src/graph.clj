@@ -52,7 +52,7 @@
 ; be merged into the conversation state
 ; =====================================================
 
-(defn start 
+(defn start
   "create starting messages, metadata, and functions to bootstrap the thread"
   [{:keys [prompts] :as opts} _]
   (let [c (async/promise-chan)]
@@ -70,7 +70,7 @@
         (async/put! c {:messages [] :done "error"})))
     c))
 
-(defn end 
+(defn end
   "merge the :done signal"
   [state]
   (let [c (async/promise-chan)]
@@ -78,12 +78,12 @@
     (async/put! c (assoc state :done (:finish-reason state)))
     c))
 
-(defn completion 
+(defn completion
   "get the next llm completion"
   [state]
   (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
 
-(defn tool 
+(defn tool
   "make docker container tool calls"
   [state]
   (let [calls (-> (:messages state) last :tool_calls)]
@@ -102,7 +102,7 @@
 
 ; tool_calls are maps with an id and a function with arguments an name
 ; look up the full tool definition using the name
-(defn sub-graph 
+(defn sub-graph
   "answer a tool call by processing a sub-graph"
   [state]
   (async/go
@@ -126,7 +126,7 @@
 ; edge functions takes state and returns next node
 ; =====================================================
 
-(defn tool-or-end 
+(defn tool-or-end
   "after a completion, check whether you need to make a tool call"
   [state]
   (let [finish-reason (-> state :finish-reason)]
@@ -148,7 +148,7 @@
 (defn add-conditional-edges [graph s1 f & [m]]
   (assoc-in graph [:edges s1] ((or m identity) f)))
 
-(defn state-reducer 
+(defn state-reducer
   "reduce the state with the change from running a node"
   [state change]
   (-> state
@@ -157,20 +157,21 @@
 
 (defn stream
   "start streaming a conversation"
-  [graph]
-  (async/go-loop
-   [state {}
-    node "start"]
-    (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
-    ;; TODO handling bad graphs with missing nodes
-    (let [enter-node (get-in graph [:nodes node])
-          new-state (state-reducer state (async/<! (enter-node state)))]
-      (if (= "end" node)
-        new-state
-        ;; TODO check for :done keys and possibly bail
-        ;; transition to the next state
-        ;; TODO handling missing edges
-        (recur new-state ((get-in graph [:edges node]) new-state))))))
+  ([graph] (stream graph {}))
+  ([graph m]
+   (async/go-loop
+    [state m
+     node "start"]
+     (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
+     ;; TODO handling bad graphs with missing nodes
+     (let [enter-node (get-in graph [:nodes node])
+           new-state (state-reducer state (async/<! (enter-node state)))]
+       (if (= "end" node)
+         new-state
+         ;; TODO check for :done keys and possibly bail
+         ;; transition to the next state
+         ;; TODO handling missing edges
+         (recur new-state ((get-in graph [:edges node]) new-state)))))))
 
 ; ============================================================
 ; this is the graph we tend to use in our experiments thus far
