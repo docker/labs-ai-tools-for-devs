@@ -1,4 +1,4 @@
-(ns docker.main 
+(ns docker.main
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
@@ -12,7 +12,8 @@
    graph
    jsonrpc
    [logging :refer [warn]]
-   prompts)
+   prompts
+   user-loop)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -68,6 +69,7 @@
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
                [nil "--debug" "add debug logging"]
+               [nil "--input" "read jsonrpc messages from stdin"]
                [nil "--help" "print option summary"]])
 
 (def output-handler (fn [x]
@@ -131,6 +133,12 @@
       (warn "Docker Desktop not logged in" {}))
     (warn "unable to check Docker Desktop for login" {})))
 
+(defn with-options [opts args]
+  ((validate ::run-args)
+   (merge
+    (apply merge-deprecated opts args)
+    (login-info))))
+
 (defn command [opts & [c :as args]]
   (case c
     "prompts" (fn []
@@ -142,31 +150,39 @@
     "register" (fn []
                  (if-let [{:keys [owner repo path]} (git/parse-github-ref (second args))]
                    (registry/update-registry (fn [m]
-                                                   (update-in m [:prompts] (fnil conj [])
-                                                              {:type (second args)
-                                                               :title (format "%s %s %s"
-                                                                              owner repo
-                                                                              (if path (str "-> " path) ""))})))
+                                               (update-in m [:prompts] (fnil conj [])
+                                                          {:type (second args)
+                                                           :title (format "%s %s %s"
+                                                                          owner repo
+                                                                          (if path (str "-> " path) ""))})))
                    (throw (ex-info "Bad GitHub ref" {:ref (second args)}))))
     "unregister" (fn []
                    (registry/update-registry
                     (fn [m]
                       (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll))))))
     "run" (fn []
-            (with-volume
-              (fn [thread-id]
-                (async/<!! ((comp graph/stream graph/chat-with-tools (validate ::run-args))
-                            (-> opts
-                                (assoc :thread-id thread-id)
-                                ((fn [opts] (merge
-                                             (apply merge-deprecated opts (rest args))
-                                             (login-info))))))))
-
-              opts))
+            (let [[in send]
+                  (if (:input opts)
+                    [*in* (constantly true)]
+                    (let [[[w c] in] (user-loop/create-pipe)]
+                      [in (fn []
+                            (w (jsonrpc/request "exit" {} (constantly 1)))
+                            (c))]))]
+              (send)
+              (with-volume
+                (fn [thread-id]
+                  (async/<!!
+                   (user-loop/start-jsonrpc-loop
+                    (user-loop/create-step
+                     (graph/chat-with-tools
+                      (-> (with-options opts (rest args))
+                          (assoc :thread-id thread-id))))
+                    user-loop/state-reducer
+                    in
+                    {})))
+                opts)))
     (fn []
-      ((comp prompts/get-prompts (validate ::run-args)) (merge
-                                                 (apply merge-deprecated opts args)
-                                                 (login-info))))))
+      (prompts/get-prompts (with-options opts args)))))
 
 (defn -main [& args]
   (try

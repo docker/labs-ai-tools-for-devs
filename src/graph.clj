@@ -54,15 +54,23 @@
 
 (defn start
   "create starting messages, metadata, and functions to bootstrap the thread"
-  [{:keys [prompts] :as opts} _]
+  [{:keys [prompts] :as opts} state]
   (let [c (async/promise-chan)]
     (try
-      (let [new-prompts (prompts/get-prompts opts)]
-        (jsonrpc/notify :prompts {:messages new-prompts})
-        (async/put! c {:metadata (prompts/collect-metadata prompts)
-                       :functions (prompts/collect-functions prompts)
-                       :opts (merge opts {:level (or (:level opts) 0)})
-                       :messages new-prompts}))
+      (async/put!
+       c
+       (-> state
+           (merge
+             {:metadata (prompts/collect-metadata prompts)
+              :functions (prompts/collect-functions prompts)
+              :opts (merge opts {:level (or (:level opts) 0)})})
+           (update 
+             :messages 
+             (fnil concat [])
+             (when (not (seq (:messages state)))
+               (let [new-prompts (prompts/get-prompts opts)]
+                 (jsonrpc/notify :prompts {:messages new-prompts})
+                 new-prompts)))))
       (catch Throwable ex
         (jsonrpc/notify :error {:content
                                 (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
@@ -75,7 +83,7 @@
   [state]
   (let [c (async/promise-chan)]
     ;; this is a normal ending and we try to add a :done key to the state for this
-    (async/put! c (assoc state :done (:finish-reason state)))
+    (async/put! c {:done (:finish-reason state)})
     c))
 
 (defn completion

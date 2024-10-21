@@ -51,3 +51,9 @@
   ```json
   {"params": {"content": "here is the user prompt"}}
   ```
+- #### exit
+  
+  Exit the engine
+  ```json
+  {"params": {}}
+  ```

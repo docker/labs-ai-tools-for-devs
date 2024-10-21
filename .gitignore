@@ -11,3 +11,5 @@
 /functions/tree-sitter-clj/target/
 /functions/tree-sitter-clj/.cpcache/
 /.cpcache/
+/.nrepl-port
+/target/

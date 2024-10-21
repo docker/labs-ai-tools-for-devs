@@ -10,30 +10,51 @@
     PipedInputStream
     PipedOutputStream]))
 
-(declare graph)
+(defn create-step 
+  "compile a function that inserts a user message to-array 
+   to the conversation and stream it through the graph
+   compiled function returns a channel that will emit the final state"
+  [graph]
+  (fn [state]
+    (graph/stream graph state)))
 
-(def do-stream (partial graph/stream graph))
+(defn state-reducer [state s]
+  (update state :messages (fnil conj []) {:role "user" :content s}))
 
-(defn start-jsonrpc-loop [f in m]
+(defn create-test-step []
+  (fn [state]
+    (async/go
+      state)))
+
+(defn start-jsonrpc-loop
+  "start a jsonrpc loop that will inject jsonrpc requests into an
+   ongoing set of state transitions
+   params
+     run-graph    async state -> state
+     reduce-state state, message -> state
+     in           input stream
+     m   initial  state
+   returns
+     the final state"
+  [run-graph state-reducer in m]
   (let [c (jsonrpc/input-stream->input-chan in {})]
     (async/go-loop
-     [state m]
-      (let [message (async/<! c)
-            s (-> message :params :content)]
-        (println "message content: " s)
-        (if (some (partial = s) ["exit" "quit" "q"])
-          state
-          (recur (async/<! (f state s))))))))
+     [next-state (async/<! (run-graph m)) n 0]
+      (println "### loop " n)
+      (let [message (async/<! c)]
+        (cond
+          (= "exit" (:method message))
+          (assoc next-state :jsonrpc-loop-finished :exit)
+          :else
+          (recur (async/<! ((comp run-graph state-reducer) next-state (-> message :params :content))) (inc n)))))))
 
 (def counter (atom 0))
 (defn get-id [] (swap! counter inc))
 
 (def ^{:private true} start-test-loop
-  (partial start-jsonrpc-loop (fn [state s]
-                                (async/go
-                                  (update state :messages (fnil conj []) s)))))
+  (partial start-jsonrpc-loop (create-test-step) state-reducer))
 
-(defn -create-pipe []
+(defn create-pipe []
   ;; Create a PipedInputStream and PipedOutputStream
   (let [piped-out (PipedOutputStream.)
         piped-in  (PipedInputStream. piped-out)
@@ -43,12 +64,17 @@
      piped-in]))
 
 (comment
-  (let [[[w c] in] (-create-pipe)]
-    (async/go (println "ending: " (async/<! (start-test-loop in {}))))
-    (w (jsonrpc/request "prompt" {:content "hello"} get-id))
-    (w (jsonrpc/request "prompt" {:content "hello1"} get-id))
-    (w (jsonrpc/request "prompt" {:content "exit"} get-id))
-    (c)))
+  (println "should be true: "
+    (async/<!!
+      (let [[[w c] in] (create-pipe)]
+        (w (jsonrpc/request "prompt" {:content "hello"} get-id))
+        (w (jsonrpc/request "prompt" {:content "hello1"} get-id))
+        (w (jsonrpc/request "prompt" {:content "hello2"} get-id))
+        (w (jsonrpc/request "exit" {} get-id))
+        (c)
+        (async/go 
+          (println "ending: " (async/<! (start-test-loop in {})))
+          true)))))
 
 (comment
   ;; an input stream is something from which we can read bytes
