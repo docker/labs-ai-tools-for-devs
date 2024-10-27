@@ -40,7 +40,6 @@
   (let [c (jsonrpc/input-stream->input-chan in {})]
     (async/go-loop
      [next-state (async/<! (run-graph m)) n 0]
-      (println "### loop " n)
       (let [message (async/<! c)]
         (cond
           (= "exit" (:method message))
