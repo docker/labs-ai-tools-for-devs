@@ -70,7 +70,7 @@
             # our application makes calls to the curl binary
             #  therefore, wrap the custom-jdk in a script with curl in the PATH
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
-              export PATH=${pkgs.lib.makeBinPath [pkgs.curl]}
+              export PATH=${pkgs.lib.makeBinPath [pkgs.curl pkgs.git]}
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
               ${custom-jdk}/bin/agent-graph "$@"
             '';

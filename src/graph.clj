@@ -106,6 +106,10 @@
                     calls)
                    (async/reduce conj []))))})))
 
+(defn tools-query
+  [_]
+  (async/go {}))
+
 (declare stream chat-with-tools)
 
 ; tool_calls are maps with an id and a function with arguments an name
@@ -192,9 +196,11 @@
       (add-node "tool" tool)
       (add-node "end" end)
       (add-node "sub-graph" sub-graph)
-      (add-edge "start" "completion")
-      (add-edge "tool" "completion")
-      (add-edge "sub-graph" "completion")
+      (add-node "tools-query" tools-query)
+      (add-edge "start" "tools-query")
+      (add-edge "tool" "tools-query")
+      (add-edge "sub-graph" "tools-query")
+      (add-edge "tools-query" "completion")
       (add-conditional-edges "completion" tool-or-end)))
 
 (comment
