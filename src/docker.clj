@@ -118,7 +118,8 @@
                   (when host-dir {:HostConfig
                                   {:Binds
                                    (concat [(format "%s:/project:rw" host-dir)
-                                            "docker-lsp:/docker-lsp"]
+                                            "docker-lsp:/docker-lsp"
+                                            "/var/run/docker.sock:/var/run/docker.sock"]
                                            (when thread-id [(format "%s:/thread:rw" thread-id)]))}
                                   :WorkingDir "/project"})
                   (when entrypoint {:Entrypoint entrypoint})
