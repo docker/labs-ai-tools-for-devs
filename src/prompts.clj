@@ -178,6 +178,10 @@
                          [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
                          ".md")}))))
 
+(comment
+  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]})
+  )
+
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
 (defn get-prompts

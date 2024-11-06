@@ -87,10 +87,13 @@
     c))
 
 (defn completion
-  "get the next llm completion"
+  "get the next llm completion
+     uses the current conversation messages and outputs
+     outputs the next set of messages and finish-reason to be added to the conversation"
   [state]
   (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
 
+;; TODO does the LangGraph Tool Node always search for the a tool_call
 (defn tool
   "make docker container tool calls"
   [state]
@@ -106,6 +109,9 @@
                     calls)
                    (async/reduce conj []))))})))
 
+(defn tool-node [_]
+  tool)
+
 (defn tools-query
   [_]
   (async/go {}))
@@ -115,7 +121,11 @@
 ; tool_calls are maps with an id and a function with arguments an name
 ; look up the full tool definition using the name
 (defn sub-graph
-  "answer a tool call by processing a sub-graph"
+  "answer a tool call by processing a sub-graph with the default graph
+    defaults
+      merge opts from the parent conversation
+      prompt defition and parameters come from the last message
+    return diff to parent conversation (last message is used as tool call response)"
   [state]
   (async/go
     (let [definition (state/get-function-definition state)
@@ -133,6 +143,9 @@
                       :messages
                       last
                       (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})))
+
+(defn sub-graph-node [_]
+  sub-graph)
 
 ; =====================================================
 ; edge functions takes state and returns next node
@@ -164,8 +177,9 @@
   "reduce the state with the change from running a node"
   [state change]
   (-> state
-      (merge (dissoc change :messages))
-      (update :messages concat (:messages change))))
+      (merge (dissoc change :messages :tools))
+      (update :messages concat (:messages change))
+      (update :functions concat (:tools change))))
 
 (defn stream
   "start streaming a conversation"
@@ -193,9 +207,9 @@
   (-> {}
       (add-node "start" (partial start opts))
       (add-node "completion" completion)
-      (add-node "tool" tool)
+      (add-node "tool" (tool-node nil))
       (add-node "end" end)
-      (add-node "sub-graph" sub-graph)
+      (add-node "sub-graph" (sub-graph-node nil))
       (add-node "tools-query" tools-query)
       (add-edge "start" "tools-query")
       (add-edge "tool" "tools-query")
