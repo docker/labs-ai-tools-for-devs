@@ -10,6 +10,7 @@
    git
    [git.registry :as registry]
    graph
+   graphs.sql
    jsonrpc
    [logging :refer [warn]]
    prompts
@@ -174,9 +175,16 @@
                   (async/<!!
                    (user-loop/start-jsonrpc-loop
                     (user-loop/create-step
-                     (graph/chat-with-tools
-                      (-> (with-options opts (rest args))
-                          (assoc :thread-id thread-id))))
+                     (fn [state]
+                       (let [m (graph/construct-initial-state-from-prompts
+                                 (assoc state :opts
+                                        (-> (with-options opts (rest args))
+                                            (assoc :thread-id thread-id))))]
+                         (graph/stream
+                           (if (= (-> m :metadata :agent) "sql")
+                             (graphs.sql/graph state)
+                             (graph/chat-with-tools state))
+                          m))))
                     user-loop/state-reducer
                     in
                     {})))

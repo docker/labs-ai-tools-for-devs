@@ -14,9 +14,9 @@
   "compile a function that inserts a user message to-array 
    to the conversation and stream it through the graph
    compiled function returns a channel that will emit the final state"
-  [graph]
+  [f]
   (fn [state]
-    (graph/stream graph state)))
+    (f state)))
 
 (defn state-reducer [state s]
   (update state :messages (fnil conj []) {:role "user" :content s}))
@@ -36,16 +36,16 @@
      m   initial  state
    returns
      the final state"
-  [run-graph state-reducer in m]
+  [run-step state-reducer in m]
   (let [c (jsonrpc/input-stream->input-chan in {})]
     (async/go-loop
-     [next-state (async/<! (run-graph m)) n 0]
+     [next-state (async/<! (run-step m)) n 0]
       (let [message (async/<! c)]
         (cond
           (= "exit" (:method message))
           (assoc next-state :jsonrpc-loop-finished :exit)
           :else
-          (recur (async/<! ((comp run-graph state-reducer) next-state (-> message :params :content))) (inc n)))))))
+          (recur (async/<! ((comp run-step state-reducer) next-state (-> message :params :content))) (inc n)))))))
 
 (def counter (atom 0))
 (defn get-id [] (swap! counter inc))

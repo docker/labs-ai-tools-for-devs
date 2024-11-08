@@ -81,7 +81,7 @@
         (let [cached-path (fs/file dir path)]
           (if (fs/exists? cached-path)
             cached-path
-            (throw (ex-info "repo exists but path does not" ref))))
+            (throw (ex-info "repo exists but path does not" {:ref ref}))))
         dir))))
 
 (comment

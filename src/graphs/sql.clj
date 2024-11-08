@@ -75,23 +75,27 @@
       (string/starts-with? last-message "Error:") "query-gen"
       :else "correct-query")))
 
-(defn graph []
+(defn graph [_]
   (-> {}
       (graph/add-node "start" graph/start)
       (graph/add-node "list-tables-sub-graph" (graph/sub-graph-node first-tool-call))         ; assistant
-      (graph/add-node "model-get-schema" (graph/sub-graph-node model-get-schema))       ; assistant
-      (graph/add-node "query-gen" query-gen)                     ; assistant - might just end if it generates the right response
-                                                                 ;           - might just loop back to query-gen if there's an error
-                                                                 ;           - otherwise switch to correct-query
-
-      (graph/add-node "correct-query" correct-query)             ; assistant 
-      (graph/add-node "execute-query" execute-query)             ; tool
-      (graph/add-node "end" graph/end)
-
       (graph/add-edge "start" "list-tables-sub-graph")
-      (graph/add-edge "list-table-sub-graph" "model-get-schema")
-      (graph/add-edge "model-get-schema" "query-gen")
-      (graph/add-conditional-edges "query-gen" should-continue)
 
-      (graph/add-edge "correct-query" "execute-query")
-      (graph/add-edge "execute-query" "query-gen")))
+      (graph/add-node "end" graph/end)
+      (graph/add-edge "list-tables-sub-graph" "end")
+
+      ;(graph/add-node "model-get-schema" (graph/sub-graph-node model-get-schema))       ; assistant
+      ;(graph/add-node "query-gen" query-gen)                     ; assistant - might just end if it generates the right response
+                                                                 ;;           - might just loop back to query-gen if there's an error
+                                                                 ;;           - otherwise switch to correct-query
+
+      ;(graph/add-node "correct-query" correct-query)             ; assistant 
+      ;(graph/add-node "execute-query" execute-query)             ; tool
+
+      ;(graph/add-edge "list-table-sub-graph" "model-get-schema")
+      ;(graph/add-edge "model-get-schema" "query-gen")
+      ;(graph/add-conditional-edges "query-gen" should-continue)
+
+      ;(graph/add-edge "correct-query" "execute-query")
+      ;(graph/add-edge "execute-query" "query-gen")
+      ))
