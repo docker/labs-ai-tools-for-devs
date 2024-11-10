@@ -10,3 +10,12 @@ Generate a QR code for the content
 Save the generated image to `qrcode.png`.
 If the command fails, read the man page and try again.
 If successful, output the path to the generated image in markdown syntax.
+
+# Testing
+
+After running the above prompt, there should be a file named `qrcode.png` in the current project's host directory.
+
+```bash
+open qrcode.png
+```
+

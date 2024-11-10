@@ -249,7 +249,7 @@
                  {:creds {:username (:user m)
                           :password (or (:jwt m) (:pat m))}}))))
 
-(defn run-function 
+(defn run-function
   "run container function with no stdin"
   [{:keys [timeout] :or {timeout 600000} :as m}]
   (-pull m)
@@ -277,8 +277,6 @@
        {:pty-output s
         :exit-code (-> info :State :ExitCode)
         :info info}))))
-
-(def extract-facts run-function)
 
 (defn write-stdin [container-id content]
   (let [buf (ByteBuffer/allocate (* 1024 20))
@@ -359,7 +357,7 @@
         (delete x)
         {}))))
 
-(defn run-with-stdin-content 
+(defn run-with-stdin-content
   "run container with stdin read from a file"
   [m]
   (let [x (docker/function-call-with-stdin
@@ -368,7 +366,7 @@
                  (Thread/sleep 10)
                  (docker/finish-call x)))))
 
-(defn run-container 
+(defn run-container
   " params ::container-definition
      returns ::container-response"
   [m]
@@ -397,20 +395,20 @@
 
   (pprint
    (json/parse-string
-    (extract-facts
+    (run-container
      (assoc sample
             :host-dir "/Users/slim/docker/genai-stack"
             :user "jimclark106")) keyword))
   (docker/delete-image {:image "vonwig/go-linguist:latest"})
   (pprint
-   (extract-facts {:image "vonwig/go-linguist:latest"
+   (run-container {:image "vonwig/go-linguist:latest"
                    :timeout 100
                    :command ["-json"]
                    :host-dir "/Users/slim/docker/labs-make-runbook"
                    :user "jimclark106"}))
   (pprint
    (json/parse-string
-    (extract-facts
+    (run-container
      {:image "vonwig/extractor-node:latest"
       :host-dir "/Users/slim/docker/labs-make-runbook"})
     keyword)))

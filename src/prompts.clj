@@ -52,7 +52,7 @@
   (try
     (medley/deep-merge
      m
-     (let [{:keys [pty-output exit-code]} (docker/extract-facts
+     (let [{:keys [pty-output exit-code]} (docker/run-container
                                            (-> container-definition
                                                (assoc :host-dir host-dir)))]
        (when (= 0 exit-code)
