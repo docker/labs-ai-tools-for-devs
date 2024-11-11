@@ -52,7 +52,7 @@
   (try
     (medley/deep-merge
      m
-     (let [{:keys [pty-output exit-code]} (docker/extract-facts
+     (let [{:keys [pty-output exit-code]} (docker/run-container
                                            (-> container-definition
                                                (assoc :host-dir host-dir)))]
        (when (= 0 exit-code)
@@ -177,6 +177,10 @@
              {:partials (partials/file-partials
                          [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
                          ".md")}))))
+
+(comment
+  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]})
+  )
 
 (def prompt-file-pattern #".*_(.*)_.*.md")
 

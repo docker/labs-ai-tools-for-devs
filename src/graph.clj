@@ -54,29 +54,8 @@
 
 (defn start
   "create starting messages, metadata, and functions to bootstrap the thread"
-  [{:keys [prompts] :as opts} state]
-  (let [c (async/promise-chan)]
-    (try
-      (async/put!
-       c
-       (-> state
-           (merge
-             {:metadata (prompts/collect-metadata prompts)
-              :functions (prompts/collect-functions prompts)
-              :opts (merge opts {:level (or (:level opts) 0)})})
-           (update 
-             :messages 
-             (fnil concat [])
-             (when (not (seq (:messages state)))
-               (let [new-prompts (prompts/get-prompts opts)]
-                 (jsonrpc/notify :prompts {:messages new-prompts})
-                 new-prompts)))))
-      (catch Throwable ex
-        (jsonrpc/notify :error {:content
-                                (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
-                                :exception (str ex)})
-        (async/put! c {:messages [] :done "error"})))
-    c))
+  [_]
+  (async/go {}))
 
 (defn end
   "merge the :done signal"
@@ -87,10 +66,13 @@
     c))
 
 (defn completion
-  "get the next llm completion"
+  "get the next llm completion
+     uses the current conversation messages and outputs
+     outputs the next set of messages and finish-reason to be added to the conversation"
   [state]
   (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
 
+;; TODO does the LangGraph Tool Node always search for the a tool_call
 (defn tool
   "make docker container tool calls"
   [state]
@@ -106,33 +88,69 @@
                     calls)
                    (async/reduce conj []))))})))
 
+(defn tool-node [_]
+  tool)
+
 (defn tools-query
   [_]
   (async/go {}))
 
-(declare stream chat-with-tools)
+(defn construct-initial-state-from-prompts [{{:keys [prompts] :as opts} :opts :as state}]
+  (try
+    (-> state
+        (merge
+         {:metadata (prompts/collect-metadata prompts)
+          :functions (prompts/collect-functions prompts)
+          :opts (merge opts {:level (or (:level opts) 0)})})
+        (update
+         :messages
+         (fnil concat [])
+         (when (not (seq (:messages state)))
+           (let [new-prompts (prompts/get-prompts opts)]
+             (jsonrpc/notify :prompts {:messages new-prompts})
+             new-prompts))))
+    (catch Throwable ex
+      (jsonrpc/notify :error {:content
+                              (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
+                              :exception (str ex)}))))
 
 ; tool_calls are maps with an id and a function with arguments an name
 ; look up the full tool definition using the name
-(defn sub-graph
-  "answer a tool call by processing a sub-graph"
-  [state]
-  (async/go
-    (let [definition (state/get-function-definition state)
-          arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
-                        (tools/arg-context raw-args))
-          sub-graph-state
-          (async/<!
-           (stream
-            (chat-with-tools
-             (-> (:opts state)
-                 (assoc :level (inc (or (-> state :opts :level) 0))
-                        :prompts (git/prompt-file (-> definition :function :ref))
-                        :parameters arg-context)))))]
-      {:messages [(-> sub-graph-state
-                      :messages
-                      last
-                      (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})))
+
+(defn add-prompt-ref [state]
+  (let [definition (state/get-function-definition state)
+        arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
+                      (tools/arg-context raw-args))]
+    (-> state
+        (dissoc :messages)
+        (update-in [:opts :level] (fnil inc 0))
+        (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
+        (update-in [:opts :parameters] (constantly arg-context)))))
+
+(comment
+  (add-prompt-ref {:messages [{:tool_calls [{:function {:name "sql_db_list_tables"
+                                                        :arguments "{\"arg\": 1}"}}]}]
+                   :functions [{:function {:name "sql_db_list_tables"
+                                           :description "List all tables in the database"
+                                           :parameters {:type "object"
+                                                        :properties
+                                                        {:database {:type "string" :description "the database to query"}}}
+                                           :ref "github:docker/labs-ai-tools-for-devs?path=prompts/curl/README.md"}}]}))
+
+(declare stream chat-with-tools)
+
+(defn sub-graph-node [{:keys [init-state construct-graph]}]
+  (fn [state]
+    (async/go
+      (let [sub-graph-state
+            (async/<!
+             (stream
+              ((or construct-graph chat-with-tools) state)
+              ((or init-state (comp construct-initial-state-from-prompts add-prompt-ref)) state)))]
+        {:messages [(-> sub-graph-state
+                        :messages
+                        last
+                        (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]}))))
 
 ; =====================================================
 ; edge functions takes state and returns next node
@@ -164,8 +182,9 @@
   "reduce the state with the change from running a node"
   [state change]
   (-> state
-      (merge (dissoc change :messages))
-      (update :messages concat (:messages change))))
+      (merge (dissoc change :messages :tools))
+      (update :messages concat (:messages change))
+      (update :functions (fnil concat []) (:tools change))))
 
 (defn stream
   "start streaming a conversation"
@@ -189,13 +208,13 @@
 ; this is the graph we tend to use in our experiments thus far
 ; ============================================================
 
-(defn chat-with-tools [opts]
+(defn chat-with-tools [_]
   (-> {}
-      (add-node "start" (partial start opts))
+      (add-node "start" start)
       (add-node "completion" completion)
-      (add-node "tool" tool)
+      (add-node "tool" (tool-node nil))
       (add-node "end" end)
-      (add-node "sub-graph" sub-graph)
+      (add-node "sub-graph" (sub-graph-node nil))
       (add-node "tools-query" tools-query)
       (add-edge "start" "tools-query")
       (add-edge "tool" "tools-query")
@@ -211,7 +230,7 @@
            :thread-id "thread"
            :host-dir "/Users/slim"
            :stream true}]
-    (state/summarize (async/<!! (stream (chat-with-tools x))))))
+    (state/summarize (async/<!! (stream (chat-with-tools x) x)))))
 
 (comment
   (def x {:stream true,
@@ -220,5 +239,5 @@
           :platform "darwin", :user "jimclark106",
           :thread-id "3e61ffe7-840e-4177-b84a-f6f7db58b24d"})
   (state/summarize
-   (async/<!! (stream (chat-with-tools x)))))
+   (async/<!! (stream (chat-with-tools x) x))))
 

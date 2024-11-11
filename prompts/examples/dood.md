@@ -6,15 +6,17 @@ tools:
       type: object
       properties:
         args:
-          type: string
+          type: array
+          items:
+            type: string
           description: arguments to pass to the docker CLI
     container:
       image: docker:cli
       command:
-        - "{{args|safe}}"
+        - "{{args|into}}"
 ---
 
 # prompt user
 
-1. run the docker command to figure out which images have been pulled
+1. use the docker command to start up a mysql server running on port 8080
 

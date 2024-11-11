@@ -2,15 +2,33 @@
   (:require
    [cheshire.core :as json]
    [clojure.core.async :as async]
+   [clojure.edn :as edn]
    docker
    git
    jsonrpc
+   [selmer.filters :as filters]
    [selmer.parser :as selmer]))
 
 (set! *warn-on-reflection* true)
 
+(filters/add-filter! :into (fn [v]
+                             (if (coll? v)
+                               [:safe [:coll (into [] v)]] 
+                               v)))
+
 (defn interpolate [m template]
-  (selmer/render template m {}))
+  (when-let [s (selmer/render template m {})]
+    (if-let [parsed (try (edn/read-string s) (catch Throwable _ nil))]
+      (if (and (coll? parsed) (= :coll (first parsed)))
+        (second parsed)
+        [s])   
+      [s])))
+
+(defn interpolate-coll [command-args arg-context]
+  (->>
+   command-args
+   (mapcat (partial interpolate arg-context))
+   (into [])))
 
 (defn arg-context [json-arg-string]
   (merge
@@ -31,7 +49,7 @@
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user jwt timeout level] :as opts :or {level 0}} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions user jwt timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
@@ -42,13 +60,9 @@
           (let [function-call (merge
                                (:container definition)
                                (dissoc opts :functions)
-                               {:command (into []
-                                               (concat
-                                                []
-                                                (->>
-                                                 (-> definition :container :command)
-                                                 (map (partial interpolate arg-context))
-                                                 (into []))))}
+                               {:command (interpolate-coll
+                                          (-> definition :container :command)
+                                          arg-context)}
                                (when user {:user user})
                                (when jwt {:jwt jwt})
                                (when timeout {:timeout timeout}))
