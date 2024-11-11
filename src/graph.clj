@@ -47,8 +47,6 @@
         (stop-looping c (str t))))
     c))
 
-
-
 ; =====================================================
 ; Node functions take state and return data that should 
 ; be merged into the conversation state
@@ -186,7 +184,7 @@
   (-> state
       (merge (dissoc change :messages :tools))
       (update :messages concat (:messages change))
-      (update :functions concat (:tools change))))
+      (update :functions (fnil concat []) (:tools change))))
 
 (defn stream
   "start streaming a conversation"

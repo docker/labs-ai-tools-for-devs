@@ -4,12 +4,11 @@
    [clojure.string :as string]
    [graph]))
 
-
 (def db-query-tool-call
   {:messages [{:content ""
-               :tool_calls [{:name "sql_db_query_tool"}
-                            :arguments "{}"
-                            :id "tool_abc123"]}]
+               :tool_calls [{:name "sql_db_query_tool"
+                             :arguments "{}"
+                             :id "tool_abc123"}]}]
    :tools [{:name "sql_db_query_tool"
             :description "List all tables in the database"
             :parameters
@@ -23,18 +22,19 @@
 
 (def first-tool-call
   {:messages [{:content ""
-               :tool_calls [{:name "sql_db_list_tables_tool"}
-                            :arguments "{}"
-                            :id "tool_abc123"]}]
-   :tools [{:name "sql_db_list_tables"
-            :description "List all tables in the database"
-            :parameters
-            {:type "object"
-             :properties
-             {:database {:type "string" :description "the database to query"}}}
-            :container
-            {:image "vonwig/sqlite:latest"
-             :command ["{{database}}" ".tables"]}}]})
+               :tool_calls [{:function {:name "sql_db_list_tables_tool"
+                                        :arguments "{\"database\": \"./Chinook.db\"}"}
+                             :id "tool_abc123"}]}]
+   :tools [{:type "function"
+            :function {:name "sql_db_list_tables_tool"
+                       :description "List all tables in the database"
+                       :parameters
+                       {:type "object"
+                        :properties
+                        {:database {:type "string" :description "the database to query"}}}
+                       :container
+                       {:image "vonwig/sqlite:latest"
+                        :command ["{{database}}" ".tables"]}}}]})
 
 (def model-get-schema
   {:messages []
@@ -48,6 +48,10 @@
             :container
             {:image "vonwig/sqlite:latest"
              :command ["{{database}}" ".schema {{table}}"]}}]})
+
+(defn list-tables-inject-tool [_]
+  (async/go
+    first-tool-call))
 
 (defn query-gen
   "Assistant+Tool Node: has it's own prompt but also adds checks for proper final answers"
@@ -78,11 +82,14 @@
 (defn graph [_]
   (-> {}
       (graph/add-node "start" graph/start)
-      (graph/add-node "list-tables-sub-graph" (graph/sub-graph-node first-tool-call))         ; assistant
-      (graph/add-edge "start" "list-tables-sub-graph")
+      (graph/add-node "list-tables-inject-tool" list-tables-inject-tool)
+      (graph/add-edge "start" "list-tables-inject-tool")
+
+      (graph/add-node "list-tables-tool" (graph/tool-node nil))
+      (graph/add-edge "list-tables-inject-tool" "list-tables-tool")
 
       (graph/add-node "end" graph/end)
-      (graph/add-edge "list-tables-sub-graph" "end")
+      (graph/add-edge "list-tables-tool" "end")
 
       ;(graph/add-node "model-get-schema" (graph/sub-graph-node model-get-schema))       ; assistant
       ;(graph/add-node "query-gen" query-gen)                     ; assistant - might just end if it generates the right response
