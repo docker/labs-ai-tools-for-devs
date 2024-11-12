@@ -249,10 +249,20 @@
                  {:creds {:username (:user m)
                           :password (or (:jwt m) (:pat m))}}))))
 
+(defn has-image? [image]
+  (let [[_ digest] (re-find #".*@(.*)" image)]
+    (some
+     (fn [{:keys [RepoTags Id]}]
+       (or
+        (some #(= % image)  RepoTags)
+        (and digest (= digest Id))))
+     (images {}))))
+
 (defn run-function
   "run container function with no stdin"
   [{:keys [timeout] :or {timeout 600000} :as m}]
-  (-pull m)
+  (when (not (has-image? (:image m)))
+    (-pull m))
   (let [x (create m)
         finished-channel (async/promise-chan)]
     (start x)
@@ -314,7 +324,8 @@
       "")))
 
 (defn function-call-with-stdin [m]
-  (-pull m)
+  (when (not (has-image? (:image m)))
+    (-pull m))
   (let [x (merge
            m
            (create (assoc m
@@ -392,6 +403,7 @@
   (get-token {})
   (get-login-info {})
   (get-login-info-from-desktop-backend)
+  (images {})
 
   (pprint
    (json/parse-string
