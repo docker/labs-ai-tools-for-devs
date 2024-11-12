@@ -36,4 +36,9 @@ My project is at `/project/` (PWD)
 
 What package manager do I need based on the lockfile?
 
+Which version of node do I need?
+
+What is the project's name?
+
+What is the project's version?
 
