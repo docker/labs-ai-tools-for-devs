@@ -16,7 +16,10 @@
 
 (defn summarize [state]
   (-> state
-      (update :messages (each summarize-content summarize-tool-calls))))
+      (update :messages (each 
+                          ;summarize-content 
+                          ;summarize-tool-calls
+                          ))))
 
 (defn prompt? [m]
   (= "prompt" (-> m :function :type)))

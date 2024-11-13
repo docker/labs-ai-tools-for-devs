@@ -1,18 +1,22 @@
 ---
 tools:
-  - name: sqlite3
+  - name: sql_db_query_tool
     description: execute the DB query
     parameters:
       type: object
       properties:
+        database:
+          type: string
+          description: the database to query
         sql:
           type: string
           description: the sql statement to run
     container:
       image: vonwig/sqlite:latest
       command:
-        - "./Chinook.db"
+        - "{{database}}"
         - "{{sql}}"
+tool_choice: required
 ---
 
 # prompt system
@@ -32,6 +36,3 @@ If there are any of the above mistakes, rewrite the query. If there are no mista
 
 You will call the appropriate tool to execute the query after running this check.
 
-# prompt user
-
-SELECT * FROM Artist LIMIT 10;

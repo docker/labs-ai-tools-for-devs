@@ -4,4 +4,5 @@ agent: sql
 
 # prompt user
 
-find all artists in database ./Chinook.db
+find all artists in the database ./Chinook.db
+

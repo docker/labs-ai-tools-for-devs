@@ -1,4 +1,13 @@
 ---
+tools:
+  - name: SubmitFinalAnswer
+    description: Submit the final answer to the user based on the query results
+    parameters:
+      type: object
+      properties:
+        final_answer:
+          type: string
+          description: The final answer to the user
 ---
 
 # prompt system

@@ -1,24 +1,9 @@
 (ns graphs.sql
   (:require
+   [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.string :as string]
    [graph]))
-
-(def db-query-tool-call
-  {:messages [{:content ""
-               :tool_calls [{:name "sql_db_query_tool"
-                             :arguments "{}"
-                             :id "tool_abc123"}]}]
-   :tools [{:name "sql_db_query_tool"
-            :description "List all tables in the database"
-            :parameters
-            {:type "object"
-             :properties
-             {:database {:type "string" :description "the database to query"}
-              :query {:type "string" :description "the sql statement to run"}}}
-            :container
-            {:image "vonwig/sqlite:latest"
-             :command ["{{database}}" "{{query}}"]}}]})
 
 (def first-tool-call
   {:messages [{:role "assistant"
@@ -55,22 +40,40 @@
   (async/go
     first-tool-call))
 
+(defn failed-tool-call-message [tool-call-name]
+  ;; this is awful - binds the should-continue edge to the format of this string
+  (format
+   "Error: The wrong tool was called: %s. Please fix your mistakes. Remember to only call SubmitFinalAnswer to submit the final answer. Generated queries should be outputted WITHOUT a tool call."
+   tool-call-name))
+
 (defn query-gen
   "Assistant+Tool Node: has it's own prompt but also adds checks for proper final answers"
-  [_]
-  ;; note that we should not bind tools here because the only acceptable output is a proper final answer
-  ;; so this sub-graph needs to remove all tools
-  )
+  [state]
+  (async/go
+    (let [x (->
+             state
+             (dissoc :messages)
+             (dissoc :functions)
+             (update-in [:opts :level] (fnil inc 0))
+             (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-gen.md")))
+             (graph/construct-initial-state-from-prompts)
+             (update-in [:messages] concat (:messages state)))
+          {:keys [messages _finish-reason]} (async/<! (graph/run-llm
+                                                       (:messages x)
+                                                       (dissoc (:metadata x) :agent)
+                                                       (:functions x)
+                                                       (:opts x)))]
 
-;; TODO pull out the query check system
-(defn correct-query
-  "Assistant Node: double check the query 
-      - should generate a tool call to execute the query"
-  [_])
-
-(defn execute-query
-  "Tool Node: runs db query"
-  [_])
+      ; check for bad tool_calls and create failed Tool messages for them 
+      {:messages
+       (concat
+        messages
+        (->> (:tool_calls (last messages))
+             (filter (complement #(= "SubmitFinalAnswer" (-> % :function :name))))
+             (map (fn [{:keys [id] :as tc}]
+                    {:role "tool"
+                     :content (failed-tool-call-message (-> tc :function :name))
+                     :tool_call_id id}))))})))
 
 (defn should-continue
   "end, correct-query, or query-gen"
@@ -78,7 +81,7 @@
   (let [last-message (last messages)]
     (cond
       (contains? last-message :tool_calls) "end"
-      (string/starts-with? last-message "Error:") "query-gen"
+      (string/starts-with? (:content last-message) "Error:") "query-gen"
       :else "correct-query")))
 
 (defn seed-get-schema-conversation [state]
@@ -90,6 +93,18 @@
       (update-in [:opts :parameters] (constantly {:database "./Chinook.db"}))
       (update-in [:functions] (fnil concat []) (:tools model-get-schema))))
 
+(defn seed-correct-query-conversation
+  [state]
+  ; make one LLM call with the last message (which should be a user query containing the SQL we want to check)
+  ; add the last message to the conversation
+  (-> state
+      (dissoc :messages)
+      (update-in [:opts :level] (fnil inc 0))
+      (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-check.md")))
+      (update-in [:opts :parameters] (constantly {:database "./Chinook.db"}))
+      (graph/construct-initial-state-from-prompts)
+      (update-in [:messages] concat [(last (:messages state))])))
+
 (defn graph [_]
   (-> {}
       (graph/add-node "start" graph/start)
@@ -99,22 +114,18 @@
       (graph/add-node "list-tables-tool" (graph/tool-node nil))
       (graph/add-edge "list-tables-inject-tool" "list-tables-tool")
 
-      (graph/add-node "model-get-schema" (graph/sub-graph-node {:init-state seed-get-schema-conversation}))       ; assistant
+      ; TODO replace the conversation state, don't append
+      (graph/add-node "model-get-schema" (graph/sub-graph-node {:init-state seed-get-schema-conversation
+                                                                :next-state graph/append-new-messages}))       ; assistant
       (graph/add-edge "list-tables-tool" "model-get-schema")
 
+      (graph/add-node "query-gen" query-gen)
+      (graph/add-edge "model-get-schema" "query-gen")
+
       (graph/add-node "end" graph/end)
-      (graph/add-edge "model-get-schema" "end")
-      ;(graph/add-node "query-gen" query-gen)                     ; assistant - might just end if it generates the right response
-                                                                 ;;           - might just loop back to query-gen if there's an error
-                                                                 ;;           - otherwise switch to correct-query
+      (graph/add-node "correct-query" (graph/sub-graph-node {:init-state seed-correct-query-conversation
+                                                             :construct-graph graph/one-tool-call
+                                                             :next-state graph/append-new-messages}))
+      (graph/add-conditional-edges "query-gen" should-continue)
 
-      ;(graph/add-node "correct-query" correct-query)             ; assistant 
-      ;(graph/add-node "execute-query" execute-query)             ; tool
-
-      ;(graph/add-edge "list-table-sub-graph" "model-get-schema")
-      ;(graph/add-edge "model-get-schema" "query-gen")
-      ;(graph/add-conditional-edges "query-gen" should-continue)
-
-      ;(graph/add-edge "correct-query" "execute-query")
-      ;(graph/add-edge "execute-query" "query-gen")
-      ))
+      (graph/add-edge "correct-query" "query-gen")))

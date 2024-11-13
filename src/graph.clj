@@ -66,15 +66,14 @@
     c))
 
 (defn completion
-  "get the next llm completion
-     uses the current conversation messages and outputs
-     outputs the next set of messages and finish-reason to be added to the conversation"
+  "generate the next AI message
+     passes the whole converation to the AI model"
   [state]
-  (run-llm (:messages state) (:metadata state) (:functions state) (:opts state)))
+  (run-llm (:messages state) (dissoc (:metadata state) :agent) (:functions state) (:opts state)))
 
 ;; TODO does the LangGraph Tool Node always search for the a tool_call
 (defn tool
-  "make docker container tool calls"
+  "execute the tool_calls from the last AI message in the conversation"
   [state]
   (let [calls (-> (:messages state) last :tool_calls)]
     (async/go
@@ -88,7 +87,9 @@
                     calls)
                    (async/reduce conj []))))})))
 
-(defn tool-node [_]
+(defn tool-node
+  "add a tool node that will run tool_calls from the last AI message in the conversation"
+  [_]
   tool)
 
 (defn tools-query
@@ -128,6 +129,7 @@
         (update-in [:opts :parameters] (constantly arg-context)))))
 
 (comment
+  ;; TODO move this into the thingy
   (add-prompt-ref {:messages [{:tool_calls [{:function {:name "sql_db_list_tables"
                                                         :arguments "{\"arg\": 1}"}}]}]
                    :functions [{:function {:name "sql_db_list_tables"
@@ -139,7 +141,23 @@
 
 (declare stream chat-with-tools)
 
-(defn sub-graph-node [{:keys [init-state construct-graph]}]
+(defn add-last-message-as-tool-call 
+  [state sub-graph-state]
+  {:messages [(-> sub-graph-state
+                  :messages
+                  last
+                  (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})
+
+(defn append-new-messages 
+  [state sub-graph-state]
+  {:messages (->> (:messages sub-graph-state)
+                  (filter (complement (fn [m] (some #(= m %) (:messages state))))))})
+
+(defn sub-graph-node
+  "create a sub-graph node that initializes a conversation from the current one,
+   creates a new agent graph from the current state and returns the messages to be added 
+   to the parent conversation"
+  [{:keys [init-state construct-graph next-state]}]
   (fn [state]
     (async/go
       (let [sub-graph-state
@@ -147,10 +165,7 @@
              (stream
               ((or construct-graph chat-with-tools) state)
               ((or init-state (comp construct-initial-state-from-prompts add-prompt-ref)) state)))]
-        {:messages [(-> sub-graph-state
-                        :messages
-                        last
-                        (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]}))))
+        ((or next-state add-last-message-as-tool-call) state sub-graph-state)))))
 
 ; =====================================================
 ; edge functions takes state and returns next node
@@ -194,6 +209,7 @@
     [state m
      node "start"]
      (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
+     #_(jsonrpc/notify :message {:debug (with-out-str (pprint (state/summarize (dissoc state :opts))))})
      ;; TODO handling bad graphs with missing nodes
      (let [enter-node (get-in graph [:nodes node])
            new-state (state-reducer state (async/<! (enter-node state)))]
@@ -220,6 +236,18 @@
       (add-edge "tool" "tools-query")
       (add-edge "sub-graph" "tools-query")
       (add-edge "tools-query" "completion")
+      (add-conditional-edges "completion" tool-or-end)))
+
+(defn one-tool-call [_]
+  (-> {}
+      (add-node "start" start)
+      (add-node "completion" completion)
+      (add-node "tool" (tool-node nil))
+      (add-node "end" end)
+      (add-node "sub-graph" (sub-graph-node nil))
+      (add-edge "start" "completion")
+      (add-edge "sub-graph" "end")
+      (add-edge "tool" "end")
       (add-conditional-edges "completion" tool-or-end)))
 
 (comment
