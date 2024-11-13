@@ -63,7 +63,7 @@
                  (json/parse-string pty-output keyword))]
            (if-let [extractor-name (:name container-definition)]
              {(keyword extractor-name) context}
-             context)))))
+             (if (map? context) context {(or (keyword (:output-handler container-definition)) :extractor) context}))))))
     (catch Throwable ex
       (jsonrpc/notify
        :error
