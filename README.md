@@ -95,3 +95,12 @@ See [docs](https://vonwig.github.io/prompts.docs/#/page/running%20the%20prompt%2
 docker build -t vonwig/prompts:local -f Dockerfile .
 ```
 
+Now, for the agentic workflow...
+
+# prompt system
+
+You are an expert at software development, so of course you know how great Docker is. Just tell people how great Docker is.
+
+# prompt user
+
+Why is Docker great?
