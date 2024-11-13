@@ -3,6 +3,7 @@
    [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.pprint :refer [pprint]]
+   [clojure.core.match :refer [match]]
    git
    jsonrpc
    openai
@@ -141,14 +142,14 @@
 
 (declare stream chat-with-tools)
 
-(defn add-last-message-as-tool-call 
+(defn add-last-message-as-tool-call
   [state sub-graph-state]
   {:messages [(-> sub-graph-state
                   :messages
                   last
                   (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})
 
-(defn append-new-messages 
+(defn append-new-messages
   [state sub-graph-state]
   {:messages (->> (:messages sub-graph-state)
                   (filter (complement (fn [m] (some #(= m %) (:messages state))))))})
@@ -220,6 +221,36 @@
          ;; TODO handling missing edges
          (recur new-state ((get-in graph [:edges node]) new-state)))))))
 
+(defn update-graph [m l x]
+  (match [x]
+
+         ; create an edge from the last node to this one 
+    [[(n1 :guard string?)]] (cond-> m
+                              true (add-edge l n1))
+
+         ; add a conditional edge from the last node to this function 
+    [[:edge (n2 :guard (comp not string?))]] (cond-> m
+                                               l (add-conditional-edges
+                                                  l
+                                                  n2))
+
+         ; 
+    [[n1 (n2 :guard (comp not string?))]] (cond-> m
+                                            true (add-node n1 n2)
+                                            l (add-edge l n1))
+
+    :else m))
+
+(defn path-item [{:keys [m l]} [n1 :as item]]
+  {:m (update-graph m l item)
+   :l (when (not (= :edge n1)) n1)})
+
+(defn paths [agg p]
+  (:m (reduce path-item {:m agg} p)))
+
+(defn construct-graph [x]
+  (reduce paths {} x))
+
 ; ============================================================
 ; this is the graph we tend to use in our experiments thus far
 ; ============================================================
@@ -238,6 +269,17 @@
       (add-edge "tools-query" "completion")
       (add-conditional-edges "completion" tool-or-end)))
 
+(def chat-with-tools-representation
+  [[["start" start]
+    ["tools-query" tools-query]
+    ["completion" completion]
+    [:edge tool-or-end]]
+   [["sub-graph" (sub-graph-node nil)]
+    ["tools-query"]]
+   [["tool" (tool-node nil)]
+    ["tools-query"]]
+   [["end" end]]])
+
 (defn one-tool-call [_]
   (-> {}
       (add-node "start" start)
@@ -249,6 +291,16 @@
       (add-edge "sub-graph" "end")
       (add-edge "tool" "end")
       (add-conditional-edges "completion" tool-or-end)))
+
+(def one-tool-call-representation
+  [[["start" start]
+    ["completion" completion]
+    [:edge tool-or-end]]
+   [["sub-graph" (sub-graph-node nil)]
+    ["completion"]]
+   [["tool" (tool-node nil)]
+    ["completion"]]
+   [["end" end]]])
 
 (comment
   (alter-var-root #'jsonrpc/notify (fn [_] (partial jsonrpc/-println {:debug true})))

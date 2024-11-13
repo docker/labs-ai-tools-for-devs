@@ -106,26 +106,19 @@
       (update-in [:messages] concat [(last (:messages state))])))
 
 (defn graph [_]
-  (-> {}
-      (graph/add-node "start" graph/start)
-      (graph/add-node "list-tables-inject-tool" list-tables-inject-tool)
-      (graph/add-edge "start" "list-tables-inject-tool")
+  (graph/construct-graph
+   [[["start" graph/start]
+     ["list-tables-inject-tool" list-tables-inject-tool]
+     ["list-tables-tool" (graph/tool-node {})]
+     ["model-get-schema" (graph/sub-graph-node
+                          {:init-state seed-get-schema-conversation
+                           :next-state graph/append-new-messages})]
+     ["query-gen" query-gen]
+     [:edge should-continue]]
+    [["correct-query" (graph/sub-graph-node
+                       {:init-state seed-correct-query-conversation
+                        :construct-graph graph/one-tool-call
+                        :next-state graph/append-new-messages})]
+     ["query-gen"]]
+    [["end" graph/end]]]))
 
-      (graph/add-node "list-tables-tool" (graph/tool-node nil))
-      (graph/add-edge "list-tables-inject-tool" "list-tables-tool")
-
-      ; TODO replace the conversation state, don't append
-      (graph/add-node "model-get-schema" (graph/sub-graph-node {:init-state seed-get-schema-conversation
-                                                                :next-state graph/append-new-messages}))       ; assistant
-      (graph/add-edge "list-tables-tool" "model-get-schema")
-
-      (graph/add-node "query-gen" query-gen)
-      (graph/add-edge "model-get-schema" "query-gen")
-
-      (graph/add-node "end" graph/end)
-      (graph/add-node "correct-query" (graph/sub-graph-node {:init-state seed-correct-query-conversation
-                                                             :construct-graph graph/one-tool-call
-                                                             :next-state graph/append-new-messages}))
-      (graph/add-conditional-edges "query-gen" should-continue)
-
-      (graph/add-edge "correct-query" "query-gen")))

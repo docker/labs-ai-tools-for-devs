@@ -931,6 +931,16 @@
       "hash": "sha256-OeNB9nv+85PkeDkNSYjxGad5ykSQZssNM/gLQv8E9D0="
     },
     {
+      "mvn-path": "org/clojure/core.match/1.1.0/core.match-1.1.0.jar",
+      "mvn-repo": "https://repo.maven.apache.org/maven2/",
+      "hash": "sha256-10V6tjEIWae9cTmEM4IEX6PN7A0T97qSEpfy8/uZj1M="
+    },
+    {
+      "mvn-path": "org/clojure/core.match/1.1.0/core.match-1.1.0.pom",
+      "mvn-repo": "https://repo.maven.apache.org/maven2/",
+      "hash": "sha256-NnHYN2UlIwq6Ah8fYmx54g86ELYrXfgXIiWJDsSv4EU="
+    },
+    {
       "mvn-path": "org/clojure/core.memoize/1.0.253/core.memoize-1.0.253.jar",
       "mvn-repo": "https://repo.maven.apache.org/maven2/",
       "hash": "sha256-SpEFhRgqsybB0KINNDFb4VY7WlhDfUHAId1/6ZEeHtY="
