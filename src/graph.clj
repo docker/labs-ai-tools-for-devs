@@ -274,9 +274,9 @@
     ["tools-query" tools-query]
     ["completion" completion]
     [:edge tool-or-end]]
-   [["sub-graph" (sub-graph-node nil)]
+   [["sub-graph" (sub-graph-node {})]
     ["tools-query"]]
-   [["tool" (tool-node nil)]
+   [["tool" (tool-node {})]
     ["tools-query"]]
    [["end" end]]])
 
@@ -284,9 +284,9 @@
   (-> {}
       (add-node "start" start)
       (add-node "completion" completion)
-      (add-node "tool" (tool-node nil))
+      (add-node "tool" (tool-node {}))
       (add-node "end" end)
-      (add-node "sub-graph" (sub-graph-node nil))
+      (add-node "sub-graph" (sub-graph-node {}))
       (add-edge "start" "completion")
       (add-edge "sub-graph" "end")
       (add-edge "tool" "end")
@@ -296,9 +296,9 @@
   [[["start" start]
     ["completion" completion]
     [:edge tool-or-end]]
-   [["sub-graph" (sub-graph-node nil)]
+   [["sub-graph" (sub-graph-node {})]
     ["completion"]]
-   [["tool" (tool-node nil)]
+   [["tool" (tool-node {})]
     ["completion"]]
    [["end" end]]])
 

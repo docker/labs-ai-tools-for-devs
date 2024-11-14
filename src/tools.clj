@@ -45,7 +45,7 @@
    does not stream - calls resolve or fail only once 
    should not throw exceptions
      params
-       opts - options map for the engine
+       opts - options map for the engine (partially bound))
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
@@ -54,7 +54,9 @@
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
                        :function)]
-    (let [arg-context (arg-context json-arg-string)]
+    (let [arg-context (merge 
+                        {:hostDir (:host-dir opts)}
+                        (arg-context json-arg-string))]
       (try
         (if (:container definition) ;; synchronous call to container function
           (let [function-call (merge

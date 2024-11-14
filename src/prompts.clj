@@ -22,10 +22,11 @@
 
 (defn- facts
   "fix up facts before sending to templates"
-  [project-facts user platform]
+  [project-facts user platform host-dir]
   (medley/deep-merge
    {:platform platform
     :username user
+    :hostDir host-dir
     :project-facts {:files (-> project-facts :project-facts :project/files)
                     :dockerfiles (-> project-facts :project-facts :project/dockerfiles)
                     :composefiles (-> project-facts :project-facts :project/composefiles)
@@ -187,10 +188,10 @@
 (defn get-prompts
   "run extractors and then render prompt templates
      returns ordered collection of chat messages"
-  [{:keys [parameters prompts user platform] :as opts}]
+  [{:keys [parameters prompts user platform host-dir] :as opts}]
   (let [;; TODO the docker default no longer makes sense here
         m (merge (run-extractors opts) parameters)
-        renderer (partial selma-render prompts (facts m user platform))
+        renderer (partial selma-render prompts (facts m user platform host-dir))
         prompts (if (fs/directory? prompts)
                   ;; directory based prompts
                   (->> (fs/list-dir prompts)

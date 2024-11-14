@@ -90,7 +90,6 @@
   ; add the schema tool
   (-> state
       (update-in [:opts :level] (fnil inc 0))
-      (update-in [:opts :parameters] (constantly {:database "./Chinook.db"}))
       (update-in [:functions] (fnil concat []) (:tools model-get-schema))))
 
 (defn seed-correct-query-conversation
@@ -101,7 +100,6 @@
       (dissoc :messages)
       (update-in [:opts :level] (fnil inc 0))
       (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-check.md")))
-      (update-in [:opts :parameters] (constantly {:database "./Chinook.db"}))
       (graph/construct-initial-state-from-prompts)
       (update-in [:messages] concat [(last (:messages state))])))
 
