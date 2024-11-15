@@ -1,10 +1,11 @@
 (ns state
   (:require
+   [babashka.fs :as fs]
+   [clojure.pprint :refer [pprint]]
    git
    jsonrpc
    prompts
-   tools
-   [clojure.pprint :refer [pprint]]))
+   tools))
 
 (set! *warn-on-reflection* true)
 
@@ -64,6 +65,35 @@
       (jsonrpc/notify :error {:content
                               (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                               :exception (str ex)}))))
+
+(defn tools-append [tools]
+  (fn [state]
+    (-> state
+        (update-in [:functions] (fnil concat []) tools))))
+
+(defn tools-set [tools]
+  (fn [state]
+    (-> state
+        (update-in [:functions] (constantly tools)))))
+
+(defn messages-reset [state]
+  (dissoc state :messages))
+
+(defn messages-take-last [n]
+  (fn [state]
+    (-> state
+        (update-in [:messages] (fnil concat []) (take-last n (:messages state))))))
+
+(defn messages-append [coll]
+  (fn [state]
+    (-> state
+        (update-in [:messages] (fnil concat []) coll))))
+
+(defn messages-from-prompt [s]
+  (fn [state]
+    (-> state
+        (update-in [:opts :prompts] (constantly (fs/file s)))
+        (construct-initial-state-from-prompts))))
 
 (defn add-prompt-ref
   [state]

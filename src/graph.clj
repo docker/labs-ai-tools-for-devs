@@ -97,6 +97,10 @@
 
 (declare stream chat-with-tools)
 
+(defn apply-functions [coll] 
+  (fn [state]
+    (reduce (fn [m f] (f m)) state coll)))
+
 (defn sub-graph-node
   "create a sub-graph node that initializes a conversation from the current one,
    creates a new agent graph from the current state and returns the messages to be added 
@@ -109,7 +113,13 @@
              (stream
               ((or construct-graph chat-with-tools) state)
               (->
-               ((or init-state (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
+               ((or 
+                  (and 
+                    init-state 
+                    (if (coll? init-state) 
+                      (apply-functions init-state) 
+                      init-state))
+                  (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
                (update-in [:opts :level] (fnil inc 0)))))]
         ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
 

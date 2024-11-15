@@ -83,19 +83,6 @@
       ;; how many times should we try to correct because correct-query will always end up back here 
       :else "correct-query")))
 
-(defn seed-list-tables-conversation [state]
-  (-> state
-      (assoc :finish-reason "tool_calls")
-      (update-in [:functions] (constantly (:tools first-tool-call)))
-      (update-in [:messages] concat (:messages first-tool-call))))
-
-(defn seed-get-schema-conversation [state]
-  ; inherit full conversation
-  ; no prompts
-  ; add the schema tool
-  (-> state
-      (update-in [:functions] (fnil concat []) (:tools model-get-schema))))
-
 (defn seed-correct-query-conversation
   [state]
   ; make one LLM call with the last message (which should be a user query containing the SQL we want to check)
@@ -106,18 +93,27 @@
       (state/construct-initial-state-from-prompts)
       (update-in [:messages] concat [(last (:messages state))])))
 
+(comment
+  [state/messages-reset
+   (state/messages-from-prompt "prompts/sql/query-check.md")
+   (state/messages-take-last 1)])
+
 ;; query-gen has a prompt
 ;; seed-correct-query-conversation has a prompt
 ;; prompts/sql/query-gen.md has a hard-coded db file
 (defn graph [_]
   (graph/construct-graph
    [[["start"                   graph/start]
-     ["list-tables-tool"        (graph/sub-graph-node 
-                                  {:init-state seed-list-tables-conversation
-                                   :construct-graph graph/generate-start-with-tool 
-                                   :next-state (state/take-last-messages 2)})]
+     ["list-tables-tool"        (graph/sub-graph-node
+                                 {:init-state
+                                  [#(assoc % :finish-reason "tool_calls")
+                                   (state/tools-set (:tools first-tool-call))
+                                   (state/messages-append (:messages first-tool-call))]
+                                  :construct-graph graph/generate-start-with-tool
+                                  :next-state (state/take-last-messages 2)})]
      ["model-get-schema"        (graph/sub-graph-node
-                                 {:init-state seed-get-schema-conversation
+                                 {:init-state
+                                  [(state/tools-append (:tools model-get-schema))]
                                   :next-state state/append-new-messages})]
      ["query-gen"               query-gen]
      [:edge                     should-continue]]
