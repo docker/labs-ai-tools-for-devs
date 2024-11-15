@@ -178,7 +178,6 @@
                     (user-loop/create-step
                      (fn [state]
                        (let [m (state/construct-initial-state-from-prompts
-                                 state
                                  (assoc state :opts
                                         (-> (with-options opts (rest args))
                                             (assoc :thread-id thread-id))))]

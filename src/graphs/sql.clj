@@ -77,7 +77,6 @@
 
 ;; query-gen has a prompt
 ;; seed-correct-query-conversation has a prompt
-;; prompts/sql/query-gen.md has a hard-coded db file
 (defn graph [_]
   (graph/construct-graph
    [[["start"                   graph/start]

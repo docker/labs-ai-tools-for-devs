@@ -82,7 +82,7 @@
        (into []
              (async/<!
               (->> (tools/make-tool-calls
-                    (-> state :opts :level)
+                     (or (-> state :opts :level) 0)
                     (partial tools/function-handler (assoc (:opts state) :functions (:functions state)))
                     calls)
                    (async/reduce conj []))))})))
@@ -120,7 +120,7 @@
                   (if (coll? init-state)
                     (apply-functions init-state)
                     init-state))
-                 (comp (partial state/construct-initial-state-from-prompts state) state/add-prompt-ref)) state)
+                 (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
                (update-in [:opts :level] (fnil inc 0)))))]
         ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
 
@@ -166,7 +166,7 @@
     [state m
      node "start"]
      (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
-     (jsonrpc/notify :message {:debug (with-out-str (pprint/pprint (state/summarize (dissoc state :opts))))})
+     #_(jsonrpc/notify :message {:debug (with-out-str (pprint/pprint (state/summarize (dissoc state :opts))))})
      ;; TODO handling bad graphs with missing nodes
      (let [enter-node (get-in graph [:nodes node])
            new-state (state-reducer state (async/<! (enter-node state)))]

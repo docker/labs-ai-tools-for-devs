@@ -20,13 +20,16 @@
   (update m :content (fn [c] (format "... %d characters ..." (count c)))))
 (defn summarize-tool-calls [m]
   (update-in m [:tool_calls] (each summarize-arguments)))
+(defn summarize-tool [m]
+  (-> m :function :name))
 
 (defn summarize [state]
-  (-> state
+  (-> (select-keys state [:messages :functions])
       (update :messages (each
                           ;summarize-content 
                           ;summarize-tool-calls
-                         ))))
+                         ))
+      (update :functions (each summarize-tool))))
 
 (defn prompt? [m]
   (= "prompt" (-> m :function :type)))
@@ -48,11 +51,7 @@
 
 (defn add-tool-call-id [m id] (assoc m :role "tool" :tool_call_id id))
 
-; ========================================
-; operate on conversation state
-; ========================================
-
-(defn construct-initial-state-from-prompts [_ {{:keys [prompts] :as opts} :opts :as state}]
+(defn construct-initial-state-from-prompts [{{:keys [prompts] :as opts} :opts :as state}]
   (try
     (-> state
         (merge
@@ -69,6 +68,20 @@
       (jsonrpc/notify :error {:content
                               (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                               :exception (str ex)}))))
+
+(defn add-prompt-ref
+  [state]
+  (let [definition (state/get-function-definition state)
+        arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
+                      (tools/arg-context raw-args))]
+    (-> state
+        (dissoc :messages)
+        (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
+        (update-in [:opts :parameters] (constantly arg-context)))))
+
+; ========================================
+; operate on conversation state
+; ========================================
 
 (defn tools-append [tools]
   (fn [_ state]
@@ -109,20 +122,10 @@
         (update-in [:messages] (fnil concat []) (:messages orig)))))
 
 (defn messages-from-prompt [s]
-  (fn [orig state]
+  (fn [_ state]
     (-> state
         (update-in [:opts :prompts] (constantly (fs/file s)))
-        ((partial construct-initial-state-from-prompts orig)))))
-
-(defn add-prompt-ref
-  [_ state]
-  (let [definition (state/get-function-definition state)
-        arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
-                      (tools/arg-context raw-args))]
-    (-> state
-        (dissoc :messages)
-        (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
-        (update-in [:opts :parameters] (constantly arg-context)))))
+        (construct-initial-state-from-prompts))))
 
 ; =========================================================
 ; produce the diffs that should be applied to the next state
