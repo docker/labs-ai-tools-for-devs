@@ -14,7 +14,7 @@ tools:
     container:
       image: vonwig/sqlite:latest
       command:
-        - "./Chinook.db"
+        - "{{database}}"
         - "{{sql}}"
 tool_choice: required
 ---

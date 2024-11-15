@@ -93,6 +93,11 @@
     (-> state
         (update-in [:messages] (fnil concat []) (take-last n (:messages orig))))))
 
+(defn messages-take [n]
+  (fn [orig state]
+    (-> state
+        (update-in [:messages] (fnil concat []) (take n (:messages orig))))))
+
 (defn messages-append [coll]
   (fn [_ state]
     (-> state

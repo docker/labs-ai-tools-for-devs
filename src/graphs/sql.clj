@@ -102,6 +102,7 @@
                                  {:init-state
                                   [(state/messages-reset)
                                    (state/messages-from-prompt "prompts/sql/query-check.md")
+                                   (state/messages-take 1)
                                    (state/messages-take-last 1)]
                                   :construct-graph graph/generate-one-tool-call
                                   :next-state state/append-new-messages})]
