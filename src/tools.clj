@@ -32,7 +32,6 @@
 
 (defn arg-context [json-arg-string]
   (merge
-   ;; TODO raw is a bad name when merging
    {:raw (if json-arg-string
            json-arg-string
            "{}")}

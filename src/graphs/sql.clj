@@ -3,7 +3,8 @@
    [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.string :as string]
-   [graph]))
+   [graph]
+   state))
 
 (def first-tool-call
   {:messages [{:role "assistant"
@@ -36,10 +37,6 @@
                        {:image "vonwig/sqlite:latest"
                         :command ["{{database}}" ".schema {{table}}"]}}}]})
 
-(defn list-tables-inject-tool [_]
-  (async/go
-    first-tool-call))
-
 (defn failed-tool-call-message [tool-call-name]
   ;; this is awful - binds the should-continue edge to the format of this string
   (format
@@ -56,7 +53,7 @@
              (dissoc :functions)
              (update-in [:opts :level] (fnil inc 0))
              (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-gen.md")))
-             (graph/construct-initial-state-from-prompts)
+             (state/construct-initial-state-from-prompts)
              (update-in [:messages] concat (:messages state)))
           {:keys [messages _finish-reason]} (async/<! (graph/run-llm
                                                        (:messages x)
@@ -81,15 +78,22 @@
   (let [last-message (last messages)]
     (cond
       (contains? last-message :tool_calls) "end"
+      ;; prevent inifinite loops of errors
       (string/starts-with? (:content last-message) "Error:") "query-gen"
+      ;; how many times should we try to correct because correct-query will always end up back here 
       :else "correct-query")))
+
+(defn seed-list-tables-conversation [state]
+  (-> state
+      (assoc :finish-reason "tool_calls")
+      (update-in [:functions] (constantly (:tools first-tool-call)))
+      (update-in [:messages] concat (:messages first-tool-call))))
 
 (defn seed-get-schema-conversation [state]
   ; inherit full conversation
   ; no prompts
   ; add the schema tool
   (-> state
-      (update-in [:opts :level] (fnil inc 0))
       (update-in [:functions] (fnil concat []) (:tools model-get-schema))))
 
 (defn seed-correct-query-conversation
@@ -98,25 +102,29 @@
   ; add the last message to the conversation
   (-> state
       (dissoc :messages)
-      (update-in [:opts :level] (fnil inc 0))
       (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-check.md")))
-      (graph/construct-initial-state-from-prompts)
+      (state/construct-initial-state-from-prompts)
       (update-in [:messages] concat [(last (:messages state))])))
 
+;; query-gen has a prompt
+;; seed-correct-query-conversation has a prompt
+;; prompts/sql/query-gen.md has a hard-coded db file
 (defn graph [_]
   (graph/construct-graph
-   [[["start" graph/start]
-     ["list-tables-inject-tool" list-tables-inject-tool]
-     ["list-tables-tool" (graph/tool-node {})]
-     ["model-get-schema" (graph/sub-graph-node
-                          {:init-state seed-get-schema-conversation
-                           :next-state graph/append-new-messages})]
-     ["query-gen" query-gen]
-     [:edge should-continue]]
-    [["correct-query" (graph/sub-graph-node
-                       {:init-state seed-correct-query-conversation
-                        :construct-graph graph/one-tool-call
-                        :next-state graph/append-new-messages})]
+   [[["start"                   graph/start]
+     ["list-tables-tool"        (graph/sub-graph-node 
+                                  {:init-state seed-list-tables-conversation
+                                   :construct-graph (fn [_] (graph/construct-graph graph/start-with-tool))
+                                   :next-state state/take-last-two-messages})]
+     ["model-get-schema"        (graph/sub-graph-node
+                                 {:init-state seed-get-schema-conversation
+                                  :next-state state/append-new-messages})]
+     ["query-gen"               query-gen]
+     [:edge                     should-continue]]
+    [["correct-query"           (graph/sub-graph-node
+                                 {:init-state seed-correct-query-conversation
+                                  :construct-graph graph/generate-one-tool-call
+                                  :next-state state/append-new-messages})]
      ["query-gen"]]
-    [["end" graph/end]]]))
+    [["end"                     graph/end]]]))
 

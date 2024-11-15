@@ -1,4 +1,10 @@
-(ns state)
+(ns state 
+  (:require
+   git
+   jsonrpc
+   prompts
+   tools
+   [clojure.pprint :refer [pprint]]))
 
 (set! *warn-on-reflection* true)
 
@@ -40,3 +46,51 @@
 (def prompt-tool? (comp prompt? get-function-definition))
 
 (defn add-tool-call-id [m id] (assoc m :role "tool" :tool_call_id id))
+
+(defn construct-initial-state-from-prompts [{{:keys [prompts] :as opts} :opts :as state}]
+  (try
+    (-> state
+        (merge
+         {:metadata (prompts/collect-metadata prompts)
+          :functions (prompts/collect-functions prompts)})
+        (update
+         :messages
+         (fnil concat [])
+         (when (not (seq (:messages state)))
+           (let [new-prompts (prompts/get-prompts opts)]
+             (jsonrpc/notify :prompts {:messages new-prompts})
+             new-prompts))))
+    (catch Throwable ex
+      (jsonrpc/notify :error {:content
+                              (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
+                              :exception (str ex)}))))
+
+(defn add-prompt-ref
+  [state]
+  (let [definition (state/get-function-definition state)
+        arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
+                      (tools/arg-context raw-args))]
+    (-> state
+        (dissoc :messages)
+        (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
+        (update-in [:opts :parameters] (constantly arg-context)))))
+
+
+(defn add-last-message-as-tool-call
+  [state sub-graph-state]
+  {:messages [(-> sub-graph-state
+                  :messages
+                  last
+                  (state/add-tool-call-id (-> state :messages last :tool_calls first :id)))]})
+
+(defn append-new-messages
+  [state sub-graph-state]
+  {:messages (->> (:messages sub-graph-state)
+                  (filter (complement (fn [m] (some #(= m %) (:messages state))))))})
+
+(defn take-last-two-messages
+  [_ sub-graph-state]
+  {:messages (->> (:messages sub-graph-state)
+                  (take-last 2))})
+
+

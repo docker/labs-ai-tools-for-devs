@@ -14,6 +14,7 @@
    jsonrpc
    [logging :refer [warn]]
    prompts
+   state
    user-loop)
   (:gen-class))
 
@@ -176,7 +177,7 @@
                    (user-loop/start-jsonrpc-loop
                     (user-loop/create-step
                      (fn [state]
-                       (let [m (graph/construct-initial-state-from-prompts
+                       (let [m (state/construct-initial-state-from-prompts
                                  (assoc state :opts
                                         (-> (with-options opts (rest args))
                                             (assoc :thread-id thread-id))))]
