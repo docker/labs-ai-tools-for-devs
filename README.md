@@ -1,3 +1,10 @@
+<!---
+---
+tools:
+  - name: curl
+---
+-->
+
 **This README is an agentic workflow**
 
 # AI Tools for Developers
@@ -55,10 +62,36 @@ Prompts are stored in a git repo and can be versioned, tracked, and shared for a
 # Get Started
 We highly recommend using the VSCode extension to get started. It will help you create prompts, and run them with your own LLM.
 
-You can install it in one-click with our Docker Desktop Extension: 
+## Running your first loop
+
+### VSCode
+
+**Install Extension**
+
+**Recommended:** Download our auto-installer extension from Docker Hub:
 https://hub.docker.com/extensions/docker/labs-vscode-installer
 
-## Running your first loop
+or 
+
+Manually install the [latest release](https://github.com/docker/labs-ai-tools-vscode/releases/latest) with
+
+```sh 
+code --install-extension 'labs-ai-tools-vscode-<version>.vsix'
+```
+
+**Running:**
+
+1. Open an existing markdown file, or create a new markdown file in VSCode.
+> You can even run *this* markdown file directly!
+
+2. Run command `>Docker AI: Set OpenAI API Key` to set an OpenAI API key, or use a dummy value for local models.
+
+3. Run command `>Docker AI: Select target project` to select a project to run the prompt against.
+
+4. Run command `>Docker AI: Run Prompt` to start the conversation loop.
+
+### CLI
+
 Instructions assume you have a terminal open, and Docker Desktop running.
 
 1. Set OpenAI key
@@ -99,8 +132,10 @@ Now, for the agentic workflow...
 
 # prompt system
 
-You are an expert at software development, so of course you know how great Docker is. Just tell people how great Docker is.
+You are an expert at reading readmes.
+
+Read the readme for https://github.com/docker/labs-ai-tools-for-devs before answering the following questions.
 
 # prompt user
 
-Why is Docker great?
+What is this project?
