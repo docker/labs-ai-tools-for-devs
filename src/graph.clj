@@ -27,16 +27,17 @@
       functions  definition for functions referenced in the initial prompt
       opts       for running the model
     returns channel that will contain an coll of messages"
-  [messages m functions {:keys [url model stream level] :as _opts :or {level 0}}]
+  [{:keys [messages functions metadata] {:keys [url model stream level]} :opts}]
   (let [[c h] (openai/chunk-handler)
         request (merge
-                 m
+                 (dissoc metadata :agent)
                  {:messages messages
                   :level level}
                  (when (seq functions) {:tools functions})
                  (when url {:url url})
                  (when model {:model model})
-                 (when (and stream (nil? (:stream m))) {:stream stream}))]
+                 ;; stream is a special case where we don't want to overwrite the metadata
+                 (when (and stream (nil? (:stream metadata))) {:stream stream}))]
     (try
       (if (seq messages)
         (openai/openai request h)
@@ -69,7 +70,7 @@
   "generate the next AI message
      passes the whole converation to the AI model"
   [state]
-  (run-llm (:messages state) (dissoc (:metadata state) :agent) (:functions state) (:opts state)))
+  (run-llm state))
 
 (defn tool
   "execute the tool_calls from the last AI message in the conversation"
@@ -97,7 +98,7 @@
 
 (declare stream chat-with-tools)
 
-(defn apply-functions [coll] 
+(defn apply-functions [coll]
   (fn [state]
     (reduce (fn [m f] (f state m)) state coll)))
 
@@ -113,13 +114,13 @@
              (stream
               ((or construct-graph chat-with-tools) state)
               (->
-               ((or 
-                  (and 
-                    init-state 
-                    (if (coll? init-state) 
-                      (apply-functions init-state) 
-                      init-state))
-                  (comp (partial state/construct-initial-state-from-prompts state) state/add-prompt-ref)) state)
+               ((or
+                 (and
+                  init-state
+                  (if (coll? init-state)
+                    (apply-functions init-state)
+                    init-state))
+                 (comp (partial state/construct-initial-state-from-prompts state) state/add-prompt-ref)) state)
                (update-in [:opts :level] (fnil inc 0)))))]
         ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
 

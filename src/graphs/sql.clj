@@ -51,11 +51,7 @@
                (state/tools-reset)
                (state/messages-from-prompt "prompts/sql/query-gen.md")
                (state/messages-append-all)]) state)
-          {:keys [messages _finish-reason]} (async/<! (graph/run-llm
-                                                       (:messages x)
-                                                       (dissoc (:metadata x) :agent)
-                                                       (:functions x)
-                                                       (:opts x)))]
+          {:keys [messages _finish-reason]} (async/<! (graph/run-llm x))]
 
       ; check for bad tool_calls and create failed Tool messages for them 
       {:messages
