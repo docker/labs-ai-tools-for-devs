@@ -114,8 +114,8 @@
    [[["start"                   graph/start]
      ["list-tables-tool"        (graph/sub-graph-node 
                                   {:init-state seed-list-tables-conversation
-                                   :construct-graph (fn [_] (graph/construct-graph graph/start-with-tool))
-                                   :next-state state/take-last-two-messages})]
+                                   :construct-graph graph/generate-start-with-tool 
+                                   :next-state (state/take-last-messages 2)})]
      ["model-get-schema"        (graph/sub-graph-node
                                  {:init-state seed-get-schema-conversation
                                   :next-state state/append-new-messages})]

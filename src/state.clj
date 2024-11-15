@@ -1,4 +1,4 @@
-(ns state 
+(ns state
   (:require
    git
    jsonrpc
@@ -22,10 +22,10 @@
 
 (defn summarize [state]
   (-> state
-      (update :messages (each 
+      (update :messages (each
                           ;summarize-content 
                           ;summarize-tool-calls
-                          ))))
+                         ))))
 
 (defn prompt? [m]
   (= "prompt" (-> m :function :type)))
@@ -75,7 +75,6 @@
         (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
         (update-in [:opts :parameters] (constantly arg-context)))))
 
-
 (defn add-last-message-as-tool-call
   [state sub-graph-state]
   {:messages [(-> sub-graph-state
@@ -88,9 +87,11 @@
   {:messages (->> (:messages sub-graph-state)
                   (filter (complement (fn [m] (some #(= m %) (:messages state))))))})
 
-(defn take-last-two-messages
-  [_ sub-graph-state]
-  {:messages (->> (:messages sub-graph-state)
-                  (take-last 2))})
+(defn take-last-messages
+  [n]
+  (fn
+    [_ sub-graph-state]
+    {:messages (->> (:messages sub-graph-state)
+                    (take-last n))}))
 
 

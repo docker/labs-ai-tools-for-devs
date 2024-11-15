@@ -1,8 +1,8 @@
 (ns graph
   (:require
-   [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.core.match :refer [match]]
+   [clojure.pprint :as pprint]
    git
    jsonrpc
    openai
@@ -155,7 +155,7 @@
     [state m
      node "start"]
      (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
-     #_(jsonrpc/notify :message {:debug (with-out-str (pprint (state/summarize (dissoc state :opts))))})
+     (jsonrpc/notify :message {:debug (with-out-str (pprint/pprint (state/summarize (dissoc state :opts))))})
      ;; TODO handling bad graphs with missing nodes
      (let [enter-node (get-in graph [:nodes node])
            new-state (state-reducer state (async/<! (enter-node state)))]
@@ -255,4 +255,7 @@
     ["end" end]]
    [["tool" (tool-node {})]
     ["end"]]])
+
+(defn generate-start-with-tool [_]
+  (construct-graph start-with-tool))
 
