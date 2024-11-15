@@ -99,7 +99,7 @@
 
 (defn apply-functions [coll] 
   (fn [state]
-    (reduce (fn [m f] (f m)) state coll)))
+    (reduce (fn [m f] (f state m)) state coll)))
 
 (defn sub-graph-node
   "create a sub-graph node that initializes a conversation from the current one,
@@ -119,7 +119,7 @@
                     (if (coll? init-state) 
                       (apply-functions init-state) 
                       init-state))
-                  (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
+                  (comp (partial state/construct-initial-state-from-prompts state) state/add-prompt-ref)) state)
                (update-in [:opts :level] (fnil inc 0)))))]
         ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
 

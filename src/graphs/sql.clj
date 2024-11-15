@@ -1,6 +1,5 @@
 (ns graphs.sql
   (:require
-   [babashka.fs :as fs]
    [clojure.core.async :as async]
    [clojure.string :as string]
    [graph]
@@ -47,14 +46,11 @@
   "Assistant+Tool Node: has it's own prompt but also adds checks for proper final answers"
   [state]
   (async/go
-    (let [x (->
-             state
-             (dissoc :messages)
-             (dissoc :functions)
-             (update-in [:opts :level] (fnil inc 0))
-             (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-gen.md")))
-             (state/construct-initial-state-from-prompts)
-             (update-in [:messages] concat (:messages state)))
+    (let [x ((graph/apply-functions
+              [(state/messages-reset)
+               (state/tools-reset)
+               (state/messages-from-prompt "prompts/sql/query-gen.md")
+               (state/messages-append-all)]) state)
           {:keys [messages _finish-reason]} (async/<! (graph/run-llm
                                                        (:messages x)
                                                        (dissoc (:metadata x) :agent)
@@ -83,21 +79,6 @@
       ;; how many times should we try to correct because correct-query will always end up back here 
       :else "correct-query")))
 
-(defn seed-correct-query-conversation
-  [state]
-  ; make one LLM call with the last message (which should be a user query containing the SQL we want to check)
-  ; add the last message to the conversation
-  (-> state
-      (dissoc :messages)
-      (update-in [:opts :prompts] (constantly (fs/file "prompts/sql/query-check.md")))
-      (state/construct-initial-state-from-prompts)
-      (update-in [:messages] concat [(last (:messages state))])))
-
-(comment
-  [state/messages-reset
-   (state/messages-from-prompt "prompts/sql/query-check.md")
-   (state/messages-take-last 1)])
-
 ;; query-gen has a prompt
 ;; seed-correct-query-conversation has a prompt
 ;; prompts/sql/query-gen.md has a hard-coded db file
@@ -106,7 +87,7 @@
    [[["start"                   graph/start]
      ["list-tables-tool"        (graph/sub-graph-node
                                  {:init-state
-                                  [#(assoc % :finish-reason "tool_calls")
+                                  [#(assoc %2 :finish-reason "tool_calls")
                                    (state/tools-set (:tools first-tool-call))
                                    (state/messages-append (:messages first-tool-call))]
                                   :construct-graph graph/generate-start-with-tool
@@ -118,7 +99,10 @@
      ["query-gen"               query-gen]
      [:edge                     should-continue]]
     [["correct-query"           (graph/sub-graph-node
-                                 {:init-state seed-correct-query-conversation
+                                 {:init-state
+                                  [(state/messages-reset)
+                                   (state/messages-from-prompt "prompts/sql/query-check.md")
+                                   (state/messages-take-last 1)]
                                   :construct-graph graph/generate-one-tool-call
                                   :next-state state/append-new-messages})]
      ["query-gen"]]

@@ -48,7 +48,11 @@
 
 (defn add-tool-call-id [m id] (assoc m :role "tool" :tool_call_id id))
 
-(defn construct-initial-state-from-prompts [{{:keys [prompts] :as opts} :opts :as state}]
+; ========================================
+; operate on conversation state
+; ========================================
+
+(defn construct-initial-state-from-prompts [_ {{:keys [prompts] :as opts} :opts :as state}]
   (try
     (-> state
         (merge
@@ -67,36 +71,46 @@
                               :exception (str ex)}))))
 
 (defn tools-append [tools]
-  (fn [state]
+  (fn [_ state]
     (-> state
         (update-in [:functions] (fnil concat []) tools))))
 
 (defn tools-set [tools]
-  (fn [state]
+  (fn [_ state]
     (-> state
         (update-in [:functions] (constantly tools)))))
 
-(defn messages-reset [state]
-  (dissoc state :messages))
+(defn tools-reset []
+  (fn [_ state]
+    (dissoc state :functions)))
+
+(defn messages-reset [] 
+  (fn  [_ state]
+    (dissoc state :messages)))
 
 (defn messages-take-last [n]
-  (fn [state]
+  (fn [orig state]
     (-> state
-        (update-in [:messages] (fnil concat []) (take-last n (:messages state))))))
+        (update-in [:messages] (fnil concat []) (take-last n (:messages orig))))))
 
 (defn messages-append [coll]
-  (fn [state]
+  (fn [_ state]
     (-> state
         (update-in [:messages] (fnil concat []) coll))))
 
+(defn messages-append-all []
+  (fn [orig state]
+    (-> state
+        (update-in [:messages] (fnil concat []) (:messages orig)))))
+
 (defn messages-from-prompt [s]
-  (fn [state]
+  (fn [orig state]
     (-> state
         (update-in [:opts :prompts] (constantly (fs/file s)))
-        (construct-initial-state-from-prompts))))
+        ((partial construct-initial-state-from-prompts orig)))))
 
 (defn add-prompt-ref
-  [state]
+  [_ state]
   (let [definition (state/get-function-definition state)
         arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
                       (tools/arg-context raw-args))]
@@ -104,6 +118,10 @@
         (dissoc :messages)
         (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
         (update-in [:opts :parameters] (constantly arg-context)))))
+
+; =========================================================
+; produce the diffs that should be applied to the next state
+; =========================================================
 
 (defn add-last-message-as-tool-call
   [state sub-graph-state]
