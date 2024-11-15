@@ -72,7 +72,7 @@
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
               export PATH=${pkgs.lib.makeBinPath [pkgs.curl pkgs.git]}
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
-              ${custom-jdk}/bin/agent-graph "$@"
+              exec ${custom-jdk}/bin/agent-graph "$@"
             '';
 
             # the final entrypoint
