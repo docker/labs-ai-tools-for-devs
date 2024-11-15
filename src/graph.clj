@@ -201,61 +201,35 @@
 ; ============================================================
 
 (defn chat-with-tools [_]
-  (-> {}
-      (add-node "start" start)
-      (add-node "completion" completion)
-      (add-node "tool" (tool-node nil))
-      (add-node "end" end)
-      (add-node "sub-graph" (sub-graph-node nil))
-      (add-node "tools-query" tools-query)
-      (add-edge "start" "tools-query")
-      (add-edge "tool" "tools-query")
-      (add-edge "sub-graph" "tools-query")
-      (add-edge "tools-query" "completion")
-      (add-conditional-edges "completion" tool-or-end)))
-
-(def chat-with-tools-representation
-  [[["start" start]
-    ["tools-query" tools-query]
-    ["completion" completion]
-    [:edge tool-or-end]]
-   [["sub-graph" (sub-graph-node {})]
-    ["tools-query"]]
-   [["tool" (tool-node {})]
-    ["tools-query"]]
-   [["end" end]]])
+  (construct-graph
+   [[["start"       start]
+     ["tools-query" tools-query]
+     ["completion"  completion]
+     [:edge         tool-or-end]]
+    [["sub-graph"   (sub-graph-node {})]
+     ["tools-query"]]
+    [["tool"        (tool-node {})]
+     ["tools-query"]]
+    [["end"         end]]]))
 
 (defn generate-one-tool-call [_]
-  (-> {}
-      (add-node "start" start)
-      (add-node "completion" completion)
-      (add-node "tool" (tool-node {}))
-      (add-node "end" end)
-      (add-node "sub-graph" (sub-graph-node {}))
-      (add-edge "start" "completion")
-      (add-edge "sub-graph" "end")
-      (add-edge "tool" "end")
-      (add-conditional-edges "completion" tool-or-end)))
-
-(def one-tool-call-representation
-  [[["start" start]
-    ["completion" completion]
-    [:edge tool-or-end]]
-   [["sub-graph" (sub-graph-node {})]
-    ["completion"]]
-   [["tool" (tool-node {})]
-    ["completion"]]
-   [["end" end]]])
+  (construct-graph
+   [[["start"       start]
+     ["completion"  completion]
+     [:edge         tool-or-end]]
+    [["sub-graph"   (sub-graph-node {})]
+     ["end"         end]]
+    [["tool"        (tool-node {})]
+     ["end"]]]))
 
 ; requires finish-reason to be set to tool_calls
-(def start-with-tool
-  [[["start" start]
-    [:edge tool-or-end]]
-   [["sub-graph" (sub-graph-node {})]
-    ["end" end]]
-   [["tool" (tool-node {})]
-    ["end"]]])
-
+; runs either a tool or sub-graph and then ends
 (defn generate-start-with-tool [_]
-  (construct-graph start-with-tool))
+  (construct-graph
+   [[["start"       start]
+     [:edge         tool-or-end]]
+    [["sub-graph"   (sub-graph-node {})]
+     ["end"         end]]
+    [["tool"        (tool-node {})]
+     ["end"]]]))
 
