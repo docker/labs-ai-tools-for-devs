@@ -178,20 +178,20 @@
                     (user-loop/create-step
                      (fn [state]
                        (let [m (state/construct-initial-state-from-prompts
-                                 (assoc state :opts
-                                        (-> (with-options opts (rest args))
-                                            (assoc :thread-id thread-id))))]
+                                (assoc state :opts
+                                       (-> (with-options opts (rest args))
+                                           (assoc :thread-id thread-id))))]
                          (graph/stream
-                           (if (= (-> m :metadata :agent) "sql")
-                             (graphs.sql/graph state)
-                             (graph/chat-with-tools state))
+                          (if (= (-> m :metadata :agent) "sql")
+                            (graphs.sql/graph state)
+                            (graph/chat-with-tools state))
                           m))))
                     user-loop/state-reducer
                     in
                     {})))
                 opts)))
     (fn []
-      (prompts/get-prompts (with-options opts args)))))
+      (:messages (prompts/get-prompts (with-options opts args))))))
 
 (defn -main [& args]
   (try

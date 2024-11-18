@@ -49,7 +49,7 @@
     (let [x ((graph/apply-functions
               [(state/messages-reset)
                (state/tools-reset)
-               (state/messages-from-prompt "prompts/sql/query-gen.md")
+               (state/messages-from-prompt "github:docker/labs-ai-tools-for-devs?path=prompts/sql/query-gen.md")
                (state/messages-append-all)]) state)
           {:keys [messages _finish-reason]} (async/<! (graph/run-llm x))]
 
@@ -75,8 +75,6 @@
       ;; how many times should we try to correct because correct-query will always end up back here 
       :else "correct-query")))
 
-;; query-gen has a prompt
-;; seed-correct-query-conversation has a prompt
 (defn graph [_]
   (graph/construct-graph
    [[["start"                   graph/start]
@@ -96,7 +94,7 @@
     [["correct-query"           (graph/sub-graph-node
                                  {:init-state
                                   [(state/messages-reset)
-                                   (state/messages-from-prompt "prompts/sql/query-check.md")
+                                   (state/messages-from-prompt "github:docker/labs-ai-tools-for-devs?path=prompts/sql/query-check.md")
                                    (state/messages-take 1)
                                    (state/messages-take-last 1)]
                                   :construct-graph graph/generate-one-tool-call

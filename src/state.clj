@@ -2,6 +2,7 @@
   (:require
    [babashka.fs :as fs]
    [clojure.pprint :refer [pprint]]
+   [clojure.string :as string]
    git
    jsonrpc
    prompts
@@ -24,7 +25,7 @@
   (-> m :function :name))
 
 (defn summarize [state]
-  (-> (select-keys state [:messages :functions])
+  (-> (select-keys state [:messages :metadata])
       (update :messages (each
                           ;summarize-content 
                           ;summarize-tool-calls
@@ -51,29 +52,31 @@
 
 (defn add-tool-call-id [m id] (assoc m :role "tool" :tool_call_id id))
 
-(defn construct-initial-state-from-prompts [{{:keys [prompts] :as opts} :opts :as state}]
+(defn construct-initial-state-from-prompts [{:keys [opts] :as state}]
   (try
-    (-> state
-        (merge
-         {:metadata (prompts/collect-metadata prompts)
-          :functions (prompts/collect-functions prompts)})
-        (update
-         :messages
-         (fnil concat [])
-         (when (not (seq (:messages state)))
-           (let [new-prompts (prompts/get-prompts opts)]
-             (jsonrpc/notify :prompts {:messages new-prompts})
-             new-prompts))))
+    (let [m (prompts/get-prompts opts)]
+      (-> state
+          (merge (select-keys m [:metadata :functions]))
+          ; propogate host-dir if its in the parent state
+          (update :metadata merge (select-keys (:metadata state) [:host-dir]))
+          (update
+           :messages
+           (fnil concat [])
+           (when (not (seq (:messages state)))
+             (jsonrpc/notify :prompts (select-keys m [:messages]))
+             (:messages m)))))
     (catch Throwable ex
       (jsonrpc/notify :error {:content
                               (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                               :exception (str ex)}))))
 
 (defn add-prompt-ref
+  "assumes last message contains tool call with a prompt function"
   [state]
   (let [definition (state/get-function-definition state)
         arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
                       (tools/arg-context raw-args))]
+    ; this is the only place where parameters can be passed into the next prompts (extractors only)
     (-> state
         (dissoc :messages)
         (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
@@ -97,7 +100,7 @@
   (fn [_ state]
     (dissoc state :functions)))
 
-(defn messages-reset [] 
+(defn messages-reset []
   (fn  [_ state]
     (dissoc state :messages)))
 
@@ -124,8 +127,14 @@
 (defn messages-from-prompt [s]
   (fn [_ state]
     (-> state
-        (update-in [:opts :prompts] (constantly (fs/file s)))
+        (update-in [:opts :prompts] (constantly (if (string/starts-with? s "github:") 
+                                                  (git/prompt-file s)
+                                                  (fs/file (-> state :opts :prompts fs/parent) s))))
         (construct-initial-state-from-prompts))))
+
+(defn metadata-merge [k]
+  (fn [origin state]
+    (update state :metadata merge (select-keys origin [k]))))
 
 ; =========================================================
 ; produce the diffs that should be applied to the next state

@@ -1,5 +1,7 @@
 (ns markdown
   (:require
+   [cheshire.core :as json]
+   [clj-yaml.core :as clj-yaml]
    [clojure.core.async :as async]
    [clojure.edn :as edn]
    [clojure.pprint :refer [pprint]]
@@ -61,18 +63,98 @@
    (filter (partial prompt-section? content))
    (map (partial node-content content))))
 
-(defn parse-markdown [content]
+(defn metadata-section? [loc]
+  (= "minus_metadata" (-> loc (zip/node) first)))
+
+(defn remove-markers [s]
+  (and s (when-let [[_ x] (re-find (re-pattern "(?sm).*---(.*)---.*") s)] x)))
+
+(defn extract-metadata [content ast]
+  (try
+    (when-let [loc (->>
+                    (iterate zip/next (zip/seq-zip ast))
+                    (take-while (complement zip/end?))
+                    (some (fn [loc] (when (metadata-section? loc) loc))))]
+      (->
+       (from-range (-> loc zip/node second) content)
+       (remove-markers)
+       (clj-yaml/parse-string)))
+    (catch Throwable _ nil)))
+
+(defn html-comment? [loc]
+  (and
+   (= "html_block" (-> loc (zip/node) first))
+   (= "-->" (-> loc (zip/children) last first))))
+
+(defn extract-first-comment [content ast]
+  (try
+    (when-let [loc (->>
+                     (iterate zip/next (zip/seq-zip ast))
+                     (take-while (complement zip/end?))
+                     (some (fn [loc] (when (html-comment? loc) loc))))]
+      (->
+        (from-range (-> loc zip/node second) content)
+        (remove-markers)
+        (clj-yaml/parse-string)))
+    (catch Throwable ex
+      (println ex)
+      nil)))
+
+(defn parse-new [content query]
   (let [content (str content "\n# END\n\n")
         x (docker/function-call-with-stdin
+           {:image "vonwig/tree-sitter:latest"
+            :content content
+            :command (concat
+                      ["-lang" "markdown"]
+                      ["-query" query])})
+        {s :pty-output} (async/<!! (async/thread
+                                     (Thread/sleep 10)
+                                     (docker/finish-call x)))]
+    (->> s)))
+
+(comment
+  ; TODO - migrate to tree-sitter queries but can we express this with tree-sitter
+  (parse-new (slurp "./tprompt1.md") "(document) @doc")
+  (json/parse-string (parse-new (slurp "./tprompt1.md") "(document (minus_metadata) @doc)"))
+  (json/parse-string (parse-new (slurp "./tprompt1.md") "(document (section (html_block) @html))"))
+  (json/parse-string (parse-new (slurp "./tprompt1.md") "(document (section (atx_heading (atx_h1_marker)))* @top-section)")))
+
+(defn parse-markdown
+  "use the custom sexp representation"
+  [content]
+  (let [x (docker/function-call-with-stdin
            {:image "docker/lsp:treesitter"
             :content content})
         {s :pty-output} (async/<!! (async/thread
                                      (Thread/sleep 10)
                                      (docker/finish-call x)))]
-    (->> s
-         (edn/read-string)
-         (extract-prompts content)
-         (into []))))
+    (->> (edn/read-string s))))
+
+(defn parse-prompts
+  "parse out the h1 prompt sections"
+  [content]
+  (let [content (str content "\n# END\n\n")
+        ast (parse-markdown content)]
+    {:messages
+     (->> ast
+          (extract-prompts content)
+          (into []))
+     :metadata  (or 
+                 (extract-metadata content ast)
+                 (extract-first-comment content ast)) }))
+
+(comment
+  ; inline same line !,[,],(,) in that order after filtering out other irrelevant things
+  ; ^ those are imgages and the content between the [ ] should be put into a separate message
+  ; the first minus_metadata block of the doc 
+  ; the first html_block section that ends with --> 
+  ;   get content and then check of --- --- pre-amble
+  ;   then try to parse the yaml out of that
+  (parse-markdown (slurp "./tprompt2.md"))
+  (parse-prompts (slurp "./tprompt1.md"))
+  (parse-prompts (slurp "./tprompt2.md"))
+  )
 
 (comment
   (string/split content #"\n")

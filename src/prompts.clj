@@ -11,7 +11,6 @@
    [jsonrpc]
    logging
    [markdown :as markdown-parser]
-   [markdown.core :as markdown]
    [medley.core :as medley]
    [openai]
    [pogonos.core :as stache]
@@ -79,79 +78,35 @@
 (defn- metadata-file [prompts-file]
   (if (fs/directory? prompts-file) (io/file prompts-file "README.md") prompts-file))
 
-(defn collect-extractors [f]
-  (let [extractors (->>
-                    (-> (try
-                          (markdown/parse-metadata (metadata-file f))
-                          (catch Throwable _
-                             ;; files with empty strings will throw assertion failures
-                            nil))
-                        first
-                        :extractors)
-                    (map (fn [m] (merge (registry/get-extractor m) m))))]
-    (if (seq extractors)
-      extractors
-      [])))
-
 (def hub-images
   #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
 
-(defn collect-functions
-  "get either :functions or :tools collection
-    returns collection of openai compatible tool definitions augmented with container info"
-  [f]
-  (try
-    (->>
-     (->
-      (markdown/parse-metadata (metadata-file f))
-      first
-      (select-keys [:tools :functions])
-      seq
-      first  ;; will take the first either tools or functions randomly 
-      second ;; returns the tools or functions array
-      )
-     (mapcat
-      (fn [m]
-        (if-let [tool (hub-images (:name m))]
+(defn function-definition [m]
+  (if-let [tool (hub-images (:name m))]
             ;; these come from our own public hub images
-          [{:type "function"
-            :function
-            {:name (format "%s-manual" tool)
-             :description (format "Run the man page for %s" tool)
-             :container
-             {:image (format "vonwig/%s:latest" tool)
-              :command
-              ["{{raw|safe}}" "man"]}}}
-           {:type "function"
-            :function
-            (merge
-             {:description (format "Run a %s command." tool)
-              :parameters
-              {:type "object"
-               :properties
-               {:args
-                {:type "string"
-                 :description (format "The arguments to pass to %s" tool)}}}
-              :container
-              {:image (format "vonwig/%s:latest" tool)
-               :command ["{{raw|safe}}"]}}
-             m)}]
-          [{:type "function" :function (merge (registry/get-function m) (dissoc m :image))}]))))
-    (catch Throwable _
-      ;; TODO warn about empty yaml front matter?
-      [])))
-
-(defn collect-metadata
-  "collect metadata from yaml front-matter in README.md
-    skip functions and extractors"
-  [f]
-  (try
-    (dissoc
-     (-> (markdown/parse-metadata (metadata-file f)) first)
-     :extractors :functions)
-    (catch Throwable _
-      ;; TODO warn about empty yaml front matter?
-      {})))
+    [{:type "function"
+      :function
+      {:name (format "%s-manual" tool)
+       :description (format "Run the man page for %s" tool)
+       :container
+       {:image (format "vonwig/%s:latest" tool)
+        :command
+        ["{{raw|safe}}" "man"]}}}
+     {:type "function"
+      :function
+      (merge
+       {:description (format "Run a %s command." tool)
+        :parameters
+        {:type "object"
+         :properties
+         {:args
+          {:type "string"
+           :description (format "The arguments to pass to %s" tool)}}}
+        :container
+        {:image (format "vonwig/%s:latest" tool)
+         :command ["{{raw|safe}}"]}}
+       m)}]
+    [{:type "function" :function (merge (registry/get-function m) (dissoc m :image))}]))
 
 (defn run-extractors
   "returns a map of extracted *math-context*
@@ -159,11 +114,12 @@
        project-root - the host project root dir
        identity-token - a valid Docker login auth token
        dir - a prompts directory with a valid README.md"
-  [{:keys [host-dir prompts user jwt]}]
+  [extractors {:keys [host-dir user jwt]}]
   (reduce
    (partial fact-reducer host-dir)
    {}
-   (->> (collect-extractors prompts)
+   (->> extractors
+        (map (fn [m] (merge (registry/get-extractor m) m)))
         (map (fn [m] (merge m
                             (when user {:user user})
                             (when jwt {:jwt jwt})))))))
@@ -180,32 +136,41 @@
                          ".md")}))))
 
 (comment
-  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]})
-  )
+  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]}))
 
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
 (defn get-prompts
   "run extractors and then render prompt templates
-     returns ordered collection of chat messages"
+     returns map of messages, functions, metadata and optionally error"
   [{:keys [parameters prompts user platform host-dir] :as opts}]
-  (let [;; TODO the docker default no longer makes sense here
-        m (merge (run-extractors opts) parameters)
-        renderer (partial selma-render prompts (facts m user platform host-dir))
-        prompts (if (fs/directory? prompts)
-                  ;; directory based prompts
-                  (->> (fs/list-dir prompts)
-                       (filter (name-matches prompt-file-pattern))
-                       (sort-by fs/file-name)
-                       (map (fn [f] {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)
-                                     :content (slurp (fs/file f))}))
-                       (into []))
-                  ;; file based prompts
-                  (try
-                    (let [p (slurp prompts)]
-                      (markdown-parser/parse-markdown p))
-                    (catch Throwable t
-                      (jsonrpc/notify :error {:content (format "failed to parse prompts from markdown %s" t)})
-                      [])))]
-    (map renderer prompts)))
+  (let [{:keys [metadata] :as prompt-data}
+
+        (if (fs/directory? prompts)
+          ;; directory based prompts
+          {:messages
+           (->> (fs/list-dir prompts)
+                (filter (name-matches prompt-file-pattern))
+                (sort-by fs/file-name)
+                (map (fn [f] {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)
+                              :content (slurp (fs/file f))}))
+                (into []))
+           :metadata (:metadata (markdown-parser/parse-prompts (slurp (metadata-file prompts))))}
+
+          ;; file based prompts
+          (markdown-parser/parse-prompts (slurp prompts)))
+
+        m (merge (run-extractors (:extractors metadata) opts) parameters)
+        renderer (partial selma-render prompts (facts m user platform host-dir))]
+    (-> prompt-data
+        (update :messages #(map renderer %))
+        (update :metadata dissoc :functions :tools :extractors)
+        (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition))))))
+
+(comment
+  (alter-var-root
+   #'jsonrpc/notify
+   (fn [_] (partial (if (:jsonrpc {}) jsonrpc/-notify jsonrpc/-println) {})))
+  (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
+  (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")}))
 

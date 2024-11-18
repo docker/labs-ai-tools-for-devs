@@ -3,6 +3,7 @@
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.edn :as edn]
+   [clojure.pprint :as pp]
    docker
    git
    jsonrpc
@@ -13,7 +14,7 @@
 
 (filters/add-filter! :into (fn [v]
                              (if (coll? v)
-                               [:safe [:coll (into [] v)]] 
+                               [:safe [:coll (into [] v)]]
                                v)))
 
 (defn interpolate [m template]
@@ -21,7 +22,7 @@
     (if-let [parsed (try (edn/read-string s) (catch Throwable _ nil))]
       (if (and (coll? parsed) (= :coll (first parsed)))
         (second parsed)
-        [s])   
+        [s])
       [s])))
 
 (defn interpolate-coll [command-args arg-context]
@@ -38,48 +39,51 @@
    (when json-arg-string (json/parse-string json-arg-string true))))
 
 (defn function-handler
-  "make openai tool call
+  "make tool call
    supports container tool definitions and prompt tool definitions 
    (prompt tools can have their own child tools definitions)
    does not stream - calls resolve or fail only once 
    should not throw exceptions
      params
-       opts - options map for the engine (partially bound))
+       defaults - valid elements of a container definition (functions dissoced)
        function-name - the name of the function that the LLM has selected
        json-arg-string - the JSON arg string that the LLM has generated
        resolve fail - callbacks"
-  [{:keys [functions user jwt timeout] :as opts} function-name json-arg-string {:keys [resolve fail]}]
+  [{:keys [functions] :as defaults} function-name json-arg-string {:keys [resolve fail]}]
   (if-let [definition (->
                        (->> (filter #(= function-name (-> % :function :name)) functions)
                             first)
                        :function)]
-    (let [arg-context (merge 
-                        {:hostDir (:host-dir opts)}
-                        (arg-context json-arg-string))]
+    (let [arg-context (merge
+                       {:hostDir (:host-dir defaults)}
+                       (arg-context json-arg-string))]
       (try
         (if (:container definition) ;; synchronous call to container function
           (let [function-call (merge
                                (:container definition)
-                               (dissoc opts :functions)
+                               (dissoc defaults :functions)
                                {:command (interpolate-coll
                                           (-> definition :container :command)
-                                          arg-context)}
-                               (when user {:user user})
-                               (when jwt {:jwt jwt})
-                               (when timeout {:timeout timeout}))
-                {:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
-                exit-code-fail? (if (false? (:check-exit-code definition))
-                                  false
-                                  (not= 0 exit-code))]
-            (cond
-              (and (= :exited done) (not exit-code-fail?))
-              (resolve pty-output)
-              (and (= :exited done) exit-code-fail?)
-              (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
-              (= :timeout done)
-              (fail (format "call timed out: %s" (:timeout result)))
-              :else
-              (fail (format "call failed"))))
+                                          arg-context)})]
+            (jsonrpc/notify 
+              :message 
+              {:debug (format "function call %s" 
+                              (with-out-str 
+                                (pp/pprint (-> function-call
+                                               (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))})
+            (let [{:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
+                  exit-code-fail? (if (false? (:check-exit-code definition))
+                                    false
+                                    (not= 0 exit-code))]
+              (cond
+                (and (= :exited done) (not exit-code-fail?))
+                (resolve pty-output)
+                (and (= :exited done) exit-code-fail?)
+                (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
+                (= :timeout done)
+                (fail (format "call timed out: %s" (:timeout result)))
+                :else
+                (fail (format "call failed")))))
 
           (fail (format "bad container definition %s" definition)))
         (catch Throwable t

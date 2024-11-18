@@ -30,13 +30,14 @@
   [{:keys [messages functions metadata] {:keys [url model stream level]} :opts}]
   (let [[c h] (openai/chunk-handler)
         request (merge
-                 (dissoc metadata :agent)
+                 (dissoc metadata :agent :host-dir) ; TODO should we just select relevant keys instead of removing bad ones
                  {:messages messages
                   :level level}
                  (when (seq functions) {:tools functions})
+                 ;; overrides from cli opts, NOT from metadata
                  (when url {:url url})
                  (when model {:model model})
-                 ;; stream is a special case where we don't want to overwrite the metadata
+                 ;; stream is a special case where we don't want to allow override of the metadata val if the cli val is set 
                  (when (and stream (nil? (:stream metadata))) {:stream stream}))]
     (try
       (if (seq messages)
@@ -82,8 +83,15 @@
        (into []
              (async/<!
               (->> (tools/make-tool-calls
-                     (or (-> state :opts :level) 0)
-                    (partial tools/function-handler (assoc (:opts state) :functions (:functions state)))
+                    (or (-> state :opts :level) 0)
+                    (partial 
+                      tools/function-handler 
+                      ;; defaults for tool handling are opts, current state functions, and a host-dir override
+                      (merge 
+                        (:opts state) 
+                        (select-keys state [:functions])
+                        ;; note that host-dir, if it exists, is an override here
+                        (select-keys (:metadata state) [:host-dir :timeout])))
                     calls)
                    (async/reduce conj []))))})))
 
@@ -115,11 +123,13 @@
               ((or construct-graph chat-with-tools) state)
               (->
                ((or
+                 ;; the sub-graph might have a function or a vector of state overlays to apply 
                  (and
                   init-state
                   (if (coll? init-state)
                     (apply-functions init-state)
                     init-state))
+                 ;; default is to assume there's a tool call with a function that contains a prompt
                  (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
                (update-in [:opts :level] (fnil inc 0)))))]
         ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
