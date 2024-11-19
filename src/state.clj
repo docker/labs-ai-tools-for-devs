@@ -25,7 +25,8 @@
   (-> m :function :name))
 
 (defn summarize [state]
-  (-> (select-keys state [:messages :metadata])
+  (-> (select-keys state [:messages :metadata :opts])
+      (update :opts #(select-keys % [:level :prompts :parameters]))
       (update :messages (each
                           ;summarize-content 
                           ;summarize-tool-calls
@@ -47,6 +48,11 @@
                     (-> message :tool_calls first :function :name)
                     (-> % :name))))
          first)))
+
+(defn prompt-file [state s]
+  (if (string/starts-with? s "github:")
+    (git/prompt-file s)
+    (fs/file (-> state :opts :prompts fs/parent) s)))
 
 (def prompt-tool? (comp prompt? get-function-definition))
 
@@ -76,10 +82,13 @@
   (let [definition (state/get-function-definition state)
         arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
                       (tools/arg-context raw-args))]
-    ; this is the only place where parameters can be passed into the next prompts (extractors only)
+      ; this is the only place where parameters can be passed into the next prompts (extractors only)
     (-> state
         (dissoc :messages)
-        (update-in [:opts :prompts] (constantly (git/prompt-file (-> definition :function :ref))))
+        (update-in [:opts :prompts] (constantly (when-let [s (or
+                                                              (-> definition :function :prompt)
+                                                              (-> definition :function :ref))]
+                                                  (prompt-file state s))))
         (update-in [:opts :parameters] (constantly arg-context)))))
 
 ; ========================================
@@ -127,9 +136,7 @@
 (defn messages-from-prompt [s]
   (fn [_ state]
     (-> state
-        (update-in [:opts :prompts] (constantly (if (string/starts-with? s "github:") 
-                                                  (git/prompt-file s)
-                                                  (fs/file (-> state :opts :prompts fs/parent) s))))
+        (update-in [:opts :prompts] (constantly (prompt-file state s)))
         (construct-initial-state-from-prompts))))
 
 (defn metadata-merge [k]

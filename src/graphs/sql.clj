@@ -1,5 +1,6 @@
 (ns graphs.sql
   (:require
+   [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.string :as string]
    [graph]
@@ -64,12 +65,22 @@
                      :content (failed-tool-call-message (-> tc :function :name))
                      :tool_call_id id}))))})))
 
+(defn summary [{:keys [messages]}]
+  (async/go
+    (let [[{:keys [id] :as tc}] (:tool_calls (last messages))
+          content (-> tc :function :arguments (json/parse-string) (get "final_answer"))]
+      {:messages [{:role "tool"
+                   :content (or content (str tc))
+                   :tool_call_id id}
+                  {:role "assistant"
+                   :content (or content (str tc))}]})))
+
 (defn should-continue
   "end, correct-query, or query-gen"
   [{:keys [messages]}]
   (let [last-message (last messages)]
     (cond
-      (contains? last-message :tool_calls) "end"
+      (contains? last-message :tool_calls) "summary"
       ;; prevent inifinite loops of errors
       (string/starts-with? (:content last-message) "Error:") "query-gen"
       ;; how many times should we try to correct because correct-query will always end up back here 
@@ -100,5 +111,6 @@
                                   :construct-graph graph/generate-one-tool-call
                                   :next-state state/append-new-messages})]
      ["query-gen"]]
-    [["end"                     graph/end]]]))
+    [["summary"                 summary]
+     ["end"                     graph/end]]]))
 

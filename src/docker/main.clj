@@ -10,7 +10,6 @@
    git
    [git.registry :as registry]
    graph
-   graphs.sql
    jsonrpc
    [logging :refer [warn]]
    prompts
@@ -182,8 +181,8 @@
                                        (-> (with-options opts (rest args))
                                            (assoc :thread-id thread-id))))]
                          (graph/stream
-                          (if (= (-> m :metadata :agent) "sql")
-                            (graphs.sql/graph state)
+                          (if (-> m :metadata :agent)
+                            ((graph/require-graph (-> m :metadata :agent)) state)
                             (graph/chat-with-tools state))
                           m))))
                     user-loop/state-reducer

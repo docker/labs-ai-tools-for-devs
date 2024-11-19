@@ -172,5 +172,6 @@
    #'jsonrpc/notify
    (fn [_] (partial (if (:jsonrpc {}) jsonrpc/-notify jsonrpc/-println) {})))
   (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
-  (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")}))
+  (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
+  (get-prompts {:prompts (fs/file "./README.md")}))
 

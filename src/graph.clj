@@ -84,14 +84,14 @@
              (async/<!
               (->> (tools/make-tool-calls
                     (or (-> state :opts :level) 0)
-                    (partial 
-                      tools/function-handler 
+                    (partial
+                     tools/function-handler
                       ;; defaults for tool handling are opts, current state functions, and a host-dir override
-                      (merge 
-                        (:opts state) 
-                        (select-keys state [:functions])
+                     (merge
+                      (:opts state)
+                      (select-keys state [:functions])
                         ;; note that host-dir, if it exists, is an override here
-                        (select-keys (:metadata state) [:host-dir :timeout])))
+                      (select-keys (:metadata state) [:host-dir :timeout])))
                     calls)
                    (async/reduce conj []))))})))
 
@@ -103,6 +103,11 @@
 (defn tools-query
   [_]
   (async/go {}))
+
+(defn require-graph [s]
+  (let [graphs-ns-symbol (symbol (format "graphs.%s" s))]
+    (require graphs-ns-symbol)
+    (ns-resolve graphs-ns-symbol 'graph)))
 
 (declare stream chat-with-tools)
 
@@ -117,22 +122,33 @@
   [{:keys [init-state construct-graph next-state]}]
   (fn [state]
     (async/go
-      (let [sub-graph-state
-            (async/<!
-             (stream
-              ((or construct-graph chat-with-tools) state)
+      (try
+        (let [new-conversation-state
               (->
-               ((or
-                 ;; the sub-graph might have a function or a vector of state overlays to apply 
-                 (and
-                  init-state
-                  (if (coll? init-state)
-                    (apply-functions init-state)
-                    init-state))
-                 ;; default is to assume there's a tool call with a function that contains a prompt
-                 (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
-               (update-in [:opts :level] (fnil inc 0)))))]
-        ((or next-state state/add-last-message-as-tool-call) state sub-graph-state)))))
+                ((or
+                   ;; the sub-graph might have a function or a vector of state overlays to apply 
+                   (and
+                     init-state
+                     (if (coll? init-state)
+                       (apply-functions init-state)
+                       init-state))
+                   ;; default is to assume there's a tool call with a function that contains a prompt
+                   (comp state/construct-initial-state-from-prompts state/add-prompt-ref)) state)
+                (update-in [:opts :level] (fnil inc 0)))
+
+              sub-graph-state
+              (async/<!
+                (stream
+                  ((or construct-graph
+                       (if-let [agent (-> new-conversation-state :metadata :agent)]
+                         (require-graph agent)
+                         chat-with-tools)) state)
+                  (-> new-conversation-state
+                      (update-in [:metadata] dissoc :agent))))]
+          ((or next-state state/add-last-message-as-tool-call) state sub-graph-state))
+        (catch Throwable t
+          (jsonrpc/notify :error {:content (str t)})
+          {:error (format "unable to enter sub-graph: %s" t)})))))
 
 ; =====================================================
 ; edge functions takes state and returns next node
@@ -163,6 +179,9 @@
 (defn state-reducer
   "reduce the state with the change from running a node"
   [state change]
+  (jsonrpc/notify :message {:debug (format "---\n%s\n---\n%s\n---\n" 
+                                           (with-out-str (pprint/pprint (state/summarize state)))
+                                           (with-out-str (pprint/pprint change)))})
   (-> state
       (merge (dissoc change :messages :tools))
       (update :messages concat (:messages change))
@@ -176,7 +195,6 @@
     [state m
      node "start"]
      (jsonrpc/notify :message {:debug (format "\n-> entering %s\n\n" node)})
-     #_(jsonrpc/notify :message {:debug (with-out-str (pprint/pprint (state/summarize (dissoc state :opts))))})
      ;; TODO handling bad graphs with missing nodes
      (let [enter-node (get-in graph [:nodes node])
            new-state (state-reducer state (async/<! (enter-node state)))]
@@ -224,13 +242,12 @@
 (defn chat-with-tools [_]
   (construct-graph
    [[["start"       start]
-     ["tools-query" tools-query]
      ["completion"  completion]
      [:edge         tool-or-end]]
     [["sub-graph"   (sub-graph-node {})]
-     ["tools-query"]]
+     ["completion"]]
     [["tool"        (tool-node {})]
-     ["tools-query"]]
+     ["completion"]]
     [["end"         end]]]))
 
 (defn generate-one-tool-call [_]

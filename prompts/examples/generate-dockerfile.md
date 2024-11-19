@@ -4,6 +4,7 @@ tools:
   - image: vonwig/function_write_files:latest
   - image: vonwig/docker_scout_tag_recommendation:latest
   - image: vonwig/docker-rag:latest
+host-dir: /Users/slim/vonwig/altaservice
 ---
 
 # prompt system
