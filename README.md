@@ -134,7 +134,7 @@ Now, for the agentic workflow...
 
 You are an expert at reading readmes.
 
-Read the readme for https://github.com/docker/labs-ai-tools-for-devs before answering the following questions.
+Use curl to get the readme for https://github.com/docker/labs-ai-tools-for-devs before answering the following questions.
 
 # prompt user
 
