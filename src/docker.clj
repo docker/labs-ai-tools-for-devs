@@ -107,7 +107,7 @@
 ;; Tty wraps the process in a pseudo terminal
 {:StdinOnce true
  :OpenStdin true}
-(defn create-container [{:keys [image entrypoint command host-dir env thread-id opts] :or {opts {:Tty true}}}]
+(defn create-container [{:keys [image entrypoint command host-dir env thread-id opts mounts] :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
@@ -120,7 +120,8 @@
                                    (concat [(format "%s:/project:rw" host-dir)
                                             "docker-lsp:/docker-lsp"
                                             "/var/run/docker.sock:/var/run/docker.sock"]
-                                           (when thread-id [(format "%s:/thread:rw" thread-id)]))}
+                                           (when thread-id [(format "%s:/thread:rw" thread-id)])
+                                           mounts)}
                                   :WorkingDir "/project"})
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))]
