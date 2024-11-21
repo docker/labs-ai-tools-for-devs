@@ -8,7 +8,8 @@
    git
    jsonrpc
    [selmer.filters :as filters]
-   [selmer.parser :as selmer]))
+   [selmer.parser :as selmer]
+   trace))
 
 (set! *warn-on-reflection* true)
 
@@ -64,13 +65,16 @@
                                (dissoc defaults :functions)
                                {:command (interpolate-coll
                                           (-> definition :container :command)
-                                          arg-context)})]
+                                          arg-context)}
+                               (when-let [wd (-> definition :container :working-dir)] 
+                                 {:working-dir (first (interpolate arg-context wd))}))]
             (jsonrpc/notify 
               :message 
               {:debug (format "function call %s" 
                               (with-out-str 
                                 (pp/pprint (-> function-call
                                                (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))})
+            (trace/container-call (update function-call :jwt (fn [s] (if s "xxxxxxx" "not-set"))))
             (let [{:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
                   exit-code-fail? (if (false? (:check-exit-code definition))
                                     false
