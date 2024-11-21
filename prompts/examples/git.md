@@ -1,3 +1,4 @@
+<!--
 ---
 tools:
   - name: append
@@ -34,6 +35,7 @@ tools:
        - "{{args|into}}"
 host-dir: /Users/slim/repo/bobloblaw
 ---
+-->
 
 # Background
 
@@ -41,9 +43,11 @@ This shows how an agent can work with a _private_ git repository.
 
 This tests that we can clone and make a change to a private repo. The git container mounts a prepared .ssh directory and .gitconfig file. In order to try this one, you'll need to do 3 things.
 
-1. Create an empty directory on your host machine and update the `host-dir` parameter to point at it.  Make it empty.  The agent is going to clone into this.
-1. Update the two mounts in git tool entry. They need a valid .ssh and .gitconfig that are okay sharing with the git container (read-only).
-2. Update the prompt below to point at a private repo with a README.md that we can update.
+1. Update the `host-dir` entry in the above comment to point at a empty directory.  The agent is going to clone into this directory so start with an empty directory.
+1. Update the two mounts in git tool entry from the comment above. This is how you will provide credential access to the git container (read-only).
+2. Update the prompt in the section below to point at a private repo of your choosing.
+
+The next section contains the prompt that will be sent to the agent.  This is where the agent instructions begin.
 
 # prompt user
 

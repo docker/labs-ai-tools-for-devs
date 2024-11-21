@@ -1,9 +1,10 @@
 (ns git
   (:require
    [babashka.fs :as fs]
-   [babashka.process :as p]
+   [clojure.pprint :as pprint]
    [clojure.string :as string]
    dir
+   docker
    [hasch.core :as hasch]))
 
 (set! *warn-on-reflection* true)
@@ -55,34 +56,40 @@
        (fs/create-dirs default-dir)
        default-dir))))
 
+(defn pull [{:keys [dir ref]}]
+  (docker/run-container
+   {:image "alpine/git:latest"
+    :host-dir (str dir)
+    :command (concat ["pull" "origin"]
+                     (when ref [ref]))}))
+
+(defn clone [{:keys [dir owner repo ref ref-hash]}]
+  (docker/run-container
+   {:image "alpine/git:latest"
+    :host-dir (str dir)
+    :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
+                            (when ref ["-b" ref])
+                            [(format "/project/%s" ref-hash)])}))
+
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
    throws if the path in the repo does not exist or if the clone fails"
   [ref]
-  (when-let [{:keys [owner repo ref path] :as git-ref-map} (parse-github-ref ref)]
+  (when-let [{:keys [ref path] :as git-ref-map} (parse-github-ref ref)]
     (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
           dir (fs/file (prompts-cache) ref-hash)
           _ (if (fs/exists? dir)
-              (-> (apply p/process
-                         {:dir dir}
-                         (concat
-                          ["git" "pull" "origin"]
-                          (when ref [ref])))
-                  (deref))
-              (-> (apply p/process
-                         {:dir (fs/parent dir)}
-                         (concat
-                          ["git" "clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
-                          (when ref ["-b" ref])
-                          [ref-hash]))
-                  (deref)
-                  (p/check)))]
+              (pull {:dir dir :ref ref})
+              (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
       (if path
         (let [cached-path (fs/file dir path)]
           (if (fs/exists? cached-path)
             cached-path
             (throw (ex-info "repo exists but path does not" {:ref ref}))))
         dir))))
+
+(comment
+  (prompt-file "github:docker/labs-make-runbook?path=prompts/docker/prompt.md"))
 
 (comment
   (fs/create-dir (prompts-cache))
