@@ -66,8 +66,12 @@
                                         {:command (interpolate-coll
                                                     (-> definition :container :command)
                                                     arg-context)}
-                                        (when-let [wd (-> definition :container :working-dir)] 
-                                          {:working-dir (first (interpolate arg-context wd))}))
+                                        ;; workdirs in a container definition will always override ones
+                                        ;; set in the metadata
+                                        (when-let [wd (or 
+                                                        (-> definition :container :workdir) 
+                                                        (:workdir defaults))] 
+                                          {:workdir (first (interpolate arg-context wd))}))
                                 (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s)))))]
             (jsonrpc/notify 
               :message 

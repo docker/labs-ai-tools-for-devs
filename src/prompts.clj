@@ -94,7 +94,7 @@
         ["{{raw|safe}}" "man"]}}}
      {:type "function"
       :function
-      (merge
+      (medley/deep-merge
        {:description (format "Run a %s command." tool)
         :parameters
         {:type "object"

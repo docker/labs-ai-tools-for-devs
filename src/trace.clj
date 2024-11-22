@@ -1,6 +1,7 @@
 (ns trace 
   (:require
-   [cheshire.core :as json]))
+   [cheshire.core :as json]
+   jsonrpc))
 
 (def trace (atom {}))
 
@@ -8,4 +9,8 @@
   (swap! trace update-in [:container-calls] (fnil concat []) [(into {} (dissoc definition :prompts))]))
 
 (defn dump []
-  (spit "trace.edn" (pr-str @trace)))
+  (spit "trace.json" (try 
+                       (json/generate-string @trace)
+                       (catch Throwable t
+                         (jsonrpc/notify :error {:content (str t)})))))
+

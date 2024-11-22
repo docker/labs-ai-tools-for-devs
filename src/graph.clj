@@ -30,7 +30,7 @@
   [{:keys [messages functions metadata] {:keys [url model stream level]} :opts}]
   (let [[c h] (openai/chunk-handler)
         request (merge
-                 (dissoc metadata :agent :host-dir) ; TODO should we just select relevant keys instead of removing bad ones
+                 (dissoc metadata :agent :host-dir :workdir) ; TODO should we just select relevant keys instead of removing bad ones
                  {:messages messages
                   :level level}
                  (when (seq functions) {:tools functions})
@@ -91,7 +91,7 @@
                       (:opts state)
                       (select-keys state [:functions])
                         ;; note that host-dir, if it exists, is an override here
-                      (select-keys (:metadata state) [:host-dir :timeout])))
+                      (select-keys (:metadata state) [:host-dir :timeout :workdir])))
                     calls)
                    (async/reduce conj []))))})))
 

@@ -63,7 +63,7 @@
      :command (concat ["pull" "origin"]
                       (when ref [ref]))}
     (if (string/starts-with? (str dir) "/prompts")
-      {:working-dir (str dir)
+      {:workdir (str dir)
        :mounts ["docker-prompts:/prompts:rw"]}
       {:host-dir (str dir)}))))
 
@@ -72,7 +72,7 @@
    (merge
     {:image "alpine/git:latest"}
     (if (string/starts-with? (str dir) "/prompts")
-      {:working-dir (str dir)
+      {:workdir (str dir)
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
                         (when ref ["-b" ref])
                         [(format "/prompts/%s" ref-hash)])

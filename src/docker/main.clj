@@ -14,12 +14,16 @@
    [logging :refer [warn]]
    prompts
    state
+   trace
    user-loop)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
 
-(defn- with-volume [f & {:keys [thread-id save-thread-volume]}]
+(defn- with-volume 
+  "callback with the thread-id for this conversation, make sure the thread volume exists
+   and possibly remove the volume afterwards"
+  [f & {:keys [thread-id save-thread-volume]}]
   (let [thread-id (or thread-id (str (random-uuid)))]
     (try
       (docker/thread-volume {:Name thread-id})
@@ -187,7 +191,8 @@
                           m))))
                     user-loop/state-reducer
                     in
-                    {})))
+                    {}))
+                  (trace/dump))
                 opts)))
     (fn []
       (:messages (prompts/get-prompts (with-options opts args))))))
