@@ -8,6 +8,7 @@
    [clojure.spec.alpha :as spec]
    [clojure.string :as string]
    [creds]
+   jsonrpc
    logging)
   (:import
    [java.net UnixDomainSocketAddress]
@@ -107,7 +108,8 @@
 ;; Tty wraps the process in a pseudo terminal
 {:StdinOnce true
  :OpenStdin true}
-(defn create-container [{:keys [image entrypoint working-dir command host-dir env thread-id opts mounts] :or {opts {:Tty true}}}]
+(defn create-container [{:keys [image entrypoint working-dir command host-dir env thread-id opts mounts] :or {opts {:Tty true}} :as m}]
+  #_(jsonrpc/notify :message {:content (str m)})
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
@@ -115,14 +117,14 @@
                   (when env {:env (->> env
                                        (map (fn [[k v]] (format "%s=%s" (name k) v)))
                                        (into []))})
-                  (when host-dir {:HostConfig
-                                  {:Binds
-                                   (concat [(format "%s:/project:rw" host-dir)
-                                            "docker-lsp:/docker-lsp"
-                                            "/var/run/docker.sock:/var/run/docker.sock"]
-                                           (when thread-id [(format "%s:/thread:rw" thread-id)])
-                                           mounts)}
-                                  :WorkingDir (or working-dir "/project")})
+                  {:HostConfig
+                   {:Binds
+                    (concat ["docker-lsp:/docker-lsp"
+                             "/var/run/docker.sock:/var/run/docker.sock"]
+                            (when host-dir [(format "%s:/project:rw" host-dir)])
+                            (when thread-id [(format "%s:/thread:rw" thread-id)])
+                            mounts)}
+                   :WorkingDir (or working-dir "/project")}
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))]
     (curl/post

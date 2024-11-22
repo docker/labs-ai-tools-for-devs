@@ -1,11 +1,11 @@
 (ns git
   (:require
    [babashka.fs :as fs]
-   [clojure.pprint :as pprint]
    [clojure.string :as string]
    dir
    docker
-   [hasch.core :as hasch]))
+   [hasch.core :as hasch]
+   jsonrpc))
 
 (set! *warn-on-reflection* true)
 
@@ -58,18 +58,29 @@
 
 (defn pull [{:keys [dir ref]}]
   (docker/run-container
-   {:image "alpine/git:latest"
-    :host-dir (str dir)
-    :command (concat ["pull" "origin"]
-                     (when ref [ref]))}))
+   (merge
+    {:image "alpine/git:latest"
+     :command (concat ["pull" "origin"]
+                      (when ref [ref]))}
+    (if (string/starts-with? (str dir) "/prompts")
+      {:working-dir (str dir)
+       :mounts ["docker-prompts:/prompts:rw"]}
+      {:host-dir (str dir)}))))
 
 (defn clone [{:keys [dir owner repo ref ref-hash]}]
   (docker/run-container
-   {:image "alpine/git:latest"
-    :host-dir (str dir)
-    :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
-                            (when ref ["-b" ref])
-                            [(format "/project/%s" ref-hash)])}))
+   (merge
+    {:image "alpine/git:latest"}
+    (if (string/starts-with? (str dir) "/prompts")
+      {:working-dir (str dir)
+       :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
+                        (when ref ["-b" ref])
+                        [(format "/prompts/%s" ref-hash)])
+       :mounts ["docker-prompts:/prompts:rw"]}
+      {:host-dir (str dir)
+       :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
+                        (when ref ["-b" ref])
+                        [(format "/project/%s" ref-hash)])}))))
 
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
@@ -78,9 +89,11 @@
   (when-let [{:keys [ref path] :as git-ref-map} (parse-github-ref ref)]
     (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
           dir (fs/file (prompts-cache) ref-hash)
-          _ (if (fs/exists? dir)
+          m (if (fs/exists? dir)
               (pull {:dir dir :ref ref})
               (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
+      (when (not (= 0 (:exit-code m)))
+        (jsonrpc/notify :error {:content (str m)}))
       (if path
         (let [cached-path (fs/file dir path)]
           (if (fs/exists? cached-path)
