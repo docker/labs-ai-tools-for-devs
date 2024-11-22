@@ -68,7 +68,7 @@
                                                     arg-context)}
                                         (when-let [wd (-> definition :container :working-dir)] 
                                           {:working-dir (first (interpolate arg-context wd))}))
-                                (-> definition :input :file) (update-in [:input :file] (fn [s] (first (interpolate arg-context s)))))]
+                                (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s)))))]
             (jsonrpc/notify 
               :message 
               {:debug (format "function call %s" 
