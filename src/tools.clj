@@ -60,14 +60,15 @@
                        (arg-context json-arg-string))]
       (try
         (if (:container definition) ;; synchronous call to container function
-          (let [function-call (merge
-                               (:container definition)
-                               (dissoc defaults :functions)
-                               {:command (interpolate-coll
-                                          (-> definition :container :command)
-                                          arg-context)}
-                               (when-let [wd (-> definition :container :working-dir)] 
-                                 {:working-dir (first (interpolate arg-context wd))}))]
+          (let [function-call (cond-> (merge
+                                        (:container definition)
+                                        (dissoc defaults :functions)
+                                        {:command (interpolate-coll
+                                                    (-> definition :container :command)
+                                                    arg-context)}
+                                        (when-let [wd (-> definition :container :working-dir)] 
+                                          {:working-dir (first (interpolate arg-context wd))}))
+                                (-> definition :input :file) (update-in [:input :file] (fn [s] (first (interpolate arg-context s)))))]
             (jsonrpc/notify 
               :message 
               {:debug (format "function call %s" 
