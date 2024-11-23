@@ -15,8 +15,8 @@ functions:
       command:
         - "--no-pager"
         - "{{args|into}}"
-      mounts:
-        - "/Users/colinmcneil/.ssh:/root/.ssh:ro"
+      # mounts:
+      #   - "/Users/username/.ssh:/root/.ssh:ro"
   - name: mkdir
     description: Create a directory.
     parameters:
