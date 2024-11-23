@@ -1,7 +1,8 @@
 ---
-functions:
+tools:
   - name: one-review-pr
     type: prompt
+    description: Review a PR for user-facing changes.
     parameters:
       type: object
       properties:
@@ -10,12 +11,13 @@ functions:
           description: the branch to check
     ref: "github:docker/labs-ai-tools-for-devs?path=prompts/check-user-facing-pr/1-check-user-facing-pr.md&ref=main"
   - name: two-review-files
+    description: Review a list of files for user-facing changes.
     type: prompt
     parameters:
       type: object
       properties:
-        files:
-          type: array
+        branch:
+          type: string
           description: the files to check
     ref: "github:docker/labs-ai-tools-for-devs?path=prompts/check-user-facing-pr/2-check-user-facing-file.md&ref=main"
 ---
