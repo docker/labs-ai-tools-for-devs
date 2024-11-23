@@ -1,5 +1,5 @@
 ---
-functions:
+tools:
   - name: git
     description: Run a git command.
     parameters:

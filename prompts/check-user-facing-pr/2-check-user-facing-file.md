@@ -1,5 +1,5 @@
 ---
-functions:
+tools:
   - name: tree-sitter
     description: Extract code ranges using tree-sitter queries
     parameters:
