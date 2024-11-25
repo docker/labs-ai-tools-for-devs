@@ -16,7 +16,7 @@ tools:
         - "--no-pager"
         - "{{args|into}}"
       # mounts:
-      #   - "/Users/username/.ssh:/root/.ssh:ro"
+      #   - "/Users/username/.ssh:/root/.ssh-base:ro"
   - name: mkdir
     description: Create a directory.
     parameters:
@@ -42,9 +42,9 @@ You are a helpful assistant that helps the user to check if a PR contains any us
 # prompt user
 You are at $PWD of /project, which is a git repo.
 
-Force checkout dev/feature/bill-2502
+Force checkout {{branch}}
 
-Run a three-dot diff of the files changed in dev/feature/bill-2502 compared to `main` using `--name-only`.
+Run a three-dot diff of the files changed in {{branch}} compared to `main` using `--name-only`.
 
 Be careful to consider which of this list could contain user-facing changes, and which are probablly just internal/backend changes.
 

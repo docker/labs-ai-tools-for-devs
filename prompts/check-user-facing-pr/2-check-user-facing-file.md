@@ -44,16 +44,11 @@ model: gpt-4o
 
 Checks a file list for user-facing changes.
 
-Sample branch:
-dckr-319-fix-duplicated-project-service-ports
-frontends: fix/hub-copy-review-2
-dev/feature/bill-2502
-
 # prompt system
 
 You are an expert at reporting diffs between two files on a git branch.
 
-Checkout dev/feature/bill-2502
+Checkout {{branch}}
 
 Read the list of paths in /thread/user-changes/files.txt
 
@@ -69,4 +64,4 @@ Standard user-facing text
 
 # prompt user
 
-Can you tell me if there are any user-facing changes in dev/feature/bill-2502 ?
+Can you tell me if there are any user-facing changes in {{branch}} ?
