@@ -15,12 +15,13 @@
    prompts
    state
    trace
+   schema
    user-loop)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
 
-(defn- with-volume 
+(defn- with-volume
   "callback with the thread-id for this conversation, make sure the thread volume exists
    and possibly remove the volume afterwards"
   [f & {:keys [thread-id save-thread-volume]}]
@@ -82,9 +83,10 @@
                        :message
                        {:content
                         (json/generate-string
-                         (if (map? x)
-                           (select-keys x [:done])
-                           x))})))
+                         (cond
+                           (map? x) (select-keys x [:done])
+                           (nil? x) {}
+                           :else x))})))
 
 (defn output-prompts [coll]
   (->> coll
@@ -94,25 +96,6 @@
        (interpose "\n")
        (apply str)
        ((fn [s] (jsonrpc/notify :message {:content s})))))
-
-(s/def ::platform (fn [s] (#{:darwin :linux :windows} (keyword (string/lower-case s)))))
-(s/def ::user string?)
-(s/def ::jwt string?)
-(s/def ::pat string?)
-(s/def ::prompts #(fs/exists? %))
-(s/def ::host-dir string?)
-(s/def ::offline boolean?)
-(s/def ::thread-id string?)
-(s/def ::save-thread-volume boolean?)
-(s/def ::url string?)
-(s/def ::run-args (s/keys :req-un [::platform ::prompts ::host-dir]
-                          :opt-un [::offline ::thread-id ::save-thread-volume ::user ::pat ::jwt ::url]))
-
-(defn validate [k]
-  (fn [opts]
-    (if (s/valid? k opts)
-      opts
-      (throw (ex-info "invalid args" {:explanation (s/explain-data k opts)})))))
 
 (defn merge-deprecated [opts & args]
   (let [[host-dir user platform dir-or-ref] args]
@@ -139,7 +122,7 @@
     (warn "unable to check Docker Desktop for login" {})))
 
 (defn with-options [opts args]
-  ((validate ::run-args)
+  ((schema/validate :schema/run-args)
    (merge
     (apply merge-deprecated opts args)
     (login-info))))
@@ -191,8 +174,7 @@
                           m))))
                     user-loop/state-reducer
                     in
-                    {}))
-                  (trace/dump))
+                    {})))
                 opts)))
     (fn []
       (:messages (prompts/get-prompts (with-options opts args))))))
@@ -211,18 +193,19 @@
             (println summary)
             (System/exit 0))
           (let [cmd (apply command options arguments)]
-            (when (and
-                   (not (:host-dir options))
-                   (< (count arguments) 2))
-              (warn
-               "you must specify a --host-dir option.  
-                 This is the directory that will be provided to tool containers as /project." {})
-              (System/exit 1))
             (alter-var-root
              #'jsonrpc/notify
-             (fn [_] (partial (if (:jsonrpc options) jsonrpc/-notify jsonrpc/-println) options)))
-            ((if (:pretty-print-prompts options) output-prompts output-handler)
-             (cmd))))))
+             (fn [_] (if (:jsonrpc options)
+                       jsonrpc/-notify
+                       (jsonrpc/create-stdout-notifier options))))
+            ((if (:pretty-print-prompts options)
+               output-prompts
+               output-handler)
+             (try
+               (cmd)
+               (catch Throwable t
+                 (jsonrpc/notify :error {:content (str t)})
+                 (System/exit 1))))))))
     (catch Throwable t
       (.printStackTrace t)
       (warn "Error: {{ exception }}" {:exception t})

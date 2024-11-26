@@ -7,8 +7,6 @@
   (:import
    [java.net ConnectException]))
 
-(alter-var-root #'jsonrpc/notify (partial (constantly jsonrpc/-println) {:debug true}))
-
 (t/deftest update-tool-calls
   (t/is
    (=
@@ -27,7 +25,7 @@
 
   ;; when we cannot connect, verify that we throw an exception
   (try
-    (let [[c cb] (openai/chunk-handler (fn [& args] (println args)))]
+    (let [[c cb] (openai/chunk-handler)]
       (openai/openai
        {:messages [{:content "What is the meaning of life?" :role "user"}]
         :url "https://does.not.exist"}
@@ -36,9 +34,7 @@
     (catch ConnectException t
       t))
 
-  (let [[c cb] (openai/chunk-handler
-                 ;; this is a function handler
-                (fn [& args] (println args)))]
+  (let [[c cb] (openai/chunk-handler)]
     (openai/openai
      {:messages [{:content "What is the meaning of life?" :role "user"}]
       :model "llama3:latest"
@@ -56,5 +52,4 @@
                          :properties
                          {:content {:type "string"
                                     :description "the content to echo back"}}}}}]}
-   (second (openai/chunk-handler (fn [& args]
-                                   (println "function-handler " args))))))
+   (second (openai/chunk-handler))))

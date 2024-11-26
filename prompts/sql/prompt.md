@@ -13,7 +13,7 @@ tools:
           type: string
           description: a human description of the query we need to run
     type: "prompt"
-    prompt: sql-agent.md
+    prompt: github:docker/labs-ai-tools-for-devs?path=prompts/sql/sql-agent.md
 host-dir: /Users/slim/docker/labs-ai-tools-for-devs/prompts/sql  # override host-dir while testing
 ---
 

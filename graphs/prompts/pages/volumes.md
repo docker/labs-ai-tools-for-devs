@@ -1,0 +1,3 @@
+- Volumes are managed by the top-level container.  In other words, we construct them as we need them.
+- the `--thread-id` allows the user of the prompt engine to control the names of the volume
+- by default, tool containers will be started with at least one volume mounted at `/thread`

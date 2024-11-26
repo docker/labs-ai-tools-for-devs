@@ -7,7 +7,8 @@
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [clojure.zip :as zip]
-   [docker]))
+   [docker]
+   jsonrpc))
 
 (set! *warn-on-reflection* true)
 
@@ -79,7 +80,9 @@
        (from-range (-> loc zip/node second) content)
        (remove-markers)
        (clj-yaml/parse-string)))
-    (catch Throwable _ nil)))
+    (catch Throwable ex
+      (jsonrpc/notify :error {:content "error parsing yaml in markdown preamble.  Metadata will be ignored."})
+      nil)))
 
 (defn html-comment? [loc]
   (and
@@ -142,7 +145,12 @@
           (into []))
      :metadata  (or 
                  (extract-metadata content ast)
-                 (extract-first-comment content ast)) }))
+                 (extract-first-comment content ast)
+                 {})}))
+
+(comment
+  (parse-prompts (slurp "./broken.md"))
+  )
 
 (comment
   ; inline same line !,[,],(,) in that order after filtering out other irrelevant things

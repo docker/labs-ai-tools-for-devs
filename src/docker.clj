@@ -5,11 +5,11 @@
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.pprint :refer [pprint]]
-   [clojure.spec.alpha :as spec]
    [clojure.string :as string]
    [creds]
    jsonrpc
-   logging)
+   logging
+   schema)
   (:import
    [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
@@ -225,25 +225,6 @@
                        "--vs-machine-id" "none"
                        "--workspace" "/docker"]})
 
-(spec/def ::host-dir string?)
-(spec/def ::entrypoint string?)
-(spec/def ::user string?)
-(spec/def ::jwt string?)
-(spec/def ::image string?)
-(spec/def ::command (spec/coll-of string?))
-(spec/def ::container-definition (spec/keys :opt-un [::host-dir ::entrypoint ::command ::user ::jwt]
-                                            :req-un [::image]))
-
-(spec/def ::pty-output string?)
-(spec/def ::exit-code integer?)
-(spec/def ::info any?)
-(spec/def ::done #{:timeout :exited})
-(spec/def ::timeout integer?)
-(spec/def ::kill-container any?)
-
-(spec/def ::container-response (spec/keys :req-un [::pty-output ::exit-code ::info ::done]
-                                          :opt-un [::timeout ::kill-container]))
-
 (defn- -pull [m]
   (pull (merge m
                {:serveraddress "https://index.docker.io/v1/"}
@@ -384,6 +365,7 @@
   " params ::container-definition
      returns ::container-response"
   [m]
+  ;; (schema/validate :schema/container-definition)
   (if (-> m :stdin :file)
     (run-with-stdin-content m)
     (run-function m)))

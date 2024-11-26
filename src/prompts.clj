@@ -15,7 +15,8 @@
    [openai]
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
-   [registry]))
+   [registry]
+   schema))
 
 (set! *warn-on-reflection* true)
 
@@ -162,15 +163,13 @@
 
         m (merge (run-extractors (:extractors metadata) opts) parameters)
         renderer (partial selma-render prompts (facts m user platform host-dir))]
-    (-> prompt-data
-        (update :messages #(map renderer %))
-        (update :metadata dissoc :functions :tools :extractors)
-        (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition))))))
+    ((schema/validate :schema/prompts-file)
+     (-> prompt-data
+         (update :messages #(map renderer %))
+         (update :metadata dissoc :functions :tools :extractors)
+         (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition)))))))
 
 (comment
-  (alter-var-root
-   #'jsonrpc/notify
-   (fn [_] (partial (if (:jsonrpc {}) jsonrpc/-notify jsonrpc/-println) {})))
   (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
   (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
   (get-prompts {:prompts (fs/file "./README.md")}))

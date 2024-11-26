@@ -10,10 +10,6 @@
            :prompts (fs/file "/Users/slim/docker/labs-ai-tools-for-devs/prompts/curl/README.md")
            :host-dir "/Users/slim/vonwig/altaservice"})
 
-(alter-var-root
- #'jsonrpc/notify
- (fn [_] (partial (if (:jsonrpc opts) jsonrpc/-notify jsonrpc/-println) opts)))
-
 (try
   (main/with-options opts ["run"])
   (catch Throwable t

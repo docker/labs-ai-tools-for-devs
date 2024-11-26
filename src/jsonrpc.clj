@@ -118,21 +118,25 @@
 ;; functions("") - meant to be updated in place
 ;; functions-done("")
 ;; error({:content ""})
-(defn -notify [{:keys [_debug]} method params]
+(defn -notify [method params]
   (write-message (io/output-stream System/out) (notification method params)))
 
 #_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
-(defn -println [{:keys [debug]} method params]
+(defn -println [method params & opts]
   (case method
     :message (cond
                (:content params) (do (print (:content params)) (flush))
-               (and debug (:debug params)) (do (println "### DEBUG\n") (println (:debug params))))
+               (and (first opts) (:debug params)) (do (println "### DEBUG\n") (println (:debug params))))
     :functions (do (print ".") (flush))
     :functions-done (println params)
     :error (binding [*out* *err*]
              (println (:content params)))
     :prompts nil
     (binding [*out* *err*] (println (format "%s\n%s\n" method params)))))
+
+(defn create-stdout-notifier [{:keys [debug]}]
+  (fn [method params]
+    (-println method params debug)))
 
 (def ^:dynamic notify -println)
 
