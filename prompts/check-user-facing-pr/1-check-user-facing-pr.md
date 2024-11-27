@@ -48,5 +48,5 @@ Run a three-dot diff of the files changed in {{branch}} compared to `main` using
 
 Be careful to consider which of this list could contain user-facing changes, and which are probablly just internal/backend changes.
 
-Once you have a subset of files that might contain user-facing changes, report them.
+Once you have a subset of files that might contain user-facing changes, use run-javascript-sandbox to run a node script which writes them to /thread/user-changes/files.txt.
 
