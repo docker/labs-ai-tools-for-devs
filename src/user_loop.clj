@@ -10,14 +10,6 @@
     PipedInputStream
     PipedOutputStream]))
 
-(defn create-step 
-  "compile a function that inserts a user message to-array 
-   to the conversation and stream it through the graph
-   compiled function returns a channel that will emit the final state"
-  [f]
-  (fn [state]
-    (f state)))
-
 (defn state-reducer [state s]
   (update state :messages (fnil conj []) {:role "user" :content s}))
 
@@ -37,10 +29,10 @@
    returns
      the final state"
   [run-step state-reducer in m]
-  (let [c (jsonrpc/input-stream->input-chan in {})]
+  (let [input-channel (jsonrpc/input-stream->input-chan in {})]
     (async/go-loop
      [next-state (async/<! (run-step m)) n 0]
-      (let [message (async/<! c)]
+      (let [message (async/<! input-channel)]
         (cond
           (= "exit" (:method message))
           (assoc next-state :jsonrpc-loop-finished :exit)
@@ -53,7 +45,9 @@
 (def ^{:private true} start-test-loop
   (partial start-jsonrpc-loop (create-test-step) state-reducer))
 
-(defn create-pipe []
+(defn create-pipe 
+  "returns [[write close] in]"
+  []
   ;; Create a PipedInputStream and PipedOutputStream
   (let [piped-out (PipedOutputStream.)
         piped-in  (PipedInputStream. piped-out)

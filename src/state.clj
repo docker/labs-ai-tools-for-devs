@@ -5,6 +5,7 @@
    [clojure.string :as string]
    git
    jsonrpc
+   [jsonrpc.logger :as logger]
    prompts
    tools))
 
@@ -72,6 +73,8 @@
              (jsonrpc/notify :prompts (select-keys m [:messages]))
              (:messages m)))))
     (catch Throwable ex
+      (jsonrpc/notify :error {:content (str ex)})
+      (logger/error ex)
       (jsonrpc/notify :error {:content
                               (format "failure for prompt configuration:\n %s" (with-out-str (pprint (dissoc opts :pat :jwt))))
                               :exception (str ex)}))))

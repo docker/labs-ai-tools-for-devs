@@ -3,7 +3,6 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
-   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.tools.cli :as cli]
    docker
@@ -11,27 +10,18 @@
    [git.registry :as registry]
    graph
    jsonrpc
+   jsonrpc.producer
+   jsonrpc.server
    [logging :refer [warn]]
    prompts
+   schema
    state
    trace
-   schema
-   user-loop)
+   user-loop
+   volumes)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
-
-(defn- with-volume
-  "callback with the thread-id for this conversation, make sure the thread volume exists
-   and possibly remove the volume afterwards"
-  [f & {:keys [thread-id save-thread-volume]}]
-  (let [thread-id (or thread-id (str (random-uuid)))]
-    (try
-      (docker/thread-volume {:Name thread-id})
-      (f thread-id)
-      (finally
-        (when (not (true? save-thread-volume))
-          (docker/delete-thread-volume {:Name thread-id}))))))
 
 (def cli-opts [;; optional
                [nil "--jsonrpc" "Output JSON-RPC notifications"]
@@ -75,7 +65,6 @@
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
                [nil "--debug" "add debug logging"]
-               [nil "--input" "read jsonrpc messages from stdin"]
                [nil "--help" "print option summary"]])
 
 (def output-handler (fn [x]
@@ -150,32 +139,38 @@
                       (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll))))))
     "run" (fn []
             (let [[in send]
-                  (if (:input opts)
-                    [*in* (constantly true)]
-                    (let [[[w c] in] (user-loop/create-pipe)]
-                      [in (fn []
-                            (w (jsonrpc/request "exit" {} (constantly 1)))
-                            (c))]))]
+                  (let [[[w c] in] (user-loop/create-pipe)]
+                    [in (fn []
+                          (w (jsonrpc/request "exit" {} (constantly 1)))
+                          (c))])]
               (send)
-              (with-volume
+              (volumes/with-volume
                 (fn [thread-id]
                   (async/<!!
                    (user-loop/start-jsonrpc-loop
-                    (user-loop/create-step
-                     (fn [state]
-                       (let [m (state/construct-initial-state-from-prompts
-                                (assoc state :opts
-                                       (-> (with-options opts (rest args))
-                                           (assoc :thread-id thread-id))))]
-                         (graph/stream
-                          (if (-> m :metadata :agent)
-                            ((graph/require-graph (-> m :metadata :agent)) state)
-                            (graph/chat-with-tools state))
-                          m))))
+                    (fn [state]
+                      (let [m (state/construct-initial-state-from-prompts
+                               (assoc state :opts
+                                      (-> (with-options opts (rest args))
+                                          (assoc :thread-id thread-id))))]
+                        (graph/stream
+                         (if (-> m :metadata :agent)
+                           ((graph/require-graph (-> m :metadata :agent)) state)
+                           (graph/chat-with-tools state))
+                         m)))
                     user-loop/state-reducer
                     in
                     {})))
                 opts)))
+    "serve" (fn []
+              (let [[producer server-promise] (jsonrpc.server/run-server! opts)]
+                (alter-var-root
+                 #'jsonrpc/notify
+                 (constantly
+                  (fn [method params]
+                    (jsonrpc.producer/publish-docker-notify producer method params))))
+                (let [finished @server-promise]
+                  {:result-code (if (= :done finished) 0 1)})))
     (fn []
       (:messages (prompts/get-prompts (with-options opts args))))))
 

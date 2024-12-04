@@ -16,6 +16,7 @@
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
    [registry]
+   [selmer.parser :as selmer]
    schema))
 
 (set! *warn-on-reflection* true)
@@ -125,16 +126,28 @@
                             (when user {:user user})
                             (when jwt {:jwt jwt})))))))
 
-(defn- selma-render [prompts-file m message]
+(defn- moustache-render [prompts-file m message]
   (update message
           :content
           (fn [content]
-            (stache/render-string
-             content
-             m
-             {:partials (partials/file-partials
-                         [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
-                         ".md")}))))
+            (if prompts-file
+              (stache/render-string
+                content
+                m
+                {:partials (partials/file-partials
+                             [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
+                             ".md")})
+              (stache/render-string content m)))))
+
+(defn selmer-render [m message]
+  (update message
+          :content
+          (fn [content]
+            (selmer/render content m))))
+
+(selmer/add-tag! :tip (fn [args context-map] 
+                        (format 
+                          "At the very end of the response, add this sentence: \"ℹ️ You can also ask: '%s'\", in the language used by the user, with the question in italic." (first args))))
 
 (comment
   (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]}))
@@ -144,11 +157,15 @@
 (defn get-prompts
   "run extractors and then render prompt templates
      returns map of messages, functions, metadata and optionally error"
-  [{:keys [parameters prompts user platform host-dir] :as opts}]
+  [{:keys [parameters prompts user platform host-dir prompt-content] :as opts}]
   (let [{:keys [metadata] :as prompt-data}
+        (cond 
+          ;; prompt content is already in opts
+          prompt-content
+          (markdown-parser/parse-prompts prompt-content)
 
-        (if (fs/directory? prompts)
           ;; directory based prompts
+          (fs/directory? prompts)
           {:messages
            (->> (fs/list-dir prompts)
                 (filter (name-matches prompt-file-pattern))
@@ -159,10 +176,13 @@
            :metadata (:metadata (markdown-parser/parse-prompts (slurp (metadata-file prompts))))}
 
           ;; file based prompts
+          :else
           (markdown-parser/parse-prompts (slurp prompts)))
 
         m (merge (run-extractors (:extractors metadata) opts) parameters)
-        renderer (partial selma-render prompts (facts m user platform host-dir))]
+        renderer (if (= "django" (:prompt-format metadata)) 
+                   (partial selmer-render (facts m user platform host-dir))
+                   (partial moustache-render prompts (facts m user platform host-dir)))]
     ((schema/validate :schema/prompts-file)
      (-> prompt-data
          (update :messages #(map renderer %))
