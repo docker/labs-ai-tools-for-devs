@@ -2,10 +2,13 @@
   (:refer-clojure :exclude [run!])
   (:require
    [babashka.fs :as fs]
+   [cheshire.core :as json]
    [clojure.core :as c]
    [clojure.core.async :as async]
+   [clojure.pprint :as pprint]
    git
    graph
+   jsonrpc
    [jsonrpc.db :as db]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
@@ -90,9 +93,9 @@
                 :hasMore false}})
 
 (defn entry->prompt-listing [k v m]
-         {:description (-> v :metadata :description)
-          :name (str k) 
-          :arguments []})
+  {:description (-> v :metadata :description)
+   :name (str k)
+   :arguments []})
 
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} _]
   ;; TODO might contain a cursor
@@ -108,7 +111,7 @@
                     (map (fn [m] (-> m
                                      (update :content (fn [content]
                                                         {:type "text"
-                                                         :content content})))))
+                                                         :text content})))))
                     (into []))}))
 
 (defmethod lsp.server/receive-request "resources/list" [_ _ _]
@@ -135,19 +138,21 @@
 
 (defmethod lsp.server/receive-request "tools/call" [_ {:keys [db*]} params]
   (eventually
-    (lsp.server/discarding-stdout
-      (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-            tool-defaults {:functions tools
-                           :host-dir ""
-                           :workdir ""}]
-        {:content
-         (->>
-           (tools/make-tool-calls 0 (partial tools/function-handler tool-defaults) [{:function params :id "1"}])
-           (async/reduce conj [])
-           (async/<!!)
-           (map :content)
-           (apply str))
-         :is-error false}))))
+   (lsp.server/discarding-stdout
+    (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+          tool-defaults {:functions tools
+                         :host-dir (-> @db* :host-dir)}]
+      {:content
+       (->>
+        (tools/make-tool-calls 
+          0 
+          (partial tools/function-handler tool-defaults) 
+          [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
+        (async/reduce conj [])
+        (async/<!!)
+        (map :content)
+        (apply str))
+       :is-error false}))))
 
 (defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
   ;; supports only git refs
@@ -257,10 +262,6 @@
   (lsp.server/discarding-stdout
    (let [timbre-logger (->TimbreLogger)
          log-path (logger/setup timbre-logger)
-         db (merge
-             {}
-             {:log-path log-path}
-             (select-keys opts [:user]))
          db* db/db*
          log-ch (async/chan (async/sliding-buffer 20))
          server (stdio-server {;:keyword-function identity
@@ -274,13 +275,51 @@
                      :logger timbre-logger
                      :producer producer
                      :server server}]
+     (swap! db* merge {:log-path log-path} (dissoc opts :in))
      (logger/info "Starting server...")
      (monitor-server-logs log-ch)
      [producer (lsp.server/start server components)])))
 
 (comment
   (def stuff (user-loop/create-pipe))
-  (def x (run-server! {:trace-level "off" :in (second stuff)}))
+  (def x (run-server! {:trace-level "off" :in (second stuff) :host-dir "/Users/slim/docker/labs-ai-tools-for-devs"}))
+  (alter-var-root
+   #'jsonrpc/notify
+   (constantly
+    (fn [method params]
+      (jsonrpc.producer/publish-docker-notify (first x) method params))))
+  ;; --------------------
+  ;; register
+  ;; --------------------
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "docker/prompts/register"
+    :id "4"
+    :params {:prompts "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"}})
+  (pprint/pprint @db/db*)
+  ;; --------------------
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "prompts/list"
+    :id "5"
+    :params {}})
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "tools/list"
+    :id "5"
+    :params {}})
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "prompts/get"
+    :id "5"
+    :params {:name "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"}})
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "tools/call"
+    :id "5"
+    :params {:name "cat_file"
+             :arguments {:path "./Dockerfile"}}})
+  ;; --------------------
   ((-> stuff first first)
    {:jsonrpc "2.0"
     :method "docker/prompts/run"

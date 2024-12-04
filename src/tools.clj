@@ -7,6 +7,7 @@
    docker
    git
    jsonrpc
+   [jsonrpc.logger :as logger]
    [selmer.filters :as filters]
    [selmer.parser :as selmer]
    trace))
@@ -123,6 +124,7 @@
             (async/close! c)))})
       (catch Throwable t
         ;; function-handlers should handle this on their own but this is just in case
+        (logger/error t)
         (async/go
           (async/>! c {:content (format "unable to run %s - %s" function-name t) :role "tool" :tool_call_id tool-call-id})
           (async/close! c))))
