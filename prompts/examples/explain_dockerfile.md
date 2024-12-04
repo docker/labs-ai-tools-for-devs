@@ -1,4 +1,11 @@
 ---
+description: |
+    Provide a detailed description, analysis, or annotation of a given Dockerfile,
+    explaining its structure and functionality.
+
+    Synonyms: explain my Dockerfile, annotate this Dockerfile...
+
+    This tool can explain a pre-provided Dockerfile but it can also fetch the Dockerfile from the user's workspace.
 tools:
   - name: cat_file
     description: fetch a file

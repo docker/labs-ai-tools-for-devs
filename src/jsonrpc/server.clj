@@ -2,11 +2,11 @@
   (:refer-clojure :exclude [run!])
   (:require
    [babashka.fs :as fs]
-   [cheshire.core :as json]
    [clojure.core :as c]
    [clojure.core.async :as async]
    git
    graph
+   [jsonrpc.db :as db]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
    [lsp4clj.coercer :as coercer]
@@ -16,6 +16,7 @@
    state
    [taoensso.timbre :as timbre]
    [taoensso.timbre.appenders.core :as appenders]
+   tools
    user-loop
    volumes)
   (:gen-class))
@@ -88,77 +89,101 @@
                 :total 0
                 :hasMore false}})
 
-(defmethod lsp.server/receive-request "prompts/list" [_ _ _]
-  ;; might contain a cursor
-  {:prompts []})
+(defn entry->prompt-listing [k v m]
+         {:description (-> v :metadata :description)
+          :name (str k) 
+          :arguments []})
 
-(defmethod lsp.server/receive-request "prompts/get" [_ _ _]
-  ;; might contain a cursor
-  {:description ""
-   :messages []})
+(defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} _]
+  ;; TODO might contain a cursor
+  {:prompts (->> (:mcp.prompts/registry @db*)
+                 (mapcat (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
+                 (into []))})
+
+(defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name]}]
+  ;; TODO resolve arguments
+  (let [{:keys [messages metadata]} (-> @db* :mcp.prompts/registry (get name))]
+    {:description (:description metadata)
+     :messages (->> messages
+                    (map (fn [m] (-> m
+                                     (update :content (fn [content]
+                                                        {:type "text"
+                                                         :content content})))))
+                    (into []))}))
 
 (defmethod lsp.server/receive-request "resources/list" [_ _ _]
-  ;; might contain a cursor
   {:resources []})
 
 (defmethod lsp.server/receive-request "resources/read" [_ _ _]
-  ;; might contain a cursor
   {:contents []})
 
 (defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
-  ;; might contain a cursor
   {:resource-templates []})
 
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ _]
-  ;; might contain a cursor
   {:resource-templates []})
 
-(defmethod lsp.server/receive-request "tools/list" [_ _ _]
-  ;; might contain a cursor
-  {:tools []})
+(defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
+  ;; TODO cursors
+  {:tools (->> (:mcp.prompts/registry @db*)
+               (vals)
+               (mapcat :functions)
+               (map (fn [m] (-> (:function m)
+                                (select-keys [:name :description])
+                                (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
+               (into []))})
 
-(defmethod lsp.server/receive-request "tools/call" [_ _ _]
-  ;; might contain a cursor
-  {:content {}
-   :is-error false})
+(defmethod lsp.server/receive-request "tools/call" [_ {:keys [db*]} params]
+  (eventually
+    (lsp.server/discarding-stdout
+      (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+            tool-defaults {:functions tools
+                           :host-dir ""
+                           :workdir ""}]
+        {:content
+         (->>
+           (tools/make-tool-calls 0 (partial tools/function-handler tool-defaults) [{:function params :id "1"}])
+           (async/reduce conj [])
+           (async/<!!)
+           (map :content)
+           (apply str))
+         :is-error false}))))
 
-(defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id] :as components} params]
+(defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
+  ;; supports only git refs
   (lsp.server/discarding-stdout
-   (let [prompt-file ""
-         prompt {}]
-     (swap! db* update-in [:mcp.prompts/registry] (fnil assoc {}) prompt-file prompt)
-     prompt)))
+   (db/add (merge @db* params))))
 
 (defmethod lsp.server/receive-request "docker/prompts/run"
   [_ {:keys [db* id] :as components} {:keys [thread-id] {:keys [file content uri]} :prompts :as params}]
   (lsp.server/discarding-stdout
-    (let [conversation-id (str (java.util.UUID/randomUUID))
-          prompt-string (cond
-                          file (slurp file)
-                          content content
-                          uri (slurp (git/prompt-file uri)))]
-      (swap! db* update-in [:mcp/conversations] (fnil assoc {}) conversation-id
-             {:state-promise
-              (p/create
-                (fn [resolve reject]
-                  (resolve
-                    (async/<!!
-                      (volumes/with-volume
-                        (fn [thread-id]
-                          (let [m (-> {}
-                                      (assoc-in [:opts :conversation-id] conversation-id)
-                                      (assoc-in [:opts :thread-id] thread-id)
-                                      (assoc-in [:opts :prompt-content] prompt-string)
-                                      (state/construct-initial-state-from-prompts))]
-                            (graph/stream
-                              (if (-> m :metadata :agent)
-                                ((graph/require-graph (-> m :metadata :agent)) m)
-                                (graph/chat-with-tools m))
-                              m)))
-                        (if thread-id
-                          {:thread-id thread-id :save-thread-volume true}
-                          {}))))))})
-      {:conversation-id conversation-id})))
+   (let [conversation-id (str (java.util.UUID/randomUUID))
+         prompt-string (cond
+                         file (slurp file)
+                         content content
+                         uri (slurp (git/prompt-file uri)))]
+     (swap! db* update-in [:mcp/conversations] (fnil assoc {}) conversation-id
+            {:state-promise
+             (p/create
+              (fn [resolve reject]
+                (resolve
+                 (async/<!!
+                  (volumes/with-volume
+                    (fn [thread-id]
+                      (let [m (-> {}
+                                  (assoc-in [:opts :conversation-id] conversation-id)
+                                  (assoc-in [:opts :thread-id] thread-id)
+                                  (assoc-in [:opts :prompt-content] prompt-string)
+                                  (state/construct-initial-state-from-prompts))]
+                        (graph/stream
+                         (if (-> m :metadata :agent)
+                           ((graph/require-graph (-> m :metadata :agent)) m)
+                           (graph/chat-with-tools m))
+                         m)))
+                    (if thread-id
+                      {:thread-id thread-id :save-thread-volume true}
+                      {}))))))})
+     {:conversation-id conversation-id})))
 
 (defn ^:private monitor-server-logs [log-ch]
   ;; NOTE: if this were moved to `initialize`, after timbre has been configured,
@@ -236,7 +261,7 @@
              {}
              {:log-path log-path}
              (select-keys opts [:user]))
-         db* (atom db)
+         db* db/db*
          log-ch (async/chan (async/sliding-buffer 20))
          server (stdio-server {;:keyword-function identity
                                :in (or (:in opts) System/in)
@@ -256,18 +281,17 @@
 (comment
   (def stuff (user-loop/create-pipe))
   (def x (run-server! {:trace-level "off" :in (second stuff)}))
-  ((-> stuff first first) 
-   {:jsonrpc "2.0" 
-    :method "docker/prompts/run" 
-    :id "4" 
+  ((-> stuff first first)
+   {:jsonrpc "2.0"
+    :method "docker/prompts/run"
+    :id "4"
     :params {:prompts {:content "\n# prompt user\nHow are you?\n"}}})
   (->>
-    (->
-      (:db* (first x))
-      (deref)
-      :mcp/conversations)
-    vals
-    (map :state-promise)
-    (map deref)
-    ))
+   (->
+    (:db* (first x))
+    (deref)
+    :mcp/conversations)
+   vals
+   (map :state-promise)
+   (map deref)))
 

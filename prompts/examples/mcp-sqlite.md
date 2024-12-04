@@ -1,4 +1,6 @@
 ---
+description: |
+  A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
 tools:
   - name: read-query
     description: Execute a SELECT query on the SQLite database
