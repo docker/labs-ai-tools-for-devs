@@ -28,7 +28,7 @@
       "url": "https://github.com/slimslenderslacks/lsp4clj.git",
       "rev": "995abcdbfebfa7ef6550625fe1ef3ca2c7683292",
       "git-dir": "https/github.com/slimslenderslacks/lsp4clj",
-      "hash": "sha256-Yaewmx2P7aFJYkQdBoo85cdnAp91cZtovJtgliyHOKA="
+      "hash": "sha256-6RQ95oLS+ZX36x88yQY8v7QOhVtkqYVtMFMkW/ENlnM="
     }
   ],
   "mvn-deps": [
@@ -71,6 +71,16 @@
       "mvn-path": "babashka/process/0.5.22/process-0.5.22.pom",
       "mvn-repo": "https://repo.clojars.org/",
       "hash": "sha256-Ijax5VAq9/FFnKomP+huFSOKh/HWGiwXLAZty/1iwo8="
+    },
+    {
+      "mvn-path": "camel-snake-kebab/camel-snake-kebab/0.4.3/camel-snake-kebab-0.4.3.jar",
+      "mvn-repo": "https://repo.clojars.org/",
+      "hash": "sha256-gZHzNXdjENeFekCtMyVL5mrbNjgGsYE22IQxlpI6wsg="
+    },
+    {
+      "mvn-path": "camel-snake-kebab/camel-snake-kebab/0.4.3/camel-snake-kebab-0.4.3.pom",
+      "mvn-repo": "https://repo.clojars.org/",
+      "hash": "sha256-LVp6g6ymqHa1ZOMHYD0CRaNxZ4osT0xoEH7dC5sLv7s="
     },
     {
       "mvn-path": "cheshire/cheshire/5.13.0/cheshire-5.13.0.jar",
