@@ -1,4 +1,3 @@
-<!--
 ---
 description: |
     Provide a detailed description, analysis, or annotation of a given Dockerfile,
@@ -37,7 +36,6 @@ tools:
         - "{{glob|safe}}"
 prompt-format: "django"
 ---
--->
 
 # prompt user
 
