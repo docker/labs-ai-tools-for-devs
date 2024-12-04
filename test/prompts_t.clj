@@ -20,7 +20,7 @@
   (t/is
    (.startsWith
     (->
-     (#'prompts/selma-render
+     (#'prompts/moustache-render
       (fs/file "prompts/dockerfiles")
       {}
       {:role "system" :content (slurp "prompts/dockerfiles/020_system_prompt.md")})

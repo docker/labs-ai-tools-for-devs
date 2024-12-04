@@ -246,8 +246,8 @@ docker run --rm \
                                  --prompts-dir local/prompts/poem \
 ```
 
-
 ```sh
+# docker:command=local-build
 docker build -t vonwig/prompts:local .
 ```
 

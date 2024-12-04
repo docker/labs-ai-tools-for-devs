@@ -17,3 +17,4 @@
 /tools_vector_store/.venv/
 /tools_vector_store/tools.db
 /tools_vector_store/chroma_db/
+/docker-mcp-server.out

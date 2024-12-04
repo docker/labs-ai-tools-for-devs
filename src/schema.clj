@@ -62,7 +62,9 @@
                              :opt-un [:tool/parameters :prompt/prompt :prompt/ref]))
 (s/def ::container-tool (s/keys :req-un [:tool/name :tool/description :tool/container]
                                 :opt-un [:tool/parameters]))
-(s/def :tool/function (s/or :container ::container-tool :prompt ::prompt-tool))
+(s/def ::placeholder-tool (s/keys :req-un [:tool/name :tool/description]
+                                  :opt-un [:tool/parameters]))
+(s/def :tool/function (s/or :container ::container-tool :prompt ::prompt-tool :placeholder ::placeholder-tool))
 (s/def :tool/type #{"function"})
 (s/def ::tool (s/keys :req-un [:tool/type :tool/function]))
 (s/def ::tools (s/coll-of ::tool))
@@ -72,6 +74,7 @@
 ;; -- Spec definitions for prompt metadata --
 (s/def ::agent string?)
 (s/def ::model string?)
+(s/def ::prompt-format #{"django"})
 (s/def ::extractors (s/coll-of ::extractor))
 (s/def ::metadata (s/keys :opt-un [::host-dir
                                    ::model
@@ -79,7 +82,9 @@
                                    ::stream
                                    ::timeout
                                    ::extractors
-                                   ::agent]))
+                                   ::agent
+                                   ::description
+                                   ::prompt-format]))
 
 ;; -- Spec Definitions for Graph state --
 ;; TODO - can be image, audio, and text content
