@@ -1,5 +1,6 @@
 (ns jsonrpc
   (:require
+   [babashka.process :as process]
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.java.io :as io]
@@ -144,6 +145,30 @@
   (notify :message {:content "message"}))
 
 (comment
+  (def mcp
+    (process/process {:err :string}
+                     "docker"
+                     "run"
+                     "-i"
+                     "-v" "/var/run/docker.sock:/var/run/docker.sock"
+                     "--mount" "type=volume,source=docker-prompts,target=/prompts"
+                     "vonwig/prompts:local"
+                     "serve"
+                     "--host-dir" "/Users/slim/docker/labs-ai-tools-for-devs"
+                     "--prompts" "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"))
+  (async/thread
+    (with-open [rdr (io/reader (:out mcp))]
+      (binding [*in* rdr]
+        (loop []
+          (when-let [line (read-line)]
+            (println :mcp line)
+            (recur))))))
+  (write-message (:in mcp) (request "ping" {} (constantly 1)))
+  (-> @mcp :err)
+  (-> @mcp :out slurp)
+  )
+
+(comment
   "tool module
     :start for container runs or failures
     :message content for container output or summary of container failure
@@ -163,5 +188,4 @@
     :message :debug when entering a new node of the state machine
    main 
     :messsage :content for the final output 
-   "
-  )
+   ")

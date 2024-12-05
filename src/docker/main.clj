@@ -10,6 +10,8 @@
    [git.registry :as registry]
    graph
    jsonrpc
+   [jsonrpc.db :as db]
+   [jsonrpc.logger :as logger]
    jsonrpc.producer
    jsonrpc.server
    [logging :refer [warn]]
@@ -169,6 +171,11 @@
                  (constantly
                   (fn [method params]
                     (jsonrpc.producer/publish-docker-notify producer method params))))
+                (when (:prompts opts)
+                  (try
+                    (db/add opts)
+                    (catch Throwable t
+                      (logger/error t))))
                 (let [finished @server-promise]
                   {:result-code (if (= :done finished) 0 1)})))
     (fn []
