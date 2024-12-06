@@ -66,7 +66,10 @@
                [nil "--nostream" "disable streaming responses"
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
-               [nil "--register ref" "register a prompt REF"]
+               [nil "--register ref" "register a prompt REF"
+                :multi true
+                :default []
+                :update-fn conj]
                [nil "--mcp" "use the mcp jsonrpc protocol"]
                [nil "--debug" "add debug logging"]
                [nil "--help" "print option summary"]])

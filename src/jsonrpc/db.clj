@@ -7,19 +7,18 @@
 (def db* (atom {}))
 
 (defn get-prompt-data [{:keys [register] :as opts}]
-  (let [f (git/prompt-file register)
-        {:keys [messages metadata functions] :as entry} (prompts/get-prompts (assoc opts :prompts f))]
-    entry))
+  (->> register
+       (map (fn [ref] [ref (git/prompt-file ref)]))
+       (map (fn [[ref f]]
+              (let [m (prompts/get-prompts (assoc opts :prompts f))]
+                [(or (-> m :metadata :name) ref) m])))
+       (into {})))
 
 (defn add [opts]
   (logger/info "adding prompts" (:register opts))
   (let [m (get-prompt-data opts)]
-    (swap! db* update-in [:mcp.prompts/registry] 
-           (fnil assoc {}) 
-           #_(:register opts) 
-           (or (-> m :metadata :name) (:register opts))
-           m)))
+    (swap! db* update-in [:mcp.prompts/registry] (fnil merge {}) m)))
 
 (comment
-  (add {:register "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"}))
+  (add {:register ["github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"]}))
 

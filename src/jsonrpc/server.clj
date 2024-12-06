@@ -94,7 +94,7 @@
 (defn entry->prompt-listing [k v m]
   (merge
     {:name (str k)}
-    (select-keys m [:description])))
+    (select-keys (:metadata v) [:description])))
 
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor
