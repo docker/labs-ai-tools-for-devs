@@ -66,6 +66,8 @@
                [nil "--nostream" "disable streaming responses"
                 :id :stream
                 :assoc-fn (fn [m k _] (assoc m k false))]
+               [nil "--register ref" "register a prompt REF"]
+               [nil "--mcp" "use the mcp jsonrpc protocol"]
                [nil "--debug" "add debug logging"]
                [nil "--help" "print option summary"]])
 
@@ -171,11 +173,6 @@
                  (constantly
                   (fn [method params]
                     (jsonrpc.producer/publish-docker-notify producer method params))))
-                (when (:prompts opts)
-                  (try
-                    (db/add opts)
-                    (catch Throwable t
-                      (logger/error t))))
                 (let [finished @server-promise]
                   {:result-code (if (= :done finished) 0 1)})))
     (fn []

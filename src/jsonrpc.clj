@@ -163,6 +163,7 @@
           (when-let [line (read-line)]
             (println :mcp line)
             (recur))))))
+  (write-message (:in mcp) (request "initialize" {} (constantly 1)))
   (write-message (:in mcp) (request "ping" {} (constantly 1)))
   (-> @mcp :err)
   (-> @mcp :out slurp)

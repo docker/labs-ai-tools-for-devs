@@ -13,6 +13,7 @@
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
    [lsp4clj.coercer :as coercer]
+   [lsp4clj.io-chan :as io-chan]
    [lsp4clj.io-server :refer [stdio-server]]
    [lsp4clj.server :as lsp.server]
    [promesa.core :as p]
@@ -45,7 +46,8 @@
   [level & args]
   ;; NOTE: this does not do compile-time elision because the level isn't a constant.
   ;; We don't really care because we always log all levels.
-  (timbre/log! level :p args))
+  (logger/info (str level (apply str args)))
+  #_(timbre/log! level :p args))
 
 (defn log! [level args fmeta]
   (timbre/log! level :p args {:?line (:line fmeta)
@@ -70,15 +72,12 @@
   ;; merges client-info capabilities and client protocol-version
   (swap! db* merge params)
   {:protocol-version "2024-11-05"
-   :capabilities {:logging {}
-                  :prompts {}
-                  :resources {}
-                  :tools {}
-                  :experimental {}}
+   :capabilities {:prompts {}
+                  :tools {}}
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
-(defmethod lsp.server/receive-notification "initialized" [_ _ _]
+(defmethod lsp.server/receive-notification "notifications/initialized" [_ _ _]
   (logger/info "Initialized!"))
 
 ; level is debug info notice warning error critical alert emergency
@@ -93,18 +92,21 @@
                 :hasMore false}})
 
 (defn entry->prompt-listing [k v m]
-  {:description (-> v :metadata :description)
-   :name (str k)
-   :arguments []})
+  {:name (str k)})
 
-(defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} _]
+(defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor
-  {:prompts (->> (:mcp.prompts/registry @db*)
-                 (mapcat (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
-                 (into []))})
+  (logger/info "prompts/list" params)
+  (let [prompts
+        {:prompts (->> (:mcp.prompts/registry @db*)
+                       (mapcat (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
+                       (into []))}]
+    (logger/info prompts)
+    prompts))
 
 (defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name]}]
   ;; TODO resolve arguments
+  (logger/info "prompts/get")
   (let [{:keys [messages metadata]} (-> @db* :mcp.prompts/registry (get name))]
     {:description (:description metadata)
      :messages (->> messages
@@ -128,6 +130,7 @@
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
   ;; TODO cursors
+  (logger/info "tools/list")
   {:tools (->> (:mcp.prompts/registry @db*)
                (vals)
                (mapcat :functions)
@@ -137,22 +140,25 @@
                (into []))})
 
 (defmethod lsp.server/receive-request "tools/call" [_ {:keys [db*]} params]
-  (eventually
-   (lsp.server/discarding-stdout
-    (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-          tool-defaults {:functions tools
-                         :host-dir (-> @db* :host-dir)}]
-      {:content
-       (->>
-        (tools/make-tool-calls 
-          0 
-          (partial tools/function-handler tool-defaults) 
-          [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
-        (async/reduce conj [])
-        (async/<!!)
-        (map :content)
-        (apply str))
-       :is-error false}))))
+  (logger/info "tools/call")
+  (lsp.server/discarding-stdout
+   (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+         tool-defaults {:functions tools
+                        :host-dir (-> @db* :host-dir)}]
+     (logger/info "calling tools " tool-defaults)
+     (logger/info "with params" params)
+     (let [content (->>
+                    (tools/make-tool-calls
+                     0
+                     (partial tools/function-handler tool-defaults)
+                     [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
+                    (async/reduce conj [])
+                    (async/<!!)
+                    (map :content)
+                    (apply str))]
+       (logger/info "content " content)
+       {:content [{:type "text" :text content}]
+        :is-error false}))))
 
 (defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
   ;; supports only git refs
@@ -264,20 +270,30 @@
          log-path (logger/setup timbre-logger)
          db* db/db*
          log-ch (async/chan (async/sliding-buffer 20))
-         server (stdio-server {;:keyword-function identity
-                               :in (or (:in opts) System/in)
-                               :out System/out
-                               :log-ch log-ch
-                               :trace-ch log-ch
-                               :trace-level trace-level})
+         server (stdio-server
+                 (merge
+                  {;:keyword-function identity
+                   :in (or (:in opts) System/in)
+                   :out System/out
+                   :log-ch log-ch
+                   :trace-ch log-ch
+                   :trace-level trace-level}
+                  (when (:mcp opts)
+                    {:in-chan-factory io-chan/mcp-input-stream->input-chan
+                     :out-chan-factory io-chan/mcp-output-stream->output-chan})))
          producer (McpProducer. server db*)
          components {:db* db*
                      :logger timbre-logger
                      :producer producer
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
-     (logger/info "Starting server...")
+     (when (:register opts)
+       (try
+         (db/add opts)
+         (catch Throwable t
+           (logger/error t))))
      (monitor-server-logs log-ch)
+     (logger/info "Starting server...")
      [producer (lsp.server/start server components)])))
 
 (comment

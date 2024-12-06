@@ -13,7 +13,7 @@
         org.clojure/core.async {:mvn/version "1.6.681"}
         org.babashka/http-client {:mvn/version "0.4.12"}
         com.taoensso/timbre {:mvn/version "5.2.1"}
-        io.github.slimslenderslacks/lsp4clj {:git/sha "995abcdbfebfa7ef6550625fe1ef3ca2c7683292"}
+        io.github.slimslenderslacks/lsp4clj {:git/sha "04390f9b1dcf0946dff335b48951617bc6bf6a9d"}
         funcool/promesa {:mvn/version "9.0.470"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}
            :build {:ns-default build

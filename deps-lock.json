@@ -26,9 +26,9 @@
     {
       "lib": "io.github.slimslenderslacks/lsp4clj",
       "url": "https://github.com/slimslenderslacks/lsp4clj.git",
-      "rev": "995abcdbfebfa7ef6550625fe1ef3ca2c7683292",
+      "rev": "04390f9b1dcf0946dff335b48951617bc6bf6a9d",
       "git-dir": "https/github.com/slimslenderslacks/lsp4clj",
-      "hash": "sha256-6RQ95oLS+ZX36x88yQY8v7QOhVtkqYVtMFMkW/ENlnM="
+      "hash": "sha256-LtBVHKhOsn6L8arX0AWuNnsz5YWT1dypmZFxosJ6rzQ="
     }
   ],
   "mvn-deps": [
