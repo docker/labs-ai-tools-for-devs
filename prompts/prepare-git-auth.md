@@ -31,10 +31,10 @@ Check that the folder exists first. If it doesn't, tell the user and stop.
 
 Your script should copy the contents of /root/.ssh-base to /root/.ssh. .ssh-base is readonly, so you after you copy the folder to .ssh, make sure to make it writable.
 
-Remove any lines containing `UseKeychain` and add `  StrictHostKeyChecking no` to `Host *` in the ssh config.
+Remove any lines containing `UseKeychain`.
 
 Finally, copy the new .ssh and .gitconfig to `/thread`.
 
 # prompt user
 
-Get my Git ssh credentials! Afterwards, do the same but tell me the contents of the ssh config file and its full path.
+Get my Git ssh credentials! Afterwards, do the same but tell me the contents of the ssh config file and its full path. I also need you to make sure GitHub is in known_hosts.
