@@ -34,4 +34,4 @@ Then, run the `two-review-files` prompt to generate a list of user-facing conten
 
 # prompt user
 
-I need you to check `my-branch`.
+I need you to check `branch`.
