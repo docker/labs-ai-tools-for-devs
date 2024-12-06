@@ -1,4 +1,5 @@
 ---
+name: explain_dockerfile
 description: |
     Provide a detailed description, analysis, or annotation of a given Dockerfile,
     explaining its structure and functionality.
