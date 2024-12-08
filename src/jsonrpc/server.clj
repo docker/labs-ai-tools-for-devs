@@ -91,7 +91,7 @@
                 :total 0
                 :hasMore false}})
 
-(defn entry->prompt-listing [k v m]
+(defn entry->prompt-listing [k v _messages]
   (merge
     {:name (str k)}
     (select-keys (:metadata v) [:description])))
