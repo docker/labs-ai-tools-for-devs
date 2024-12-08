@@ -1,7 +1,7 @@
 ---
 tools:
   - name: hello-world
-    description: A simple tool that prints "Hello, World!" to the console
+    description: print a secret message
     container:
       image: busybox:latest
       command:
