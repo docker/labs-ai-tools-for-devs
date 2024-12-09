@@ -281,9 +281,21 @@ docker run --rm \
 
 ```
 
+## dump current mcp server logs
+
 ```sh
 docker run --rm \
            -v docker-prompts:/prompts:ro \
            busybox:latest \
            /bin/sh -c "cat prompts/docker-mcp-server.out"
 ```
+
+## tail current mcp server logs
+
+```sh
+docker run --rm \
+           -v docker-prompts:/prompts:ro \
+           busybox:latest \
+           /bin/sh -c "tail -f prompts/docker-mcp-server.out"
+```
+

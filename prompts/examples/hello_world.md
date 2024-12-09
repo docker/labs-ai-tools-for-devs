@@ -1,6 +1,7 @@
 ---
+name: hello-docker
 tools:
-  - name: hello-world
+  - name: hello-docker
     description: print a secret message
     container:
       image: busybox:latest
