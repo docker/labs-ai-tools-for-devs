@@ -280,3 +280,10 @@ docker run --rm \
            --prompts-file /Users/slim/docker/labs-ai-tools-for-devs/prompts/curl/README.md
 
 ```
+
+```sh
+docker run --rm \
+           -v docker-prompts:/prompts:ro \
+           busybox:latest \
+           /bin/sh -c "cat prompts/docker-mcp-server.out"
+```

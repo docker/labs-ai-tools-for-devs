@@ -211,7 +211,7 @@
 (defrecord TimbreLogger []
   logger/ILogger
   (setup [this]
-    (let [log-path (str (fs/file "docker-mcp-server.out"))]
+    (let [log-path (str (fs/file "/prompts/docker-mcp-server.out"))]
       (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
                              :appenders {:println {:enabled? false}
                                          :spit (appenders/spit-appender {:fname log-path})}})
