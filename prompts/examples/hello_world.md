@@ -1,5 +1,6 @@
 ---
 name: hello-docker
+description: run the hello-docker
 tools:
   - name: hello-docker
     description: print a secret message
