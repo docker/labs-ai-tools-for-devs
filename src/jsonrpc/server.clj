@@ -110,7 +110,7 @@
   ;; TODO resolve arguments
   (logger/info "prompts/get " name)
   (let [{:keys [messages metadata] :as entry} (-> @db* :mcp.prompts/registry (get name))]
-    {:description (:description metadata)
+    {:description (or (:description metadata) name)
      :messages (->> messages
                     (map (fn [m] (-> m
                                      (update :content (fn [content]
