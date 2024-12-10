@@ -20,5 +20,6 @@
     (swap! db* update-in [:mcp.prompts/registry] (fnil merge {}) m)))
 
 (comment
-  (add {:register ["github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"]}))
+  (add {:register ["github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"
+                   "github:docker/labs-ai-tools-for-devs?path=prompts/examples/hello_world.md"]}))
 

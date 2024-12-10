@@ -108,8 +108,8 @@
 
 (defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name]}]
   ;; TODO resolve arguments
-  (logger/info "prompts/get")
-  (let [{:keys [messages metadata]} (-> @db* :mcp.prompts/registry (get name))]
+  (logger/info "prompts/get " name)
+  (let [{:keys [messages metadata] :as entry} (-> @db* :mcp.prompts/registry (get name))]
     {:description (:description metadata)
      :messages (->> messages
                     (map (fn [m] (-> m
