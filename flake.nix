@@ -84,7 +84,7 @@
 
           devShells.default = pkgs.devshell.mkShell {
             name = "agent-graph-shell";
-            packages = with pkgs; [ babashka clojure skopeo ];
+            packages = with pkgs; [ babashka clojure skopeo hugo ];
 
             commands = [
               {

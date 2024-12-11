@@ -20,27 +20,12 @@ tools:
       image: vonwig/bash_alpine
       command:
         - "cat {{path|safe}}"
-  - name: findutils-by-name
-    description: find files in a project by name
-    parameters:
-      type: object
-      properties:
-        glob:
-          type: string
-          description: the glob pattern for files that should be found
-    container:
-      image: vonwig/findutils:latest
-      command:
-        - find
-        - .
-        - -name
-        - "{{glob|safe}}"
 prompt-format: "django"
 ---
 
 # prompt user
 
-Start by fetching the ./Dockerfile in the project root.  If there is no Dockerfile, then search for other files named 'Dockerfile' in the project and ask which one we want to explain.
+Start by fetching the ./Dockerfile in the project root.
 
 After fetching the Dockerfile contents, explain the Dockerfile line by line.
 
