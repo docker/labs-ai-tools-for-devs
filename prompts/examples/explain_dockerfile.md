@@ -13,11 +13,17 @@ tools:
     parameters:
       type: object
       properties:
+        project:
+          type: string
+          description: absolute path in the project root
         path:
           type: string
           description: Path of the folder to delete
     container:
       image: vonwig/bash_alpine
+      mounts: 
+        - "{{project|safe}}:/workdir:ro"
+      workdir: /workdir
       command:
         - "cat {{path|safe}}"
 prompt-format: "django"
@@ -25,7 +31,7 @@ prompt-format: "django"
 
 # prompt user
 
-Start by fetching the ./Dockerfile in the project root.
+Start by fetching the ./Dockerfile in the project root at /Users/slim/docker/labs-ai-tools-for-devs.
 
 After fetching the Dockerfile contents, explain the Dockerfile line by line.
 

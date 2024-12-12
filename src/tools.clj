@@ -62,24 +62,28 @@
       (try
         (if (:container definition) ;; synchronous call to container function
           (let [function-call (cond-> (merge
-                                        (:container definition)
-                                        (dissoc defaults :functions)
-                                        {:command (interpolate-coll
-                                                    (-> definition :container :command)
-                                                    arg-context)}
-                                        ;; workdirs in a container definition will always override ones
-                                        ;; set in the metadata
-                                        (when-let [wd (or 
-                                                        (-> definition :container :workdir) 
-                                                        (:workdir defaults))] 
-                                          {:workdir (first (interpolate arg-context wd))}))
+                                       (:container definition)
+                                       (dissoc defaults :functions)
+                                       {:command (interpolate-coll
+                                                  (-> definition :container :command)
+                                                  arg-context)}
+                                       (when (-> definition :container :mounts)
+                                         {:mounts (->> (-> definition :container :mounts)
+                                                       (map (fn [s] (first (interpolate arg-context s))))
+                                                       (into []))})
+                                          ;; workdirs in a container definition will always override ones
+                                          ;; set in the metadata
+                                       (when-let [wd (or
+                                                      (-> definition :container :workdir)
+                                                      (:workdir defaults))]
+                                         {:workdir (first (interpolate arg-context wd))}))
                                 (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s)))))]
-            (jsonrpc/notify 
-              :message 
-              {:debug (format "function call %s" 
-                              (with-out-str 
-                                (pp/pprint (-> function-call
-                                               (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))})
+            (jsonrpc/notify
+             :message
+             {:debug (format "function call %s"
+                             (with-out-str
+                               (pp/pprint (-> function-call
+                                              (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))})
             (trace/container-call (update function-call :jwt (fn [s] (if s "xxxxxxx" "not-set"))))
             (let [{:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
                   exit-code-fail? (if (false? (:check-exit-code definition))
