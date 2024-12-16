@@ -1,8 +1,10 @@
 (ns graph
   (:require
+   claude
    [clojure.core.async :as async]
    [clojure.core.match :refer [match]]
    [clojure.pprint :as pprint]
+   [clojure.string :as string]
    git
    jsonrpc
    openai
@@ -19,6 +21,21 @@
   (async/>!! c {:messages [{:role "assistant" :content s}]
                 :finish-reason "error"}))
 
+(def providers {:openai [openai/chunk-handler openai/openai]
+                :claude [claude/chunk-handler claude/sample]})
+(defn llm-provider [model]
+  (cond
+    (nil? model) :openai
+    (some #(string/starts-with? model %) ["gpt"]) :openai
+    (some #(string/starts-with? model %) ["claude"]) :claude
+    :else :openai))
+
+(comment
+  (llm-provider nil)
+  (llm-provider "gpt-4")
+  (llm-provider "claude-3.5-sonnet-latest")
+  (providers (llm-provider "claude-3.5-sonnet-latest")))
+
 (defn run-llm
   "call openai compatible chat completion endpoint and handle tool requests
     params
@@ -28,7 +45,8 @@
       opts       for running the model
     returns channel that will contain an coll of messages"
   [{:keys [messages functions metadata] {:keys [url model stream level]} :opts}]
-  (let [[c h] (openai/chunk-handler)
+  (let [[chunk-handler sample] (providers (llm-provider (or (:model metadata) model)))
+        [c h] (chunk-handler)
         request (merge
                  (dissoc metadata :agent :host-dir :workdir :prompt-format :description :name) ; TODO should we just select relevant keys instead of removing bad ones
                  {:messages messages
@@ -41,7 +59,7 @@
                  (when (and stream (nil? (:stream metadata))) {:stream stream}))]
     (try
       (if (seq messages)
-        (openai/openai request h)
+        (sample request h)
         (stop-looping c "This is an empty set of prompts.  Define prompts using h1 sections (eg `# prompt user`)"))
       (catch ConnectException _
         (stop-looping c "I cannot connect to an openai compatible endpoint."))

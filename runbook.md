@@ -148,7 +148,7 @@ clj -M:main run \
               --host-dir /Users/slim/docker/labs-make-runbook \
               --user jimclark106 \
               --platform darwin \
-              --prompts-file prompts/qrencode/README.md
+              --prompts-file prompts/examples/qrencode.md
 ```
 
 ```sh

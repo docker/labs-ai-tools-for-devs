@@ -72,14 +72,6 @@
    :content_filter "content filter applied"
    :not_specified "not specified"})
 
-(s/def ::role #{"user" "system" "assistant" "tool"})
-(s/def ::content string?)
-(s/def ::message (s/keys :req-un [::role]
-                         :opt-un [::content ::tool-calls]))
-(s/def ::messages (s/coll-of ::message))
-(s/def ::finish-reason any?)
-(s/def ::response (s/keys :req-un [::finish-reason ::messages]))
-
 (defn response-loop
   "handle one response stream that we read from input channel c
    adds content or tool_calls while streaming and call any functions when done

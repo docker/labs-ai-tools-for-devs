@@ -107,3 +107,21 @@
      {:name ""
       :arguments "serialized json"}}]})
 
+;; response from both openai and claude sampling
+(comment
+  (s/def ::name string?)
+  (s/def ::arguments string?)
+  (s/def ::id string?)
+  (s/def :response/function (s/keys :req-un [::name ::arguments]))
+  (s/def :function/type #{"function"})
+  (s/def ::tool_call (s/keys :req-un [:response/function ::id :function/type]))
+  (s/def ::tool_calls (s/coll-of ::tool_call))
+  (s/def :response/role #{"assistant"})
+  (s/def :response/content string?)
+  (s/def ::message (s/keys :req-un [:response/role]
+                           :opt-un [:response/content ::tool_calls]))
+  (s/def ::messages (s/coll-of ::message))
+  ;; Claude uses tool_use but we'll standardize on tool_calls (the openai term)
+  (s/def ::finish-reason any?)
+  (s/def ::response (s/keys :req-un [::finish-reason ::messages])))
+
