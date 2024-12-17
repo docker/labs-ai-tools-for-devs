@@ -13,7 +13,8 @@
 (defn claude-api-key []
   (try
     (string/trim (slurp (io/file (or (System/getenv "CLAUDE_API_KEY_LOCATION") (System/getenv "HOME")) ".claude-api-key")))
-    (catch Throwable _ nil)))
+    (catch Throwable _
+      (throw (ex-info "Unable to read claude-api-key secret" {})))))
 
 (defn parse-sse [s]
   (when (string/starts-with? s "data:")

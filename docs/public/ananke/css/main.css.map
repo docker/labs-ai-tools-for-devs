@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "main.css",
-	"sourceRoot": "/Users/slim/docker/labs-ai-tools-for-devs/docs/quickstart",
+	"sourceRoot": "/Users/slim/docker/labs-ai-tools-for-devs/docs",
 	"sources": [
 		"ananke/css/main.css"
 	],

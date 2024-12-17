@@ -4,7 +4,6 @@
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.java.io :as io]
-   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [jsonrpc]))
 
@@ -13,7 +12,8 @@
 (defn openai-api-key []
   (try
     (string/trim (slurp (io/file (or (System/getenv "OPENAI_API_KEY_LOCATION") (System/getenv "HOME")) ".openai-api-key")))
-    (catch Throwable _ nil)))
+    (catch Throwable _
+      (throw (ex-info "Unable to read openai api-key secret" {})))))
 
 (defn openai
   "get a response
