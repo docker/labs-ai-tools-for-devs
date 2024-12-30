@@ -82,12 +82,7 @@ We highly recommend using the VSCode extension to get started. It will help you 
 
 **Install Extension**
 
-**Recommended:** Download our auto-installer extension from Docker Hub:
-https://hub.docker.com/extensions/docker/labs-vscode-installer
-
-or 
-
-Manually install the [latest release](https://github.com/docker/labs-ai-tools-vscode/releases/latest) with
+Get the [latest release](https://github.com/docker/labs-ai-tools-vscode/releases/latest) and install with
 
 ```sh 
 code --install-extension 'labs-ai-tools-vscode-<version>.vsix'
