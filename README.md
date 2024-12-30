@@ -13,6 +13,20 @@ Agentic AI workflows enabled by Docker containers.
 
 Just Docker. Just Markdown. BYOLLM.
 
+## MCP
+Any prompts you write and their tools can now be used as [MCP servers](https://www.anthropic.com/news/model-context-protocol)
+
+Use serve mode with `--mcp` flag. Then, register prompts via git ref or path with `--register <ref>`
+
+```sh
+# ...
+serve
+--mcp
+--register github:docker/labs-ai-tools-for-devs?path=prompts/examples/generate_dockerfile.md
+--register /Users/ai-overlordz/some/local/prompt.md
+# ...
+```
+
 ![overall architecture diagram preview](img1.png)
 
 Source for many experiments in our [LinkedIn newsletter](https://www.linkedin.com/newsletters/docker-labs-genai-7204877599427194882/)
