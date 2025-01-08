@@ -14,7 +14,7 @@
   (try
     (string/trim (slurp (io/file (or (System/getenv "CLAUDE_API_KEY_LOCATION") (System/getenv "HOME")) ".claude-api-key")))
     (catch Throwable _
-      (throw (ex-info "Unable to read claude-api-key secret" {})))))
+      (throw (ex-info "Unable to read claude api-key secret" {})))))
 
 (defn parse-sse [s]
   (when (string/starts-with? s "data:")
@@ -52,7 +52,7 @@
               (if tool_calls
                 {:role (:role message)
                  :content (concat
-                            (when (:content message) [{:type "text" :text (:content message)}])
+                            (when (and (:content message) (not (= "" (:content message)))) [{:type "text" :text (:content message)}])
                             (->> tool_calls
                                  (map (fn [{:keys [id function]}]
                                         {:type "tool_use"

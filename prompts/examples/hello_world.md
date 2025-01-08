@@ -1,6 +1,7 @@
 ---
 name: hello-docker
 description: run the hello-docker
+model: claude-3-5-sonnet-20241022
 tools:
   - name: hello-docker
     description: print a secret message

@@ -7,6 +7,7 @@ description: |
     Synonyms: explain my Dockerfile, annotate this Dockerfile...
 
     This tool can explain a pre-provided Dockerfile but it can also fetch the Dockerfile from the user's workspace.
+model: claude-3-5-sonnet-20241022
 tools:
   - name: cat_file
     description: fetch a file

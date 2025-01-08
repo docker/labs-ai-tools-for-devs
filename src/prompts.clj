@@ -132,11 +132,11 @@
           (fn [content]
             (if prompts-file
               (stache/render-string
-                content
-                m
-                {:partials (partials/file-partials
-                             [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
-                             ".md")})
+               content
+               m
+               {:partials (partials/file-partials
+                           [(if (fs/directory? prompts-file) prompts-file (fs/parent prompts-file))]
+                           ".md")})
               (stache/render-string content m)))))
 
 (defn selmer-render [m message]
@@ -145,9 +145,9 @@
           (fn [content]
             (selmer/render content m))))
 
-(selmer/add-tag! :tip (fn [args context-map] 
-                        (format 
-                          "At the very end of the response, add this sentence: \"ℹ️ You can also ask: '%s'\", in the language used by the user, with the question in italic." (first args))))
+(selmer/add-tag! :tip (fn [args context-map]
+                        (format
+                         "At the very end of the response, add this sentence: \"ℹ️ You can also ask: '%s'\", in the language used by the user, with the question in italic." (first args))))
 
 (comment
   (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]}))
@@ -159,7 +159,7 @@
      returns map of messages, functions, metadata and optionally error"
   [{:keys [parameters prompts user platform host-dir prompt-content] :as opts}]
   (let [{:keys [metadata] :as prompt-data}
-        (cond 
+        (cond
           ;; prompt content is already in opts
           prompt-content
           (markdown-parser/parse-prompts prompt-content)
@@ -179,8 +179,11 @@
           :else
           (markdown-parser/parse-prompts (slurp prompts)))
 
-        m (merge (run-extractors (:extractors metadata) opts) parameters)
-        renderer (if (= "django" (:prompt-format metadata)) 
+        m (merge
+           (run-extractors (:extractors metadata) opts)
+           parameters
+           (-> metadata :parameter-values))
+        renderer (if (= "django" (:prompt-format metadata))
                    (partial selmer-render (facts m user platform host-dir))
                    (partial moustache-render prompts (facts m user platform host-dir)))]
     ((schema/validate :schema/prompts-file)
