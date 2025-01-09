@@ -1,39 +1,48 @@
 ---
-description: |
-  A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
+description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
 model: claude-3-5-sonnet-20241022
 tools:
   - name: read-query
     description: Execute a SELECT query on the SQLite database
-    parameters: &query
+    parameters:
       type: object
       properties:
         query:
           type: string
           description: SELECT SQL query to execute
-    container: &sqlite
-      image: vonwig/sqlite:latest
+    container: &sqlite-container
+      image: &sqlite-image vonwig/sqlite:latest
       command:
-        - "/mcp/test1.db"
+        - &db "/mcp/test1.db"
         - "{{query|safe}}"
-      mounts: &mounts
+      volumes: &mounts
         - "mcp-test:/mcp"
   - name: write-query
     description: Execute an INSERT, UPDATE, or DELETE query on the SQLite database
-    parameters: *query
-    container: *sqlite
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          description: SQL query to execute
+    container: *sqlite-container
   - name: create-table
     description: Create a new table in the SQLite database
-    parameters: *query
-    container: *sqlite
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          description: CREATE TABLE SQL statement
+    container: *sqlite-container
   - name: list-tables
     description: List all tables in the SQLite database
     container:
-      image: vonwig/sqlite:latest
+      image: *sqlite-image
       command:
-        - "/mcp/test1.db"
+        - *db
         - "SELECT name from sqlite_master WHERE type='table'"
-      mounts: *mounts
+      volumes: *mounts
   - name: describe-table
     description: Get the schema information for a specific table
     parameters:
@@ -43,11 +52,11 @@ tools:
           type: string
           description: Name of the table to describe
     container:
-      image: vonwig/sqlite:latest
+      image: *sqlite-image
       command:
-        - "/mcp/test1.db"
+        - *db
         - "PRAGMA table_info({{table_name}})"
-      mounts: *mounts
+      volumes: *mounts
   - name: append-insight
     description: Add a business insight to the memo
     parameters:
@@ -61,7 +70,7 @@ tools:
       command:
         - "-c"
         - "echo '{{insight|safe}}' >> /mcp/insights.txt"
-      mounts: *mounts
+      volumes: *mounts
 prompt-format: django
 parameter-values:
   topic: Ocean Conservation
