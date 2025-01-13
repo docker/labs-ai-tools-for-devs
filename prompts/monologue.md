@@ -1,6 +1,9 @@
 ---
 extractors:
   - name: project-facts
+url: http://host.docker.internal:11434/v1/chat/completions
+model: llama3.2
+stream: false
 ---
 
 # Example prompt
@@ -14,4 +17,3 @@ Tell me about my project.
 
 My project uses the following languages:
 {{project-facts.languages}}
-

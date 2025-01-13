@@ -134,7 +134,7 @@ registry:
         - "{{database}}"
         - "{{sql|safe}}"
   - name: run-javascript-sandbox
-    description: Execute javascript in a Node.JS environment.
+    description: Execute javascript in a Node.JS environment. STDOUT and STDERR will be returned to you.
     parameters:
       type: object
       properties:

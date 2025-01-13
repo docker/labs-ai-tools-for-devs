@@ -61,9 +61,9 @@
               src = ./.;
               installPhase = ''
                 mkdir -p $out/extractors
-                mkdir -p $out/functions
+                mkdir -p $out/tools
                 cp ./extractors/registry.edn $out/extractors
-                cp ./functions/registry.edn $out/functions
+                cp ./tools/registry.edn $out/tools
               '';
             };
 
