@@ -30,17 +30,17 @@ jobs:
             # If folder has pyproject.toml
             if [ -f "$folder/pyproject.toml" ]; then
               cd $folder
-              docker buildx build --builder cloud-ai-labs
-                                  --platform linux/amd64,linux/arm64
-                                --tag dockerpublicbot/mcp-$foldername:${{ github.event.client_payload.release_tag }}
-                                --push .
+              docker buildx build --builder cloud-ai-labs \
+                                  --platform linux/amd64,linux/arm64 \
+                                  --tag dockerpublicbot/mcp-$foldername:${{ github.event.client_payload.release_tag }} \
+                                  --push .
               cd $top_level_folder
             else
               foldername=$(basename $folder)
-              docker buildx build --builder cloud-ai-labs
-                                  --platform linux/amd64,linux/arm64
-                                --tag dockerpublicbot/mcp-$foldername:${{ github.event.client_payload.release_tag }}
-                                --file $folder/Dockerfile
-                                --push .
+              docker buildx build --builder cloud-ai-labs \
+                                  --platform linux/amd64,linux/arm64 \
+                                  --tag dockerpublicbot/mcp-$foldername:${{ github.event.client_payload.release_tag }} \
+                                  --file $folder/Dockerfile \
+                                  --push .
             fi
           done
