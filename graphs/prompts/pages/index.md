@@ -1,3 +1,0 @@
-- [Authoring a Prompt]([[Authoring Prompts]])
-- [Running a Prompt]([[Running the Prompt Engine]])
-- [Adding Tools]([[Tools]])

@@ -1,3 +1,0 @@
-- [langchain adapter for sqlitevec](https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/vectorstores/sqlitevec.py) #link
-	- this imports the `sqlite3` and `sqlite_vec` python packages.  At connection time, we use `sqlite_vec` to load the vector extensions into sqlite.
--

@@ -1,3 +1,7 @@
 [submodule "docs/quickstart/themes/ananke"]
 	path = docs/themes/ananke
 	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git
+[submodule "docs/themes/blowfish"]
+	path = docs/themes/blowfish
+	url = https://github.com/nunocoracao/blowfish.git
+	branch = main
