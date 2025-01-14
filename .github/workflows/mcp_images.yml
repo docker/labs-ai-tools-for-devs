@@ -35,13 +35,15 @@ jobs:
             if [ -f "$folder/pyproject.toml" ]; then
               cd $folder
               docker buildx build --platform linux/amd64,linux/arm64 \
-                                  --tag ${{ secrets.DOCKER_NS }}/mcp-$foldername:${{ github.event.client_payload.release_tag }} \
+                                  --tag ${{ secrets.DOCKER_NS }}/mcp-$foldername:${{ github.event.client_payload.ref }} \
+                                  --tag latest \
                                   --push .
               cd $top_level_folder
             else
               foldername=$(basename $folder)
               docker buildx build --platform linux/amd64,linux/arm64 \
-                                  --tag ${{ secrets.DOCKER_NS }}/mcp-$foldername:${{ github.event.client_payload.release_tag }} \
+                                  --tag ${{ secrets.DOCKER_NS }}/mcp-$foldername:${{ github.event.client_payload.ref }} \
+                                  --tag latest \
                                   --file $folder/Dockerfile \
                                   --push .
             fi
