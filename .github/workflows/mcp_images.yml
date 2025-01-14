@@ -20,7 +20,7 @@ jobs:
           username: dockerpublicbot
           password: ${{ secrets.DOCKERPUBLICBOT_WRITE_PAT }}
       - name: Build MCP Images
-        run: >
+        run: |
           top_level_folder=$(pwd)
           for folder in src/*; do
             # If folder does not contain Dockerfile, skip
