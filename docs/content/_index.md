@@ -4,6 +4,7 @@ description: "Labs AI Tools for Devs"
 draft: false
 cascade:
   type: docs
+breadcrumbs: false
 ---
 
 {{< cards >}}
