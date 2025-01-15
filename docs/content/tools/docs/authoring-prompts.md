@@ -81,7 +81,9 @@ Run the curl command, in silent mode, to fetch gists for user slimslenderslacks 
 If you specify an anthropic model, such as `model: claude-3-5-sonnet-20241022`, you do not need to specify the url. The correct anthropic
 endpoint will be used.
 
-**Note**: Do not change tool definitinos to use `json_schema` instead of `properties`.  This will be done automatically.
+{{< callout type="info" >}}
+When using anthropic, do not change tool definitions to use `json_schema`. Use the openai standard of `parameters` - this will be automatically converted before making the api call.
+{{< /callout >}}
 
 ### OpenAI-compatible endpoints (Ollama)
 
@@ -101,5 +103,7 @@ model: llama3.1
 Run the curl command, in silent mode, to fetch gists for user slimslenderslacks from GitHub.
 ```
 
-**Note**: Set streaming to false if you're using Ollama for tool calling. Ollama does not currently stream tool calls.
+{{< callout type="info" >}}
+Set streaming to false if you're using Ollama for tool calling. Ollama does not currently stream tool calls.
+{{< /callout >}}
 

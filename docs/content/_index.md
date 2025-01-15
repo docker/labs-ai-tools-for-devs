@@ -1,16 +1,12 @@
 ---
-title: "Documentation"
+title: "Labs Projects"
 description: "Labs AI Tools for Devs"
-date: 2024-03-21
 draft: false
 cascade:
   type: docs
 ---
 
-## Quick Start
-
-- [Run with Claude Desktop](docs/claude-desktop)
-
-## Reference
-
-- [Authoring a Prompt](docs/authoring-prompts)
+{{< cards >}}
+  {{< card link="tools" title="AI Tools for Devs (Model Context Protocol)" icon="tag" tag="In progress" >}}
+  {{< card link="speculative" title="Speculative Execution" icon="tag" tag= "In progress" >}}
+{{< /cards >}}

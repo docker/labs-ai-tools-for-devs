@@ -1,11 +1,8 @@
 theme: hextra
 menu:
   main:
-    - name: Documentation
-      pageRef: /documentation
-      weight: 1
-    - name: Projects
-      pageRef: /projects
+    - name: Labs Projects
+      pageRef: /
       weight: 2
     - name: GitHub
       weight: 5
