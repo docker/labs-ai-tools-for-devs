@@ -3,14 +3,14 @@ title: "Documentation"
 description: "Labs AI Tools for Devs"
 date: 2024-03-21
 draft: false
+cascade:
+  type: docs
 ---
-
-# Documentation
 
 ## Quick Start
 
-- [Run with Claude Desktop](pages/claude-desktop)
+- [Run with Claude Desktop](docs/claude-desktop)
 
 ## Reference
 
-- [Authoring a Prompt](pages/authoring-prompts)
+- [Authoring a Prompt](docs/authoring-prompts)

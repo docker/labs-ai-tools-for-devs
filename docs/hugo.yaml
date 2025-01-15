@@ -1,0 +1,14 @@
+theme: hextra
+menu:
+  main:
+    - name: Documentation
+      pageRef: /documentation
+      weight: 1
+    - name: Projects
+      pageRef: /projects
+      weight: 2
+    - name: GitHub
+      weight: 5
+      url: "https://github.com/docker/labs-ai-tools-for-devs"
+      params:
+        icon: github
