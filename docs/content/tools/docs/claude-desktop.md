@@ -1,5 +1,6 @@
 ---
 title: Using Claude Desktop
+weight: 3
 ---
 
 Enable mcp_run in your claude_desktop_config.json file using the following snippet.  See the [quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user) for more details.

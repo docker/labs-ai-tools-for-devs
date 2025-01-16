@@ -1,3 +1,8 @@
+---
+title: Authoring Prompts
+weight: 2
+---
+
 # Prompt files
 
 A prompt is markdown content with a preamble describing tools available to the agent when executing this prompt.
@@ -106,4 +111,97 @@ Run the curl command, in silent mode, to fetch gists for user slimslenderslacks 
 {{< callout type="info" >}}
 Set streaming to false if you're using Ollama for tool calling. Ollama does not currently stream tool calls.
 {{< /callout >}}
+
+## Prompt Templates
+
+It is common for prompts to contain parameters that are either extracted from a user interaction 
+or, in the case of RAG, are populated by some sort of retrieval process. Markdown prompts can also
+contain template parameters.
+
+For example, the above curl example could be re-written as a template with a ``{{ user }}`` parameter.
+
+```markdown
+---
+tools:
+  - name: curl
+url:  http://localhost/v1/chat/completions
+stream: false
+model: llama3.1
+---
+
+# prompt
+
+Run the curl command, in silent mode, to fetch gists for user {{ user }} from GitHub.
+```
+
+### Binding values during testing
+
+When running in VSCode, you can set values of the parameters in the markdown preamble.
+
+```markdown
+---
+parameter-values:
+  user: slimslenderslacks
+---
+```
+
+### Extractors
+
+Extractors are container functions that can be used to extract values when the prompt has been deployed
+to a server. These extractors are also used to populate default values for a prompt when it is used from
+an MCP client.
+
+Extractor definitions also follow the pattern of compose services. They are just docker images but with 
+the additional requirement that they should write `application/json` to stdout. This json will be used to
+populate the context for binding parameters in the prompt template.
+
+```markdown
+---
+extractors:
+  - name: linguist
+    image: vonwig/go-linguist:latest
+    command:
+      - -json
+---
+```
+
+We can create lists if the extractor json output has array types.  For example,
+if we run the linguist tool to extract language from a project, our prompt can list
+them using the following template.  You need to be familar with the json format output
+by linguist (eg that it creates lists of maps with a `language` key).
+
+```markdown
+---
+extractors:
+  - name: linguist 
+---
+
+# prompt
+
+{{#linguist}}
+
+This project contains {{language}} code.
+
+{{/linguist}}
+
+```
+
+### Template Engine
+
+We support two templating engines today.
+
+* [mustache](https://mustache.github.io/mustache.5.html) is the default
+* [django](https://docs.djangoproject.com/en/5.1/topics/templates/)
+
+If you want to use django, then add the following field in the markdown preamble.
+
+```markdown
+---
+prompt-format: "django"
+---
+```
+
+### MCP arguments
+
+
 

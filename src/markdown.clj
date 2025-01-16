@@ -31,11 +31,12 @@
          (update 0 (fn [s] (.substring ^String s (dec c1))))
          (update (dec (count lines)) (fn [s] (.substring ^String s 0 (- c2 c1))))))))
 
-(def prompt-pattern #"(?i)\s*prompt\s+(\w+)\s?")
+(def prompt-pattern-with-role-capture #"(?i)\s*prompt\s+(\w+)\s?")
+(def prompt-pattern #"(?i)\s*prompt\s?(\w+)?\s?")
 
 (defn extract-role [s]
   (second
-   (re-find prompt-pattern s)))
+   (re-find prompt-pattern-with-role-capture s)))
 
 ;; headings that include the word Prompt
 (defn prompt-section? [content node]
@@ -51,9 +52,17 @@
 ;; extract Role from Prompt ....
 (defn node-content [content node]
   {:role
-   (-> node (nth 2) (nth 3) (nth 1) (from-range content) (extract-role))
+   (or (-> node (nth 2) (nth 3) (nth 1) (from-range content) (extract-role)) "user")
    :content
    (remove-first-line (from-range (nth node 1) content))})
+
+(comment
+  (extract-role "prompt user")
+  (extract-role "prompt")
+  (extract-role "prompt user and more")
+  (re-matches prompt-pattern "prompt")
+  (re-matches prompt-pattern "prompt user")
+  (re-matches prompt-pattern "prompt user"))
 
 (defn extract-prompts [content ast]
   (->>
