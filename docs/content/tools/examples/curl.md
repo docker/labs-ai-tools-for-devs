@@ -1,5 +1,15 @@
 ---
-model: claude-3-5-sonnet-20241022
+title: curl
+---
+
+# Description
+
+Fetch gists from your user from GitHub
+
+# Prompt Code
+
+```markdown
+---
 tools:
   - name: curl
 parameter-values:
@@ -9,4 +19,5 @@ parameter-values:
 # prompt
 
 Run the curl command, in silent mode, to fetch gists for user {{user}} from GitHub.
+```
 

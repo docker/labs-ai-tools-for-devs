@@ -1,3 +1,0 @@
----
-title: Model Context Protocol
----

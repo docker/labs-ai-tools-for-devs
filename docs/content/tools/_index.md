@@ -1,10 +1,7 @@
 ---
-title: Tools For Devs
+title: MCP/run Toolbox
 weight: 1
+cascade:
+  type: docs
 ---
 
-## AI Tools for Dev
-
-
-
-## Model Context Protocol

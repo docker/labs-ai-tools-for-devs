@@ -9,3 +9,7 @@ menu:
       url: "https://github.com/docker/labs-ai-tools-for-devs"
       params:
         icon: github
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
