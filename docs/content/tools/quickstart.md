@@ -1,49 +1,25 @@
 ---
-title: Quick Start w/ VSCode
+title: Quick Start w/ Claude Desktop
 weight: 1
 ---
 
 {{% steps %}}
 
-### Download `.vsix` extension
+### Install
 
-Download the `.vsix` extension from the [releases page](https://github.com/docker/labs-ai-tools-vscode/releases).
+[Configure Docker Desktop](../docs/claude-desktop) to use the `mcp/run` Docker container.
 
-### Install extension from `.vsix` file
+### Restart Claude Desktop
 
-```sh
-code --install-extension <path-to-vsix-file>
-```
+Restarting desktop should be a one-time activity. However, Claude
+Desktop does not support the `tools/list_changed` notification so we
+currently have to restart desktop more less continuously. :)
 
-or use the VSCode command palette `Extensions: Install from VSIX...`
+### Try a prompt
 
-### Open a prompt
-With the extension installed, open a prompt in VSCode. Examples can be found in the [examples](https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples) directory.
+Write a prompt in Claude that will run one of the tools in a registered defintion.
+For example:
 
-### Configure OpenAI API Key, or use a different model.
-Default model is `gpt-4` provided by OpenAI. Use an the VSCode command palette `Docker AI: Set secret key` to set your API key. 
-
-**Changing the model:**
-Use the following keys in the prompt front-matter to change the model:
-
-Anthropic:
-```yml
----
-url: https://api.anthropic.com
-model: claude-3-5-sonnet-20240620
----
-```
-
-
-Ollama:
-```yml
----
-model: llama3.2
-url: https://docker.host.internal:11434/v1
----
-```
-
-### Run the prompt
-Use the VSCode command palette `Docker AI: Run this prompt` to run the prompt.
+> Use hello world to send a greeting and then respond to what comes back.
 
 {{% /steps %}}

@@ -29,3 +29,16 @@ This will have already been exposed using this MCP server so when using Claude D
 You'll see a prompt asking if you want to run the "hello world" tool locally.
 
 ![consent](consent.png)
+
+## More prompts
+
+You can register new definitions in public github repos by adding additional `--register` arguments.
+
+```
+        "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/examples/swagger.md"
+```
+
+We are moving these registration command to a command line. It doesn't make sense to change the claude 
+config each time you add or remote a defintion.  However, because Claude Desktop has to be restarted 
+every time a definition changes today (because of the missing notification), we will work
+with Anthropic to make this much smoother.
