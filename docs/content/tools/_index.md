@@ -7,9 +7,9 @@ cascade:
 
 ## Background
 
-The `mcp/run` container is an mcp server, but it can be extended by giving it new
-containers, as tools, and prompts. Existing containers, like `curl` or `ffmpeg`, can
-then be exposed as MCP servers.
+The `mcp/run` container is an mcp server that can be extended with new
+container-based tools, and prompts. Existing containers, like `curl` or `ffmpeg`, can
+now be exposed as MCP servers without having to wrap each tool in an mcp server.
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
     style box2 fill:#f9f9f9,stroke:#333,stroke-width:2px
 ```
 
-Our current definitions are markdown documents (see [examples](examples)).
+Definitions of new tools and prompts are made using markdown documents (see [examples](examples)).
 
 ```markdown
 ---
@@ -42,7 +42,7 @@ Run the curl command, in silent mode, to fetch gists for user slimslenderslacks 
 
 ## Getting Started
 
-We can use this to extend MCP clients like Claude Desktop, and create test new tools and prompts using
+We can use this to extend MCP clients like Claude Desktop, and test new tool definitions using
 VSCode. Instructions for these two paths are here.
 
 1. Attach the MCP server [to Claude Desktop](quickstart).
