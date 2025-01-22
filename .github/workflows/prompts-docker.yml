@@ -30,6 +30,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: vonwig/prompts:latest
