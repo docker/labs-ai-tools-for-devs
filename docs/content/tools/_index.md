@@ -1,5 +1,5 @@
 ---
-title: MCP/run Toolbox
+title: MCP/docker Toolbox
 weight: 1
 cascade:
   type: docs
@@ -15,7 +15,7 @@ now be exposed as MCP servers without having to wrap each tool in an mcp server.
 flowchart LR
     desktop["Claude Desktop"]
     subgraph docker["Docker"]
-        mcp["mcp/run"]
+        mcp["mcp/docker"]
     end
     desktop --> docker
     docker -- extended by --- box1["Tools/Prompt Def (curl)"]
