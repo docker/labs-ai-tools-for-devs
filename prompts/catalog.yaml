@@ -1,13 +1,13 @@
 registry:
-  - name: "NPM Project Info"
-    description: "Get information about an NPM project"
-    ref: "github:docker/labs-ai-tools-for-devs/main/prompts/npm-project.md"
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/npm.svg"
+  - name: NPM Project Info
+    description: Get information about an NPM project
+    ref: github:docker/labs-ai-tools-for-devs/main/prompts/npm-project.md"
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/npm.svg
   - name: SQL Agent
-    description: "Run a SQL query against a sqlite database"
-    ref: "github:docker/labs-ai-tools-for-devs/main/prompts/sql/prompt.md"
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg"
-  - name: "Recommended Tags"
-    description: "Get recommended tags for a Docker image"
-    ref: "github:docker/labs-ai-tools-for-devs/main/prompts/recommended-tags.md"
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg"
+    description: Run a SQL query against a sqlite database
+    ref: github:docker/labs-ai-tools-for-devs/main/prompts/sql/prompt.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
+  - name: Recommended Tags
+    description: Get recommended tags for a Docker image
+    ref: github:docker/labs-ai-tools-for-devs/main/prompts/recommended_tags.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
