@@ -33,4 +33,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: vonwig/prompts:latest
+          tags: 
+            - vonwig/prompts:latest
+            - mcp/run:latest
+            - mcp/docker:latest

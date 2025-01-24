@@ -6,6 +6,8 @@
    [clojure.core :as c]
    [clojure.core.async :as async]
    [clojure.pprint :as pprint]
+   [clojure.string :as string]
+   docker
    git
    graph
    jsonrpc
@@ -93,8 +95,8 @@
 
 (defn entry->prompt-listing [k v _messages]
   (merge
-    {:name (str k)}
-    (select-keys (:metadata v) [:description])))
+   {:name (str k)}
+   (select-keys (:metadata v) [:description])))
 
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor
@@ -211,7 +213,8 @@
 (defrecord TimbreLogger []
   logger/ILogger
   (setup [this]
-    (let [log-path (str (fs/file "/prompts/docker-mcp-server.out"))]
+    (fs/create-dirs (fs/file "/prompts" "log"))
+    (let [log-path (str (fs/file "/prompts/log/docker-mcp-server.out"))]
       (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
                              :appenders {:println {:enabled? false}
                                          :spit (appenders/spit-appender {:fname log-path})}})
@@ -253,6 +256,7 @@
     (->> params (lsp.server/send-notification server "notifications/message")))
 
   (publish-prompt-list-changed [_ params]
+    (logger/info "send prompt list changed")
     (->> params (lsp.server/send-notification server "notifications/prompts/list_changed")))
 
   (publish-resource-list-changed [_ params]
@@ -262,6 +266,7 @@
     (->> params (lsp.server/send-notification server "notifications/resources/updated")))
 
   (publish-tool-list-changed [_ params]
+    (logger/info "send tool list changed")
     (->> params (lsp.server/send-notification server "notifications/tools/list_changed")))
   (publish-docker-notify [_ method params]
     (lsp.server/send-notification server method params)))
@@ -289,11 +294,35 @@
                      :producer producer
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
+     ;; register static prompts
      (when (:register opts)
        (try
          (db/add opts)
          (catch Throwable t
            (logger/error t))))
+     ;; register dynamic prompts
+     (when (fs/exists? (fs/file "/prompts/registry.yaml"))
+       (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml"))))
+     ;; watch dynamic prompts in background
+     (async/thread
+       (docker/run-streaming-function-with-no-stdin
+        {:image "vonwig/inotifywait:latest"
+         :volumes ["docker-prompts:/prompts"]
+         :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
+         :opts {:Tty true
+                :StdinOnce false
+                :OpenStdin false
+                :AttachStdin false}}
+        (fn [line]
+          (logger/info "registry changed" line)
+          (let [[_dir _event f] (string/split line #"\s+")]
+            (when (= f "registry.yaml")
+              (try
+                (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
+                (producer/publish-tool-list-changed producer {})
+                (producer/publish-prompt-list-changed producer {})
+                (catch Throwable t
+                  (logger/error t "unable to parse registry.yaml"))))))))
      (monitor-server-logs log-ch)
      (logger/info "Starting server...")
      [producer (lsp.server/start server components)])))

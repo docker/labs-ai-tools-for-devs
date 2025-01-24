@@ -3,11 +3,23 @@ registry:
     description: Get information about an NPM project
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/npm-project.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/npm.svg
-  SQL Agent:
-    description: Run a SQL query against a sqlite database
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/sql/prompt.md
+  mcp-sqlite:
+    description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
-  Recommended Tags:
-    description: Get recommended tags for a Docker image
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/recommended_tags.md
+  curl:
+    description: Use curl to make HTTP requests
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
+  hello-world:
+    description: echo a greeting using a container!
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/hello-world.svg
+  ffmpeg:
+    description: Use ffmpeg to process video files
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
+  explain_dockerfile:
+    description: Provide a detailed description, analysis, or annotation of a given Dockerfile.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg

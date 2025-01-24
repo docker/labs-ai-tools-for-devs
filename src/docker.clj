@@ -4,6 +4,7 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
+   [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [creds]
@@ -182,6 +183,14 @@
     :as :bytes
     :throw false}))
 
+(defn attach-container-stream-stdout [{:keys [Id]}]
+  ;; this assumes no Tty so the output will be multiplexed back
+  (curl/post
+   (format "http://localhost/containers/%s/attach?stderr=false&stdout=true&stream=true" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :as :stream
+    :throw false}))
+
 ;; should be 200 and then will have a StatusCode
 (defn wait-container [{:keys [Id]}]
   (curl/post
@@ -242,8 +251,54 @@
         (and digest (= digest Id))))
      (images {}))))
 
+(defn run-streaming-function-with-no-stdin
+  "run container function with no stdin, and no timeout, but streaming stdout"
+  [m cb]
+  (when (not (has-image? (:image m)))
+    (-pull m))
+  (let [x (create m)
+        finished-channel (async/promise-chan)]
+    (start x)
+
+    (async/go
+      (try
+        (let [s (:body (attach-container-stream-stdout x))]
+          (println s)
+          (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
+            (cb line)))
+        (catch Throwable e
+          (println e))))
+
+;; watch the container
+    (async/go
+      (wait x)
+      (async/>! finished-channel {:done :exited}))
+
+;; body is raw PTY output
+    (let [finish-reason (async/<!! finished-channel)
+          s (:body (attach x))
+          info (inspect x)]
+      (delete x)
+      (merge
+       finish-reason
+       {:pty-output s
+        :exit-code (-> info :State :ExitCode)
+        :info info}))))
+
+(comment
+  (async/thread
+    (run-streaming-function-with-no-stdin
+      {:image "vonwig/inotifywait:latest"
+       :volumes ["docker-prompts:/prompts"]
+       :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
+       :opts {:Tty true
+              :StdinOnce false
+              :OpenStdin false
+              :AttachStdin false}}
+      println)))
+
 (defn run-function
-  "run container function with no stdin"
+  "run container function with no stdin, and no streaming output"
   [{:keys [timeout] :or {timeout 600000} :as m}]
   (when (not (has-image? (:image m)))
     (-pull m))
