@@ -17,7 +17,7 @@ Enable mcp_run in your claude_desktop_config.json file using the following snipp
         "mcp/docker:latest",
         "serve",
         "--mcp",
-        "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/examples/hello_world.md"
+        "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"
       ]
     }
 }
