@@ -25,5 +25,5 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
   qr code:
     description: Generate a qrcode for an input text string
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qr_code.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/qr.svg
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
+    icon: https://gravatar.com/slimslenderslacks
