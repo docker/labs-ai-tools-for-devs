@@ -3,7 +3,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Paper, Stack, Typography, Button, ButtonGroup, Grid, Dialog, DialogContent, DialogTitle, DialogContentText } from '@mui/material';
 import { run } from 'node:test';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
-import { CatalogItem, CatalogItemCard } from './components/PromptCard';
+import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
 
@@ -18,24 +18,24 @@ const READ_REGISTRY_COMMAND_ARGS = ['--rm', '-v', 'docker-prompts:/docker-prompt
 const getRegistry = async () => {
   const catFile = async () => {
     const result = await client.docker.cli.exec('run', READ_REGISTRY_COMMAND_ARGS)
-    return parse(result.stdout)['registry'];
+    return parse(result.stdout)['registry'] as Promise<{ [key: string]: { ref: string } }>;
   }
   try {
-    return await catFile();
+    return await catFile()
   }
   catch (error) {
     if (typeof error === 'object' && error && 'stderr' in error && error.stderr && (error.stderr as string).includes('No such file or directory')) {
       const payload = JSON.stringify({
         files: [{
           path: 'registry.yaml',
-          content: 'registry: []'
+          content: 'registry: {}'
         }]
       })
       await client.docker.cli.exec('run', ['--rm', '--workdir', '/docker-prompts', '-v', 'docker-prompts:/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       return await catFile();
     }
     client.desktopUI.toast.error('Failed to get prompt registry: ' + error)
-    return [];
+    return {};
   }
 }
 
@@ -46,7 +46,7 @@ export function App() {
   const [claudeModal, setClaudeModal] = useState({ show: false, content: '' });
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [canRegister, setCanRegister] = useState(false);
-  const [registryItems, setRegistryItems] = useState<CatalogItem[]>([]);
+  const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
   const [status, setStatus] = useState<{
     status: 'idle' | 'loading' | 'error',
     message: string
@@ -86,10 +86,10 @@ export function App() {
     setCanRegister(true);
   }
 
-  const registerCatalogItem = async (item: CatalogItem) => {
+  const registerCatalogItem = async (item: CatalogItemWithName) => {
     try {
       const currentRegistry = await getRegistry();
-      const newRegistry = [...currentRegistry, { ref: item.ref || `ref-${item.name}` }];
+      const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
       const payload = JSON.stringify({
         files: [{
           path: 'registry.yaml',
@@ -105,14 +105,14 @@ export function App() {
     }
   }
 
-  const unregisterCatalogItem = async (item: CatalogItem) => {
+  const unregisterCatalogItem = async (item: CatalogItemWithName) => {
     try {
       const currentRegistry = await getRegistry();
-      const newRegistry = currentRegistry.filter((i: RegistryItem) => i.ref !== item.ref && i.ref !== `ref-${item.name}`);
+      delete currentRegistry[item.name];
       const payload = JSON.stringify({
         files: [{
           path: 'registry.yaml',
-          content: stringify({ registry: newRegistry })
+          content: stringify({ registry: currentRegistry })
         }]
       })
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
@@ -172,14 +172,14 @@ export function App() {
           </ButtonGroup>
         </div>
         <Grid container spacing={2}>
-          {items.map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item.name}>
+          {Object.entries(items).map(([name, item]) => (
+            <Grid item xs={12} sm={6} md={4} key={name} flex="1 1 0">
               <CatalogItemCard openUrl={() => {
                 client.host.openExternal(Ref.fromRef(item.ref).toURL())
               }}
-                item={item}
+                item={{ name, ...item }}
                 canRegister={canRegister}
-                registered={registryItems.some((i) => i.ref === item.ref || i.ref === `ref-${item.name}`)}
+                registered={Object.keys(registryItems).some((i) => i === name)}
                 register={registerCatalogItem}
                 unregister={unregisterCatalogItem}
               />
