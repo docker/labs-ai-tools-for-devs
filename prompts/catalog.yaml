@@ -11,15 +11,19 @@ registry:
     description: Use curl to make HTTP requests
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
-  hello-world:
+  hello world:
     description: echo a greeting using a container!
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/hello-world.svg
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
   ffmpeg:
     description: Use ffmpeg to process video files
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
-  explain_dockerfile:
+  explain dockerfiles:
     description: Provide a detailed description, analysis, or annotation of a given Dockerfile.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
+  qr code:
+    description: Generate a qrcode for an input text string
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qr_code.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/qr.svg

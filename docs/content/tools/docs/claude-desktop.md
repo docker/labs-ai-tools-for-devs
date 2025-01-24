@@ -8,13 +8,13 @@ Enable mcp_run in your claude_desktop_config.json file using the following snipp
 ```json
 {
   "mcpServers": {
-    "mcp_run": {
+    "mcp_docker": {
       "command": "docker",
       "args": [
         "run", "--rm", "-i", "--pull", "always",
         "-v", "/var/run/docker.sock:/var/run/docker.sock",
         "--mount", "type=volume,source=docker-prompts,target=/prompts",
-        "vonwig/prompts:latest",
+        "mcp/docker:latest",
         "serve",
         "--mcp",
         "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/examples/hello_world.md"
