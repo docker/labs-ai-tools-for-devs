@@ -21,5 +21,4 @@ tools:
 # prompt user
 
 Ask the user what kind of a greeting they'd like to receive.
-Then send a greeting from Docker and show the output.
-
+Once you have the answer, generate a greeting and send it to Docker.
