@@ -1,7 +1,13 @@
 ---
-name: hello-docker
-description: run the hello-docker
+name: hello from Docker
+description: send a greeting from Docker
 model: claude-3-5-sonnet-20241022
+parameters:
+  type: object
+  properties:
+    greeting:
+      type: string
+      description: the greeting to send
 tools:
   - name: hello-docker
     description: print a secret message
@@ -9,10 +15,11 @@ tools:
       image: busybox:latest
       command:
         - echo
-        - "Hello, World!"
+        - "{{greeting|safe}}"
 ---
 
 # prompt user
 
-Use hello world to print a secret message and then explain it to me
+Ask the user what kind of a greeting they'd like to receive.
+Then send a greeting from Docker and show the output.
 
