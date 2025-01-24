@@ -175,7 +175,7 @@ export function App() {
           {Object.entries(items).map(([name, item]) => (
             <Grid item xs={12} sm={6} md={4} key={name} flex="1 1 0">
               <CatalogItemCard openUrl={() => {
-                client.host.openExternal(Ref.fromRef(item.ref).toURL())
+                client.host.openExternal(Ref.fromRef(item.ref).toURL(true))
               }}
                 item={{ name, ...item }}
                 canRegister={canRegister}

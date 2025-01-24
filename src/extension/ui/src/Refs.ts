@@ -27,7 +27,7 @@ export class Ref {
         return `${this.provider}:${this.repository}?ref=${this.ref}&path=${this.path}`;
     }
 
-    toURL() {
+    toURL(plain: boolean = false) {
         let baseUrl = ''
         switch (this.provider) {
             case 'github':
@@ -42,6 +42,6 @@ export class Ref {
             default:
                 throw new Error(`Unsupported provider: ${this.provider}`);
         }
-        return `${baseUrl}/${this.repository}/blob/${this.ref}/${this.path}`;
+        return `${baseUrl}/${this.repository}/blob/${this.ref}/${this.path}${plain ? '?plain=1' : ''}`;
     }
 }
