@@ -26,4 +26,4 @@ registry:
   qr code:
     description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
-    icon: https://gravatar.com/slimslenderslacks
+    icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
