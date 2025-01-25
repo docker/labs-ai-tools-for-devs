@@ -6,8 +6,8 @@
 
 (set! *warn-on-reflection* true)
 
-(defn- functions-dir []
-  (dir/get-dir "./functions" "/app/result/functions" "/app/functions"))
+(defn- tools-dir []
+  (dir/get-dir "./tools" "/app/result/tools" "/app/tools"))
 
 (defn- extractors-dir []
   (dir/get-dir "./extractors" "/app/result/extractors" "/app/extractors"))
@@ -26,16 +26,16 @@
          (into {}))))
 
 (comment
-  (pprint (get-registry functions-dir)))
+  (pprint (get-registry tools-dir)))
 
-(defn get-function 
-  "  returns a function definition or nil"
+(defn get-tool 
+  "  returns a tool definition or nil"
   [{:keys [name image]}]
   (or
-    (get (get-registry functions-dir) name)
-    (get (get-container-images functions-dir) image)))
+    (get (get-registry tools-dir) name)
+    (get (get-container-images tools-dir) image)))
 
 (defn get-extractor
-  "  returns a function definition or nil"
+  "  returns a extractor definition or nil"
   [{:keys [name]}]
   (get (get-registry extractors-dir) name))
