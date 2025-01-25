@@ -154,9 +154,20 @@
 
 (def prompt-file-pattern #".*_(.*)_.*.md")
 
+(defn ->message [{:keys [content] :as m}] (assoc m :content {:text content :type "text"}))
+
 (defn get-prompts
-  "run extractors and then render prompt templates
-     returns map of messages, functions, metadata and optionally error"
+  "run extractors and then render prompt templates (possibly)
+     parameters
+       mandatory
+         either prompts or prompt-content
+           prompts should be a markdown file
+           prompts used to be a directory but that's deprecated
+       optional
+         user, platform, host-dir - create default facts for template rendering]
+         parameters - external params bound at rendering time
+       
+     returns a :schema/prompts-file"
   [{:keys [parameters prompts user platform host-dir prompt-content] :as opts}]
   (let [{:keys [metadata] :as prompt-data}
         (cond
@@ -184,16 +195,29 @@
            parameters
            (-> metadata :parameter-values))
         renderer (if (= "django" (:prompt-format metadata))
-                   (partial selmer-render (facts m user platform host-dir))
-                   (partial moustache-render prompts (facts m user platform host-dir)))]
+                   (fn [arguments message]
+                     (selmer-render (merge (facts m user platform host-dir) arguments) message))
+                   (fn [arguments message]
+                     (moustache-render prompts (merge (facts m user platform host-dir) arguments) message)))]
     ((schema/validate :schema/prompts-file)
      (-> prompt-data
-         (update :messages #(map renderer %))
+         ((fn [m] (assoc m :prompt-function (fn [arguments]
+                                              (->> (:messages m)
+                                                   (map (comp ->message (partial renderer arguments)))
+                                                   (into []))))))
+         (update :messages #(map (partial renderer {}) %))
          (update :metadata dissoc :functions :tools :extractors)
          (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition)))))))
 
 (comment
   (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
   (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
-  (get-prompts {:prompts (fs/file "./README.md")}))
+  (get-prompts {:prompts (fs/file "./README.md")})
+  (=
+   ((:prompt-function (get-prompts {:prompts (fs/file "./prompts/examples/qrencode.md")})) {:content "mycontent"})
+   [{:role "user",
+     :content
+     {:text
+      "\nGenerate a QR code for the content 'mycontent'.\nSave the generated image to `/thread/resources/qrcode.png`.\nIf the command fails, read the man page and try again.\nIf successful, output the path to the generated image in markdown syntax.",
+      :type "text"}}]))
 

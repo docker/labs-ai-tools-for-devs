@@ -1,13 +1,20 @@
 ---
+name: qrencode
+description: Generate QR codes
 tools:
   - name: qrencode
+arguments:
+  - name: content
+    description: the content to encode in the QR code
+    required: true
+parameter-values:
+  content: https://github.com/docker/labs-ai-tools-for-devs
 ---
 
-# Prompt user
+# prompt
 
-Generate a QR code for the content 
-'https://github.com/docker/labs-ai-tools-for-devs'.
-Save the generated image to `qrcode.png`.
+Generate a QR code for the content '{{content}}'.
+Save the generated image to `/thread/resources/qrcode.png`.
 If the command fails, read the man page and try again.
 If successful, output the path to the generated image in markdown syntax.
 
@@ -16,6 +23,6 @@ If successful, output the path to the generated image in markdown syntax.
 After running the above prompt, there should be a file named `qrcode.png` in the current project's host directory.
 
 ```bash
-open ~/vonwig/altaservice/qrcode.png
+open ~/docker/labs-ai-tools-for-devs/qrcode.png
 ```
 

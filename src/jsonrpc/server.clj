@@ -74,8 +74,8 @@
   ;; merges client-info capabilities and client protocol-version
   (swap! db* merge params)
   {:protocol-version "2024-11-05"
-   :capabilities {:prompts {}
-                  :tools {}}
+   :capabilities {:prompts {:listChanged true}
+                  :tools {:listChanged true}}
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
@@ -96,29 +96,24 @@
 (defn entry->prompt-listing [k v _messages]
   (merge
    {:name (str k)}
-   (select-keys (:metadata v) [:description])))
+   (select-keys (:metadata v) [:description :arguments])))
 
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor
   (logger/info "prompts/list" params)
   (let [prompts
         {:prompts (->> (:mcp.prompts/registry @db*)
-                       (mapcat (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
+                       (mapcat
+                        (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
                        (into []))}]
     (logger/info prompts)
     prompts))
 
-(defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name]}]
-  ;; TODO resolve arguments
+(defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name arguments]}]
   (logger/info "prompts/get " name)
-  (let [{:keys [messages metadata] :as entry} (-> @db* :mcp.prompts/registry (get name))]
+  (let [{:keys [prompt-function metadata]} (-> @db* :mcp.prompts/registry (get name))]
     {:description (or (:description metadata) name)
-     :messages (->> messages
-                    (map (fn [m] (-> m
-                                     (update :content (fn [content]
-                                                        {:type "text"
-                                                         :text content})))))
-                    (into []))}))
+     :messages (prompt-function (or arguments {}))}))
 
 (defmethod lsp.server/receive-request "resources/list" [_ _ _]
   {:resources []})
