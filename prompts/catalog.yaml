@@ -8,7 +8,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
   curl:
-    description: Use curl to make HTTP requests
+    description: Demonstration of curl tool (use curl to fetch GitHub gists for a user)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
   hello world:
