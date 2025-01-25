@@ -6,6 +6,7 @@ import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
+import { ClaudeConfigStatus } from './components/ClaudeConfigStatus';
 
 type RegistryItem = {
   ref: string;
@@ -141,7 +142,6 @@ export function App() {
         client.desktopUI.toast.error('Unsupported platform: ' + platform)
         return;
     }
-
     const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
     setClaudeModal({ show: true, content: result.stdout })
   }
@@ -170,6 +170,7 @@ export function App() {
             <Button onClick={loadRegistry}>Refresh registry</Button>
             <Button onClick={showClaudeDesktopConfig}>Show Claude Desktop Config</Button>
           </ButtonGroup>
+          <ClaudeConfigStatus client={client} />
         </div>
         <Grid container spacing={2}>
           {Object.entries(items).map(([name, item]) => (
