@@ -32,7 +32,7 @@ arguments:
 
 # prompt user
 
-Start by fetching the Dockerfile located at the path /dockerfile.
+Start by fetching the Dockerfile located at the path {{path}}.
 
 After fetching the Dockerfile contents, explain the Dockerfile line by line.
 
