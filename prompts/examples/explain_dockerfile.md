@@ -19,7 +19,7 @@ tools:
           description: Path of the folder to delete
     container:
       image: vonwig/bash_alpine
-      mounts: 
+      volumes: 
         - "{{path|safe}}:/dockerfile:ro"
       command:
         - "cat /dockerfile"
@@ -32,7 +32,7 @@ arguments:
 
 # prompt user
 
-Start by fetching the Dockerfile located at /dockerfile.
+Start by fetching the Dockerfile located at the path /dockerfile.
 
 After fetching the Dockerfile contents, explain the Dockerfile line by line.
 
