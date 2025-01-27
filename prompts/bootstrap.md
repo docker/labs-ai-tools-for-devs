@@ -1,4 +1,5 @@
 ---
+name: register a new skill
 tools:
   - name: register-skill
     description: Register a new skill

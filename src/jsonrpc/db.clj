@@ -44,7 +44,6 @@
   (try
     (let [{:keys [registry]} (yaml/parse-string registry-content)
           prompt-registry (get-prompt-data (assoc opts :register (map :ref (vals registry))))]
-      (logger/info "merging" prompt-registry)
       (swap! db* add-dynamic-prompts prompt-registry))
     (catch Throwable e
       (logger/error e "could not merge dynamic prompts"))))

@@ -56,6 +56,13 @@
        (fs/create-dirs default-dir)
        default-dir))))
 
+(comment
+  "alpine/git uses a VOLUME /git declaration
+   so we need to mount something there or docker will create
+   a volume.
+   https://docs.docker.com/reference/dockerfile/#volume
+   see https://hub.docker.com/r/alpine/git for usage guidelines")
+
 (defn pull [{:keys [dir ref]}]
   (docker/run-container
    (merge
@@ -64,8 +71,10 @@
                       (when ref [ref]))}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
+       :volumes ["docker-prompts-git:/git"]
        :mounts ["docker-prompts:/prompts:rw"]}
-      {:host-dir (str dir)}))))
+      {:host-dir (str dir)
+       :volumes ["docker-prompts-git:/git"]}))))
 
 (defn clone [{:keys [dir owner repo ref ref-hash]}]
   (docker/run-container
@@ -73,14 +82,19 @@
     {:image "alpine/git:latest"}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
+       :volumes ["docker-prompts-git:/git"]
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
                         (when ref ["-b" ref])
                         [(format "/prompts/%s" ref-hash)])
        :mounts ["docker-prompts:/prompts:rw"]}
       {:host-dir (str dir)
+       :volumes ["docker-prompts-git:/git"]
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
                         (when ref ["-b" ref])
                         [(format "/project/%s" ref-hash)])}))))
+
+(comment
+  (clone {:dir "/Users/slim/crap" :owner "docker" :repo "labs-make-runbook" :ref "main" :ref-hash "crap"}))
 
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve

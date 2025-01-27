@@ -50,3 +50,6 @@
     `(when *logger*
        (-debug *logger* ~fmeta ~@args))))
 
+(defn trace [x]
+  (info "trace " x)
+  x)

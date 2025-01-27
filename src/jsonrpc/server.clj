@@ -1,30 +1,31 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
-   [babashka.fs :as fs]
-   [cheshire.core :as json]
-   [clojure.core :as c]
-   [clojure.core.async :as async]
-   [clojure.pprint :as pprint]
-   [clojure.string :as string]
-   docker
-   git
-   graph
-   jsonrpc
-   [jsonrpc.db :as db]
-   [jsonrpc.logger :as logger]
-   [jsonrpc.producer :as producer]
-   [lsp4clj.coercer :as coercer]
-   [lsp4clj.io-chan :as io-chan]
-   [lsp4clj.io-server :refer [stdio-server]]
-   [lsp4clj.server :as lsp.server]
-   [promesa.core :as p]
-   state
-   [taoensso.timbre :as timbre]
-   [taoensso.timbre.appenders.core :as appenders]
-   tools
-   user-loop
-   volumes)
+    [babashka.fs :as fs]
+    [cheshire.core :as json]
+    [clojure.core :as c]
+    [clojure.core.async :as async]
+    [clojure.pprint :as pprint]
+    [clojure.string :as string]
+    docker
+    git
+    graph
+    jsonrpc
+    [jsonrpc.db :as db]
+    [jsonrpc.logger :as logger]
+    [jsonrpc.producer :as producer]
+    [lsp4clj.coercer :as coercer]
+    [lsp4clj.io-chan :as io-chan]
+    [lsp4clj.io-server :refer [stdio-server]]
+    [lsp4clj.server :as lsp.server]
+    [promesa.core :as p]
+    shutdown
+    state
+    [taoensso.timbre :as timbre]
+    [taoensso.timbre.appenders.core :as appenders]
+    tools
+    user-loop
+    volumes)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -75,7 +76,8 @@
   (swap! db* merge params)
   {:protocol-version "2024-11-05"
    :capabilities {:prompts {:listChanged true}
-                  :tools {:listChanged true}}
+                  :tools {:listChanged true}
+                  :resources {}}
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
@@ -122,7 +124,11 @@
   {:contents []})
 
 (defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
-  {:resource-templates []})
+  {:resource-templates
+   ;; uriTemplate, name, description, mimeType
+   ;; uriTemplates have parameters like {path}
+   ;;   example: "file:///{path}
+   []})
 
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ _]
   {:resource-templates []})
@@ -138,26 +144,39 @@
                                 (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
                (into []))})
 
+(defn mcp-tool-calls
+  " params
+      db* - uses mcp.prompts/registry and host-dir
+      params - tools/call mcp params"
+  [db* params]
+  (volumes/with-volume
+    (fn [thread-id]
+      (concat
+       [{:type "text"
+         :text (->>
+                (tools/make-tool-calls
+                 0
+                 (partial
+                  tools/function-handler
+                  {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+                   :host-dir (-> @db* :host-dir)
+                   :thread-id thread-id})
+                 [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
+                (async/reduce conj [])
+                (async/<!!)
+                (map :content)
+                (apply str))}]
+       (volumes/pick-up-mcp-resources thread-id)))))
+
 (defmethod lsp.server/receive-request "tools/call" [_ {:keys [db*]} params]
   (logger/info "tools/call")
+  (logger/info "with params" params)
   (lsp.server/discarding-stdout
-   (let [tools (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-         tool-defaults {:functions tools
-                        :host-dir (-> @db* :host-dir)}]
-     (logger/info "calling tools " tool-defaults)
-     (logger/info "with params" params)
-     (let [content (->>
-                    (tools/make-tool-calls
-                     0
-                     (partial tools/function-handler tool-defaults)
-                     [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
-                    (async/reduce conj [])
-                    (async/<!!)
-                    (map :content)
-                    (apply str))]
-       (logger/info "content " content)
-       {:content [{:type "text" :text content}]
-        :is-error false}))))
+   (let [content (mcp-tool-calls db* params)]
+     (logger/info "content " (with-out-str (pprint/pprint content)))
+     ;; TODO with mcp, tool-calls with errors can be explicit
+     {:content content
+      :is-error false})))
 
 (defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
   ;; supports only git refs
@@ -191,7 +210,7 @@
                            (graph/chat-with-tools m))
                          m)))
                     (if thread-id
-                      {:thread-id thread-id :save-thread-volume true}
+                      {:thread-id thread-id :save-thread-volume false}
                       {}))))))})
      {:conversation-id conversation-id})))
 
@@ -300,24 +319,26 @@
        (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml"))))
      ;; watch dynamic prompts in background
      (async/thread
-       (docker/run-streaming-function-with-no-stdin
-        {:image "vonwig/inotifywait:latest"
-         :volumes ["docker-prompts:/prompts"]
-         :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
-         :opts {:Tty true
-                :StdinOnce false
-                :OpenStdin false
-                :AttachStdin false}}
-        (fn [line]
-          (logger/info "registry changed" line)
-          (let [[_dir _event f] (string/split line #"\s+")]
-            (when (= f "registry.yaml")
-              (try
-                (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
-                (producer/publish-tool-list-changed producer {})
-                (producer/publish-prompt-list-changed producer {})
-                (catch Throwable t
-                  (logger/error t "unable to parse registry.yaml"))))))))
+       (let [{x :container}
+             (docker/run-streaming-function-with-no-stdin
+              {:image "vonwig/inotifywait:latest"
+               :volumes ["docker-prompts:/prompts"]
+               :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
+              (fn [line]
+                (logger/info "registry changed" line)
+                (let [[_dir _event f] (string/split line #"\s+")]
+                  (when (= f "registry.yaml")
+                    (try
+                      (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
+                      (producer/publish-tool-list-changed producer {})
+                      (producer/publish-prompt-list-changed producer {})
+                      (catch Throwable t
+                        (logger/error t "unable to parse registry.yaml")))))))]
+         (shutdown/schedule-container-shutdown
+          (fn []
+            (logger/info "inotifywait shutting down")
+            (docker/kill-container x)
+            (docker/delete x)))))
      (monitor-server-logs log-ch)
      (logger/info "Starting server...")
      [producer (lsp.server/start server components)])))

@@ -4,7 +4,6 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
-   [clojure.java.io :as io]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [creds]
@@ -109,7 +108,7 @@
 ;; Tty wraps the process in a pseudo terminal
 {:StdinOnce true
  :OpenStdin true}
-(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes] :or {opts {:Tty true}} :as m}]
+(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes] :or {opts {:Tty true}}}]
   #_(jsonrpc/notify :message {:content (str m)})
   (let [payload (json/generate-string
                  (merge
@@ -167,6 +166,8 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
+;; container was created with a Terminal (output is not-multiplexed)
+;; use after the container has stopped (not streaming)
 (defn attach-container [{:keys [Id]}]
   ;; logs is true (as opposed to stream=true) so we run this after the container has stopped
   ;; TTY is true above so this is the just the raw data sent to the PTY (not multiplexed)
@@ -175,6 +176,7 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
+;; container was created without a Terminal (output is multiplexed so read as bytes)
 (defn attach-container-stdout-logs [{:keys [Id]}]
   ;; this assumes no Tty so the output will be multiplexed back
   (curl/post
@@ -183,8 +185,8 @@
     :as :bytes
     :throw false}))
 
+;; container must be created with a Terminal (so we can stream with a Reader)
 (defn attach-container-stream-stdout [{:keys [Id]}]
-  ;; this assumes no Tty so the output will be multiplexed back
   (curl/post
    (format "http://localhost/containers/%s/attach?stderr=false&stdout=true&stream=true" Id)
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
@@ -256,46 +258,55 @@
   [m cb]
   (when (not (has-image? (:image m)))
     (-pull m))
-  (let [x (create m)
+  (let [x (-> m
+              (update :opts
+                      (fnil merge {})
+                      {:Tty true
+                       :StdinOnce false
+                       :OpenStdin false
+                       :AttachStdin false})
+              (create))
         finished-channel (async/promise-chan)]
     (start x)
 
     (async/go
       (try
         (let [s (:body (attach-container-stream-stdout x))]
-          (println s)
           (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
             (cb line)))
         (catch Throwable e
           (println e))))
 
-;; watch the container
+    ;; watch the container
     (async/go
       (wait x)
       (async/>! finished-channel {:done :exited}))
 
-;; body is raw PTY output
-    (let [finish-reason (async/<!! finished-channel)
-          s (:body (attach x))
-          info (inspect x)]
-      (delete x)
-      (merge
-       finish-reason
-       {:pty-output s
-        :exit-code (-> info :State :ExitCode)
-        :info info}))))
+    {:container x
+     ;; stopped channel
+     :stopped (async/go
+                ;; body is raw PTY output
+                (let [finish-reason (async/<!! finished-channel)
+                      s (:body (attach x))
+                      info (inspect x)]
+                  (delete x)
+                  (merge
+                   finish-reason
+                   {:pty-output s
+                    :exit-code (-> info :State :ExitCode)
+                    :info info})))}))
 
 (comment
   (async/thread
     (run-streaming-function-with-no-stdin
-      {:image "vonwig/inotifywait:latest"
-       :volumes ["docker-prompts:/prompts"]
-       :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
-       :opts {:Tty true
-              :StdinOnce false
-              :OpenStdin false
-              :AttachStdin false}}
-      println)))
+     {:image "vonwig/inotifywait:latest"
+      :volumes ["docker-prompts:/prompts"]
+      :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
+      :opts {:Tty true
+             :StdinOnce false
+             :OpenStdin false
+             :AttachStdin false}}
+     println)))
 
 (defn run-function
   "run container function with no stdin, and no streaming output"
@@ -327,6 +338,9 @@
         :exit-code (-> info :State :ExitCode)
         :info info}))))
 
+;; not curl - opens a real socket to write to the container stdin
+;;  returns the open socket - closing the socket will signal the program to finish
+;;          if it's waiting on input
 (defn write-stdin [container-id content]
   (let [buf (ByteBuffer/allocate (* 1024 20))
         address (UnixDomainSocketAddress/of "/var/run/docker.sock")
@@ -362,7 +376,10 @@
       (println t)
       "")))
 
-(defn function-call-with-stdin [m]
+(defn function-call-with-stdin 
+  "creates and starts container, then writes to stdin process
+     returns container map with Id, and socket - socket is open socket to stdin"
+  [m]
   (when (not (has-image? (:image m)))
     (-pull m))
   (let [x (merge
@@ -390,7 +407,8 @@
     (async/go
       (wait x)
       (async/>! finished-channel {:done :exited}))
-    ;; body is raw PTY output
+    ;; body is raw PTY output - could we 
+    ;;   have just been reading from the socket since it's two way?
     (try
       (let [finish-reason (async/<!! finished-channel)
             s (docker-stream-format->stdout

@@ -13,8 +13,7 @@ parameter-values:
 
 # prompt
 
-Generate a QR code for the content '{{content}}'.
-Save the generated image to `/thread/resources/qrcode.png`.
+Generate a QR code for the content '{{content}}' and write the output to the file `/thread/resources/qrcode.png`.
 If the command fails, read the man page and try again.
 If successful, output the path to the generated image in markdown syntax.
 

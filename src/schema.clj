@@ -37,9 +37,10 @@
 (s/def ::image string?)
 (s/def ::command (s/coll-of string?))
 (s/def ::mounts (s/coll-of string?))
+(s/def ::volumes (s/coll-of string?))
 (s/def ::file string?)
 (s/def ::stdin (s/keys :opt-un [::file]))
-(s/def ::container-definition (s/keys :opt-un [::stdin ::host-dir ::entrypoint ::command ::user ::jwt ::mounts ::thread-id ::workdir]
+(s/def ::container-definition (s/keys :opt-un [::stdin ::host-dir ::entrypoint ::command ::user ::jwt ::mounts ::volumes ::thread-id ::workdir]
                                       :req-un [::image]))
 
 (s/def ::pty-output string?)
