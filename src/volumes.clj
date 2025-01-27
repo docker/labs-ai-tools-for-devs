@@ -33,13 +33,16 @@
           {:image "vonwig/bb:latest"
            :thread-id thread-id
            :command [(json/generate-string
-                       {:directory "/thread/resources"} keyword)
+                       {:directory "/thread"} keyword)
                      (script/read "src/volumes/collect.clj")]})
         :pty-output
         (json/parse-string keyword))
     (catch Throwable t
       (logger/error t "error collecting mcp resources")
       {})))
+
+(comment
+  (script/read "src/volumes/collect.clj"))
 
 (comment
   (->
