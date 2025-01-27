@@ -71,8 +71,8 @@
                       (when ref [ref]))}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
-       :volumes ["docker-prompts-git:/git"]
-       :mounts ["docker-prompts:/prompts:rw"]}
+       :volumes ["docker-prompts-git:/git"
+                 "docker-prompts:/prompts:rw"]}
       {:host-dir (str dir)
        :volumes ["docker-prompts-git:/git"]}))))
 

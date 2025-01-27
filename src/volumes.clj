@@ -48,11 +48,11 @@
   (->
     (docker/run-container
       {:image "vonwig/bb:latest"
-       :volumes ["/Users/slim/slimslenderslacks/flask-nix-example:/project"]
+       :volumes ["/Users/slim:/project"]
        :workdir "/project"
        :command [(json/generate-string
-                   {:thread-id "blah"})
-                 "{}"]})
+                   {:directory "/project"})
+                 (script/read "src/volumes/collect.clj")]})
     :pty-output
-    (json/parse-string keyword)))
+    #_(json/parse-string keyword)))
 

@@ -71,6 +71,10 @@
                                          {:mounts (->> (-> definition :container :mounts)
                                                        (map (fn [s] (first (interpolate arg-context s))))
                                                        (into []))})
+                                       (when (-> definition :container :volumes)
+                                         {:volumes (->> (-> definition :container :volumes)
+                                                        (map (fn [s] (first (interpolate arg-context s))))
+                                                        (into []))})
                                           ;; workdirs in a container definition will always override ones
                                           ;; set in the metadata
                                        (when-let [wd (or

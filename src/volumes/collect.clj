@@ -3,6 +3,10 @@
   "pass in args"
   (def args {:directory "/Users/slim"}))
 
+(require '[clojure.java.io :as io])
+(require '[babashka.fs :as fs])
+(require '[cheshire.core :as json])
+
 (defn file->bytes [path]
   (with-open [in (io/input-stream path)
               out (java.io.ByteArrayOutputStream.)]
