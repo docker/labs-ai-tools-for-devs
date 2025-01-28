@@ -45,7 +45,7 @@ then ask again.
 
 Figure out the basedir for this file and use that as the basedir parameter when running ffmpeg.
 
-Use ffmpeg to convert this file to an animated gif. The output .gif file should be written to the /thread directory and the filename
+Use ffmpeg to convert this file to an animated gif. The output .gif file should be written to the basedir directory and the filename
 should be the same as the input file but with the file extension .gif.
 
 Then count the number of frames in the output .gif file.
