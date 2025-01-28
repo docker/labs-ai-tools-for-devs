@@ -10,12 +10,9 @@
     "@emotion/styled": "11.10.4",
     "@mui/icons-material": "^5.16.5",
     "@mui/material": "5.10.8",
-    "@open-rpc/client-js": "^1.8.1",
     "ansi-to-html": "^0.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "simple-jsonrpc-js": "^1.2.0",
-    "vscode-jsonrpc": "^8.2.1",
     "yaml": "^2.3.1"
   },
   "scripts": {
