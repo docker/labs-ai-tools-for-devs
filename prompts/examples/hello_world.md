@@ -1,5 +1,5 @@
 ---
-name: hello from Docker
+name: hello Docker
 description: send a greeting from Docker
 model: claude-3-5-sonnet-20241022
 tools:
@@ -20,5 +20,5 @@ tools:
 
 # prompt user
 
-Ask the user what kind of a greeting they'd like to receive.
+Ask what kind of a greeting I'd like to receive.
 Once you have the answer, generate a greeting and send it to Docker.

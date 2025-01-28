@@ -1,4 +1,5 @@
 ---
+name: mcp-sqlite
 description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
 model: claude-3-5-sonnet-20241022
 tools:

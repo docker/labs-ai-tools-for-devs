@@ -10,7 +10,14 @@
 (defn get-prompt-data [{:keys [register] :as opts}]
   (logger/info "get-prompt-data " register)
   (->> register
-       (map (fn [ref] [ref (git/prompt-file ref)]))
+       (map (fn [ref] 
+              [ref 
+               (try 
+                 (git/prompt-file ref) 
+                 (catch Throwable t 
+                   (logger/error t (format "missing ref %s" ref)) 
+                   :missing))]))
+       (filter (complement #(= :missing (second %))))
        (map (fn [[ref f]]
               (let [m (prompts/get-prompts (assoc opts :prompts f))]
                 [(or (-> m :metadata :name) ref) m])))

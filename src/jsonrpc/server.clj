@@ -118,19 +118,23 @@
      :messages (prompt-function (or arguments {}))}))
 
 (defmethod lsp.server/receive-request "resources/list" [_ _ _]
+  (logger/info "resources/list")
   {:resources []})
 
-(defmethod lsp.server/receive-request "resources/read" [_ _ _]
+(defmethod lsp.server/receive-request "resources/read" [_ _ params]
+  (logger/info "resouces/read" params)
   {:contents []})
 
 (defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
+  (logger/info "resources/templates/list")
   {:resource-templates
    ;; uriTemplate, name, description, mimeType
    ;; uriTemplates have parameters like {path}
    ;;   example: "file:///{path}
    []})
 
-(defmethod lsp.server/receive-request "resources/subscribe" [_ _ _]
+(defmethod lsp.server/receive-request "resources/subscribe" [_ _ params]
+  (logger/info "resources/subscribe" params)
   {:resource-templates []})
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
