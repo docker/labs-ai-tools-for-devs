@@ -25,7 +25,6 @@ export const writeFileToPromptsVolume = async (client: v1.DockerDesktopClient, c
 export const writeFilesToHost = async (client: v1.DockerDesktopClient, files: { path: string, content: string }[], hostPaths: { source: string, target: string }[], workdir: string) => {
     const bindArgs = hostPaths.map(path => `--mount type=bind,source="${path.source}",target="${path.target}"`)
     const args = ['--rm', ...bindArgs, '--workdir', workdir, 'vonwig/function_write_files:latest', `'${JSON.stringify({ files })}'`]
-    console.log('args', `docker run ${args.join(' ')}`)
     const result = await client.docker.cli.exec('run', args)
     if (result.stderr) {
         console.error(result.stderr)

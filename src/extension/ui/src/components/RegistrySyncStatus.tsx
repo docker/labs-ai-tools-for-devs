@@ -9,28 +9,12 @@ import { stopWatch, watchFile } from "../FileWatcher";
 
 const statusMap = {
     0: {
-        label: 'Idle...',
-        color: 'primary',
-    },
-    1: {
         label: 'Synced',
         color: 'success',
     },
-    2: {
-        label: 'Out of Sync',
-        color: 'error',
-    },
-    3: {
-        label: '?',
+    1: {
+        label: 'Syncing...',
         color: 'warning',
-    },
-    4: {
-        label: 'Loading...',
-        color: 'primary',
-    },
-    5: {
-        label: 'Error',
-        color: 'error',
     },
 }
 
@@ -39,14 +23,17 @@ export const RegistrySyncStatus = ({ registryLoaded }: { registryLoaded: boolean
 
     useEffect(() => {
         if (registryLoaded) {
+            setStatus(0)
+        }
+        else {
             setStatus(1)
         }
     }, [registryLoaded]);
 
     return <Badge badgeContent={statusMap[status].label} color={statusMap[status].color as any} sx={{ ml: 1 }} title={statusMap[status].label}>
-        <div style={{ width: 40, height: 'auto', margin: 5 }}>
+        <div style={{ width: 36, height: 'auto', margin: 5 }}>
             {/* yaml logo for icon */}
-            <img src="https://www.svgrepo.com/show/524492/database.svg" alt="database" style={{ height: 40, backgroundColor: 'white', borderRadius: 8 }} />
+            <img src="https://www.svgrepo.com/show/524492/database.svg" alt="database" style={{ width: "100%", backgroundColor: 'white', borderRadius: 8 }} />
         </div>
     </Badge>
 }

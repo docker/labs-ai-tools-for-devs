@@ -28,3 +28,6 @@ COPY metadata.json .
 COPY docker.svg /docker.svg
 COPY --from=client-builder /ui/build ui
 
+CMD sleep 600
+
+

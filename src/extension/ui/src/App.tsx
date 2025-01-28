@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce } from '@mui/material';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton } from '@mui/material';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
@@ -119,8 +120,6 @@ export function App() {
     <div>
       <Stack direction="column" spacing={1}>
         <div>
-          {status.status === 'loading' && <Typography>{status.message}</Typography>}
-          {status.status === 'error' && <Typography>{status.message}</Typography>}
           <ButtonGroup>
             <Button onClick={loadCatalog}>Refresh catalog</Button>
             <Button onClick={loadRegistry}>Refresh registry</Button>
@@ -140,8 +139,20 @@ export function App() {
                 register={registerCatalogItem}
                 unregister={unregisterCatalogItem}
               />
+
             </Grid>
           ))}
+          <Grid item xs={12} sm={6} md={4} flex="1 1 0">
+            <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <CardContent>
+                <IconButton sx={{ height: '100%' }} onClick={() => {
+                  client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/')
+                }}>
+                  <AddIcon sx={{ width: '100%', height: 100 }} />
+                </IconButton>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
       </Stack>
     </div>
