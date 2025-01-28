@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Paper, Stack, Typography, Button, ButtonGroup, Grid, Dialog, DialogContent, DialogTitle, DialogContentText } from '@mui/material';
-import { run } from 'node:test';
-import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce } from '@mui/material';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
-import { ClaudeConfigStatus } from './components/ClaudeConfigStatus';
+import { RegistrySyncStatus } from './components/RegistrySyncStatus';
+import { getRegistry } from './Registry';
+import { ClaudeConfigSyncStatus } from './components/ClaudeConfigSyncStatus';
 
 type RegistryItem = {
   ref: string;
@@ -14,37 +14,11 @@ type RegistryItem = {
 
 const client = createDockerDesktopClient();
 
-const READ_REGISTRY_COMMAND_ARGS = ['--rm', '-v', 'docker-prompts:/docker-prompts', 'alpine:latest', 'sh', '-c', '"cat /docker-prompts/registry.yaml"']
-
-const getRegistry = async () => {
-  const catFile = async () => {
-    const result = await client.docker.cli.exec('run', READ_REGISTRY_COMMAND_ARGS)
-    return parse(result.stdout)['registry'] as Promise<{ [key: string]: { ref: string } }>;
-  }
-  try {
-    return await catFile()
-  }
-  catch (error) {
-    if (typeof error === 'object' && error && 'stderr' in error && error.stderr && (error.stderr as string).includes('No such file or directory')) {
-      const payload = JSON.stringify({
-        files: [{
-          path: 'registry.yaml',
-          content: 'registry: {}'
-        }]
-      })
-      await client.docker.cli.exec('run', ['--rm', '--workdir', '/docker-prompts', '-v', 'docker-prompts:/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-      return await catFile();
-    }
-    client.desktopUI.toast.error('Failed to get prompt registry: ' + error)
-    return {};
-  }
-}
-
 const CATALOG_URL = 'https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml'
 
 export function App() {
 
-  const [claudeModal, setClaudeModal] = useState({ show: false, content: '' });
+  const [registryLoaded, setRegistryLoaded] = useState(false);
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [canRegister, setCanRegister] = useState(false);
   const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
@@ -70,12 +44,14 @@ export function App() {
   }
 
   const loadRegistry = async () => {
+    setRegistryLoaded(false);
     setCanRegister(false);
     setStatus({ status: 'loading', message: 'Grabbing prompt registry...' });
     try {
-      const result = await getRegistry()
+      const result = await getRegistry(client)
       setRegistryItems(result);
       setStatus({ status: 'idle', message: '' });
+      setRegistryLoaded(true);
     }
     catch (error) {
       if (error instanceof Error) {
@@ -89,7 +65,7 @@ export function App() {
 
   const registerCatalogItem = async (item: CatalogItemWithName) => {
     try {
-      const currentRegistry = await getRegistry();
+      const currentRegistry = await getRegistry(client);
       const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
       const payload = JSON.stringify({
         files: [{
@@ -99,7 +75,7 @@ export function App() {
       })
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt registered successfully');
-      loadRegistry();
+      await loadRegistry();
     }
     catch (error) {
       client.desktopUI.toast.error('Failed to register prompt: ' + error);
@@ -108,7 +84,7 @@ export function App() {
 
   const unregisterCatalogItem = async (item: CatalogItemWithName) => {
     try {
-      const currentRegistry = await getRegistry();
+      const currentRegistry = await getRegistry(client);
       delete currentRegistry[item.name];
       const payload = JSON.stringify({
         files: [{
@@ -118,49 +94,29 @@ export function App() {
       })
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt unregistered successfully');
-      loadRegistry();
+      await loadRegistry();
     }
     catch (error) {
       client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
     }
   }
 
-  const showClaudeDesktopConfig = async () => {
-    const platform = client.host.platform
-    let path = ''
-    switch (platform) {
-      case 'darwin':
-        path = '/Users/$USER/Library/Application Support/Claude/claude_desktop_config.json'
-        break;
-      case 'linux':
-        path = '/home/$USER/.config/claude/claude_desktop_config.json'
-        break;
-      case 'win32':
-        path = '%APPDATA%\\Claude\\claude_desktop_config.json'
-        break;
-      default:
-        client.desktopUI.toast.error('Unsupported platform: ' + platform)
-        return;
-    }
-    const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
-    setClaudeModal({ show: true, content: result.stdout })
-  }
-
   useEffect(() => {
     loadCatalog();
     loadRegistry();
+    const interval = setInterval(() => {
+      loadCatalog();
+      loadRegistry();
+    }, 30000)
+    return () => {
+      clearInterval(interval)
+    }
   }, []);
+
+
 
   return (
     <div>
-      <Dialog open={claudeModal.show} onClose={() => setClaudeModal({ show: false, content: '' })} maxWidth="lg">
-        <DialogTitle>Current Claude Desktop Config</DialogTitle>
-        <DialogContent>
-          <DialogContentText component='pre'>
-            <Typography >{claudeModal.content}</Typography>
-          </DialogContentText>
-        </DialogContent>
-      </Dialog>
       <Stack direction="column" spacing={1}>
         <div>
           {status.status === 'loading' && <Typography>{status.message}</Typography>}
@@ -168,9 +124,9 @@ export function App() {
           <ButtonGroup>
             <Button onClick={loadCatalog}>Refresh catalog</Button>
             <Button onClick={loadRegistry}>Refresh registry</Button>
-            <Button onClick={showClaudeDesktopConfig}>Show Claude Desktop Config</Button>
           </ButtonGroup>
-          <ClaudeConfigStatus client={client} />
+          <RegistrySyncStatus registryLoaded={registryLoaded} />
+          <ClaudeConfigSyncStatus client={client} />
         </div>
         <Grid container spacing={2}>
           {Object.entries(items).map(([name, item]) => (

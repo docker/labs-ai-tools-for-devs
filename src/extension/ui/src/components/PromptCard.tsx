@@ -1,7 +1,10 @@
-import { Button, Stack } from "@mui/material";
+import { CircularProgress, Stack } from "@mui/material";
+import Button from '@mui/material/Button';
+
 
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
+import { useState } from "react";
 
 export interface CatalogItem {
     description?: string;
@@ -13,7 +16,8 @@ export interface CatalogItemWithName extends CatalogItem {
     name: string;
 }
 
-export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => void, unregister: (item: CatalogItemWithName) => void }) {
+export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void> }) {
+    const [isRegistering, setIsRegistering] = useState(false)
     return (
         <Card sx={{ height: '100%' }}>
             <CardContent>
@@ -35,10 +39,21 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
             <CardActions>
                 <Button
                     size="small"
-                    onClick={() => canRegister ? (registered ? unregister(item) : register(item)) : null}
-                    disabled={!canRegister}
+                    onClick={() => {
+                        setIsRegistering(true)
+                        if (registered) {
+                            unregister(item).then(() => {
+                                setIsRegistering(false)
+                            })
+                        } else {
+                            register(item).then(() => {
+                                setIsRegistering(false)
+                            })
+                        }
+                    }}
+                    disabled={!canRegister || isRegistering}
                 >
-                    {registered ? 'Remove' : 'Add'}
+                    {isRegistering ? <CircularProgress size={20} /> : registered ? 'Remove' : 'Add'}
                 </Button>
             </CardActions>
         </Card >
