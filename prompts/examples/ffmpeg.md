@@ -2,6 +2,21 @@
 name: "ffmpeg - convert to gif"
 tools:
   - name: imagemagick
+  - name: file-exists
+    description: check if a file exists
+    parameters:
+      type: object
+      properties:
+        path:
+          type: string
+    container:
+      image: busybox:latest
+      volumes:
+        - "{{path|safe}}:{{path|safe}}"
+      command:
+        - test
+        - -f
+        - "{{path|safe}}"
   - name: ffmpeg
     description: run the ffmpeg command
     parameters:
@@ -25,7 +40,8 @@ model: claude-3-5-sonnet-20241022
 
 # prompt user
 
-You will convert /Users/slim/vids/UsingPuppeteer.mp4 to a gif using ffmpeg.
+Ask for a video file to convert to a gif. Check that the file exists and if it does not,
+then ask again.
 
 Figure out the basedir for this file and use that as the basedir parameter when running ffmpeg.
 

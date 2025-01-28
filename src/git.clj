@@ -82,11 +82,11 @@
     {:image "alpine/git:latest"}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
-       :volumes ["docker-prompts-git:/git"]
+       :volumes ["docker-prompts-git:/git"
+                 "docker-prompts:/prompts:rw"]
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
                         (when ref ["-b" ref])
-                        [(format "/prompts/%s" ref-hash)])
-       :mounts ["docker-prompts:/prompts:rw"]}
+                        [(format "/prompts/%s" ref-hash)])}
       {:host-dir (str dir)
        :volumes ["docker-prompts-git:/git"]
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
