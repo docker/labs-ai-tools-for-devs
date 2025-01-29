@@ -2,6 +2,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { Badge, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { writeFilesToHost } from "../FileWatcher";
+import { trackEvent } from "../Usage";
 
 const DOCKER_MCP_CONFIG = {
     "command": "docker",
@@ -94,6 +95,7 @@ export const ClaudeConfigSyncStatus = ({ client }: { client: v1.DockerDesktopCli
         return <Dialog open={showConfigModal} onClose={() => setShowConfigModal(false)} maxWidth="lg">
             <DialogTitle>Current Claude Desktop Config</DialogTitle>
             {status.state === 'has docker_mcp' && <Button onClick={async () => {
+                trackEvent('claude-config-changed', { action: 'remove' })
                 // Remove docker_mcp from config
                 if (claudeConfig && claudeConfig.mcpServers) {
                     const newConfig = { ...claudeConfig }
@@ -104,6 +106,7 @@ export const ClaudeConfigSyncStatus = ({ client }: { client: v1.DockerDesktopCli
                 }
             }}>Remove Docker MCP</Button>}
             {status.state === 'missing docker_mcp' && <Button onClick={() => {
+                trackEvent('claude-config-changed', { action: 'add' })
                 // Add docker_mcp to config
                 if (claudeConfig && claudeConfig.mcpServers) {
                     const newConfig = { ...claudeConfig }

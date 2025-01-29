@@ -1,10 +1,9 @@
 import { CircularProgress, Stack } from "@mui/material";
 import Button from '@mui/material/Button';
-
-
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
 import { useState } from "react";
+import { trackEvent } from "../Usage";
 
 export interface CatalogItem {
     description?: string;
@@ -42,6 +41,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                 <Button
                     size="small"
                     onClick={() => {
+                        trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
                         setIsRegistering(true)
                         if (registered) {
                             unregister(item).then(() => {
