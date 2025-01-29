@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
 import { useState } from "react";
+import { registryChanged } from "../Usage";
 
 export interface CatalogItem {
     description?: string;
@@ -42,6 +43,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                 <Button
                     size="small"
                     onClick={() => {
+                        registryChanged(item.name, item.ref, registered ? 'remove' : 'add');
                         setIsRegistering(true)
                         if (registered) {
                             unregister(item).then(() => {
