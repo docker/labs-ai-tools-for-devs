@@ -1,8 +1,4 @@
 registry:
-  NPM Project Info:
-    description: Get information about an NPM project
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/npm-project.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/npm.svg
   mcp-sqlite:
     description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
