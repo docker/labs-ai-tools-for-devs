@@ -146,7 +146,8 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
             </DialogContent>
         </Dialog >
 
-        <Dialog open={showRestartModal} onClose={() => setShowRestartModal(false)} >
+        {/* Keep this closed for now. */}
+        <Dialog open={showRestartModal && false} onClose={() => setShowRestartModal(false)} >
             <DialogTitle>Restart Claude Desktop</DialogTitle>
             <DialogContent sx={{ padding: 5, mt: 2 }}>
                 <Stack direction="column" spacing={3}>

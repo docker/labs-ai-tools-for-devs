@@ -81,7 +81,7 @@ export function App() {
         }]
       })
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-      client.desktopUI.toast.success('Prompt registered successfully');
+      client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
     }
     catch (error) {
@@ -100,7 +100,7 @@ export function App() {
         }]
       })
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-      client.desktopUI.toast.success('Prompt unregistered successfully');
+      client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
     }
     catch (error) {
