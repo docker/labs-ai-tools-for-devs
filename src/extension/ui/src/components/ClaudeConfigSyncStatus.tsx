@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { Badge, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Stack, Typography } from "@mui/material";
+import { Badge, Button, Checkbox, Dialog, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { writeFilesToHost } from "../FileWatcher";
 import { trackEvent } from "../Usage";
@@ -146,22 +146,19 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
             </DialogContent>
         </Dialog >
 
-        {/* Keep this closed for now. */}
-        <Dialog open={showRestartModal && false} onClose={() => setShowRestartModal(false)} >
-            <DialogTitle>Restart Claude Desktop</DialogTitle>
+        <Dialog open={showRestartModal} onClose={() => setShowRestartModal(false)} >
+            <DialogTitle>Config Changes Applied</DialogTitle>
             <DialogContent sx={{ padding: 5, mt: 2 }}>
                 <Stack direction="column" spacing={3}>
                     <Typography>
-                        You must manually restart Claude Desktop to apply changes to the config.
+                        Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
                     </Typography>
-                    <Button onClick={() => {
-                        setShowRestartModal(false)
-                    }}>Close</Button>
+                    <FormControlLabel control={<Checkbox defaultChecked={getNeverShowAgain()} onChange={(e) => setNeverShowAgain(e.target.checked)} />} label="Don't show this again" />
+
 
                     <Button onClick={() => {
                         setShowRestartModal(false)
-                        setNeverShowAgain(true)
-                    }}>Never show this again</Button>
+                    }}>Close</Button>
                 </Stack>
             </DialogContent>
         </Dialog >
