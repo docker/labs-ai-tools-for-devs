@@ -15,13 +15,13 @@ LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
     org.opencontainers.image.description="Agentic workflows with Dockerized tools" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
-    com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/Screenshot1.png"}, {"alt":"screenshot of the extension output", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/Screenshot2.png"}]' \
+    com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-ext-screenshot.png"}, {"alt":"screenshot of the extension output", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-extension-output.png"}]' \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/docker.svg" \
-    com.docker.extension.detailed-description="Internal tool for research at Docker - available to the public. Run AI-powered workflows with Dockerized tools in Docker Desktop." \
+    com.docker.extension.detailed-description="A catalog of Dockerized MCP tools for developers" \
     com.docker.extension.publisher-url="https://www.docker.com/" \
     com.docker.extension.additional-urls="" \
     com.docker.extension.categories="utility-tools" \
-    com.docker.extension.changelog="Initial release"
+    com.docker.extension.changelog="Added MCP catalog"
 
 COPY docker-compose.yaml .
 COPY metadata.json .
