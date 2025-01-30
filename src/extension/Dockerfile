@@ -12,7 +12,7 @@ RUN npm run build
 
 FROM alpine
 LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
-    org.opencontainers.image.description="Agentic workflows with Dockerized tools" \
+    org.opencontainers.image.description="MCP Tool Catalog" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-ext-screenshot.png"}, {"alt":"screenshot of the extension output", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-extension-output.png"}]' \
@@ -29,5 +29,3 @@ COPY docker.svg /docker.svg
 COPY --from=client-builder /ui/build ui
 
 CMD sleep 600
-
-

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton } from '@mui/material';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert } from '@mui/material';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
 import { RegistrySyncStatus } from './components/RegistrySyncStatus';
 import { getRegistry } from './Registry';
 import { ClaudeConfigSyncStatus } from './components/ClaudeConfigSyncStatus';
+import { FolderOpen, FolderOpenOutlined, FolderOpenRounded, VolumeUp } from '@mui/icons-material';
 
 type RegistryItem = {
   ref: string;
@@ -20,7 +21,7 @@ const CATALOG_URL = 'https://raw.githubusercontent.com/docker/labs-ai-tools-for-
 export function App() {
 
   const [registryLoaded, setRegistryLoaded] = useState(false);
-  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
   const [canRegister, setCanRegister] = useState(false);
   const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
   const [status, setStatus] = useState<{
@@ -31,12 +32,16 @@ export function App() {
     message: ''
   });
 
+  const [hasConfig, setHasConfig] = useState(false);
+
   const loadCatalog = async () => {
     setStatus({ status: 'loading', message: 'Grabbing latest prompt catalog...' });
     try {
       const response = await fetch(CATALOG_URL);
       const catalog = await response.text();
-      setItems(parse(catalog)['registry']);
+      const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
+      const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
+      setCatalogItems(itemsWithName);
       setStatus({ status: 'idle', message: '' });
     }
     catch (error) {
@@ -50,9 +55,10 @@ export function App() {
     setStatus({ status: 'loading', message: 'Grabbing prompt registry...' });
     try {
       const result = await getRegistry(client)
-      setRegistryItems(result);
+      setRegistryItems(result || {});
       setStatus({ status: 'idle', message: '' });
       setRegistryLoaded(true);
+
     }
     catch (error) {
       if (error instanceof Error) {
@@ -114,7 +120,9 @@ export function App() {
     }
   }, []);
 
-
+  const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
+    catalogItems.some((c) => c.name === i)
+  )
 
   return (
     <div>
@@ -125,17 +133,25 @@ export function App() {
             <Button onClick={loadRegistry}>Refresh registry</Button>
           </ButtonGroup>
           <RegistrySyncStatus registryLoaded={registryLoaded} />
-          <ClaudeConfigSyncStatus client={client} />
+          <ClaudeConfigSyncStatus client={client} setHasConfig={setHasConfig} />
         </div>
+        {!hasConfig && Object.keys(registryItems).length > 0 && <Alert severity="warning">
+          Claude Desktop has not been configured with docker_mcp.  Click on the Claude icon to update the configuration.
+        </Alert>}
+        {hasOutOfCatalog && <Alert action={<Button startIcon={<FolderOpenRounded />} variant='outlined' color='secondary' onClick={() => {
+          client.desktopUI.navigate.viewVolume('docker-prompts')
+        }}>registry.yaml</Button>} severity="info">
+          <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
+        </Alert>}
         <Grid container spacing={2}>
-          {Object.entries(items).map(([name, item]) => (
-            <Grid item xs={12} sm={6} md={4} key={name} flex="1 1 0">
+          {catalogItems.map((item) => (
+            <Grid item xs={12} sm={6} md={4} key={item.name} flex="1 1 0">
               <CatalogItemCard openUrl={() => {
                 client.host.openExternal(Ref.fromRef(item.ref).toURL(true))
               }}
-                item={{ name, ...item }}
+                item={item}
                 canRegister={canRegister}
-                registered={Object.keys(registryItems).some((i) => i === name)}
+                registered={Object.keys(registryItems).some((i) => i === item.name)}
                 register={registerCatalogItem}
                 unregister={unregisterCatalogItem}
               />
@@ -155,6 +171,8 @@ export function App() {
           </Grid>
         </Grid>
       </Stack>
+
+
     </div>
   )
 }
