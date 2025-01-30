@@ -19,45 +19,48 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
     const [isRegistering, setIsRegistering] = useState(false)
     return (
         <Card sx={{ height: '100%' }}>
-            <CardContent>
-                <a href="">
-                    <Stack onClick={openUrl} direction="row" spacing={2} justifyContent="space-between" sx={{ cursor: 'pointer' }}>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {item.name}
-                        </Typography>
-                        <CardMedia
-                            component="img"
-                            sx={{ maxWidth: 100, padding: 1, background: 'white', borderRadius: 1 }}
-                            alt={`Icon for ${item.name}`}
-                            image={item.icon}
-                        />
-                    </Stack>
-                </a>
-                <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
-                    {item.description}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button
-                    size="small"
-                    onClick={() => {
-                        trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
-                        setIsRegistering(true)
-                        if (registered) {
-                            unregister(item).then(() => {
-                                setIsRegistering(false)
-                            })
-                        } else {
-                            register(item).then(() => {
-                                setIsRegistering(false)
-                            })
-                        }
-                    }}
-                    disabled={!canRegister || isRegistering}
-                >
-                    {isRegistering ? <CircularProgress size={20} /> : registered ? 'Remove' : 'Add'}
-                </Button>
-            </CardActions>
+            <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
+                <CardContent>
+                    <a href="">
+                        <Stack onClick={openUrl} direction="row" spacing={2} justifyContent="space-between" sx={{ cursor: 'pointer' }}>
+
+                            <Typography gutterBottom variant="h5" component="div">
+                                {item.name}
+                            </Typography>
+                            <CardMedia
+                                component="img"
+                                sx={{ maxWidth: 100, padding: 1, background: 'white', borderRadius: 1 }}
+                                alt={`Icon for ${item.name}`}
+                                image={item.icon}
+                            />
+                        </Stack>
+                    </a>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
+                        {item.description}
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    <Button
+                        size="small"
+                        onClick={() => {
+                            trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
+                            setIsRegistering(true)
+                            if (registered) {
+                                unregister(item).then(() => {
+                                    setIsRegistering(false)
+                                })
+                            } else {
+                                register(item).then(() => {
+                                    setIsRegistering(false)
+                                })
+                            }
+                        }}
+                        disabled={!canRegister || isRegistering}
+                    >
+                        {isRegistering ? <CircularProgress size={20} /> : registered ? 'Remove' : 'Add'}
+                    </Button>
+                </CardActions>
+            </Stack>
         </Card >
     )
 }
