@@ -1,5 +1,5 @@
 IMAGE?=docker/labs-ai-tools-for-devs
-TAG?=0.1.2
+TAG?=0.1.4
 
 BUILDER=buildx-multi-arch
 

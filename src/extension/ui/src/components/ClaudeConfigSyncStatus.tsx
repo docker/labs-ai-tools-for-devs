@@ -50,7 +50,7 @@ const getClaudeConfig = async (client: v1.DockerDesktopClient) => {
     return result.stdout
 }
 
-const setNeverShowAgain = (value: boolean) => {
+export const setNeverShowAgain = (value: boolean) => {
     localStorage.setItem('claude-config-sync-status-never-show-again', value.toString())
 }
 
@@ -93,7 +93,6 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
             const servers = claudeConfig.mcpServers
             if (!servers) {
                 setStatus({ state: 'invalid', message: 'No servers found in Claude Desktop Config', color: 'error' })
-
             }
             else {
                 const hasDocker = Object.keys(servers).some(key => key === 'mcp_docker')
@@ -151,11 +150,9 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
             <DialogContent sx={{ padding: 5, mt: 2 }}>
                 <Stack direction="column" spacing={3}>
                     <Typography>
-                        Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                        Claude config has been updated.  Please restart Claude Desktop to apply the changes.
                     </Typography>
                     <FormControlLabel control={<Checkbox defaultChecked={getNeverShowAgain()} onChange={(e) => setNeverShowAgain(e.target.checked)} />} label="Don't show this again" />
-
-
                     <Button onClick={() => {
                         setShowRestartModal(false)
                     }}>Close</Button>

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert } from '@mui/material';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox } from '@mui/material';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
 import { RegistrySyncStatus } from './components/RegistrySyncStatus';
 import { getRegistry } from './Registry';
-import { ClaudeConfigSyncStatus } from './components/ClaudeConfigSyncStatus';
-import { FolderOpen, FolderOpenOutlined, FolderOpenRounded, VolumeUp } from '@mui/icons-material';
+import { ClaudeConfigSyncStatus, setNeverShowAgain } from './components/ClaudeConfigSyncStatus';
+import { FolderOpenRounded, } from '@mui/icons-material';
+
+const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 type RegistryItem = {
   ref: string;
@@ -24,25 +26,16 @@ export function App() {
   const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
   const [canRegister, setCanRegister] = useState(false);
   const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
-  const [status, setStatus] = useState<{
-    status: 'idle' | 'loading' | 'error',
-    message: string
-  }>({
-    status: 'idle',
-    message: ''
-  });
-
+  const [showReloadModal, setShowReloadModal] = useState(false);
   const [hasConfig, setHasConfig] = useState(false);
 
   const loadCatalog = async () => {
-    setStatus({ status: 'loading', message: 'Grabbing latest prompt catalog...' });
     try {
       const response = await fetch(CATALOG_URL);
       const catalog = await response.text();
       const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
       const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
       setCatalogItems(itemsWithName);
-      setStatus({ status: 'idle', message: '' });
     }
     catch (error) {
       client.desktopUI.toast.error('Failed to get latest catalog: ' + error);
@@ -52,11 +45,9 @@ export function App() {
   const loadRegistry = async () => {
     setRegistryLoaded(false);
     setCanRegister(false);
-    setStatus({ status: 'loading', message: 'Grabbing prompt registry...' });
     try {
       const result = await getRegistry(client)
       setRegistryItems(result || {});
-      setStatus({ status: 'idle', message: '' });
       setRegistryLoaded(true);
 
     }
@@ -83,6 +74,7 @@ export function App() {
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
+      setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
     }
     catch (error) {
       client.desktopUI.toast.error('Failed to register prompt: ' + error);
@@ -102,10 +94,12 @@ export function App() {
       await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
+      setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
     }
     catch (error) {
       client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
     }
+
   }
 
   useEffect(() => {
@@ -126,8 +120,25 @@ export function App() {
 
   return (
     <div>
+      <Dialog open={showReloadModal} onClose={() => setShowReloadModal(false)}>
+        <DialogTitle>Registry Updated</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ marginBottom: 2 }}>
+            You have updated the registry.
+            Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Button onClick={() => {
+              setShowReloadModal(false)
+            }}>Close</Button>
+            <FormControlLabel control={<Checkbox defaultChecked={Boolean(localStorage.getItem(NEVER_SHOW_AGAIN_KEY))} onChange={(e) => localStorage.setItem(NEVER_SHOW_AGAIN_KEY, e.target.checked.toString())} />} label="Don't show this again" />
+          </Stack>
+        </DialogContent>
+      </Dialog>
+
       <Stack direction="column" spacing={1}>
         <div>
+
           <ButtonGroup>
             <Button onClick={loadCatalog}>Refresh catalog</Button>
             <Button onClick={loadRegistry}>Refresh registry</Button>
