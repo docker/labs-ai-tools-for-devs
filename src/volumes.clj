@@ -34,7 +34,7 @@
            :thread-id thread-id
            :command [(json/generate-string
                        {:directory "/thread"} keyword)
-                     (script/read "src/volumes/collect.clj")]})
+                     (script/read-script-at-compile-time "src/volumes/collect.clj")]})
         :pty-output
         (json/parse-string keyword))
     (catch Throwable t
@@ -42,7 +42,7 @@
       {})))
 
 (comment
-  (script/read "src/volumes/collect.clj"))
+  (script/read-script-at-compile-time "src/volumes/collect.clj"))
 
 (comment
   (->
@@ -52,7 +52,7 @@
        :workdir "/project"
        :command [(json/generate-string
                    {:directory "/project"})
-                 (script/read "src/volumes/collect.clj")]})
+                 (script/read-script-at-compile-time "src/volumes/collect.clj")]})
     :pty-output
     #_(json/parse-string keyword)))
 

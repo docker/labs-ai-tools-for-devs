@@ -1,7 +1,7 @@
 (ns script)
 
-(defmacro read [path]
+(defmacro read-script-at-compile-time [path]
   (slurp path))
 
 (comment
-  (macroexpand '(read "src/volumes/collect.clj")))
+  (macroexpand '(read-script-at-compile-time "src/volumes/collect.clj")))

@@ -45,8 +45,7 @@
   (add {:register ["github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"
                    "github:docker/labs-ai-tools-for-devs?path=prompts/examples/hello_world.md"]}))
 
-#_{:clj-kondo/ignore [:redefined-var]}
-(defn merge [{:keys [registry-content] :as opts}]
+(defn merge-dynamic-prompts [{:keys [registry-content] :as opts}]
   (logger/info "adding dynamic prompts" registry-content)
   (try
     (let [{:keys [registry]} (yaml/parse-string registry-content)

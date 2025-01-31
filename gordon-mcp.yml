@@ -1,0 +1,12 @@
+services:
+  mcp_docker:
+    image: mcp/docker:latest
+    command: serve --mcp --register github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - docker-prompts:/prompts
+    x-mcp-autoremove: false
+
+volumes:
+  docker-prompts:
+    external: true

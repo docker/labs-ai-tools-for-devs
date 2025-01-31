@@ -295,6 +295,7 @@
          log-path (logger/setup timbre-logger)
          db* db/db*
          log-ch (async/chan (async/sliding-buffer 20))
+         ;; server will start watching stdio/stdout immediately
          server (stdio-server
                  (merge
                   {;:keyword-function identity
@@ -320,7 +321,7 @@
            (logger/error t))))
      ;; register dynamic prompts
      (when (fs/exists? (fs/file "/prompts/registry.yaml"))
-       (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml"))))
+       (db/merge-dynamic-prompts (assoc opts :registry-content (slurp "/prompts/registry.yaml"))))
      ;; watch dynamic prompts in background
      (async/thread
        (let [{x :container}
@@ -333,7 +334,7 @@
                 (let [[_dir _event f] (string/split line #"\s+")]
                   (when (= f "registry.yaml")
                     (try
-                      (db/merge (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
+                      (db/merge-dynamic-prompts (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
                       (producer/publish-tool-list-changed producer {})
                       (producer/publish-prompt-list-changed producer {})
                       (catch Throwable t
@@ -345,6 +346,7 @@
             (docker/delete x)))))
      (monitor-server-logs log-ch)
      (logger/info "Starting server...")
+     ;; only on lsp.server/start will the stdio channels start being used
      [producer (lsp.server/start server components)])))
 
 (comment
