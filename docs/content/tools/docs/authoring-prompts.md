@@ -121,12 +121,16 @@ contain template parameters.
 For example, the above curl example could be re-written as a template with a ``{{ user }}`` parameter.
 
 ```markdown
----
+---yaml
 tools:
   - name: curl
 url:  http://localhost/v1/chat/completions
 stream: false
 model: llama3.1
+arguments:
+  - name: user
+    description: the GitHub username to fetch gists for
+    required: true
 ---
 
 # prompt
@@ -134,9 +138,39 @@ model: llama3.1
 Run the curl command, in silent mode, to fetch gists for user {{ user }} from GitHub.
 ```
 
+### Template Engine
+
+We support two templating engines today.
+
+* [mustache](https://mustache.github.io/mustache.5.html) is the default
+* [django](https://docs.djangoproject.com/en/5.1/topics/templates/)
+
+If you want to use django, then add the following field in the markdown preamble.
+
+```markdown
+---
+prompt-format: "django"
+arguments:
+  - name: user
+    description: the GitHub username to fetch gists for
+    required: true
+---
+```
+
+### MCP arguments
+
+MCP clients can use `arguments` to help you bind values into templates.
+
+```yaml
+---
+prompt-format: "django"
+---
+```
+
 ### Binding values during testing
 
-When running in VSCode, you can set values of the parameters in the markdown preamble.
+When running in VSCode, you can set values of the parameters in the markdown preamble. This is
+a great way to quickly test your prompt during development.
 
 ```markdown
 ---
@@ -185,23 +219,4 @@ This project contains {{language}} code.
 {{/linguist}}
 
 ```
-
-### Template Engine
-
-We support two templating engines today.
-
-* [mustache](https://mustache.github.io/mustache.5.html) is the default
-* [django](https://docs.djangoproject.com/en/5.1/topics/templates/)
-
-If you want to use django, then add the following field in the markdown preamble.
-
-```markdown
----
-prompt-format: "django"
----
-```
-
-### MCP arguments
-
-
 

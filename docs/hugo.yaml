@@ -13,3 +13,6 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+params:
+  search:
+    enable: false

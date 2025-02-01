@@ -75,6 +75,10 @@ tools:
 prompt-format: django
 parameter-values:
   topic: Ocean Conservation
+arguments:
+  - name: topic
+    description: The topic for the business scenario
+    required: true
 ---
 
 # prompt user

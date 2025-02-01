@@ -9,7 +9,7 @@ weight: 1
 
 ## Quick Start w/ Docker Desktop Extension
 
-1. Install [Docker Labs AI Tools for Devs](https://hub.docker.com/extensions/docker/labs-ai-tools-for-devs)
+1. Install [Docker Labs AI Tools for Devs](https://open.docker.com/extensions/marketplace?extensionId=docker/labs-ai-tools-for-devs)
 2. Click on the Claude button to add `mcp_docker` toolbox to your Claude Desktop.
 3. Select any prompts you would like to add from the catalog to your toolbox.
 
@@ -23,8 +23,8 @@ currently have to restart desktop more less continuously. Fire up those keybinds
 
 ### Try a prompt
 
-Write a prompt in Claude that will run one of the tools in a registered defintion.
-For example:
+Type an instruction to Claude that will use one of the tools you've added.
+For example, if you've enabled the _hello world_ tool, then you could type the following.
 
 > Use hello world to send a greeting and then respond to what comes back.
 

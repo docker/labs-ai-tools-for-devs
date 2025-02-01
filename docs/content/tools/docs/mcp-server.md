@@ -1,5 +1,5 @@
 ---
-title: running the mcp/docker image
+title: mcp/docker server logs
 ---
 
 ## Logging
