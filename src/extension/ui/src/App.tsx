@@ -146,7 +146,7 @@ export function App() {
         <div>
 
           <ButtonGroup>
-            <Button onClick={loadCatalog}>Refresh catalog</Button>
+            <Button onClick={() => loadCatalog(true)}>Refresh catalog</Button>
             <Button onClick={loadRegistry}>Refresh registry</Button>
           </ButtonGroup>
           <RegistrySyncStatus registryLoaded={registryLoaded} />
