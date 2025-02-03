@@ -12,10 +12,6 @@ import { FolderOpenRounded, } from '@mui/icons-material';
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
-type RegistryItem = {
-  ref: string;
-}
-
 const client = createDockerDesktopClient();
 
 const CATALOG_URL = 'https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml'
@@ -29,16 +25,26 @@ export function App() {
   const [showReloadModal, setShowReloadModal] = useState(false);
   const [hasConfig, setHasConfig] = useState(false);
 
-  const loadCatalog = async () => {
+  const loadCatalog = async (showNotification = true) => {
+    const cachedCatalog = localStorage.getItem('catalog');
     try {
       const response = await fetch(CATALOG_URL);
       const catalog = await response.text();
       const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
       const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
       setCatalogItems(itemsWithName);
+      localStorage.setItem('catalog', JSON.stringify(itemsWithName));
+      if (showNotification) {
+        client.desktopUI.toast.success('Catalog updated successfully.');
+      }
     }
     catch (error) {
-      client.desktopUI.toast.error('Failed to get latest catalog: ' + error);
+      if (cachedCatalog) {
+        setCatalogItems(JSON.parse(cachedCatalog));
+      }
+      if (showNotification) {
+        client.desktopUI.toast.error(`Failed to get latest catalog.${cachedCatalog ? ' Using cached catalog.' : ''}` + error);
+      }
     }
   }
 
@@ -106,7 +112,7 @@ export function App() {
     loadCatalog();
     loadRegistry();
     const interval = setInterval(() => {
-      loadCatalog();
+      loadCatalog(false);
       loadRegistry();
     }, 30000)
     return () => {

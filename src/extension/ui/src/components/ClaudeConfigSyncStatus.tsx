@@ -68,23 +68,17 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
     const [configPath, setConfigPath] = useState<string | null>(null)
     useEffect(() => {
         const refreshConfig = async () => {
-            const cachedConfig = localStorage.getItem('claude-config')
             try {
-                const config = cachedConfig ? JSON.parse(cachedConfig) : await getClaudeConfig(client)
+                const config = await getClaudeConfig(client)
                 const newConfig = JSON.parse(config)
                 setClaudeConfig(newConfig)
-                // Dumb cache, no way to see if config changed
-                localStorage.setItem('claude-config', config)
+
             } catch (error) {
                 console.error('Error parsing config. Using cached config if available.', error)
-                if (cachedConfig) {
-                    setClaudeConfig(JSON.parse(cachedConfig))
-                }
             }
+
         }
-
         refreshConfig()
-
         const interval = setInterval(() => {
             refreshConfig()
         }, 30000)
