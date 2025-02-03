@@ -20,7 +20,7 @@ services:
 
 volumes:
   docker-prompts:
-    external: true
+    external: false
 ```
 
 ## debugging

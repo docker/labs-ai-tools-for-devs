@@ -8,18 +8,9 @@
 (def db* (atom {}))
 
 (defn get-prompt-data [{:keys [register] :as opts}]
-  (logger/info "get-prompt-data " register)
   (->> register
-       (map (fn [ref] 
-              [ref 
-               (try 
-                 (git/prompt-file ref) 
-                 (catch Throwable t 
-                   (logger/error t (format "missing ref %s" ref)) 
-                   :missing))]))
-       (filter (complement #(= :missing (second %))))
-       (map (fn [[ref f]]
-              (let [m (prompts/get-prompts (assoc opts :prompts f))]
+       (map (fn [{:keys [cached-path]}]
+              (let [m (prompts/get-prompts (assoc opts :prompts cached-path))]
                 [(or (-> m :metadata :name) ref) m])))
        (into {})))
 
@@ -34,22 +25,52 @@
   (-> db
       (assoc :mcp.prompts/registry (merge m (:mcp.prompts/static db)))))
 
-(defn add
-  "add any static prompts to db"
-  [opts]
-  (logger/info "adding static prompts" (:register opts))
-  (let [prompt-registry (get-prompt-data opts)]
-    (swap! db* add-static-prompts prompt-registry)))
+(defn update-dynamic [coll]
+  (swap! db* add-dynamic-prompts (get-prompt-data {:register coll})))
+(defn update-static [coll]
+  (swap! db* add-static-prompts (get-prompt-data {:register coll})))
 
-(comment
-  (add {:register ["github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"
-                   "github:docker/labs-ai-tools-for-devs?path=prompts/examples/hello_world.md"]}))
+(defn missing-cached-prompt-file? [m]
+  (when (not (contains? m :cached-path))
+    (logger/warn "missing cached path: %s" (:ref-string m))
+    m))
 
-(defn merge-dynamic-prompts [{:keys [registry-content] :as opts}]
-  (logger/info "adding dynamic prompts" registry-content)
-  (try
-    (let [{:keys [registry]} (yaml/parse-string registry-content)
-          prompt-registry (get-prompt-data (assoc opts :register (map :ref (vals registry))))]
-      (swap! db* add-dynamic-prompts prompt-registry))
-    (catch Throwable e
-      (logger/error e "could not merge dynamic prompts"))))
+(defn add-refs
+  "update the db with new refs
+     params
+       refs - coll of [type ref] type is static or dynamic"
+  [refs]
+  (if (seq refs)
+    (let [git-map-coll (->> refs
+                            (map (fn [[t ref]] {:type t :ref-string ref :ref (git/parse-github-ref ref)}))
+                            (map (fn [m] (assoc-in m [:ref :ref-hash] (git/hashch (:ref m)))))
+                            (map (fn [m] (assoc-in m [:ref :dir] (git/cache-dir (:ref m))))))]
+      (-> git-map-coll
+          git/collect-unique-cache-dirs
+          git/refresh-cache)
+      (let [typed-colls
+            (->> git-map-coll
+                 (map git/cached-prompt-file)
+                 (filter (complement missing-cached-prompt-file?))
+                 (sort-by :type)
+                 (partition-by :type))]
+        (doseq [coll typed-colls]
+          (case (-> coll first :type)
+            :dynamic (update-dynamic coll)
+            :static (update-static coll)
+            (logger/info "unknown type " (first coll))))))
+    ;; if registry.yaml is empty
+    (swap! db* (fn [db] (-> db
+                            (update 
+                              :mcp.prompts/registry 
+                              (constantly (or (:mcp.prompts/static db) {}))))))))
+
+(defn registry-refs 
+  "parse refs from the registry.yaml file - these are dynamic"
+  [f]
+  (->>
+   (yaml/parse-string (slurp f))
+   :registry
+   (vals)
+   (map (fn [{:keys [ref]}] [:dynamic ref]))))
+

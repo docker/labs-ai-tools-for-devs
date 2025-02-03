@@ -38,14 +38,10 @@
           parse-ref
           add-attributes))
 
-(defn- hashch
+(defn hashch
   "returns #uuid"
   [m]
   (str (hasch/uuid5 (hasch/edn-hash (select-keys m [:owner :repo :ref])))))
-
-(comment
-  (hashch {:owner "docker" :repo "labs-make-runbook"})
-  (hashch {:owner "docker" :repo "labs-make-runbook" :ref "main"}))
 
 ;(def prompts-cache (fs/file "/Users/slim/docker/labs-make-runbook/prompts-cache"))
 (defn prompts-cache []
@@ -96,13 +92,40 @@
 (comment
   (clone {:dir "/Users/slim/crap" :owner "docker" :repo "labs-make-runbook" :ref "main" :ref-hash "crap"}))
 
+(defn cache-dir [{:keys [ref-hash]}]
+  (fs/file (prompts-cache) ref-hash))
+
+(defn collect-unique-cache-dirs [coll]
+  (->> coll
+       (sort-by (comp :ref-hash :ref))
+       (partition-by (comp :ref-hash :ref))
+       (map first)))
+
+(defn refresh-cache 
+  " pure side-effect - clone or pull the cache"
+  [coll]
+  (doseq [m coll]
+    (if (fs/exists? (-> m :ref :dir))
+      (pull (:ref m))
+      (clone (:ref m)))
+    (when (not (= 0 (:exit-code m)))
+      (jsonrpc/notify :error {:content (str m)}))))
+
+(defn cached-prompt-file [{{:keys [dir path]} :ref :as m}]
+  (if path
+    (let [cached-path (fs/file dir path)]
+      (if (fs/exists? cached-path)
+        (assoc m :cached-path cached-path)
+        m))
+    m))
+
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
    throws if the path in the repo does not exist or if the clone fails"
   [ref]
   (when-let [{:keys [ref path] :as git-ref-map} (parse-github-ref ref)]
     (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
-          dir (fs/file (prompts-cache) ref-hash)
+          dir (cache-dir {:ref-hash ref-hash})
           m (if (fs/exists? dir)
               (pull {:dir dir :ref ref})
               (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]

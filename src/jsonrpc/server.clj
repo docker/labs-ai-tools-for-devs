@@ -1,31 +1,32 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
-    [babashka.fs :as fs]
-    [cheshire.core :as json]
-    [clojure.core :as c]
-    [clojure.core.async :as async]
-    [clojure.pprint :as pprint]
-    [clojure.string :as string]
-    docker
-    git
-    graph
-    jsonrpc
-    [jsonrpc.db :as db]
-    [jsonrpc.logger :as logger]
-    [jsonrpc.producer :as producer]
-    [lsp4clj.coercer :as coercer]
-    [lsp4clj.io-chan :as io-chan]
-    [lsp4clj.io-server :refer [stdio-server]]
-    [lsp4clj.server :as lsp.server]
-    [promesa.core :as p]
-    shutdown
-    state
-    [taoensso.timbre :as timbre]
-    [taoensso.timbre.appenders.core :as appenders]
-    tools
-    user-loop
-    volumes)
+   [babashka.fs :as fs]
+   [cheshire.core :as json]
+   [clj-yaml.core :as yaml]
+   [clojure.core :as c]
+   [clojure.core.async :as async]
+   [clojure.pprint :as pprint]
+   [clojure.string :as string]
+   docker
+   git
+   graph
+   jsonrpc
+   [jsonrpc.db :as db]
+   [jsonrpc.logger :as logger]
+   [jsonrpc.producer :as producer]
+   [lsp4clj.coercer :as coercer]
+   [lsp4clj.io-chan :as io-chan]
+   [lsp4clj.io-server :refer [stdio-server]]
+   [lsp4clj.server :as lsp.server]
+   [promesa.core :as p]
+   shutdown
+   state
+   [taoensso.timbre :as timbre]
+   [taoensso.timbre.appenders.core :as appenders]
+   tools
+   user-loop
+   volumes)
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -183,9 +184,7 @@
       :is-error false})))
 
 (defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
-  ;; supports only git refs
-  (lsp.server/discarding-stdout
-   (db/add (merge @db* params))))
+  (logger/info "docker/prompts/register"))
 
 (defmethod lsp.server/receive-request "docker/prompts/run"
   [_ {:keys [db* id] :as components} {:keys [thread-id] {:keys [file content uri]} :prompts :as params}]
@@ -289,6 +288,8 @@
   (publish-docker-notify [_ method params]
     (lsp.server/send-notification server method params)))
 
+(def registry "/prompts/registry.yaml")
+
 (defn run-server! [{:keys [trace-level] :or {trace-level "off"} :as opts}]
   (lsp.server/discarding-stdout
    (let [timbre-logger (->TimbreLogger)
@@ -314,14 +315,13 @@
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
      ;; register static prompts
-     (when (:register opts)
-       (try
-         (db/add opts)
-         (catch Throwable t
-           (logger/error t))))
-     ;; register dynamic prompts
-     (when (fs/exists? (fs/file "/prompts/registry.yaml"))
-       (db/merge-dynamic-prompts (assoc opts :registry-content (slurp "/prompts/registry.yaml"))))
+     (db/add-refs
+       (concat
+         (->> (:register opts)
+              (map (fn [ref] [:static ref])))
+         ;; register dynamic prompts
+         (when (fs/exists? (fs/file registry))
+           (db/registry-refs registry))))
      ;; watch dynamic prompts in background
      (async/thread
        (let [{x :container}
@@ -334,7 +334,7 @@
                 (let [[_dir _event f] (string/split line #"\s+")]
                   (when (= f "registry.yaml")
                     (try
-                      (db/merge-dynamic-prompts (assoc opts :registry-content (slurp "/prompts/registry.yaml")))
+                      (db/add-refs (logger/trace (into [] (db/registry-refs registry))))
                       (producer/publish-tool-list-changed producer {})
                       (producer/publish-prompt-list-changed producer {})
                       (catch Throwable t
