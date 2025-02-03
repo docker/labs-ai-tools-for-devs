@@ -47,8 +47,10 @@ const getClaudeConfigPath = (client: v1.DockerDesktopClient) => {
 const getClaudeConfig = async (client: v1.DockerDesktopClient) => {
     const path = getClaudeConfigPath(client)
     const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
+    localStorage.setItem('claude-config-sync-status-path', result.stdout)
     return result.stdout
 }
+
 
 export const setNeverShowAgain = (value: boolean) => {
     localStorage.setItem('claude-config-sync-status-never-show-again', value.toString())
@@ -66,18 +68,26 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
     const [configPath, setConfigPath] = useState<string | null>(null)
     useEffect(() => {
         const refreshConfig = async () => {
-            const config = await getClaudeConfig(client)
-            const newConfig = JSON.parse(config)
-            setClaudeConfig(newConfig)
+            const cachedConfig = localStorage.getItem('claude-config')
+            try {
+                const config = cachedConfig ? JSON.parse(cachedConfig) : await getClaudeConfig(client)
+                const newConfig = JSON.parse(config)
+                setClaudeConfig(newConfig)
+                // Dumb cache, no way to see if config changed
+                localStorage.setItem('claude-config', config)
+            } catch (error) {
+                console.error('Error parsing config. Using cached config if available.', error)
+                if (cachedConfig) {
+                    setClaudeConfig(JSON.parse(cachedConfig))
+                }
+            }
         }
-        refreshConfig()
 
+        refreshConfig()
 
         const interval = setInterval(() => {
             refreshConfig()
         }, 30000)
-
-
         return () => {
             clearInterval(interval)
         }
@@ -103,7 +113,6 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                     setStatus({ state: 'missing docker_mcp', message: 'No Docker servers found in Claude Desktop Config', color: 'error' })
                     setHasConfig(false)
                 }
-
             }
         }
     }, [claudeConfig])
