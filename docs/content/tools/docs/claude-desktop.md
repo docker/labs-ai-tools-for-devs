@@ -3,9 +3,19 @@ title: Using Claude Desktop
 weight: 3
 ---
 
+# Quickstart
+
+Use our Docker Desktop extension to automatically register and use our tools.
+
+[Open in Docker Desktop](https://open.docker.com/extensions/marketplace?extensionId=docker/labs-ai-tools-for-devs)
+[Marketplace](https://hub.docker.com/extensions/docker/labs-ai-tools-for-devs)
+
+# Manual Setup
+
 Enable mcp_run in your claude_desktop_config.json file using the following snippet.  See the [quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user) for more details.
 
 ```json
+
 {
   "mcpServers": {
     "mcp_docker": {
