@@ -70,7 +70,7 @@ tools:
       image: vonwig/bash_alpine
       command:
         - "-c"
-        - "echo '{{insight|safe}}' >> /mcp/insights.txt"
+        - "echo '{{insight|safe}}' >> /thread/insights.txt"
       volumes: *mounts
 prompt-format: django
 parameter-values:
