@@ -3,23 +3,214 @@ registry:
     description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
+    tools:
+    - type: function
+      function:
+        name: read-query
+        description: Execute a SELECT query on the SQLite database
+        parameters:
+          type: object
+          properties:
+            query: {type: string, description: SELECT SQL query to execute}
+        container:
+          image: vonwig/sqlite:latest
+          command: [/mcp/test1.db, '{{query|safe}}']
+          volumes: ['mcp-test:/mcp']
+    - type: function
+      function:
+        name: write-query
+        description: Execute an INSERT, UPDATE, or DELETE query on the SQLite database
+        parameters:
+          type: object
+          properties:
+            query: {type: string, description: SQL query to execute}
+        container:
+          image: vonwig/sqlite:latest
+          command: [/mcp/test1.db, '{{query|safe}}']
+          volumes: ['mcp-test:/mcp']
+    - type: function
+      function:
+        name: create-table
+        description: Create a new table in the SQLite database
+        parameters:
+          type: object
+          properties:
+            query: {type: string, description: CREATE TABLE SQL statement}
+        container:
+          image: vonwig/sqlite:latest
+          command: [/mcp/test1.db, '{{query|safe}}']
+          volumes: ['mcp-test:/mcp']
+    - type: function
+      function:
+        name: list-tables
+        description: List all tables in the SQLite database
+        container:
+          image: vonwig/sqlite:latest
+          command: [/mcp/test1.db, SELECT name from sqlite_master WHERE type='table']
+          volumes: ['mcp-test:/mcp']
+    - type: function
+      function:
+        name: describe-table
+        description: Get the schema information for a specific table
+        parameters:
+          type: object
+          properties:
+            table_name: {type: string, description: Name of the table to describe}
+        container:
+          image: vonwig/sqlite:latest
+          command: [/mcp/test1.db, 'PRAGMA table_info({{table_name}})']
+          volumes: ['mcp-test:/mcp']
+    - type: function
+      function:
+        name: append-insight
+        description: Add a business insight to the memo
+        parameters:
+          type: object
+          properties:
+            insight: {type: string, description: Business insight discovered from data analysis}
+        container:
+          image: vonwig/bash_alpine
+          command: [-c, 'echo ''{{insight|safe}}'' >> /thread/insights.txt']
+          volumes: ['mcp-test:/mcp']
+    prompts: 1
+    resources: {}
   curl:
     description: Demonstration of curl tool (use curl to fetch GitHub gists for a user)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
+    tools:
+    - type: function
+      function:
+        name: curl-manual
+        description: Run the man page for curl
+        container:
+          image: vonwig/curl:latest
+          command: ['{{raw|safe}}', man]
+    - type: function
+      function:
+        description: Run a curl command.
+        parameters:
+          type: object
+          properties:
+            args: {type: string, description: The arguments to pass to curl}
+        container:
+          image: vonwig/curl:latest
+          command: ['{{raw|safe}}']
+        name: curl
+    prompts: 1
+    resources: {}
   hello world:
     description: echo a greeting using a container!
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
+    tools:
+    - type: function
+      function:
+        name: hello-docker
+        description: print a secret message
+        parameters:
+          type: object
+          properties:
+            greeting: {type: string, description: the greeting to send}
+        container:
+          image: busybox:latest
+          command: [echo, '{{greeting|safe}}']
+    prompts: 1
+    resources: {}
   ffmpeg:
     description: Use ffmpeg to process video files
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
+    tools:
+    - type: function
+      function:
+        name: imagemagick-manual
+        description: Run the man page for imagemagick
+        container:
+          image: vonwig/imagemagick:latest
+          command: ['{{raw|safe}}', man]
+    - type: function
+      function:
+        description: Run a imagemagick command.
+        parameters:
+          type: object
+          properties:
+            args: {type: string, description: The arguments to pass to imagemagick}
+        container:
+          image: vonwig/imagemagick:latest
+          command: ['{{raw|safe}}']
+        name: imagemagick
+    - type: function
+      function:
+        name: file-exists
+        description: check if a file exists
+        parameters:
+          type: object
+          properties:
+            path: {type: string}
+        container:
+          image: busybox:latest
+          volumes: ['{{path|safe}}:{{path|safe}}']
+          command: [test, -f, '{{path|safe}}']
+    - type: function
+      function:
+        name: ffmpeg
+        description: run the ffmpeg command
+        parameters:
+          type: object
+          properties:
+            basedir: {type: string}
+            args:
+              description: arguments to pass to ffmpeg
+              type: array
+              items: {type: string}
+        container:
+          image: linuxserver/ffmpeg:version-7.1-cli
+          volumes: ['{{basedir|safe}}:{{basedir|safe}}']
+          command: ['{{args|into}}']
+    prompts: 1
+    resources: {}
   explain dockerfiles:
     description: Provide a detailed description, analysis, or annotation of a given Dockerfile.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
+    tools:
+    - type: function
+      function:
+        name: cat_file
+        description: fetch a file
+        parameters:
+          type: object
+          properties:
+            path: {type: string, description: Path of the folder to delete}
+        container:
+          image: vonwig/bash_alpine
+          volumes: ['{{path|safe}}:/dockerfile:ro']
+          command: [cat /dockerfile]
+    prompts: 1
+    resources: {}
   qr code:
     description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
+    tools:
+    - type: function
+      function:
+        name: qrencode-manual
+        description: Run the man page for qrencode
+        container:
+          image: vonwig/qrencode:latest
+          command: ['{{raw|safe}}', man]
+    - type: function
+      function:
+        description: Run a qrencode command.
+        parameters:
+          type: object
+          properties:
+            args: {type: string, description: The arguments to pass to qrencode}
+        container:
+          image: vonwig/qrencode:latest
+          command: ['{{raw|safe}}']
+        name: qrencode
+    prompts: 1
+    resources: {}
