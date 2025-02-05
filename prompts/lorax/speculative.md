@@ -1,4 +1,8 @@
 ---
+defs:
+  - lorax: &lorax
+      image: lorax:latest
+      entrypoint: lorax
 model: claude-3-5-sonnet-20241022
 tools:
   - name: sandbox-source
@@ -8,34 +12,29 @@ tools:
       properties:
         host-dir:
           type: string
-        user-source:
+        name:
           type: string
-    container:
-      image: vonwig/speculative:latest
-      mounts:
-        - "{{host-dir|safe}}:/repo"
-      commands:
+    container: 
+      <<: [*lorax]
+      command:
         - sandbox
         - source
         - "-n"
-        - "{{user-source}}"
-        - /repo
+        - "{{name}}"
+        - "{{host-dir}}"
+      background: true
   - name: sandbox-clone
-    description: create a sandbox for a host repo and respond with the id of the new sandbox
+    description: create a sandbox and respond with the id of the new sandbox
     parameters:
       type: object
       properties:
         sandbox-name:
           type: string
-        user-source:
-          type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - clone
-        - "{{user-source}}"
-        - "--name"
         - "{{sandbox-name}}"
   - name: sandbox-snapshot
     description: snapshot the current state of a sandbox
@@ -45,8 +44,8 @@ tools:
         sandbox-id:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - snapshot
         - "{{sandbox-id}}"
@@ -60,8 +59,8 @@ tools:
         tree-id:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - restore
         - "{{sandbox-id}}"
@@ -76,8 +75,8 @@ tools:
         image:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - exec
         - --mount-image
@@ -93,8 +92,8 @@ tools:
         path:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - delete
         - "{{sandbox-id}}"
@@ -109,8 +108,8 @@ tools:
         path:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - rm 
         - "{{sandbox-id}}"
@@ -124,8 +123,8 @@ tools:
         tree-id:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - diff
         - "{{sandbox-id}}"
@@ -138,15 +137,18 @@ tools:
         diff:
           type: string
     container:
-      image: vonwig/speculative:latest
-      commands:
+      <<: [*lorax]
+      command:
         - sandbox
         - apply
         - user-source
         - "{{diff}}"
 ---
 
+# xprompt
+
+Make a cloned repo available to the sandbox.  The host repo is '/Users/slim/vonwig/altaservice' and it should be named atlas
+
 # prompt
 
-* create a sandbox for the host repo at '/Users/slim/vonwig/altaservice' and name it atlas
-* execute 
+Clone the sandbox named atlas. We will get back the id of the new sandbox and we should remember that.

@@ -46,7 +46,7 @@
 (s/def ::pty-output string?)
 (s/def ::exit-code integer?)
 (s/def ::info any?)
-(s/def ::done #{:timeout :exited})
+(s/def ::done #{:timeout :exited :running})
 (s/def ::timeout integer?)
 (s/def ::kill-container any?)
 (s/def ::container-response (s/keys :req-un [::pty-output ::exit-code ::info ::done]

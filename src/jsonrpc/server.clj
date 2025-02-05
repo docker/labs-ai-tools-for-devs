@@ -109,7 +109,6 @@
                        (mapcat
                         (fn [[k v]] (map (partial entry->prompt-listing k v) (:messages v))))
                        (into []))}]
-    (logger/info prompts)
     prompts))
 
 (defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name arguments]}]
@@ -125,7 +124,6 @@
                              (vals)
                              (map #(select-keys % [:uri :name :description :mimeType])))
                         [])}]
-    (logger/info resources)
     resources))
 
 (defmethod lsp.server/receive-request "resources/read" [_ {:keys [db*]} params]
@@ -329,6 +327,7 @@
     (->> params (lsp.server/send-notification server "notifications/prompts/list_changed")))
 
   (publish-resource-list-changed [_ params]
+    (logger/info "send resource list changed")
     (->> params (lsp.server/send-notification server "notifications/resources/list_changed")))
 
   (publish-resource-updated [_ params]
@@ -338,6 +337,7 @@
     (logger/info "send tool list changed")
     (->> params (lsp.server/send-notification server "notifications/tools/list_changed")))
   (publish-docker-notify [_ method params]
+    (logger/info (format "%s - %s" method params))
     (lsp.server/send-notification server method params)))
 
 (def registry "/prompts/registry.yaml")

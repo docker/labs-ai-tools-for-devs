@@ -98,6 +98,8 @@
                 (resolve pty-output)
                 (and (= :exited done) (not exit-code-fail?))
                 (resolve "success")
+                (= :running done)
+                (resolve "success")
                 (and (= :exited done) exit-code-fail?)
                 (fail (format "call exited with non-zero code (%d): %s" exit-code pty-output))
                 (= :timeout done)

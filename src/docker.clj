@@ -8,10 +8,11 @@
    [clojure.string :as string]
    [creds]
    jsonrpc
+   [jsonrpc.logger :as logger]
    logging
    schema)
   (:import
-   [java.net UnixDomainSocketAddress]
+   [java.net URLEncoder UnixDomainSocketAddress]
    [java.nio ByteBuffer]
    [java.nio.channels SocketChannel]
    [java.util Arrays Base64]))
@@ -109,7 +110,6 @@
 {:StdinOnce true
  :OpenStdin true}
 (defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes] :or {opts {:Tty true}}}]
-  #_(jsonrpc/notify :message {:content (str m)})
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
@@ -126,14 +126,15 @@
                             (or volumes mounts))}
                    :WorkingDir (or workdir "/project")}
                   (when entrypoint {:Entrypoint entrypoint})
-                  (when command {:Cmd command})))]
+                  (when command {:Cmd command})))
+        ascii-payload (String. (.getBytes payload "ASCII")) ]
     (curl/post
      "http://localhost/containers/create"
      {:raw-args ["--unix-socket" "/var/run/docker.sock"]
       :throw false
-      :body payload
+      :body ascii-payload
       :headers {"Content-Type" "application/json"
-                "Content-Length" (count payload)}})))
+                "Content-Length" (count ascii-payload)}})))
 
 (defn create-volume [{:keys [Name]}]
   (curl/post "http://localhost/volumes/create"
@@ -308,6 +309,16 @@
              :AttachStdin false}}
      println)))
 
+(defn run-background-function
+  "run container function with no stdin, and no streaming output"
+  [m]
+  (when (not (has-image? (:image m)))
+    (-pull m))
+  (let [x (create m)]
+    (start x)
+    ;; TODO schedule shutdown hook
+    {:done :running}))
+
 (defn run-function
   "run container function with no stdin, and no streaming output"
   [{:keys [timeout] :or {timeout 600000} :as m}]
@@ -439,8 +450,12 @@
      returns ::container-response"
   [m]
   ;; (schema/validate :schema/container-definition)
-  (if (-> m :stdin :file)
+  (cond 
+    (-> m :stdin :file)
     (run-with-stdin-content m)
+    (true? (:background m))
+    (run-background-function m)
+    :else
     (run-function m)))
 
 (defn get-login-info-from-desktop-backend

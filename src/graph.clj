@@ -48,7 +48,7 @@
   (let [[chunk-handler sample] (providers (llm-provider (or (:model metadata) model)))
         [c h] (chunk-handler)
         request (merge
-                 (dissoc metadata :agent :host-dir :workdir :prompt-format :description :name :parameter-values :arguments :resources) ; TODO should we just select relevant keys instead of removing bad ones
+                 (dissoc metadata :agent :host-dir :workdir :prompt-format :description :name :parameter-values :arguments :resources :defs) ; TODO should we just select relevant keys instead of removing bad ones
                  {:messages messages
                   :level level}
                  (when (seq functions) {:tools functions})
