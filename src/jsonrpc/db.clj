@@ -5,6 +5,8 @@
    [jsonrpc.logger :as logger]
    prompts))
 
+(set! *warn-on-reflection* true)
+
 (def db* (atom {}))
 
 (defn get-prompt-data [{:keys [register] :as opts}]
@@ -14,16 +16,29 @@
                 [(or (-> m :metadata :name) ref) m])))
        (into {})))
 
+(defn extract-resources [m]
+  (->> (vals m)
+       (map (comp :resources :metadata))
+       (filter identity)
+       (map (fn [{:keys [uri] :as entry}]
+              [uri (merge
+                    entry
+                    (when (and (not (contains? entry :text)) (-> entry :default :text))
+                      {:text (-> entry :default :text)}))]))
+       (into {})))
+
 (defn add-static-prompts [db m]
   (-> db
       (update :mcp.prompts/registry (fnil merge {}) m)
-      (assoc :mcp.prompts/static m)))
+      (assoc :mcp.prompts/static m)
+      (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))
 
 (defn add-dynamic-prompts [db m]
   (logger/info "dynamic keys" (keys (:mcp.prompts/registry db)))
   (logger/info "static keys" (keys (:mcp.prompts/static db)))
   (-> db
-      (assoc :mcp.prompts/registry (merge m (:mcp.prompts/static db)))))
+      (assoc :mcp.prompts/registry (merge m (:mcp.prompts/static db)))
+      (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))
 
 (defn update-dynamic [coll]
   (swap! db* add-dynamic-prompts (get-prompt-data {:register coll})))
@@ -61,11 +76,12 @@
             (logger/info "unknown type " (first coll))))))
     ;; if registry.yaml is empty
     (swap! db* (fn [db] (-> db
-                            (update 
-                              :mcp.prompts/registry 
-                              (constantly (or (:mcp.prompts/static db) {}))))))))
+                            (update
+                             :mcp.prompts/registry
+                             (constantly (or (:mcp.prompts/static db) {})))))))
+  (logger/info "resources are " (:mcp.prompts/resources @db*)))
 
-(defn registry-refs 
+(defn registry-refs
   "parse refs from the registry.yaml file - these are dynamic"
   [f]
   (->>

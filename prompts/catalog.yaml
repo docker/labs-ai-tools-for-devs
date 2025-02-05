@@ -73,7 +73,13 @@ registry:
           command: [-c, 'echo ''{{insight|safe}}'' >> /thread/insights.txt']
           volumes: ['mcp-test:/mcp']
     prompts: 1
-    resources: {}
+    resources:
+    - name: Business Insights Memo
+      description: A living document of discovered business insights
+      uri: memo://insights
+      mimeType: text/plain
+      matches: resource:///thread/insights.txt
+      default: {text: No business insights have been discovered yet.}
   curl:
     description: Demonstration of curl tool (use curl to fetch GitHub gists for a user)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md

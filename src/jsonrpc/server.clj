@@ -3,7 +3,6 @@
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
-   [clj-yaml.core :as yaml]
    [clojure.core :as c]
    [clojure.core.async :as async]
    [clojure.pprint :as pprint]
@@ -19,6 +18,7 @@
    [lsp4clj.io-chan :as io-chan]
    [lsp4clj.io-server :refer [stdio-server]]
    [lsp4clj.server :as lsp.server]
+   [medley.core :as medley]
    [promesa.core :as p]
    shutdown
    state
@@ -118,13 +118,22 @@
     {:description (or (:description metadata) name)
      :messages (prompt-function (or arguments {}))}))
 
-(defmethod lsp.server/receive-request "resources/list" [_ _ _]
+(defmethod lsp.server/receive-request "resources/list" [_ {:keys [db*]} _]
   (logger/info "resources/list")
-  {:resources []})
+  (let [resources
+        {:resources (or (->> (:mcp.prompts/resources @db*)
+                             (vals)
+                             (map #(select-keys % [:uri :name :description :mimeType])))
+                        [])}]
+    (logger/info resources)
+    resources))
 
-(defmethod lsp.server/receive-request "resources/read" [_ _ params]
+(defmethod lsp.server/receive-request "resources/read" [_ {:keys [db*]} params]
   (logger/info "resouces/read" params)
-  {:contents []})
+  {:contents (concat
+              []
+              (when-let [m (get-in @db* [:mcp.prompts/resources (:uri params)])]
+                [(select-keys m [:uri :mimeType :text :blob])]))})
 
 (defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
   (logger/info "resources/templates/list")
@@ -149,11 +158,54 @@
                                 (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
                (into []))})
 
+(defn resource-uri [db-resources uri]
+  ((->> db-resources
+        vals
+        (map (fn [{:keys [uri matches]}] [matches uri]))
+        (into {})) uri))
+
+(defn update-matched-resources
+  "check if any collected-resources match the db ones and update them"
+  [db-resources collected-resources]
+  (let [matched (->> collected-resources
+                     (filter (comp (into #{} (->> db-resources (vals) (map :matches))) :uri :resource)))]
+    (medley/deep-merge
+     db-resources
+     (->> matched
+          (map (fn [{{:keys [uri text]} :resource}] [(resource-uri db-resources uri) {:text text}]))
+          (into {})))))
+
+(comment
+  (update-matched-resources
+   {"memo://insights" {:uri "memo://insights" :text "No Business Insights" :matches "resource:///thread/insights.txt"}}
+   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
+
+(defn update-resources
+  "update the resource list in the db
+     params - resources coll of mcp resources extracted from last tool call"
+  [{:keys [db* producer]} resources]
+  (when (seq resources)
+    (swap! db* update :mcp.prompts/resources update-matched-resources resources)
+    (producer/publish-resource-list-changed producer {})))
+
+(comment
+  (def hey
+    (atom
+     {:mcp.prompts/resources
+      {"memo://insights"
+       {:uri "memo://insights"
+        :text "No Business Insights"
+        :matches "resource:///thread/insights.txt"}}}))
+  (update-resources
+   {:db* hey
+    :producer (reify producer/IProducer (publish-resource-list-changed [_ _] (println "called")))}
+   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
+
 (defn mcp-tool-calls
   " params
-      db* - uses mcp.prompts/registry and host-dir
-      params - tools/call mcp params"
-  [db* params]
+  db* - uses mcp.prompts/registry and host-dir
+  params - tools/call mcp params"
+  [{:keys [db*] :as components} params]
   (volumes/with-volume
     (fn [thread-id]
       (concat
@@ -171,13 +223,13 @@
                 (async/<!!)
                 (map :content)
                 (apply str))}]
-       (volumes/pick-up-mcp-resources thread-id)))))
+       (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
 
-(defmethod lsp.server/receive-request "tools/call" [_ {:keys [db*]} params]
+(defmethod lsp.server/receive-request "tools/call" [_ components params]
   (logger/info "tools/call")
   (logger/info "with params" params)
   (lsp.server/discarding-stdout
-   (let [content (mcp-tool-calls db* params)]
+   (let [content (mcp-tool-calls components params)]
      (logger/info "content " (with-out-str (pprint/pprint content)))
      ;; TODO with mcp, tool-calls with errors can be explicit
      {:content content
@@ -316,12 +368,12 @@
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
      ;; register static prompts
      (db/add-refs
-       (concat
-         (->> (:register opts)
-              (map (fn [ref] [:static ref])))
+      (concat
+       (->> (:register opts)
+            (map (fn [ref] [:static ref])))
          ;; register dynamic prompts
-         (when (fs/exists? (fs/file registry))
-           (db/registry-refs registry))))
+       (when (fs/exists? (fs/file registry))
+         (db/registry-refs registry))))
      ;; watch dynamic prompts in background
      (async/thread
        (let [{x :container}

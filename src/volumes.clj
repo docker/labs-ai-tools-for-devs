@@ -25,9 +25,10 @@
    {:uri "resource://example"
     :mimeType "text/plain"
     :text "Resource Content"}})
+
 (defn pick-up-mcp-resources
   " returns a coll of mcp resources picked up for a thread"
-  [thread-id]
+  [thread-id callback]
   (try
     (-> (docker/run-container
           {:image "vonwig/bb:latest"
@@ -36,7 +37,8 @@
                        {:directory "/thread"} keyword)
                      (script/read-script-at-compile-time "src/volumes/collect.clj")]})
         :pty-output
-        (json/parse-string keyword))
+        (json/parse-string keyword)
+        ((fn [resources] (callback resources) resources)))
     (catch Throwable t
       (logger/error t "error collecting mcp resources")
       {})))
