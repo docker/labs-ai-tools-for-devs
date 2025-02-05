@@ -72,6 +72,14 @@ tools:
         - "-c"
         - "echo '{{insight|safe}}' >> /thread/insights.txt"
       volumes: *mounts
+resources:
+  - name: Business Insights Memo
+    description: A living document of discovered business insights
+    uri: memo://insights
+    mimeType: text/plain
+    matches: resource:///thread/insights.txt
+    default:
+      text: "No business insights have been discovered yet."
 prompt-format: django
 parameter-values:
   topic: Ocean Conservation

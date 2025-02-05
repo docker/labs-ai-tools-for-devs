@@ -8,6 +8,8 @@ tools:
       properties:
         host-dir:
           type: string
+        user-source:
+          type: string
     container:
       image: vonwig/speculative:latest
       mounts:
@@ -15,6 +17,8 @@ tools:
       commands:
         - sandbox
         - source
+        - "-n"
+        - "{{user-source}}"
         - /repo
   - name: sandbox-clone
     description: create a sandbox for a host repo and respond with the id of the new sandbox
@@ -23,12 +27,14 @@ tools:
       properties:
         sandbox-name:
           type: string
+        user-source:
+          type: string
     container:
       image: vonwig/speculative:latest
       commands:
         - sandbox
         - clone
-        - "user-source"
+        - "{{user-source}}"
         - "--name"
         - "{{sandbox-name}}"
   - name: sandbox-snapshot
