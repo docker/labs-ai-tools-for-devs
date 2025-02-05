@@ -15,7 +15,7 @@ tools:
       image: busybox:latest
       command:
         - echo
-        - "{{greeting|safe}}"
+        - "{{greeting}}"
 ---
 
 # prompt user
