@@ -1,5 +1,5 @@
 ---
-functions:
+tools:
   - name: run-javascript-sandbox
     description: Run a node.js script in the project
     parameters:
@@ -12,6 +12,8 @@ functions:
       image: vonwig/javascript-runner
       command:
         - "{{javascript|safe}}"
+url: https://api.anthropic.com/v1/messages
+model: claude-3-5-sonnet-20241022
 ---
 
 # not a prompt
