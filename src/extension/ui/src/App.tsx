@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox } from '@mui/material';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper } from '@mui/material';
 import { CatalogItem, CatalogItemCard, CatalogItemWithName } from './components/PromptCard';
 import { parse, stringify } from 'yaml';
 import { Ref } from './Refs';
@@ -9,6 +9,7 @@ import { RegistrySyncStatus } from './components/RegistrySyncStatus';
 import { getRegistry } from './Registry';
 import { ClaudeConfigSyncStatus, setNeverShowAgain } from './components/ClaudeConfigSyncStatus';
 import { FolderOpenRounded, } from '@mui/icons-material';
+import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
@@ -24,6 +25,7 @@ export function App() {
   const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
   const [showReloadModal, setShowReloadModal] = useState(false);
   const [hasConfig, setHasConfig] = useState(false);
+  const [imagesLoadingResults, setImagesLoadingResults] = useState<ExecResult | null>(null);
 
   const loadCatalog = async (showNotification = true) => {
     const cachedCatalog = localStorage.getItem('catalog');
@@ -108,8 +110,24 @@ export function App() {
 
   }
 
+  const startImagesLoading = async () => {
+    setImagesLoadingResults(null);
+    try {
+      const result = await client.docker.cli.exec('pull', ['vonwig/function_write_files:latest'])
+      setImagesLoadingResults(result);
+    }
+    catch (error) {
+      console.error(error)
+      if (error) {
+        setImagesLoadingResults(error as ExecResult)
+      }
+
+    }
+  }
+
   useEffect(() => {
     loadCatalog();
+    startImagesLoading();
     loadRegistry();
     const interval = setInterval(() => {
       loadCatalog(false);
@@ -124,9 +142,22 @@ export function App() {
     catalogItems.some((c) => c.name === i)
   )
 
+  if (!imagesLoadingResults || imagesLoadingResults.stderr) {
+    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      {!imagesLoadingResults && <CircularProgress sx={{ marginBottom: 2 }} />}
+      {!imagesLoadingResults && <Typography>Loading images...</Typography>}
+      {imagesLoadingResults && <Alert sx={{ fontSize: '1.5em' }} action={<Button variant='outlined' color='secondary' onClick={() => startImagesLoading()}>Retry</Button>} title="Error loading images" severity="error">{imagesLoadingResults.stderr}</Alert>}
+      <Typography>{imagesLoadingResults?.stdout}</Typography>
+    </Paper>
+  }
+
+
+
+
   return (
     <div>
       <Dialog open={showReloadModal} onClose={() => setShowReloadModal(false)}>
+
         <DialogTitle>Registry Updated</DialogTitle>
         <DialogContent>
           <Typography sx={{ marginBottom: 2 }}>
@@ -144,7 +175,6 @@ export function App() {
 
       <Stack direction="column" spacing={1}>
         <div>
-
           <ButtonGroup>
             <Button onClick={() => loadCatalog(true)}>Refresh catalog</Button>
             <Button onClick={loadRegistry}>Refresh registry</Button>
@@ -188,8 +218,7 @@ export function App() {
           </Grid>
         </Grid>
       </Stack>
-
-
     </div>
   )
+
 }
