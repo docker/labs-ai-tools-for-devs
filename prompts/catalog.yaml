@@ -73,13 +73,7 @@ registry:
           command: [-c, 'echo ''{{insight|safe}}'' >> /thread/insights.txt']
           volumes: ['mcp-test:/mcp']
     prompts: 1
-    resources:
-    - name: Business Insights Memo
-      description: A living document of discovered business insights
-      uri: memo://insights
-      mimeType: text/plain
-      matches: resource:///thread/insights.txt
-      default: {text: No business insights have been discovered yet.}
+    resources: {}
   curl:
     description: Demonstration of curl tool (use curl to fetch GitHub gists for a user)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
@@ -120,7 +114,7 @@ registry:
             greeting: {type: string, description: the greeting to send}
         container:
           image: busybox:latest
-          command: [echo, '{{greeting|safe}}']
+          command: [echo, '{{greeting}}']
     prompts: 1
     resources: {}
   ffmpeg:
@@ -221,12 +215,288 @@ registry:
     prompts: 1
     resources: {}
   speculative_execution:
-    description: >
-      Use lorax from Claude. Lorax is a speculative execution tool that can be used 
-      to make edits and run tools in an isolated sandbox. 
+    description: "Use lorax from Claude. Lorax is a speculative execution tool that can be used  to make edits and run tools in an isolated sandbox. \n"
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md
     icon: https://vonwig.github.io/prompts.docs/img/speculative_hu15687469033092380316.webp
+    tools:
+    - type: function
+      function:
+        name: sandbox-source
+        description: make a cloned host repo available to the sandbox
+        parameters:
+          type: object
+          properties:
+            host-dir: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          mounts: ['{{host-dir|safe}}:/repo']
+          commands: [sandbox, source, /repo]
+    - type: function
+      function:
+        name: sandbox-clone
+        description: create a sandbox for a host repo and respond with the id of the new sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-name: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, clone, user-source, --name, '{{sandbox-name}}']
+    - type: function
+      function:
+        name: sandbox-snapshot
+        description: snapshot the current state of a sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, snapshot, '{{sandbox-id}}']
+    - type: function
+      function:
+        name: sandbox-restore
+        description: snapshot the current state of a sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+            tree-id: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, restore, '{{sandbox-id}}', '{{tree-id}}']
+    - type: function
+      function:
+        name: sandbox-exec
+        description: exec a container in the current sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+            image: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, exec, --mount-image, '{{image}}', '{{sandbox-id}}']
+    - type: function
+      function:
+        name: sandbox-delete-file
+        description: exec a container in the current sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+            path: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, delete, '{{sandbox-id}}', '{{path}}']
+    - type: function
+      function:
+        name: sandbox-rm
+        description: exec a container in the current sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+            path: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, rm, '{{sandbox-id}}']
+    - type: function
+      function:
+        name: sandbox-diff
+        description: exec a container in the current sandbox
+        parameters:
+          type: object
+          properties:
+            sandbox-id: {type: string}
+            tree-id: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, diff, '{{sandbox-id}}', '{{tree-id}}']
+    - type: function
+      function:
+        name: sandbox-apply
+        description: exec a container in the current sandbox
+        parameters:
+          type: object
+          properties:
+            diff: {type: string}
+        container:
+          image: vonwig/speculative:latest
+          commands: [sandbox, apply, user-source, '{{diff}}']
+    prompts: 1
+    resources: {}
   memory:
     description: give your MCP client a memory system
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
+    tools:
+    - type: function
+      function:
+        name: create_entities
+        description: Create multiple new entities in the knowledge graph
+        parameters:
+          type: object
+          properties:
+            entities:
+              type: array
+              items:
+                type: object
+                properties:
+                  name: {type: string, description: The name of the entity}
+                  entityType: {type: string, description: The type of the entity}
+                  observations:
+                    type: array
+                    items: {type: string}
+                    description: An array of observation contents associated with the entity
+                required: [name, entityType, observations]
+          required: [entities]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [create-entities, '{{raw}}']
+    - type: function
+      function:
+        name: create_relations
+        description: Create multiple new relations between entities in the knowledge graph. Relations should be in active voice
+        parameters:
+          type: object
+          properties:
+            relations:
+              type: array
+              items:
+                type: object
+                properties:
+                  from: {type: string, description: The name of the entity where the relation starts}
+                  to: {type: string, description: The name of the entity where the relation ends}
+                  relationType: {type: string, description: The type of the relation}
+                required: [from, to, relationType]
+          required: [relations]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [create-relations, '{{raw}}']
+    - type: function
+      function:
+        name: add_observations
+        description: Add new observations to existing entities in the knowledge graph
+        parameters:
+          type: object
+          properties:
+            observations:
+              type: array
+              items:
+                type: object
+                properties:
+                  entityName: {type: string, description: The name of the entity to add the observations to}
+                  contents:
+                    type: array
+                    items: {type: string}
+                    description: An array of observation contents to add
+                required: [entityName, contents]
+          required: [observations]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [add-observations, '{{raw}}']
+    - type: function
+      function:
+        name: delete_entities
+        description: Delete multiple entities and their associated relations from the knowledge graph
+        parameters:
+          type: object
+          properties:
+            entityNames:
+              type: array
+              items: {type: string}
+              description: An array of entity names to delete
+          required: [entityNames]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [delete-entities, '{{raw}}']
+    - type: function
+      function:
+        name: delete_observations
+        description: Delete specific observations from entities in the knowledge graph
+        parameters:
+          type: object
+          properties:
+            deletions:
+              type: array
+              items:
+                type: object
+                properties:
+                  entityName: {type: string, description: The name of the entity containing the observations}
+                  observations:
+                    type: array
+                    items: {type: string}
+                    description: An array of observations to delete
+                required: [entityName, observations]
+          required: [deletions]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [delete-observations, '{{raw}}']
+    - type: function
+      function:
+        name: delete_relations
+        description: Delete multiple relations from the knowledge graph
+        parameters:
+          type: object
+          properties:
+            relations:
+              type: array
+              items:
+                type: object
+                properties:
+                  from: {type: string, description: The name of the entity where the relation starts}
+                  to: {type: string, description: The name of the entity where the relation ends}
+                  relationType: {type: string, description: The type of the relation}
+                required: [from, to, relationType]
+              description: An array of relations to delete
+          required: [relations]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [delete-releations, '{{raw}}']
+    - type: function
+      function:
+        name: read_graph
+        description: Read the entire knowledge graph
+        parameters: {type: object, properties: null}
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [read-graph, '{{raw}}']
+    - type: function
+      function:
+        name: search_nodes
+        description: Search for nodes in the knowledge graph based on a query
+        parameters:
+          type: object
+          properties:
+            query: {type: string, description: 'The search query to match against entity names, types, and observation content'}
+          required: [query]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [search-nodes, '{{raw}}']
+    - type: function
+      function:
+        name: open_nodes
+        description: Open specific nodes in the knowledge graph by their names
+        parameters:
+          type: object
+          properties:
+            names:
+              type: array
+              items: {type: string}
+              description: An array of entity names to retrieve
+          required: [names]
+        container:
+          image: vonwig/memory:latest
+          volumes: ['mcp-memory:/memory']
+          command: [open-nodes, '{{raw}}']
+    prompts: 1
+    resources: {}

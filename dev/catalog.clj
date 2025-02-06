@@ -1,9 +1,13 @@
 (ns catalog
   (:require
+   [babashka.fs :as fs]
    [clj-yaml.core :as yaml]
    git
    [medley.core :as medley]
    prompts))
+
+(prompts/get-prompts {:prompts (fs/file "prompts/examples/mcp-memory.md")})
+(yaml/parse-string (slurp "prompts/examples/mcp-memory.md"))
 
 (defn f->prompt [f]
   (prompts/get-prompts {:prompts f}))
