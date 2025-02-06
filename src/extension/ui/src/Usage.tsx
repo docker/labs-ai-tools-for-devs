@@ -21,7 +21,7 @@ export interface RegistryChangedRecord extends Record {
 export interface ClaudeConfigChangedRecord extends Record {
     event: 'claude-config-changed';
     properties: {
-        action: 'add' | 'remove';
+        action: 'add' | 'remove' | 'write' | 'delete';
     };
 };
 
