@@ -226,3 +226,7 @@ registry:
       to make edits and run tools in an isolated sandbox. 
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md
     icon: https://vonwig.github.io/prompts.docs/img/speculative_hu15687469033092380316.webp
+  memory:
+    description: give your MCP client a memory system
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
