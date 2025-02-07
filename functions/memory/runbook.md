@@ -19,6 +19,5 @@ docker buildx build \
     --tag vonwig/memory:latest \
     --file Dockerfile \
     --push .
-
 ```
 

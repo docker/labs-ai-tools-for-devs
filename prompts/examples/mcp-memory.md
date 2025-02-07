@@ -131,7 +131,7 @@ tools:
     container:
       <<: [*memory]
       command:
-        - delete-releations
+        - delete-relations
         - "{{raw}}"
   - name: "read_graph"
     description: "Read the entire knowledge graph"
