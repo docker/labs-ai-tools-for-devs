@@ -137,7 +137,7 @@ tools:
     description: "Read the entire knowledge graph"
     parameters:
       type: "object"
-      properties:
+      properties: {}
     container:
       <<: [*memory]
       command:
