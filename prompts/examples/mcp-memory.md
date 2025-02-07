@@ -30,7 +30,7 @@ tools:
       <<: [*memory]
       command:
         - create-entities
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "create_relations"
     description: "Create multiple new relations between entities in the knowledge graph. Relations should be in active voice"
     parameters:
@@ -50,7 +50,7 @@ tools:
       <<: [*memory]
       command:
         - create-relations
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "add_observations"
     description: "Add new observations to existing entities in the knowledge graph"
     parameters:
@@ -73,7 +73,7 @@ tools:
       <<: [*memory]
       command:
         - add-observations
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "delete_entities"
     description: "Delete multiple entities and their associated relations from the knowledge graph"
     parameters:
@@ -89,7 +89,7 @@ tools:
       <<: [*memory]
       command:
         - delete-entities
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "delete_observations"
     description: "Delete specific observations from entities in the knowledge graph"
     parameters:
@@ -111,7 +111,7 @@ tools:
       <<: [*memory]
       command:
         - delete-observations
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "delete_relations"
     description: "Delete multiple relations from the knowledge graph"
     parameters:
@@ -132,7 +132,7 @@ tools:
       <<: [*memory]
       command:
         - delete-relations
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "read_graph"
     description: "Read the entire knowledge graph"
     parameters:
@@ -142,7 +142,7 @@ tools:
       <<: [*memory]
       command:
         - read-graph
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "search_nodes"
     description: "Search for nodes in the knowledge graph based on a query"
     parameters:
@@ -156,7 +156,7 @@ tools:
       <<: [*memory]
       command:
         - search-nodes
-        - "{{raw}}"
+        - "{{raw|safe}}"
   - name: "open_nodes"
     description: "Open specific nodes in the knowledge graph by their names"
     parameters:
@@ -172,7 +172,7 @@ tools:
       <<: [*memory]
       command:
         - open-nodes
-        - "{{raw}}"
+        - "{{raw|safe}}"
 ---
 
 # prompt
