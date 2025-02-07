@@ -356,7 +356,8 @@
                    :out System/out
                    :log-ch log-ch
                    :trace-ch log-ch
-                   :trace-level trace-level}
+                   :trace-level trace-level
+                   :keyword-function keyword}
                   (when (:mcp opts)
                     {:in-chan-factory io-chan/mcp-input-stream->input-chan
                      :out-chan-factory io-chan/mcp-output-stream->output-chan})))

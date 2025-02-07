@@ -21,3 +21,4 @@
 /docs/public/**
 /docs/public/
 /docs/.hugo_build.lock
+/functions/memory/memory.json

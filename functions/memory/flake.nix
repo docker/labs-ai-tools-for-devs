@@ -24,13 +24,16 @@
               name = "scripts";
               src = ./.;
               installPhase = ''
-                cp init.clj $out
+                mkdir $out
+                cp *.clj $out
+                cp bb.edn $out
               '';
             };
 
             run-entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
-              /usr/local/bin/bb ${scripts} "$@"
+              cd ${scripts}
+              /usr/local/bin/bb init.clj "$@"
             '';
 
             default = pkgs.buildEnv {
