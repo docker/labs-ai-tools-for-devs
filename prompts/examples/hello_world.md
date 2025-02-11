@@ -4,13 +4,14 @@ description: send a greeting from Docker
 model: claude-3-5-sonnet-20241022
 tools:
   - name: hello-docker
-    description: print a secret message
+    description: send a greeting from docker
     parameters:
       type: object
       properties:
         greeting:
           type: string
           description: the greeting to send
+      required: [greeting]
     container:
       image: busybox:latest
       command:
