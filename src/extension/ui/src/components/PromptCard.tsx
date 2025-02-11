@@ -51,9 +51,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                 </Badge>
                             </Tooltip>
                             <Tooltip title="Resources">
-
                                 <Badge badgeContent={item.resources?.length || "0"} color="secondary">
-
                                     <AttachFile />
                                 </Badge>
                             </Tooltip>
@@ -66,8 +64,6 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                         </Stack>
                         <Button
                             size="small"
-
-
                             onClick={() => {
                                 trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
                                 setIsRegistering(true)

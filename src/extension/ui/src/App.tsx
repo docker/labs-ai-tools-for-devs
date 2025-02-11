@@ -10,6 +10,7 @@ import { getRegistry } from './Registry';
 import { ClaudeConfigSyncStatus, setNeverShowAgain } from './components/ClaudeConfigSyncStatus';
 import { FolderOpenRounded, } from '@mui/icons-material';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
+import Gordon from './components/Gordon';
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
@@ -181,6 +182,7 @@ export function App() {
           </ButtonGroup>
           <RegistrySyncStatus registryLoaded={registryLoaded} />
           <ClaudeConfigSyncStatus client={client} setHasConfig={setHasConfig} />
+          <Gordon client={client} />
         </div>
         {!hasConfig && Object.keys(registryItems).length > 0 && <Alert severity="warning">
           Claude Desktop has not been configured with docker_mcp.  Click on the Claude icon to update the configuration.
