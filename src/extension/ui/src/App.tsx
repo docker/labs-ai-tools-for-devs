@@ -11,6 +11,7 @@ import { ClaudeConfigSyncStatus, setNeverShowAgain } from './components/ClaudeCo
 import { FolderOpenRounded, } from '@mui/icons-material';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import Gordon from './components/Gordon';
+import { tryRunImageSync } from './FileWatcher';
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
@@ -80,7 +81,7 @@ export function App() {
           content: stringify({ registry: newRegistry })
         }]
       })
-      await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
+      await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
       setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
@@ -100,7 +101,7 @@ export function App() {
           content: stringify({ registry: currentRegistry })
         }]
       })
-      await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
+      await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
       client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
       await loadRegistry();
       setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
@@ -108,13 +109,13 @@ export function App() {
     catch (error) {
       client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
     }
-
   }
 
   const startImagesLoading = async () => {
     setImagesLoadingResults(null);
     try {
       const result = await client.docker.cli.exec('pull', ['vonwig/function_write_files:latest'])
+      await client.docker.cli.exec('pull', ['alpine:latest'])
       setImagesLoadingResults(result);
     }
     catch (error) {
@@ -122,7 +123,6 @@ export function App() {
       if (error) {
         setImagesLoadingResults(error as ExecResult)
       }
-
     }
   }
 

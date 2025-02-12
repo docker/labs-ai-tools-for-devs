@@ -5,7 +5,7 @@ import { Badge, Button, Dialog, DialogContent, DialogTitle, Stack, Typography } 
 import gordon from '../gordon.png';
 import { v1 } from '@docker/extension-api-client-types';
 import { parse, stringify } from 'yaml';
-import { writeFilesToHost } from '../FileWatcher';
+import { tryRunImageSync, writeFilesToHost } from '../FileWatcher';
 
 const DOCKER_MCP_CONFIG_YML = {
     services: {
@@ -37,18 +37,18 @@ const Gordon: React.FC<{ client: v1.DockerDesktopClient }> = ({ client }) => {
                 }
                 try {
                     const path = dialogResult.filePaths[0]
-                    const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/project`, 'alpine:latest', 'ls', '-la', '/project'])
-                    const files = result.stdout.split('\n').filter(line => line.trim() !== '').slice(1).map(line => line.split(' ').filter(Boolean).pop())
+                    const result = await tryRunImageSync(client, ['--rm', '--mount', `type=bind,source="${path}",target=/project`, 'alpine:latest', 'ls', '-la', '/project'])
+                    const files = result.split('\n').filter(line => line.trim() !== '').slice(1).map(line => line.split(' ').filter(Boolean).pop())
                     const has_gordon_mcp_yml = files.some(file => file?.toLowerCase().endsWith('gordon-mcp.yml'))
                     if (!has_gordon_mcp_yml) {
                         await writeFilesToHost(client, [{ path: 'gordon-mcp.yml', content: stringify(DOCKER_MCP_CONFIG_YML) }], [{ source: path, target: '/project' }], '/project')
-                        client.desktopUI.toast.success(`Gordon MCP yml saved to ${path}`)
+                        client.desktopUI.toast.success(`Gordon MCP yml saved to ${path}/gordon-mcp.yml`)
                     }
                     else {
-                        const current_config = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/project`, 'alpine:latest', 'cat', '/project/gordon-mcp.yml'])
-                        const current_config_yaml = parse(current_config.stdout)
+                        const current_config = await tryRunImageSync(client, ['--rm', '--mount', `type=bind,source="${path}",target=/project`, 'alpine:latest', 'cat', '/project/gordon-mcp.yml'])
+                        const current_config_yaml = parse(current_config)
                         if (current_config_yaml.services.mcp_docker) {
-                            return client.desktopUI.toast.error(`You already have mcp/docker configured in ${path}`)
+                            return client.desktopUI.toast.error(`Found pre-configured mcp/docker at ${path}/gordon-mcp.yml`)
                         }
                         const new_config = {
                             ...current_config_yaml,

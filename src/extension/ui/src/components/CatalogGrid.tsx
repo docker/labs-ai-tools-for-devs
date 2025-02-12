@@ -7,6 +7,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
 import { getRegistry } from '../Registry';
 import { FolderOpenRounded } from '@mui/icons-material';
+import { tryRunImageSync } from '../FileWatcher';
 
 interface CatalogGridProps {
     registryItems: { [key: string]: { ref: string } };
@@ -61,7 +62,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     content: stringify({ registry: newRegistry })
                 }]
             })
-            await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
             client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
             onRegistryChange();
 
@@ -81,7 +82,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     content: stringify({ registry: currentRegistry })
                 }]
             })
-            await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
             client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
             onRegistryChange();
         }

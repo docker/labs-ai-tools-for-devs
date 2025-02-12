@@ -1,7 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { Badge, Button, Checkbox, Dialog, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { writeFilesToHost } from "../FileWatcher";
+import { tryRunImageSync, writeFilesToHost } from "../FileWatcher";
 import { trackEvent } from "../Usage";
 import { ExecResult } from "@docker/extension-api-client-types/dist/v1";
 
@@ -47,9 +47,9 @@ const getClaudeConfigPath = (client: v1.DockerDesktopClient) => {
 
 const getClaudeConfig = async (client: v1.DockerDesktopClient) => {
     const path = getClaudeConfigPath(client)
-    const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
-    localStorage.setItem('claude-config-sync-status-path', result.stdout)
-    return result.stdout
+    const result = await tryRunImageSync(client, ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
+    localStorage.setItem('claude-config-sync-status-path', result)
+    return result
 }
 
 
@@ -180,7 +180,7 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                     else {
                         trackEvent('claude-config-changed', { action: 'delete' })
                         try {
-                            await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${configPath!.split('/').slice(0, -1).join('/')}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', '"rm -f /claude_desktop_config/claude_desktop_config.json"'])
+                            await tryRunImageSync(client, ['--rm', '--mount', `type=bind,source="${configPath!.split('/').slice(0, -1).join('/')}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', '"rm -f /claude_desktop_config/claude_desktop_config.json"'])
                             refreshConfig()
                             setDeleteReady(false)
                         } catch (error) {
