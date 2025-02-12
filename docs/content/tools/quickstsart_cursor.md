@@ -13,7 +13,7 @@ weight: 3
    
    ![Claude Features](claude_features.png)
 
-2. Copy and paste the following string into the field labeled "Command".
+2. Choose `Command` mode and then copy and paste the following string into the field labeled "Command".
 
    ```
    docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=volume,source=docker-prompts,target=/prompts mcp/docker:latest serve --mcp --register github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
@@ -22,6 +22,10 @@ weight: 3
    After entering this command, the server will start and you should see a list of available tools.
 
    ![Claude Tools](claude_tools.png)
+
+{{< callout type="info" >}}
+After updating the list of tools, users must click the refresh button to activate new tool definitions
+{{< /callout >}}
 
 
 ## Use tools from compose agent

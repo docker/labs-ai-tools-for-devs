@@ -13,6 +13,12 @@ parameter-values:
 
 # prompt
 
+## description
+
+Generate a QR code
+
+## content
+
 Generate a QR code for the content '{{content}}' and write the output to the file `/thread/qrcode.png`.
 If the command fails, read the man page and try again.
 If successful, output the path to the generated image in markdown syntax.

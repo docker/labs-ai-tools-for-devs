@@ -1,12 +1,5 @@
 ---
-name: explain_dockerfile
-description: |
-    Provide a detailed description, analysis, or annotation of a given Dockerfile,
-    explaining its structure and functionality.
-
-    Synonyms: explain my Dockerfile, annotate this Dockerfile...
-
-    This tool can explain a pre-provided Dockerfile but it can also fetch the Dockerfile from the user's workspace.
+name: docker prompts
 model: claude-3-5-sonnet-20241022
 tools:
   - name: cat_file
@@ -30,7 +23,18 @@ arguments:
     required: true
 ---
 
-# prompt user
+# prompt explain dockerfile
+
+## description
+
+Provide a detailed description, analysis, or annotation of a given Dockerfile,
+explaining its structure and functionality.
+
+Synonyms: explain my Dockerfile, annotate this Dockerfile...
+
+This tool can explain a pre-provided Dockerfile but it can also fetch the Dockerfile from the user's workspace.
+
+## content
 
 Start by fetching the Dockerfile located at the path {{path}}.
 

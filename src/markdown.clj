@@ -31,18 +31,33 @@
          (update 0 (fn [s] (.substring ^String s (dec c1))))
          (update (dec (count lines)) (fn [s] (.substring ^String s 0 (- c2 c1))))))))
 
+(defn parse-h1 [s]
+  (when s
+    (let [[t1 t2 & tokens :as h1] (string/split (string/trim s) #"\s+")]
+      (cond
+        ;; prompt is the first token
+        (and t1 (= "prompt" (string/lower-case t1)))
+        (merge
+         {:role (or (#{"user" "system"} t2) "user")}
+         (let [v (concat (if (#{"user" "system"} t2) [] (when t2 [t2])) tokens)]
+           (when (seq v)
+             {:title (string/join " " v)})))
+
+        ;; prompt is the second token
+        (and t2 (= "prompt" (string/lower-case t2)))
+        (merge
+         {:role t1}
+         (when (seq tokens) {:title (string/join " " tokens)}))))))
+
 (def prompt-pattern-with-role-capture #"(?i)\s*prompt\s+(\w+)\s?")
 (def prompt-pattern #"(?i)\s*prompt\s?(\w+)?\s?")
 
 (defn extract-role [s]
-  (second
-   (re-find prompt-pattern-with-role-capture s)))
+  (:role (parse-h1 s)))
 
 ;; headings that include the word Prompt
 (defn prompt-section? [content node]
-  (re-matches
-   prompt-pattern
-   (-> node (nth 2) (nth 3) (nth 1) (from-range content))))
+  (parse-h1 (-> node (nth 2) (nth 3) (nth 1) (from-range content))))
 
 (defn remove-first-line [s]
   (->> (string/split s #"\n")
@@ -51,18 +66,66 @@
 
 ;; extract Role from Prompt ....
 (defn node-content [content node]
-  {:role
-   (or (-> node (nth 2) (nth 3) (nth 1) (from-range content) (extract-role)) "user")
-   :content
-   (remove-first-line (from-range (nth node 1) content))})
+  (merge
+   (-> node (nth 2) (nth 3) (nth 1) (from-range content) (parse-h1))
+    ;; TODO merge a description and filter node content
+   {:content
+    (remove-first-line (from-range (nth node 1) content))}))
 
-(comment
-  (extract-role "prompt user")
-  (extract-role "prompt")
-  (extract-role "prompt user and more")
-  (re-matches prompt-pattern "prompt")
-  (re-matches prompt-pattern "prompt user")
-  (re-matches prompt-pattern "prompt user"))
+(defn section? [node]
+  (and (list? node) (= "section" (first node))))
+
+(defn description-section? [content node]
+  (when-let [atx-header-node (first (filter #(= "atx_heading" (first %)) node))]
+    (println "trimmed " (string/trim (from-range (-> atx-header-node (nth 3) (nth 1)) content)))
+    (= "description"  (string/trim (from-range (-> atx-header-node (nth 3) (nth 1)) content)))))
+
+(defn atx-heading-section? [node]
+  (= "atx_heading" (first node)))
+
+(defn remove-section-content [content s node]
+  (if (and (list? node) (= "atx_heading" (first node)))
+    (string/replace s (from-range (nth node 1) content) "")
+    s))
+
+(defn section-content-without-headings [content node]
+  (reduce
+   (partial remove-section-content content)
+   (from-range (nth node 1) content)
+   (seq node)))
+
+(defn h1-prompt-content [content node]
+  (merge
+   (-> node (nth 2) (nth 3) (nth 1) (from-range content) (parse-h1))
+    ;; TODO merge a description and filter node content
+   (if (some section? node)
+     (merge
+      {:content (->> node
+                     (filter section?)
+                     (filter (complement (partial description-section? content)))
+                     #_(filter (complement atx-heading-section?))
+                     (map (partial section-content-without-headings content))
+                     (apply str)
+                     (string/trim))}
+      (when-let [description (->> node
+                                  (filter section?)
+                                  (filter (partial description-section? content))
+                                  first
+                                  (section-content-without-headings content)
+                                  (string/trim))]
+        {:description description}))
+     {:content (string/trim (section-content-without-headings content node))})))
+
+(def heading-1-loc->top-level-section-node (comp zip/node zip/up zip/up))
+
+(defn extract-prompts-with-descriptions [content ast]
+  (->>
+   (iterate zip/next (zip/seq-zip ast))
+   (take-while (complement zip/end?))
+   (filter heading-1-section?)
+   (map heading-1-loc->top-level-section-node)
+   (filter (partial prompt-section? content))
+   (map (partial h1-prompt-content content))))
 
 (defn extract-prompts [content ast]
   (->>
@@ -101,16 +164,43 @@
 (defn extract-first-comment [content ast]
   (try
     (when-let [loc (->>
-                     (iterate zip/next (zip/seq-zip ast))
-                     (take-while (complement zip/end?))
-                     (some (fn [loc] (when (html-comment? loc) loc))))]
+                    (iterate zip/next (zip/seq-zip ast))
+                    (take-while (complement zip/end?))
+                    (some (fn [loc] (when (html-comment? loc) loc))))]
       (->
-        (from-range (-> loc zip/node second) content)
-        (remove-markers)
-        (clj-yaml/parse-string)))
+       (from-range (-> loc zip/node second) content)
+       (remove-markers)
+       (clj-yaml/parse-string)))
     (catch Throwable ex
       (println ex)
       nil)))
+
+(defn parse-markdown
+  "use the custom sexp representation"
+  [content]
+  (let [x (docker/function-call-with-stdin
+           {:image "docker/lsp:treesitter"
+            :content content})
+        {s :pty-output} (async/<!! (async/thread
+                                     (Thread/sleep 10)
+                                     (docker/finish-call x)))]
+    (->> (edn/read-string s))))
+
+(defn parse-prompts
+  "parse out the h1 prompt sections and the metadata"
+  [content]
+  (let [content (str content "\n# END\n\n")
+        ast (parse-markdown content)]
+    {:messages
+     (->> ast
+          (extract-prompts-with-descriptions content)
+          (into []))
+     :metadata  (or
+                 (extract-metadata content ast)
+                 (extract-first-comment content ast)
+                 {})}))
+
+;; ---------- future ---------
 
 (defn parse-new [content query]
   (let [content (str content "\n# END\n\n")
@@ -132,68 +222,3 @@
   (json/parse-string (parse-new (slurp "./tprompt1.md") "(document (section (html_block) @html))"))
   (json/parse-string (parse-new (slurp "./tprompt1.md") "(document (section (atx_heading (atx_h1_marker)))* @top-section)")))
 
-(defn parse-markdown
-  "use the custom sexp representation"
-  [content]
-  (let [x (docker/function-call-with-stdin
-           {:image "docker/lsp:treesitter"
-            :content content})
-        {s :pty-output} (async/<!! (async/thread
-                                     (Thread/sleep 10)
-                                     (docker/finish-call x)))]
-    (->> (edn/read-string s))))
-
-(defn parse-prompts
-  "parse out the h1 prompt sections"
-  [content]
-  (let [content (str content "\n# END\n\n")
-        ast (parse-markdown content)]
-    {:messages
-     (->> ast
-          (extract-prompts content)
-          (into []))
-     :metadata  (or 
-                 (extract-metadata content ast)
-                 (extract-first-comment content ast)
-                 {})}))
-
-(comment
-  (parse-prompts (slurp "./broken.md"))
-  )
-
-(comment
-  ; inline same line !,[,],(,) in that order after filtering out other irrelevant things
-  ; ^ those are imgages and the content between the [ ] should be put into a separate message
-  ; the first minus_metadata block of the doc 
-  ; the first html_block section that ends with --> 
-  ;   get content and then check of --- --- pre-amble
-  ;   then try to parse the yaml out of that
-  (parse-markdown (slurp "./tprompt2.md"))
-  (parse-prompts (slurp "./tprompt1.md"))
-  (parse-prompts (slurp "./tprompt2.md"))
-  )
-
-(comment
-  (string/split content #"\n")
-
-  (def content (slurp "prompts/qrencode/README.md"))
-  (pprint (parse-markdown content))
-
-  (parse-markdown (slurp "prompts/pylint/docs.md"))
-  (parse-markdown (slurp "prompts/pylint/4-run-violation-insert.md"))
-
-  (def t
-    '("section"
-      "4:1-8:1"
-      ("atx_heading"
-       "4:1-5:1"
-       ("atx_h1_marker" "4:1-4:2")
-       ("inline" "4:3-4:13"))
-      ("paragraph"
-       "6:1-7:1"
-       ("inline" "6:1-6:34" ("," "6:26-6:27") ("?" "6:33-6:34")))))
-
-  (def r "4:3-4:13")
-  (prompt-section? "" t)
-  (from-range "4:3-4:13" content)
-  (from-range "8:1-14:1" content))

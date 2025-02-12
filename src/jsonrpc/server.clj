@@ -96,10 +96,15 @@
                 :total 0
                 :hasMore false}})
 
-(defn entry->prompt-listing [k v _messages]
-  (merge
-   {:name (str k)}
-   (select-keys (:metadata v) [:description :arguments])))
+(defn entry->prompt-listing [k v message]
+  (let [{:keys [description arguments]} (:metadata v)]
+    (merge
+     {:name (if (:title message)
+              (str k ":" (:title message))
+              k)
+      :description (or (:description message) description "missing description")}
+     (when arguments
+       {:arguments arguments}))))
 
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor

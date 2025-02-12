@@ -1,9 +1,9 @@
 (ns prompts-t
-  (:require [clojure.test :as t]
-            [babashka.fs :as fs]
-            [prompts]
-            [markdown]
-            [pogonos.partials :as partials]))
+  (:require
+   [clojure.string :as string]
+   [clojure.test :as t]
+   [markdown]
+   [prompts]))
 
 (def not-nil? (comp not nil?))
 
@@ -12,56 +12,40 @@
     nil? (re-matches markdown/prompt-pattern "#prompt user ")
     not-nil? (re-matches markdown/prompt-pattern "prompt user ")
     not-nil? (re-matches markdown/prompt-pattern "Prompt user ")
-    nil? (re-matches markdown/prompt-pattern "prompt ")
+    not-nil? (re-matches markdown/prompt-pattern "prompt")
     not-nil? (re-matches markdown/prompt-pattern "prompt user")
     nil? (re-matches markdown/prompt-pattern "xprompt user ")))
 
-(t/deftest render-partials
-  (t/is
-   (.startsWith
-    (->
-     (#'prompts/moustache-render
-      (fs/file "prompts/dockerfiles")
-      {}
-      {:role "system" :content (slurp "prompts/dockerfiles/020_system_prompt.md")})
-     :content)
-    "\nWrite Dockerfiles")))
+(t/deftest parse-h1-tests
+  (->>
+   [nil (markdown/parse-h1 "xprompt user")
+    {:role "user" :title "title"} (markdown/parse-h1 "user Prompt title")
+    {:role "user" :title "title"} (markdown/parse-h1 "user prompt title")
+    {:role "user" :title "title"} (markdown/parse-h1 " prompt title")
+    {:role "system" :title "prompt description"} (markdown/parse-h1 "system prompt prompt description")
+    nil (markdown/parse-h1 "")
+    nil (markdown/parse-h1 nil)
+    {:role "user"} (markdown/parse-h1 "prompt")
+    {:role "user"} (markdown/parse-h1 "user prompt")]
+   (partition 2)
+   (map (fn [[x y]] (t/is (= x y))))
+   (doall)))
 
-;; test requires that vonwig/go-linguist:latest is already
-;; pulled
-(t/deftest fact-reducer-tests
+(t/deftest extract-prompts-tests
   (t/is
-   (=
-    (->>
-     (prompts/fact-reducer "/Users/slim/docker/labs-make-runbook"
-                           {}
-                           {:name "linguist"
-                            :image "vonwig/go-linguist:latest"
-                            :command ["-json"]
-                            :output-handler "linguist"
-                            :user "jimclark106"
-                            :offline true})
-     :linguist
-     (map :language)
-     (into #{}))
-    (into #{}
-          '("Coq" "Ignore List" "JSON" "JSON with Comments" "JavaScript" "Markdown" "TypeScript" "YAML")))))
-
-(t/deftest extractors
+   (let [[m] (let [content (str (slurp "prompts/examples/curl.md") "\n# END\n\n")
+                   ast (markdown/parse-markdown content)]
+               (markdown/extract-prompts-with-descriptions content ast))]
+     (and
+      (= "user" (:role m))
+      (string/starts-with? (:content m) "Run the curl"))))
   (t/is
-   (=
-    (prompts/collect-extractors "prompts/docker")
-    '({:name "project-facts", :image "docker/lsp:latest", :entrypoint "/app/result/bin/docker-lsp", :command ["project-facts" "--vs-machine-id" "none" "--workspace" "/project"]})))
-  (t/is
-   (=
-    (prompts/collect-extractors "prompts/dockerfiles")
-    '({:name "linguist", :image "vonwig/go-linguist:latest", :command ["-json"], :output-handler "linguist"}))))
-
-(comment
-  (prompts/run-extractors
-   {:host-dir "/Users/slim/docker/labs-ai-tools-for-devs/"
-    :user "jimclark106"
-    :prompts (fs/file "prompts/docker")})
-  (prompts/collect-functions (fs/file "prompts/dockerfiles"))
-  (prompts/collect-extractors (fs/file "prompts/docker")))
+   (let [[m]
+         (let [content (str (slurp "prompts/examples/qrencode.md") "\n# END\n\n")
+               ast (markdown/parse-markdown content)]
+           (markdown/extract-prompts-with-descriptions content ast))]
+     (and
+      (= "user" (:role m))
+      (string/starts-with? (:content m) "Generate a QR")
+      (= "A description" (:description m))))))
 
