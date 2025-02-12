@@ -1,6 +1,5 @@
 ---
-name: seed-sample-sqlite-db
-description: A prompt to seed the database with initial data and demonstrate what you can do with an SQLite MCP Server + Claude
+name: sqlite
 model: claude-3-5-sonnet-20241022
 tools:
   - name: read-query
@@ -89,7 +88,13 @@ arguments:
     required: true
 ---
 
-# prompt user
+# prompt business insight demo
+
+## description
+
+A demo of an agent using sqlite to generate business insights.
+
+## content
 
 The assistants goal is to walkthrough an informative demo of MCP. To demonstrate the Model Context Protocol (MCP) we will leverage this example server to interact with an SQLite database.
 It is important that you first explain to the user what is going on. The user has downloaded and installed the SQLite MCP Server and is now ready to use it.

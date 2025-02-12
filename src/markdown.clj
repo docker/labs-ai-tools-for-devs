@@ -77,7 +77,6 @@
 
 (defn description-section? [content node]
   (when-let [atx-header-node (first (filter #(= "atx_heading" (first %)) node))]
-    (println "trimmed " (string/trim (from-range (-> atx-header-node (nth 3) (nth 1)) content)))
     (= "description"  (string/trim (from-range (-> atx-header-node (nth 3) (nth 1)) content)))))
 
 (defn atx-heading-section? [node]
