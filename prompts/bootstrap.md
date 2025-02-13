@@ -1,27 +1,35 @@
----
-name: register a new skill
+```yaml
+name: bootstrap
+model: claude-3-5-sonnet-20241022
 tools:
-  - name: register-skill
-    description: Register a new skill
+  - name: tool-registration
+    description: bootstrap a tool definition in the current session
     parameters:
       type: object
       properties:
+        content:
+          type: string
+          description: the content of the tool definition
         name:
           type: string
-        ref:
-          type: string
+          description: the name of the tool
     container:
-      image: alpine:latest
+      image: vonwig/bash_alpine
       volumes:
         - "docker-prompts:/prompts"
       command:
-        - sh
-        - "-c"
-        - |
-          echo "{{name}} {{ref}}" >> /prompts/skills.txt
----
+        - -c
+        - "echo \"{{content|safe}}\" >> /prompts/{{name}}.md"
+  - name: write_files
+```
 
 # prompt
 
-Start by asking the user for the name of the skill they want to register.
-Once you have a name, ask the user for a github ref.  Complain if the github ref is not of the form `github:owner/repo?path=path/to/file.md`.  If the user provides a valid ref, register the skill using the `register-skill` tool.  Finally, ask the user if they want to register another skill.
+Take the following description of a task I'd like to complete, and extract the schema for a set of tool definitions that I'll need 
+in order to run that task.  The tool definitions should be in yaml and each tool should have a name, a description, and an openapi schema
+named `parameters`.  Add the tools as a vector with a top-level field named `tools`. Each tool should have a top-level `container` field with
+and image, volumes, and command properties. The command properties must be a vector of arguments.  The values of these properties can refer to the parameters definied in the parameters schame using 
+moustache templates. The final yaml definition should be written into a code block of a markdown file named tools.md.
+        
+> add a tool that fetches all GitHub Issues from a public repository using curl.  We do not need a token.
+
