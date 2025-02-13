@@ -203,7 +203,7 @@
          (update :messages (fn [messages]
                              (->> messages
                                   (map (partial renderer {}))
-                                  (map #(dissoc % :name :description :title)))))
+                                  (map #(dissoc % :title)))))
          (update :metadata dissoc :functions :tools :extractors)
          (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition)))))))
 

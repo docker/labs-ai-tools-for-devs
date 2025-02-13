@@ -8,6 +8,7 @@
    [clojure.string :as string]
    [creds]
    jsonrpc
+   [jsonrpc.logger :as logger]
    logging
    schema)
   (:import
@@ -35,10 +36,10 @@
   (curl/post
    (format "http://localhost/images/create?fromImage=%s" image)
    (merge
-     {:raw-args ["--unix-socket" (let [f (fs/file "/var/run/docker.raw.sock")] 
-                                   (if (.exists f)  
-                                     "/var/run/docker.raw.sock"
-                                     "/var/run/docker.sock"))]
+    {:raw-args ["--unix-socket" (let [f (fs/file "/var/run/docker.raw.sock")]
+                                  (if (.exists f)
+                                    "/var/run/docker.raw.sock"
+                                    "/var/run/docker.sock"))]
      :throw false}
     (when (or creds identity-token)
       {:headers {"X-Registry-Auth"
@@ -129,7 +130,7 @@
                    :WorkingDir (or workdir "/project")}
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))
-        ascii-payload (String. (.getBytes payload "ASCII")) ]
+        ascii-payload (String. (.getBytes payload "ASCII"))]
     (curl/post
      "http://localhost/containers/create"
      {:raw-args ["--unix-socket" "/var/run/docker.sock"]
@@ -386,10 +387,10 @@
   (try
     (String. ^bytes (Arrays/copyOfRange ^bytes bytes 8 (count bytes)))
     (catch Throwable t
-      (println t)
+      (logger/error "not a docker stream: " t)
       "")))
 
-(defn function-call-with-stdin 
+(defn function-call-with-stdin
   "creates and starts container, then writes to stdin process
      returns container map with Id, and socket - socket is open socket to stdin"
   [m]
@@ -442,7 +443,7 @@
   "run container with stdin read from a file"
   [m]
   (let [x (docker/function-call-with-stdin
-            (assoc m :content (or (-> m :stdin :content)  (slurp (-> m :stdin :file)))))]
+           (assoc m :content (or (-> m :stdin :content) (slurp (-> m :stdin :file)))))]
     (async/<!! (async/thread
                  (Thread/sleep 10)
                  (docker/finish-call x)))))
@@ -452,13 +453,35 @@
      returns ::container-response"
   [m]
   ;; (schema/validate :schema/container-definition)
-  (cond 
+  (cond
     (-> m :stdin)
     (run-with-stdin-content m)
     (true? (:background m))
     (run-background-function m)
     :else
     (run-function m)))
+
+(comment
+  (run-container
+   {:image "vonwig/websocat:latest",
+    :stdin
+    {:content
+     "{\"id\":1,\"method\":\"Page.navigate\",\"params\":{\"url\":\"https://www.docker.com\"}}"},
+    :command
+    ["-n1"
+     "--jsonrpc"
+     "--jsonrpc-omit-jsonrpc"
+     "http://host.docker.internal:9222/devtools/page/EF1106D0B121836079CE1582C85F6E9A"],
+    :jsonrpc true,
+    :host-dir "/Users/slim/docker/labs-ai-tools-for-devs",
+    :debug true,
+    :stream true,
+    :jwt "xxxxxxx",
+    :save-thread-volume true,
+    :register [],
+    :thread-id "thread",
+    :user "jimclark106",
+    :platform "darwin"}))
 
 (defn get-login-info-from-desktop-backend
   "returns token or nil if not logged in or backend.sock is not available"

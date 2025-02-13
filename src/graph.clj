@@ -49,7 +49,7 @@
         [c h] (chunk-handler)
         request (merge
                  (dissoc metadata :agent :host-dir :workdir :prompt-format :description :name :parameter-values :arguments :resources :defs) ; TODO should we just select relevant keys instead of removing bad ones
-                 {:messages messages
+                 {:messages (->> messages (map #(dissoc % :name :description)))
                   :level level}
                  (when (seq functions) {:tools functions})
                  ;; overrides from cli opts, NOT from metadata

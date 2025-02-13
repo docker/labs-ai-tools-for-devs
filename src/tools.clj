@@ -82,9 +82,9 @@
                                                       (:workdir defaults))]
                                          {:workdir (first (interpolate arg-context wd))}))
 
-                                (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s))))
+                                (-> definition :container :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s))))
                                 
-                                (-> definition :stdin :content) (update-in [:stdin :content] (fn [s] (first (interpolate arg-context s)))))]
+                                (-> definition :container :stdin :content) (update-in [:stdin :content] (fn [s] (first (interpolate arg-context s)))))]
             (jsonrpc/notify
              :message
              {:debug (format "function call %s"

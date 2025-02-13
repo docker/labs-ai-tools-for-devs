@@ -41,7 +41,7 @@
     (->> @db/db*
          :mcp.prompts/registry
          vals
-         (mapcat :mcp/prompt-registry))
+         )
     (get-in (deref db/db*) [:mcp.prompts/registry "curl"])
     (server/receive-request "prompts/list" {:db* db/db*} {})
     (server/receive-request 
