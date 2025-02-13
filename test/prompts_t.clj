@@ -35,17 +35,19 @@
   (t/is
    (let [[m] (let [content (str (slurp "prompts/examples/curl.md") "\n# END\n\n")
                    ast (markdown/parse-markdown content)]
-               (markdown/extract-prompts-with-descriptions content ast))]
+               (markdown/extract-prompts-with-descriptions content {:name "test"} ast))]
      (and
+      (= "test:fetch gists" (:name m))
       (= "user" (:role m))
       (string/starts-with? (:content m) "Run the curl"))))
   (t/is
    (let [[m]
          (let [content (str (slurp "prompts/examples/qrencode.md") "\n# END\n\n")
                ast (markdown/parse-markdown content)]
-           (markdown/extract-prompts-with-descriptions content ast))]
+           (markdown/extract-prompts-with-descriptions content {:name "qrencode"} ast))]
      (and
       (= "user" (:role m))
+      (= "qrencode" (:name m))
       (string/starts-with? (:content m) "Generate a QR")
-      (= "A description" (:description m))))))
+      (string/starts-with? (:description m) "Generate")))))
 

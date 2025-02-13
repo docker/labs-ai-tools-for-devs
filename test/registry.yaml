@@ -1,13 +1,18 @@
 registry:
   hello world:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md
-  mcp-sqlite:
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
   curl:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
-  ffmpeg:
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
-  explain dockerfiles:
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
   qr code:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
+  mcp-sqlite:
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
+  explain dockerfiles:
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
+  ffmpeg:
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
+  memory:
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
+  speculative_execution:
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md
+

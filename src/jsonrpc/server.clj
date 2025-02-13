@@ -96,13 +96,10 @@
                 :total 0
                 :hasMore false}})
 
-(defn entry->prompt-listing [k v message]
-  (let [{:keys [description arguments]} (:metadata v)]
+(defn entry->prompt-listing [_ v message]
+  (let [{:keys [arguments]} (:metadata v)]
     (merge
-     {:name (if (:title message)
-              (str k ":" (:title message))
-              k)
-      :description (or (:description message) description "missing description")}
+     (select-keys message [:name :description])
      (when arguments
        {:arguments arguments}))))
 
@@ -118,8 +115,15 @@
 
 (defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name arguments]}]
   (logger/info "prompts/get " name)
-  (let [{:keys [prompt-function metadata]} (-> @db* :mcp.prompts/registry (get name))]
-    {:description (or (:description metadata) name)
+  (let [{:keys [prompt-function description] :as m}
+        (get
+          (->> @db*
+               :mcp.prompts/registry
+               vals
+               (mapcat :mcp/prompt-registry)
+               (into {}))
+          name)]
+    {:description description
      :messages (prompt-function (or arguments {}))}))
 
 (defmethod lsp.server/receive-request "resources/list" [_ {:keys [db*]} _]

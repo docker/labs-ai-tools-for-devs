@@ -175,17 +175,6 @@
           prompt-content
           (markdown-parser/parse-prompts prompt-content)
 
-          ;; directory based prompts
-          (fs/directory? prompts)
-          {:messages
-           (->> (fs/list-dir prompts)
-                (filter (name-matches prompt-file-pattern))
-                (sort-by fs/file-name)
-                (map (fn [f] {:role (let [[_ role] (re-find prompt-file-pattern (fs/file-name f))] role)
-                              :content (slurp (fs/file f))}))
-                (into []))
-           :metadata (:metadata (markdown-parser/parse-prompts (slurp (metadata-file prompts))))}
-
           ;; file based prompts
           :else
           (markdown-parser/parse-prompts (slurp prompts)))
@@ -201,11 +190,20 @@
                      (moustache-render prompts (merge (facts m user platform host-dir) arguments) message)))]
     ((schema/validate :schema/prompts-file)
      (-> prompt-data
-         ((fn [m] (assoc m :prompt-function (fn [arguments]
-                                              (->> (:messages m)
-                                                   (map (comp ->message (partial renderer arguments)))
-                                                   (into []))))))
-         (update :messages #(map (partial renderer {}) %))
+         (assoc :mcp/prompt-registry
+                (->> (:messages prompt-data)
+                     (map (fn [{:keys [name] :as v}]
+                            [name (assoc
+                                   (select-keys v [:description])
+                                   :prompt-function
+                                   (fn [arguments]
+                                     [((comp ->message (partial renderer arguments))
+                                       (select-keys v [:role :content]))]))]))
+                     (into {})))
+         (update :messages (fn [messages]
+                             (->> messages
+                                  (map (partial renderer {}))
+                                  (map #(dissoc % :name :description :title)))))
          (update :metadata dissoc :functions :tools :extractors)
          (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition)))))))
 

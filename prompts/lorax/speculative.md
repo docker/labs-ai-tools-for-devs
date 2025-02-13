@@ -149,6 +149,6 @@ tools:
 
 Make a cloned repo available to the sandbox.  The host repo is '/Users/slim/vonwig/altaservice' and it should be named atlas
 
-# prompt
+# prompt test lorax
 
 Clone the sandbox named atlas. We will get back the id of the new sandbox and we should remember that.

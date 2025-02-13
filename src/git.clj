@@ -101,15 +101,15 @@
        (partition-by (comp :ref-hash :ref))
        (map first)))
 
-(defn refresh-cache 
+(defn refresh-cache
   " pure side-effect - clone or pull the cache"
   [coll]
   (doseq [m coll]
-    (if (fs/exists? (-> m :ref :dir))
-      (pull (:ref m))
-      (clone (:ref m)))
-    (when (not (= 0 (:exit-code m)))
-      (jsonrpc/notify :error {:content (str m)}))))
+    (let [c (if (fs/exists? (-> m :ref :dir))
+              (pull (:ref m))
+              (clone (:ref m)))]
+      (when (not (= 0 (:exit-code c)))
+        (jsonrpc/notify :error {:content (str c)})))))
 
 (defn cached-prompt-file [{{:keys [dir path]} :ref :as m}]
   (if path

@@ -8,11 +8,10 @@
    [clojure.string :as string]
    [creds]
    jsonrpc
-   [jsonrpc.logger :as logger]
    logging
    schema)
   (:import
-   [java.net URLEncoder UnixDomainSocketAddress]
+   [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
    [java.nio.channels SocketChannel]
    [java.util Arrays Base64]))
@@ -36,7 +35,10 @@
   (curl/post
    (format "http://localhost/images/create?fromImage=%s" image)
    (merge
-    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+     {:raw-args ["--unix-socket" (let [f (fs/file "/var/run/docker.raw.sock")] 
+                                   (if (.exists f)  
+                                     "/var/run/docker.raw.sock"
+                                     "/var/run/docker.sock"))]
      :throw false}
     (when (or creds identity-token)
       {:headers {"X-Registry-Auth"
@@ -440,7 +442,7 @@
   "run container with stdin read from a file"
   [m]
   (let [x (docker/function-call-with-stdin
-           (assoc m :content (slurp (-> m :stdin :file))))]
+            (assoc m :content (or (-> m :stdin :content)  (slurp (-> m :stdin :file)))))]
     (async/<!! (async/thread
                  (Thread/sleep 10)
                  (docker/finish-call x)))))
@@ -451,7 +453,7 @@
   [m]
   ;; (schema/validate :schema/container-definition)
   (cond 
-    (-> m :stdin :file)
+    (-> m :stdin)
     (run-with-stdin-content m)
     (true? (:background m))
     (run-background-function m)

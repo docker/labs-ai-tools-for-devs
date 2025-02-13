@@ -75,6 +75,9 @@
 (defn section? [node]
   (and (list? node) (= "section" (first node))))
 
+(defn fenced-code-block? [node]
+  (and (list? node) (= "fenced_code_block" (first node))))
+
 (defn description-section? [content node]
   (when-let [atx-header-node (first (filter #(= "atx_heading" (first %)) node))]
     (= "description"  (string/trim (from-range (-> atx-header-node (nth 3) (nth 1)) content)))))
@@ -117,14 +120,25 @@
 
 (def heading-1-loc->top-level-section-node (comp zip/node zip/up zip/up))
 
-(defn extract-prompts-with-descriptions [content ast]
+(defn extract-prompts-with-descriptions [content metadata ast]
   (->>
    (iterate zip/next (zip/seq-zip ast))
    (take-while (complement zip/end?))
    (filter heading-1-section?)
    (map heading-1-loc->top-level-section-node)
    (filter (partial prompt-section? content))
-   (map (partial h1-prompt-content content))))
+   (map (partial h1-prompt-content content))
+   (map (fn [m] (-> m
+                    (assoc :name (cond
+                                   (and (:title m) (:name metadata)) (str (:name metadata) ":" (:title m))
+                                   (:title m) (:title m)
+                                   (:name metadata) (:name metadata)
+                                   ;; TODO fix this
+                                   :else "missing name")
+                           :description (or
+                                         (:description m)
+                                         (:description metadata)
+                                         "missing description")))))))
 
 (defn extract-prompts [content ast]
   (->>
@@ -174,6 +188,28 @@
       (println ex)
       nil)))
 
+(defn extract-first-yaml-code-block [content ast]
+  (try
+    (when-let [loc (when-let [first-section
+                              (->>
+                               (iterate zip/right (zip/down (zip/seq-zip ast)))
+                               (some (fn [loc] (when (section? (zip/node loc)) loc))))]
+                     (when-let [first-code-block
+                                (->>
+                                  (iterate zip/right (zip/down first-section))
+                                  (some (fn [loc] (when (fenced-code-block? (zip/node loc)) loc))))]
+                       first-code-block))]
+      (->
+       (from-range (-> loc zip/node (nth 5) (nth 1)) content)
+       (clj-yaml/parse-string)))
+    (catch Throwable ex
+      (println ex)
+      nil)))
+
+(comment
+  (let [content (slurp "prompts/examples/github_issues.md")]
+    (extract-first-yaml-code-block content (parse-markdown content))))
+
 (defn parse-markdown
   "use the custom sexp representation"
   [content]
@@ -189,15 +225,17 @@
   "parse out the h1 prompt sections and the metadata"
   [content]
   (let [content (str content "\n# END\n\n")
-        ast (parse-markdown content)]
+        ast (parse-markdown content)
+        metadata (or
+                  (extract-metadata content ast)
+                  (extract-first-comment content ast)
+                  (extract-first-yaml-code-block content ast)
+                  {})]
     {:messages
      (->> ast
-          (extract-prompts-with-descriptions content)
+          (extract-prompts-with-descriptions content metadata)
           (into []))
-     :metadata  (or
-                 (extract-metadata content ast)
-                 (extract-first-comment content ast)
-                 {})}))
+     :metadata  metadata}))
 
 ;; ---------- future ---------
 

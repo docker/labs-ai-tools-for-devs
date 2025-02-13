@@ -81,7 +81,10 @@
                                                       (-> definition :container :workdir)
                                                       (:workdir defaults))]
                                          {:workdir (first (interpolate arg-context wd))}))
-                                (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s)))))]
+
+                                (-> definition :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s))))
+                                
+                                (-> definition :stdin :content) (update-in [:stdin :content] (fn [s] (first (interpolate arg-context s)))))]
             (jsonrpc/notify
              :message
              {:debug (format "function call %s"
@@ -109,7 +112,8 @@
 
           (fail (format "bad container definition %s" definition)))
         (catch Throwable t
-          (fail (format "system failure %s" t)))))
+          (fail (format "system failure %s" t))
+          (fail (with-out-str (.printStackTrace t))))))
     (fail "no function found")))
 
 (defn call-function

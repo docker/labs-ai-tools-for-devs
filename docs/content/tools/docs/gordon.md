@@ -23,6 +23,12 @@ volumes:
     external: false
 ```
 
+{{< callout type="info" >}}
+
+`mcp/docker` uses the local docker engine to run containers. 
+
+{{< /callout >}}
+
 ## debugging
 
 We suggest using `docker ai --debug` if you are trying to debug some of your tools while using the `docker ai` cli.

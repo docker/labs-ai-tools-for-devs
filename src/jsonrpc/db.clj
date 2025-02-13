@@ -9,11 +9,13 @@
 
 (def db* (atom {}))
 
-(defn get-prompt-data [{:keys [register] :as opts}]
+(defn get-prompt-data 
+  "register is a coll of prompt file ref maps"
+  [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path]}]
+       (map (fn [{:keys [cached-path ref-string]}]
               (let [m (prompts/get-prompts (assoc opts :prompts cached-path))]
-                [(or (-> m :metadata :name) ref) m])))
+                [(or (-> m :metadata :name) ref-string) m])))
        (into {})))
 
 (defn extract-resources [m]
@@ -56,13 +58,16 @@
        refs - coll of [type ref] type is static or dynamic"
   [refs]
   (if (seq refs)
+    ;; turn static/dynamic refs into maps of type, ref-string, and parsed ref with cache dir
     (let [git-map-coll (->> refs
                             (map (fn [[t ref]] {:type t :ref-string ref :ref (git/parse-github-ref ref)}))
                             (map (fn [m] (assoc-in m [:ref :ref-hash] (git/hashch (:ref m)))))
                             (map (fn [m] (assoc-in m [:ref :dir] (git/cache-dir (:ref m))))))]
+      ;; refresh cache (side effect)
       (-> git-map-coll
           git/collect-unique-cache-dirs
           git/refresh-cache)
+      ;; updated git map with cached-path
       (let [typed-colls
             (->> git-map-coll
                  (map git/cached-prompt-file)
