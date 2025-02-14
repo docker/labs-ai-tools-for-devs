@@ -19,7 +19,7 @@ tools:
         - "docker-prompts:/prompts"
       command:
         - -c
-        - "echo \"{{content|safe}}\" >> /prompts/{{name}}.md"
+        - "echo \"{{content|safe}}\" > /prompts/{{name}}.md"
   - name: write_files
   - name: read-file
 ```

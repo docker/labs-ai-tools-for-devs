@@ -94,7 +94,7 @@
                  (-> db 
                      (update-in [:mcp.prompts/registry s] (constantly m))
                      (update-in [:mcp.prompts/static s] (constantly m))
-                     (update [:mcp.prompts/resources] (fnil merge merge {}) (extract-resources m)))))))
+                     (update [:mcp.prompts/resources] (fnil merge {}) (extract-resources m)))))))
 
 (comment
   (println @db*)

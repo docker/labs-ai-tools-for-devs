@@ -377,7 +377,7 @@
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
      ;; register static prompts
-     (doseq [[s content] (->> (fs/list-dir "/Users/slim/docker/labs-ai-tools-for-devs/prompts")
+     (doseq [[s content] (->> (fs/list-dir "/prompts")
                               (filter (fn [f] (= "md" (fs/extension f))))
                               (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
        (db/update-prompt opts s content))
