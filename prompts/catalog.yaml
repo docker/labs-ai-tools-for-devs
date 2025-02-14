@@ -500,3 +500,7 @@ registry:
           command: [open-nodes, '{{raw}}']
     prompts: 1
     resources: {}
+  chrome:
+    description: Drive a headless Chrome browser to interact with web pages
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
