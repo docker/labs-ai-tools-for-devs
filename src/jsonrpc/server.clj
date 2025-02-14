@@ -117,12 +117,12 @@
   (logger/info "prompts/get " name)
   (let [{:keys [prompt-function description] :as m}
         (get
-          (->> @db*
-               :mcp.prompts/registry
-               vals
-               (mapcat :mcp/prompt-registry)
-               (into {}))
-          name)]
+         (->> @db*
+              :mcp.prompts/registry
+              vals
+              (mapcat :mcp/prompt-registry)
+              (into {}))
+         name)]
     {:description description
      :messages (prompt-function (or arguments {}))}))
 
@@ -377,6 +377,10 @@
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
      ;; register static prompts
+     (doseq [[s content] (->> (fs/list-dir "/Users/slim/docker/labs-ai-tools-for-devs/prompts")
+                              (filter (fn [f] (= "md" (fs/extension f))))
+                              (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
+       (db/update-prompt opts s content))
      (db/add-refs
       (concat
        (->> (:register opts)
@@ -392,7 +396,7 @@
                :volumes ["docker-prompts:/prompts"]
                :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
               (fn [line]
-                (logger/info "registry changed" line)
+                (logger/info "change event" line)
                 (let [[_dir _event f] (string/split line #"\s+")]
                   (when (= f "registry.yaml")
                     (try
@@ -400,7 +404,14 @@
                       (producer/publish-tool-list-changed producer {})
                       (producer/publish-prompt-list-changed producer {})
                       (catch Throwable t
-                        (logger/error t "unable to parse registry.yaml")))))))]
+                        (logger/error t "unable to parse registry.yaml"))))
+                  (when (string/ends-with? f ".md")
+                    (try
+                      (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
+                      (producer/publish-tool-list-changed producer {})
+                      (producer/publish-prompt-list-changed producer {})
+                      (catch Throwable t
+                        (logger/error t "unable to parse " f)))))))]
          (shutdown/schedule-container-shutdown
           (fn []
             (logger/info "inotifywait shutting down")

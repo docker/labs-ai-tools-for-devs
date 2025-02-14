@@ -466,7 +466,7 @@
    {:image "vonwig/websocat:latest",
     :stdin
     {:content
-     "{\"id\":1,\"method\":\"Page.navigate\",\"params\":{\"url\":\"https://www.docker.com\"}}"},
+     "Page.navigate {\"url\":\"https://www.docker.com\"}"},
     :command
     ["-n1"
      "--jsonrpc"

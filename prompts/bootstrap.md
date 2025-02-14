@@ -21,9 +21,10 @@ tools:
         - -c
         - "echo \"{{content|safe}}\" >> /prompts/{{name}}.md"
   - name: write_files
+  - name: read-file
 ```
 
-# prompt
+# xprompt
 
 Take the following description of a task I'd like to complete, and extract the schema for a set of tool definitions that I'll need 
 in order to run that task.  The tool definitions should be in yaml and each tool should have a name, a description, and an openapi schema
@@ -33,3 +34,6 @@ moustache templates. The final yaml definition should be written into a code blo
         
 > add a tool that fetches all GitHub Issues from a public repository using curl.  We do not need a token.
 
+# prompt
+
+Read in the file tools.md and then bootstrap the tool definition with the name 'github-issues'

@@ -9,7 +9,7 @@
 
 (def db* (atom {}))
 
-(defn get-prompt-data 
+(defn get-prompt-data
   "register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
@@ -85,6 +85,21 @@
                              :mcp.prompts/registry
                              (constantly (or (:mcp.prompts/static db) {})))))))
   (logger/info "resources are " (:mcp.prompts/resources @db*)))
+
+(defn update-prompt [opts s content]
+  (logger/info (format "update prompt %s with content %s" s content))
+  (let [m (prompts/get-prompts
+           (assoc opts :prompt-content content))]
+    (swap! db* (fn [db] 
+                 (-> db 
+                     (update-in [:mcp.prompts/registry s] (constantly m))
+                     (update-in [:mcp.prompts/static s] (constantly m))
+                     (update [:mcp.prompts/resources] (fnil merge merge {}) (extract-resources m)))))))
+
+(comment
+  (println @db*)
+  (-> @db* :mcp.prompts/registry (get "github-issues"))
+  (update-prompt {} "github-issues" (slurp "prompts/examples/github_issues.md")))
 
 (defn registry-refs
   "parse refs from the registry.yaml file - these are dynamic"
