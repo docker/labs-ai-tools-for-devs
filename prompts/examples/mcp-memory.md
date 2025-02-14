@@ -175,6 +175,3 @@ tools:
         - "{{raw|safe}}"
 ---
 
-# prompt
-
-Search for nodes that contain the term docker

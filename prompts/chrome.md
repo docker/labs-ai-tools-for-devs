@@ -12,7 +12,9 @@ tools:
           type: string
           description: The message to send to websocat on stdin.
         websocat_args:
-          type: string
+          type: array
+          items:
+            type: string
           description: The arguments to pass to websocat.
       required:
         - url
@@ -21,9 +23,10 @@ tools:
     container:
       image: vonwig/websocat:latest
       stdin: 
-        content: {{message|safe}}
+        content: "{{message|safe}}"
       command:
-        - "{{websocat_args|safe}} {{url|safe}}"
+        - "{{websocat_args|into}}"
+        - "{{url|safe}}"
   - name: curl
     description: Run a curl command.
     parameters:
