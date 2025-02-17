@@ -4,7 +4,6 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
-   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [creds]
    jsonrpc
@@ -184,7 +183,7 @@
 (defn attach-container-stdout-logs [{:keys [Id]}]
   ;; this assumes no Tty so the output will be multiplexed back
   (curl/post
-   (format "http://localhost/containers/%s/attach?stdout=true&logs=true" Id)
+   (format "http://localhost/containers/%s/attach?stdout=true&stderr=true&logs=true" Id)
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :as :bytes
     :throw false}))
@@ -233,12 +232,6 @@
 (def get-archive (comp (status? 200 "container->archive") container->archive))
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
-
-(def sample {:image "docker/lsp:latest"
-             :entrypoint "/app/result/bin/docker-lsp"
-             :command ["project-facts"
-                       "--vs-machine-id" "none"
-                       "--workspace" "/docker"]})
 
 (defn- -pull [m]
   (pull (merge m
@@ -299,18 +292,6 @@
                    {:pty-output s
                     :exit-code (-> info :State :ExitCode)
                     :info info})))}))
-
-(comment
-  (async/thread
-    (run-streaming-function-with-no-stdin
-     {:image "vonwig/inotifywait:latest"
-      :volumes ["docker-prompts:/prompts"]
-      :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]
-      :opts {:Tty true
-             :StdinOnce false
-             :OpenStdin false
-             :AttachStdin false}}
-     println)))
 
 (defn run-background-function
   "run container function with no stdin, and no streaming output"
@@ -375,19 +356,28 @@
         client))
     client))
 
-(defn docker-stream-format->stdout [bytes]
-  ;; use xxd to look at the bytes
-  #_(try
-      (with-open [w (java.io.BufferedOutputStream.
-                     (java.io.FileOutputStream. "hey.txt"))]
-        (.write w bytes))
+(defn get-block [x-bytes start]
+  (let [[type _ _ _ n1 n2 n3 n4] (Arrays/copyOfRange ^bytes x-bytes start (+ start 8))]
+    (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes x-bytes (+ start 4) (+ start 8))))]
+      [(case type 0 :stdin 1 :stdout 2 :stderr)
+       size
+       (String. (Arrays/copyOfRange ^bytes x-bytes (+ start 8) (+ start 8 size)))])))
 
-      (catch Throwable t
-        (println t)))
+(defn process-bytes [x-bytes]
+  (loop [agg {:stdout "" :stderr "" :stdin ""} start 0]
+    (if (> (- (count x-bytes) start) 8)
+      (let [[type size s] (get-block x-bytes start)]
+        (recur
+         (update agg type str s)
+         (+ start size 8)))
+      agg)))
+
+(defn docker-stream-format->stdout [bytes]
   (try
-    (String. ^bytes (Arrays/copyOfRange ^bytes bytes 8 (count bytes)))
+    (let [{:keys [stdout stderr]} (process-bytes bytes)]
+      (str stdout stderr))
     (catch Throwable t
-      (logger/error "not a docker stream: " t)
+      (logger/error "processing docker engine attach bytes: " t)
       "")))
 
 (defn function-call-with-stdin
@@ -440,7 +430,15 @@
         {}))))
 
 (defn run-with-stdin-content
-  "run container with stdin read from a file"
+  "run container with stdin read from file or from string
+   this is several engine calls
+     - create container
+     - start container
+     - write-stdin which creates a socket, upgrades the connection, and writes the bytes
+     - closes the socket
+     - wait for container to exit or kill it if there's a timeout
+     - attaches to the container and downloads the bytes for both the stdout and stderr
+     - deletes the container"
   [m]
   (let [x (docker/function-call-with-stdin
            (assoc m :content (or (-> m :stdin :content) (slurp (-> m :stdin :file)))))]
@@ -461,28 +459,6 @@
     :else
     (run-function m)))
 
-(comment
-  (run-container
-   {:image "vonwig/websocat:latest",
-    :stdin
-    {:content
-     "Page.navigate {\"url\":\"https://www.docker.com\"}"},
-    :command
-    ["-n1"
-     "--jsonrpc"
-     "--jsonrpc-omit-jsonrpc"
-     "http://host.docker.internal:9222/devtools/page/EF1106D0B121836079CE1582C85F6E9A"],
-    :jsonrpc true,
-    :host-dir "/Users/slim/docker/labs-ai-tools-for-devs",
-    :debug true,
-    :stream true,
-    :jwt "xxxxxxx",
-    :save-thread-volume true,
-    :register [],
-    :thread-id "thread",
-    :user "jimclark106",
-    :platform "darwin"}))
-
 (defn get-login-info-from-desktop-backend
   "returns token or nil if not logged in or backend.sock is not available"
   []
@@ -494,32 +470,4 @@
          (get-login-info {})
          (catch Throwable _))))
     (catch Throwable _)))
-
-(comment
-
-  (is-logged-in? {})
-  (get-token {})
-  (get-login-info {})
-  (get-login-info-from-desktop-backend)
-  (images {})
-
-  (pprint
-   (json/parse-string
-    (run-container
-     (assoc sample
-            :host-dir "/Users/slim/docker/genai-stack"
-            :user "jimclark106")) keyword))
-  (docker/delete-image {:image "vonwig/go-linguist:latest"})
-  (pprint
-   (run-container {:image "vonwig/go-linguist:latest"
-                   :timeout 100
-                   :command ["-json"]
-                   :host-dir "/Users/slim/docker/labs-make-runbook"
-                   :user "jimclark106"}))
-  (pprint
-   (json/parse-string
-    (run-container
-     {:image "vonwig/extractor-node:latest"
-      :host-dir "/Users/slim/docker/labs-make-runbook"})
-    keyword)))
 
