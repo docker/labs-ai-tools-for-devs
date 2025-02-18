@@ -40,13 +40,32 @@ tools:
       image: vonwig/curl:latest
       command: 
         - "{{raw|safe}}"
+  - name: chrome
+    description: Starts the chrome browser.
+    parameters:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The url to navigate to after the browser is started.
+      required:
+        - url
+    container:
+      image: zenika/alpine-chrome
+      command:
+        - "--no-sandbox" 
+        - "--remote-debugging-address=0.0.0.0"
+        - "--remote-debugging-port=9222"
+        - "{{url|safe}}"
 ---
 
 # prompt
 
-You are a helpful assistant who can control a headless chrome browser. The browser is already running and you will be controlling it with the devtools protocol.
+You are a helpful assistant who can control a headless chrome browser. This browser may or may not be running.
 
 You have `curl` and `websocat` available to you to control the browser and to answer the user's question.
+
+If you don't see the browser running, use the chrome tool. Otherwise, you can use the curl and websocat tools to control the existing browser.
 
 ## Verify the server is running
 
@@ -84,4 +103,4 @@ It is important that when you are done with your page, you close it. This is imp
 
 # prompt
 
-{{question}}
+What is the url for the docker logo?
