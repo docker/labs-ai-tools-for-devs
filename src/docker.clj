@@ -9,7 +9,8 @@
    jsonrpc
    [jsonrpc.logger :as logger]
    logging
-   schema)
+   schema
+   shutdown)
   (:import
    [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
@@ -300,7 +301,10 @@
     (-pull m))
   (let [x (create m)]
     (start x)
-    ;; TODO schedule shutdown hook
+    (shutdown/schedule-container-shutdown
+     (fn []
+       (kill-container x)
+       (delete x)))
     {:done :running}))
 
 (defn run-function

@@ -376,6 +376,7 @@
                      :producer producer
                      :server server}]
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
+     (shutdown/init)
      ;; register static prompts
      (doseq [[s content] (->> (fs/list-dir "/prompts")
                               (filter (fn [f] (= "md" (fs/extension f))))

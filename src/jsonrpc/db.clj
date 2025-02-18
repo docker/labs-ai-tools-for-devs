@@ -9,8 +9,10 @@
 
 (def db* (atom {}))
 
-(defn get-prompt-data
-  "register is a coll of prompt file ref maps"
+(defn- get-prompt-data
+  "get map of prompt data from a set of prompt files
+     params
+       register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
        (map (fn [{:keys [cached-path ref-string]}]
@@ -18,7 +20,9 @@
                 [(or (-> m :metadata :name) ref-string) m])))
        (into {})))
 
-(defn extract-resources [m]
+(defn- extract-resources 
+  "extract resource map from a prompt"
+  [m]
   (->> (vals m)
        (map (comp :resources :metadata))
        (filter identity)
@@ -29,31 +33,32 @@
                       {:text (-> entry :default :text)}))]))
        (into {})))
 
-(defn add-static-prompts [db m]
+(defn- add-static-prompts 
+  [db m]
   (-> db
       (update :mcp.prompts/registry (fnil merge {}) m)
       (assoc :mcp.prompts/static m)
       (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))
 
-(defn add-dynamic-prompts [db m]
+(defn- add-dynamic-prompts [db m]
   (logger/info "dynamic keys" (keys (:mcp.prompts/registry db)))
   (logger/info "static keys" (keys (:mcp.prompts/static db)))
   (-> db
       (assoc :mcp.prompts/registry (merge m (:mcp.prompts/static db)))
       (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))
 
-(defn update-dynamic [coll]
+(defn- update-dynamic [coll]
   (swap! db* add-dynamic-prompts (get-prompt-data {:register coll})))
-(defn update-static [coll]
+(defn- update-static [coll]
   (swap! db* add-static-prompts (get-prompt-data {:register coll})))
 
-(defn missing-cached-prompt-file? [m]
+(defn- missing-cached-prompt-file? [m]
   (when (not (contains? m :cached-path))
     (logger/warn "missing cached path: %s" (:ref-string m))
     m))
 
 (defn add-refs
-  "update the db with new refs
+  "update the db with new refs after rereshing the cache from git
      params
        refs - coll of [type ref] type is static or dynamic"
   [refs]
@@ -86,7 +91,9 @@
                              (constantly (or (:mcp.prompts/static db) {})))))))
   (logger/info "resources are " (:mcp.prompts/resources @db*)))
 
-(defn update-prompt [opts s content]
+(defn update-prompt 
+  "update the db with new markdown prompt content being dynamically registered"
+  [opts s content]
   (logger/info (format "update prompt %s with content %s" s content))
   (let [m (prompts/get-prompts
            (assoc opts :prompt-content content))]
@@ -101,6 +108,7 @@
   (-> @db* :mcp.prompts/registry (get "github-issues"))
   (update-prompt {} "github-issues" (slurp "prompts/examples/github_issues.md")))
 
+;; the registry.yaml file is a list of refs selected from our catalog
 (defn registry-refs
   "parse refs from the registry.yaml file - these are dynamic"
   [f]

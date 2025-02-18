@@ -107,11 +107,12 @@ registry:
     - type: function
       function:
         name: hello-docker
-        description: print a secret message
+        description: send a greeting from docker
         parameters:
           type: object
           properties:
             greeting: {type: string, description: the greeting to send}
+          required: [greeting]
         container:
           image: busybox:latest
           command: [echo, '{{greeting}}']
@@ -227,21 +228,24 @@ registry:
           type: object
           properties:
             host-dir: {type: string}
+            name: {type: string}
         container:
-          image: vonwig/speculative:latest
-          mounts: ['{{host-dir|safe}}:/repo']
-          commands: [sandbox, source, /repo]
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, source, -n, '{{name}}', '{{host-dir}}']
+          background: true
     - type: function
       function:
         name: sandbox-clone
-        description: create a sandbox for a host repo and respond with the id of the new sandbox
+        description: create a sandbox and respond with the id of the new sandbox
         parameters:
           type: object
           properties:
             sandbox-name: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, clone, user-source, --name, '{{sandbox-name}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, clone, '{{sandbox-name}}']
     - type: function
       function:
         name: sandbox-snapshot
@@ -251,8 +255,9 @@ registry:
           properties:
             sandbox-id: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, snapshot, '{{sandbox-id}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, snapshot, '{{sandbox-id}}']
     - type: function
       function:
         name: sandbox-restore
@@ -263,8 +268,9 @@ registry:
             sandbox-id: {type: string}
             tree-id: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, restore, '{{sandbox-id}}', '{{tree-id}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, restore, '{{sandbox-id}}', '{{tree-id}}']
     - type: function
       function:
         name: sandbox-exec
@@ -275,8 +281,9 @@ registry:
             sandbox-id: {type: string}
             image: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, exec, --mount-image, '{{image}}', '{{sandbox-id}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, exec, --mount-image, '{{image}}', '{{sandbox-id}}']
     - type: function
       function:
         name: sandbox-delete-file
@@ -287,8 +294,9 @@ registry:
             sandbox-id: {type: string}
             path: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, delete, '{{sandbox-id}}', '{{path}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, delete, '{{sandbox-id}}', '{{path}}']
     - type: function
       function:
         name: sandbox-rm
@@ -299,8 +307,9 @@ registry:
             sandbox-id: {type: string}
             path: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, rm, '{{sandbox-id}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, rm, '{{sandbox-id}}']
     - type: function
       function:
         name: sandbox-diff
@@ -311,8 +320,9 @@ registry:
             sandbox-id: {type: string}
             tree-id: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, diff, '{{sandbox-id}}', '{{tree-id}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, diff, '{{sandbox-id}}', '{{tree-id}}']
     - type: function
       function:
         name: sandbox-apply
@@ -322,8 +332,9 @@ registry:
           properties:
             diff: {type: string}
         container:
-          image: vonwig/speculative:latest
-          commands: [sandbox, apply, user-source, '{{diff}}']
+          image: lorax:latest
+          entrypoint: lorax
+          command: [sandbox, apply, user-source, '{{diff}}']
     prompts: 1
     resources: {}
   memory:
@@ -354,7 +365,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [create-entities, '{{raw}}']
+          command: [create-entities, '{{raw|safe}}']
     - type: function
       function:
         name: create_relations
@@ -375,7 +386,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [create-relations, '{{raw}}']
+          command: [create-relations, '{{raw|safe}}']
     - type: function
       function:
         name: add_observations
@@ -398,7 +409,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [add-observations, '{{raw}}']
+          command: [add-observations, '{{raw|safe}}']
     - type: function
       function:
         name: delete_entities
@@ -414,7 +425,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [delete-entities, '{{raw}}']
+          command: [delete-entities, '{{raw|safe}}']
     - type: function
       function:
         name: delete_observations
@@ -437,7 +448,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [delete-observations, '{{raw}}']
+          command: [delete-observations, '{{raw|safe}}']
     - type: function
       function:
         name: delete_relations
@@ -459,16 +470,18 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [delete-releations, '{{raw}}']
+          command: [delete-relations, '{{raw|safe}}']
     - type: function
       function:
         name: read_graph
         description: Read the entire knowledge graph
-        parameters: {type: object, properties: null}
+        parameters:
+          type: object
+          properties: {}
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [read-graph, '{{raw}}']
+          command: [read-graph, '{{raw|safe}}']
     - type: function
       function:
         name: search_nodes
@@ -481,7 +494,7 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [search-nodes, '{{raw}}']
+          command: [search-nodes, '{{raw|safe}}']
     - type: function
       function:
         name: open_nodes
@@ -497,10 +510,49 @@ registry:
         container:
           image: vonwig/memory:latest
           volumes: ['mcp-memory:/memory']
-          command: [open-nodes, '{{raw}}']
-    prompts: 1
+          command: [open-nodes, '{{raw|safe}}']
+    prompts: 0
     resources: {}
   chrome:
     description: Drive a headless Chrome browser to interact with web pages
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
+    tools:
+    - type: function
+      function:
+        name: websocat
+        description: A tool to send and receive messages over a websocket.
+        parameters:
+          type: object
+          properties:
+            url: {type: string, description: The url of the websocket endpoint.}
+            message: {type: string, description: The message to send to websocat on stdin.}
+            websocat_args:
+              type: array
+              items: {type: string}
+              description: The arguments to pass to websocat.
+          required: [url, message, websocat_args]
+        container:
+          image: vonwig/websocat:latest
+          stdin: {content: '{{message|safe}}'}
+          command: ['{{websocat_args|into}}', '{{url|safe}}']
+    - type: function
+      function:
+        name: curl-manual
+        description: Run the man page for curl
+        container:
+          image: vonwig/curl:latest
+          command: ['{{raw|safe}}', man]
+    - type: function
+      function:
+        description: Run a curl command.
+        parameters:
+          type: object
+          properties:
+            args: {type: string, description: The arguments to pass to curl}
+        container:
+          image: vonwig/curl:latest
+          command: ['{{raw|safe}}']
+        name: curl
+    prompts: 2
+    resources: {}

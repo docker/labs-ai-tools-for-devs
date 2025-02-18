@@ -3,7 +3,7 @@ name: mcp-memory
 description: Create a memory system for conversational agents
 model: claude-3-5-sonnet-20241022
 defs:
-  - lorax: &memory
+  - memory: &memory
       image: vonwig/memory:latest 
       volumes:
         - "mcp-memory:/memory"

@@ -7,7 +7,6 @@
    prompts))
 
 (prompts/get-prompts {:prompts (fs/file "prompts/examples/mcp-memory.md")})
-(yaml/parse-string (slurp "prompts/examples/mcp-memory.md"))
 
 (defn f->prompt [f]
   (prompts/get-prompts {:prompts f}))
