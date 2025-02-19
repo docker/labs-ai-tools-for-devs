@@ -112,7 +112,8 @@
 ;; Tty wraps the process in a pseudo terminal
 {:StdinOnce true
  :OpenStdin true}
-(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes] :or {opts {:Tty true}}}]
+(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes ports] 
+                         :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
@@ -121,13 +122,17 @@
                                        (map (fn [[k v]] (format "%s=%s" (name k) v)))
                                        (into []))})
                   {:HostConfig
-                   {:Binds
-                    (concat ["docker-lsp:/docker-lsp"
-                             "/var/run/docker.sock:/var/run/docker.sock"]
-                            (when host-dir [(format "%s:/project:rw" host-dir)])
-                            (when thread-id [(format "%s:/thread:rw" thread-id)])
-                            (or volumes mounts))}
+                   (merge
+                     {:Binds
+                      (concat ["docker-lsp:/docker-lsp"
+                               "/var/run/docker.sock:/var/run/docker.sock"]
+                              (when host-dir [(format "%s:/project:rw" host-dir)])
+                              (when thread-id [(format "%s:/thread:rw" thread-id)])
+                              (or volumes mounts))}
+                     (when ports 
+                       {:PortBindings {"9222/tcp" [{:HostPort "9222"}]}}))
                    :WorkingDir (or workdir "/project")}
+                  (when ports {:ExposedPorts {"9222/tcp" {}}})
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))
         ascii-payload (String. (.getBytes payload "ASCII"))]
@@ -234,8 +239,19 @@
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
 
+(defn- add-latest [image]
+  (let [[_ tag] (re-find #".*(:.*)$" image)]
+    (if tag
+      image
+      (str image ":latest"))))
+
+(comment
+  (add-latest "vonwig/go-linguist")
+  (add-latest "blah/what:tag"))
+
 (defn- -pull [m]
   (pull (merge m
+               {:image (add-latest (:image m))}
                {:serveraddress "https://index.docker.io/v1/"}
                (when (and (:user m)
                           (or (:jwt m) (:pat m)))
@@ -305,7 +321,8 @@
      (fn []
        (kill-container x)
        (delete x)))
-    {:done :running}))
+    {:done :running
+     :pty-output (str "started up Ts" (:image m))}))
 
 (defn run-function
   "run container function with no stdin, and no streaming output"

@@ -4,7 +4,6 @@
    [clj-yaml.core :as clj-yaml]
    [clojure.core.async :as async]
    [clojure.edn :as edn]
-   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [clojure.zip :as zip]
    [docker]
@@ -85,6 +84,11 @@
 (defn atx-heading-section? [node]
   (= "atx_heading" (first node)))
 
+(defn atx-heading-1? [node]
+  (and
+   (= "atx_heading" (first node))
+   (= "atx_h1_marker" (-> node (nth 2) first))))
+
 (defn remove-section-content [content s node]
   (if (and (list? node) (= "atx_heading" (first node)))
     (string/replace s (from-range (nth node 1) content) "")
@@ -99,19 +103,40 @@
 (defn section-content [content node]
   (from-range (nth node 1) content))
 
-(defn h1-prompt-content [content node]
+(defn h1-prompt-content
+  " params
+      node is a top-level h1 prompt node"
+  [content node]
   (merge
    (-> node (nth 2) (nth 3) (nth 1) (from-range content) (parse-h1))
-   (if (some section? node)
+   (if (->> node
+            (filter list?)
+            (some (partial description-section? content)))
      ;; prompt is broken up with real sections
      (merge
-      {:content (->> node
-                     (filter list?)
-                     (filter (complement (partial description-section? content)))
-                     #_(filter (complement atx-heading-section?))
-                     (map (partial section-content content))
-                     (apply str)
-                     (string/trim))}
+      {:content (let [top-level-content-nodes
+                      (->> node
+                           (filter list?)
+                           (filter (complement (partial description-section? content)))
+                           (filter (complement atx-heading-1?)))
+                      first-heading-node
+                      (->> top-level-content-nodes
+                           (filter section?)
+                           first
+                           (seq)
+                           (filter atx-heading-section?)
+                           first)
+                      prompt-content
+                      (->> top-level-content-nodes
+                           (map (partial section-content content))
+                           (apply str))]
+                  (string/trim
+                    (string/replace 
+                      prompt-content  
+                      (if first-heading-node
+                        (from-range (nth first-heading-node 1) content)
+                        "")
+                      "")))}
       (when-let [description (some->> node
                                       (filter section?)
                                       (filter (partial description-section? content))

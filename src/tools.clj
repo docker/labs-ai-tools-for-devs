@@ -97,6 +97,8 @@
                                     false
                                     (not= 0 exit-code))]
               (cond
+                (= :running done)
+                (resolve pty-output)
                 (and (= :exited done) (not exit-code-fail?) pty-output (not (= "" pty-output)))
                 (resolve pty-output)
                 (and (= :exited done) (not exit-code-fail?))

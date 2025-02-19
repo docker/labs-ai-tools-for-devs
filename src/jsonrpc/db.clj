@@ -94,7 +94,6 @@
 (defn update-prompt 
   "update the db with new markdown prompt content being dynamically registered"
   [opts s content]
-  (logger/info (format "update prompt %s with content %s" s content))
   (let [m (prompts/get-prompts
            (assoc opts :prompt-content content))]
     (swap! db* (fn [db] 

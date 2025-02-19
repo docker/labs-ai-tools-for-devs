@@ -6,7 +6,10 @@
    [medley.core :as medley]
    prompts))
 
-(prompts/get-prompts {:prompts (fs/file "prompts/examples/mcp-memory.md")})
+(try
+  (prompts/get-prompts {:prompts (fs/file "prompts/chrome.md")})
+  (catch Throwable t
+    (println t)))
 
 (defn f->prompt [f]
   (prompts/get-prompts {:prompts f}))

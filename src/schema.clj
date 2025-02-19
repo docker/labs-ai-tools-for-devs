@@ -52,20 +52,31 @@
 (s/def ::container-response (s/keys :req-un [::pty-output ::exit-code ::info ::done]
                                     :opt-un [::timeout ::kill-container]))
 
+;; -- tool parameters --
+(s/def :tool/parameters any?)
+
+;; -- container tools --
+(s/def :container/image string?)
+(s/def :container/command (s/coll-of string?))
+(s/def :container/stdin any?)
+(s/def :container/volumes (s/coll-of string?))
+(s/def :container/entrypoint string?)
+(s/def :container/workdir string?)
+(s/def :tool/container (s/keys :req-un [:container/image]
+                               :opt-un [:container/stdin :container/command :container/volumes :container/entrypoint :container/workdir]))
+
 ;; -- Spec definitions for Tools --
 (s/def ::github-ref (s/and string? #(string/starts-with? % "github:")))
 (s/def :prompt/ref ::github-ref)
 (s/def :prompt/prompt (s/or :github-ref ::github-ref :relative-path string?))
 (s/def :tool/name string?)
-(s/def :docker/type #{"prompt" "container"})
+(s/def :docker/type #{"prompt"})
 (s/def :tool/description string?)
 (s/def ::prompt-tool (s/keys :req-un [:tool/name :tool/description :docker/type]
                              :opt-un [:tool/parameters :prompt/prompt :prompt/ref]))
 (s/def ::container-tool (s/keys :req-un [:tool/name :tool/description :tool/container]
                                 :opt-un [:tool/parameters]))
-(s/def ::placeholder-tool (s/keys :req-un [:tool/name :tool/description]
-                                  :opt-un [:tool/parameters]))
-(s/def :tool/function (s/or :container ::container-tool :prompt ::prompt-tool :placeholder ::placeholder-tool))
+(s/def :tool/function (s/or :container ::container-tool :prompt ::prompt-tool))
 (s/def :tool/type #{"function"})
 (s/def ::tool (s/keys :req-un [:tool/type :tool/function]))
 (s/def ::tools (s/coll-of ::tool))

@@ -286,11 +286,20 @@
       (apply log-wrapper-fn log-args)
       (recur))))
 
+(defn decide-log-path []
+  (let [prompts-dir (fs/file "/prompts")]
+    (if (fs/exists? prompts-dir)
+      (do
+        (fs/create-dirs (fs/file prompts-dir "log"))
+        (fs/file prompts-dir "log/docker-mcp-server.out"))
+      (do
+        (fs/create-dirs (fs/file "./log"))
+        (fs/file "./log/docker-mcp-server.out")))))
+
 (defrecord TimbreLogger []
   logger/ILogger
   (setup [this]
-    (fs/create-dirs (fs/file "/prompts" "log"))
-    (let [log-path (str (fs/file "/prompts/log/docker-mcp-server.out"))]
+    (let [log-path (str (decide-log-path))]
       (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
                              :appenders {:println {:enabled? false}
                                          :spit (appenders/spit-appender {:fname log-path})}})

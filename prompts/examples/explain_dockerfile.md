@@ -36,7 +36,7 @@ This tool can explain a pre-provided Dockerfile but it can also fetch the Docker
 
 ## content
 
-Start by fetching the Dockerfile located at the path {{path}}.
+Start by fetching the Dockerfile located at the path {{path}} using the cat_file tool.
 
 After fetching the Dockerfile contents, explain the Dockerfile line by line.
 
