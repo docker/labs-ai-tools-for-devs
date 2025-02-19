@@ -96,26 +96,30 @@
    (from-range (nth node 1) content)
    (seq node)))
 
+(defn section-content [content node]
+  (from-range (nth node 1) content))
+
 (defn h1-prompt-content [content node]
   (merge
    (-> node (nth 2) (nth 3) (nth 1) (from-range content) (parse-h1))
-    ;; TODO merge a description and filter node content
    (if (some section? node)
+     ;; prompt is broken up with real sections
      (merge
       {:content (->> node
-                     (filter section?)
+                     (filter list?)
                      (filter (complement (partial description-section? content)))
                      #_(filter (complement atx-heading-section?))
-                     (map (partial section-content-without-headings content))
+                     (map (partial section-content content))
                      (apply str)
                      (string/trim))}
-      (when-let [description (->> node
-                                  (filter section?)
-                                  (filter (partial description-section? content))
-                                  first
-                                  (section-content-without-headings content)
-                                  (string/trim))]
+      (when-let [description (some->> node
+                                      (filter section?)
+                                      (filter (partial description-section? content))
+                                      first
+                                      (section-content-without-headings content)
+                                      (string/trim))]
         {:description description}))
+     ;; the contene is just one big section with no description
      {:content (string/trim (section-content-without-headings content node))})))
 
 (def heading-1-loc->top-level-section-node (comp zip/node zip/up zip/up))
@@ -196,8 +200,8 @@
                                (some (fn [loc] (when (section? (zip/node loc)) loc))))]
                      (when-let [first-code-block
                                 (->>
-                                  (iterate zip/right (zip/down first-section))
-                                  (some (fn [loc] (when (fenced-code-block? (zip/node loc)) loc))))]
+                                 (iterate zip/right (zip/down first-section))
+                                 (some (fn [loc] (when (fenced-code-block? (zip/node loc)) loc))))]
                        first-code-block))]
       (->
        (from-range (-> loc zip/node (nth 5) (nth 1)) content)
