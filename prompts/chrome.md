@@ -58,14 +58,14 @@ tools:
         - url
     container:
       image: zenika/alpine-chrome
-      network_mode: host
-      background: true
       command:
         - "--no-sandbox" 
         - "--remote-debugging-address=0.0.0.0"
         - "--remote-debugging-port=9222"
         - "{{url|safe}}"
       background: true
+      ports:
+        - "9222:9222"
 ---
 
 # prompt
@@ -87,7 +87,7 @@ Examples:
 ```sh
 # Get the websocket url
 # NOTE: Set the host header to be localhost:9222 due to chrome's default behavior to only allow localhost
-curl -X PUT -sg http://host.docker.internal:9222/json/new 
+curl -X PUT -H "Host: localhost:9222" -sg http://host.docker.internal:9222/json/new 
 
 # Navigate to a page
 # We are setting --jsonrpc mode, so the first word is the method name and the rest is the arguments.
@@ -105,6 +105,10 @@ For more complex tasks, use websocat to send and receive messages to the browser
 
 It is important that when you are done with your page, you close it. This is important because the browser could continue to run even after you close the websocket connection.
 
+## Question
+
 The following is the question you are trying to answer:
 
 {{query}}
+
+(if there is no question, just confirm Chrome is running and ready to answer questions)
