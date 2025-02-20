@@ -1,5 +1,5 @@
 ---
-model: gpt-4o-mini
+model: claude-3-5-sonnet-20241022
 tools:
   - name: websocat
     description: A tool to send and receive messages over a websocket.
