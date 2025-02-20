@@ -105,14 +105,44 @@
     :throw false
     :as :stream}))
 
+(defn parse-port [s]
+  (let [[_ host container] (re-find #"(.*):(.*)" s)]
+    {:host {:port host}
+     :container {:port container
+                 :protocol "tcp"}}))
+
+(defn exposed-ports
+  "  params
+       - coll of strings (e.g. [\"9222:9222\"])"
+  [coll]
+  (->> (for [s coll :let [{:keys [container]} (parse-port s)]]
+         [(format "%s/%s" (:port container) (:protocol container)) {}])
+       (into {})))
+
+(defn port-bindings
+  "  params
+       - coll of strings (e.g. [\"9222:9222\"])"
+  [coll]
+  (->>
+    (for [s coll :let [{:keys [container host]} (parse-port s)]]
+      [(format "%s/%s" (:port container) (:protocol container)) [{:HostPort (:port host)}]])
+    (into {})))
+
+(comment
+  (port-bindings ["9222:9222"])
+  (exposed-ports ["9222:9222"]))
+
 ;; check for 201
 ;; entrypoint is an array of strings
 ;; env is a map
 ;; Env is an array of name=value strings
+;;
+;; opts
+;;
 ;; Tty wraps the process in a pseudo terminal
-{:StdinOnce true
- :OpenStdin true}
-(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes ports] 
+;; StdinOnce closes the stdin after the first client detaches
+;; OpenStdin just opens stdin
+(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes ports network_mode]
                          :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
@@ -123,16 +153,18 @@
                                        (into []))})
                   {:HostConfig
                    (merge
-                     {:Binds
-                      (concat ["docker-lsp:/docker-lsp"
-                               "/var/run/docker.sock:/var/run/docker.sock"]
-                              (when host-dir [(format "%s:/project:rw" host-dir)])
-                              (when thread-id [(format "%s:/thread:rw" thread-id)])
-                              (or volumes mounts))}
-                     (when ports 
-                       {:PortBindings {"9222/tcp" [{:HostPort "9222"}]}}))
+                    {:Binds
+                     (concat ["docker-lsp:/docker-lsp"
+                              "/var/run/docker.sock:/var/run/docker.sock"]
+                             (when host-dir [(format "%s:/project:rw" host-dir)])
+                             (when thread-id [(format "%s:/thread:rw" thread-id)])
+                             (or volumes mounts))}
+                    (when network_mode
+                      {:NetworkMode network_mode})
+                    (when ports
+                      {:PortBindings (port-bindings ports)}))
                    :WorkingDir (or workdir "/project")}
-                  (when ports {:ExposedPorts {"9222/tcp" {}}})
+                  (when ports {:ExposedPorts (exposed-ports ports)})
                   (when entrypoint {:Entrypoint entrypoint})
                   (when command {:Cmd command})))
         ascii-payload (String. (.getBytes payload "ASCII"))]

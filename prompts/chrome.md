@@ -23,6 +23,7 @@ tools:
         - websocat_args      
     container:
       image: vonwig/websocat:latest
+      network_mode: host
       stdin: 
         content: "{{message|safe}}"
       command:
@@ -38,6 +39,7 @@ tools:
           description: The arguments to pass to curl
     container:
       image: vonwig/curl:latest
+      network_mode: host
       command: 
         - "{{raw|safe}}"
   - name: chrome
@@ -52,9 +54,8 @@ tools:
         - url
     container:
       image: zenika/alpine-chrome
+      network_mode: host
       background: true
-      ports:
-        - "9222:9222"
       command:
         - "--no-sandbox" 
         - "--remote-debugging-address=0.0.0.0"
@@ -81,13 +82,13 @@ Examples:
 
 ```sh
 # Get the websocket url
-curl -X PUT -H "HOST: localhost:9222" -sg http://host.docker.internal:9222/json/new 
+curl -X PUT -sg http://localhost:9222/json/new 
 
 # Navigate to a page
 
 $MESSAGE='Page.navigate {"url":"https://www.docker.com"}' # This format works with --jsonrpc where the first word is the method name and the rest is the arguments.
 
-$MESSAGE | websocat -n1 --jsonrpc --jsonrpc-omit-jsonrpc ws://host.docker.internal:9222/devtools/page/<PAGE_ID>
+$MESSAGE | websocat -n1 --jsonrpc --jsonrpc-omit-jsonrpc ws://localhost:9222/devtools/page/<PAGE_ID>
 
 {"id":2,"result":{"frameId":"A331E56CCB8615EB4FCB720425A82259","loaderId":"EF5AAD19F2F8BB27FAF55F94FFB27DF9"}}
 ```
