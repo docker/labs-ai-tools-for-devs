@@ -27,7 +27,6 @@ tools:
         - websocat_args      
     container:
       image: vonwig/websocat:latest
-      network_mode: host
       stdin: 
         content: "{{message|safe}}"
       command:
@@ -43,7 +42,6 @@ tools:
           description: The arguments to pass to curl
     container:
       image: vonwig/curl:latest
-      network_mode: host
       command: 
         - "{{raw|safe}}"
   - name: chrome
@@ -109,6 +107,6 @@ It is important that when you are done with your page, you close it. This is imp
 
 The following is the question you are trying to answer:
 
-{{query}}
+what is the url of the logo for docker.com?
 
 (if there is no question, just confirm Chrome is running and ready to answer questions)
