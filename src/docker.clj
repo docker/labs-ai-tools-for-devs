@@ -410,11 +410,11 @@
     client))
 
 (defn get-block [x-bytes start]
-  (let [[type _ _ _ n1 n2 n3 n4] (Arrays/copyOfRange ^bytes x-bytes start (+ start 8))]
-    (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes x-bytes (+ start 4) (+ start 8))))]
-      [(case type 0 :stdin 1 :stdout 2 :stderr)
+  (let [[type _ _ _ n1 n2 n3 n4] (Arrays/copyOfRange ^bytes x-bytes ^int start ^int (+ start 8))]
+    (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes x-bytes ^int (+ start 4) ^int (+ start 8))))]
+      [(case (int type) 0 :stdin 1 :stdout 2 :stderr)
        size
-       (String. (Arrays/copyOfRange ^bytes x-bytes (+ start 8) (+ start 8 size)))])))
+       (String. (Arrays/copyOfRange ^bytes x-bytes ^int (+ start 8) ^int (+ start 8 size)))])))
 
 (defn process-bytes [x-bytes]
   (loop [agg {:stdout "" :stderr "" :stdin ""} start 0]
@@ -422,7 +422,7 @@
       (let [[type size s] (get-block x-bytes start)]
         (recur
          (update agg type str s)
-         (+ start size 8)))
+         (long (+ start size 8))))
       agg)))
 
 (defn docker-stream-format->stdout [bytes]

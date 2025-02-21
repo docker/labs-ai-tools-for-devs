@@ -5,6 +5,8 @@ arguments:
   - name: query
     description: the question to answer
     required: true
+parameter-values:
+  query: "What is url of the logo for docker.com?"
 tools:
   - name: websocat
     description: A tool to send and receive messages over a websocket.
@@ -108,6 +110,6 @@ It is important that when you are done with your page, you close it. This is imp
 
 The following is the question you are trying to answer:
 
-what is the url of the logo for docker.com?
+{{query}}
 
 (if there is no question, just confirm Chrome is running and ready to answer questions)

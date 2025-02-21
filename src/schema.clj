@@ -30,18 +30,10 @@
 
 ;; -- Spec Definitions for Docker Container --
 (s/def ::host-dir string?)
-(s/def ::workdir string?)
-(s/def ::entrypoint string?)
 (s/def ::user string?)
 (s/def ::jwt string?)
-(s/def ::image string?)
-(s/def ::command (s/coll-of string?))
-(s/def ::mounts (s/coll-of string?))
-(s/def ::volumes (s/coll-of string?))
 (s/def ::file string?)
-(s/def ::stdin (s/keys :opt-un [::file]))
-(s/def ::container-definition (s/keys :opt-un [::stdin ::host-dir ::entrypoint ::command ::user ::jwt ::mounts ::volumes ::thread-id ::workdir]
-                                      :req-un [::image]))
+(s/def ::content string?)
 
 (s/def ::pty-output string?)
 (s/def ::exit-code integer?)
@@ -56,14 +48,30 @@
 (s/def :tool/parameters any?)
 
 ;; -- container tools --
+(s/def :container/background boolean?)
 (s/def :container/image string?)
 (s/def :container/command (s/coll-of string?))
-(s/def :container/stdin any?)
+(s/def :container/stdin (s/keys :opt-un [::file ::content]))
 (s/def :container/volumes (s/coll-of string?))
+(s/def :container/ports (s/coll-of string?))
 (s/def :container/entrypoint string?)
 (s/def :container/workdir string?)
+(s/def :container/network_mode (s/or :standard #{"host" "none" "bridge"}
+                                     :container (fn [s] (re-find #"container:.*" s))
+                                     :custom string?))
 (s/def :tool/container (s/keys :req-un [:container/image]
-                               :opt-un [:container/stdin :container/command :container/volumes :container/entrypoint :container/workdir]))
+                               :opt-un [::host-dir
+                                        ::thread-id
+                                        ::user
+                                        ::jwt
+                                        :container/background
+                                        :container/stdin
+                                        :container/command
+                                        :container/volumes
+                                        :container/entrypoint
+                                        :container/workdir
+                                        :container/ports  ; port mappings (incompatible with network_mode of host)
+                                        :container/network_mode]))
 
 ;; -- Spec definitions for Tools --
 (s/def ::github-ref (s/and string? #(string/starts-with? % "github:")))
@@ -82,6 +90,7 @@
 (s/def ::tools (s/coll-of ::tool))
 ;; functions and tools are aliases
 (s/def ::functions ::tools)
+
 
 ;; -- Spec definitions for prompt metadata --
 (s/def ::agent string?)
@@ -106,7 +115,7 @@
 (s/def ::content (s/or :string string? :coll (s/coll-of ::message-content)))
 (s/def ::messages (s/coll-of (s/keys :req-un [::role ::content])))
 (s/def ::state (s/keys :req-un [::metadata ::opts ::functions ::messages]))
-;; this is the data that can be extracted from a prompts file
+;; this is the data that can be extracted from a prompts file, whether it's yaml or markdown
 (s/def ::prompts-file (s/keys :req-un [::messages ::functions ::metadata]))
 
 ;; we need to parse a lot of tool_calls here

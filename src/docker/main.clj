@@ -71,6 +71,8 @@
                 :default []
                 :update-fn conj]
                [nil "--mcp" "use the mcp jsonrpc protocol"]
+               [nil "--port PORT" "run a socket server"
+                :parse-fn #(Long/parseLong %)]
                [nil "--debug" "add debug logging"]
                [nil "--help" "print option summary"]])
 
@@ -172,7 +174,10 @@
                     {})))
                 opts)))
     "serve" (fn []
-              (let [[producer server-promise] (jsonrpc.server/run-server! opts)]
+              (let [server-opts (jsonrpc.server/server-context opts)
+                    [producer server-promise] (if (:port opts)
+                                                (jsonrpc.server/run-socket-server! opts server-opts)
+                                                (jsonrpc.server/run-server! opts server-opts))]
                 (alter-var-root
                  #'jsonrpc/notify
                  (constantly
@@ -208,6 +213,7 @@
              (try
                (cmd)
                (catch Throwable t
+                 (.printStackTrace t)
                  (jsonrpc/notify :error {:content (str t)})
                  (System/exit 1))))))))
     (catch Throwable t

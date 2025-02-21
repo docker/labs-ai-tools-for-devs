@@ -17,6 +17,7 @@
    [lsp4clj.coercer :as coercer]
    [lsp4clj.io-chan :as io-chan]
    [lsp4clj.io-server :refer [stdio-server]]
+   [jsonrpc.socket-server :as socket-server]
    [lsp4clj.server :as lsp.server]
    [medley.core :as medley]
    [promesa.core :as p]
@@ -68,6 +69,7 @@
   (exit-server server))
 
 (defmethod lsp.server/receive-request "ping" [_ _ _]
+  (logger/info "ping")
   {})
 
 (defmethod lsp.server/receive-request "initialize" [_ {:keys [db*]} params]
@@ -156,7 +158,11 @@
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
   ;; TODO cursors
-  (logger/info "tools/list")
+  (logger/info "tools/list " (->> (:mcp.prompts/registry @db*)
+                                  (vals)
+                                  (mapcat :functions)
+                                  (map :function)
+                                  (into [])))
   {:tools (->> (:mcp.prompts/registry @db*)
                (vals)
                (mapcat :functions)
@@ -323,6 +329,8 @@
   (-debug [_this fmeta arg1 arg2] (log! :debug [arg1 arg2] fmeta))
   (-debug [_this fmeta arg1 arg2 arg3] (log! :debug [arg1 arg2 arg3] fmeta)))
 
+(def producers (atom []))
+
 (defrecord ^:private McpProducer
            [server db*]
   producer/IProducer
@@ -358,131 +366,115 @@
     (logger/info (format "%s - %s" method params))
     (lsp.server/send-notification server method params)))
 
+(defn get-prompts-dir []
+  (if (fs/exists? (fs/file "/prompts"))
+    "/prompts"
+    (format "%s/prompts" (System/getenv "HOME"))))
+
 (def registry "/prompts/registry.yaml")
 
-(defn run-server! [{:keys [trace-level] :or {trace-level "off"} :as opts}]
+(defn- init-dynamic-prompt-watcher [opts]
+  (async/thread
+    (let [{x :container}
+          (docker/run-streaming-function-with-no-stdin
+           {:image "vonwig/inotifywait:latest"
+            :volumes ["docker-prompts:/prompts"]
+            :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
+           (fn [line]
+             (logger/info "change event" line)
+             (let [[_dir _event f] (string/split line #"\s+")]
+               (when (= f "registry.yaml")
+                 (try
+                   (db/add-refs (logger/trace (into [] (db/registry-refs registry))))
+                   (doseq [producer @producers]
+                     (try
+                       (producer/publish-tool-list-changed producer {})
+                       (producer/publish-prompt-list-changed producer {})
+                       (catch Throwable _)))
+                   (catch Throwable t
+                     (logger/error t "unable to parse registry.yaml"))))
+               (when (string/ends-with? f ".md")
+                 (try
+                   (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
+                   (doseq [producer @producers]
+                     (try
+                       (producer/publish-tool-list-changed producer {})
+                       (producer/publish-prompt-list-changed producer {})
+                       (catch Throwable _)))
+                   (catch Throwable t
+                     (logger/error t "unable to parse " f)))))))]
+      (shutdown/schedule-container-shutdown
+       (fn []
+         (logger/info "inotifywait shutting down")
+         (docker/kill-container x)
+         (docker/delete x))))))
+
+(defn initialize-prompts [opts]
+  ;; register static prompts
+  (doseq [[s content] (->> (fs/list-dir (get-prompts-dir))
+                           (filter (fn [f] (= "md" (fs/extension f))))
+                           (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
+    (db/update-prompt opts s content))
+  ;; add dynamic refs from prompts volume
+  (db/add-refs
+   (concat
+    (->> (:register opts)
+         (map (fn [ref] [:static ref])))
+         ;; register dynamic prompts
+    (when (fs/exists? (fs/file registry))
+      (db/registry-refs registry)))))
+
+(defn server-context
+  "create chan server options for any io chan server that we build"
+  [{:keys [trace-level] :or {trace-level "off"} :as opts}]
   (lsp.server/discarding-stdout
    (let [timbre-logger (->TimbreLogger)
          log-path (logger/setup timbre-logger)
          db* db/db*
-         log-ch (async/chan (async/sliding-buffer 20))
-         ;; server will start watching stdio/stdout immediately
-         server (stdio-server
-                 (merge
-                  {;:keyword-function identity
-                   :in (or (:in opts) System/in)
-                   :out System/out
-                   :log-ch log-ch
-                   :trace-ch log-ch
-                   :trace-level trace-level
-                   :keyword-function keyword}
-                  (when (:mcp opts)
-                    {:in-chan-factory io-chan/mcp-input-stream->input-chan
-                     :out-chan-factory io-chan/mcp-output-stream->output-chan})))
-         producer (McpProducer. server db*)
-         components {:db* db*
-                     :logger timbre-logger
-                     :producer producer
-                     :server server}]
+         log-ch (async/chan (async/sliding-buffer 20))]
+     ;; add option map and log-path to the db
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
-     (shutdown/init)
-     ;; register static prompts
-     (doseq [[s content] (->> (fs/list-dir "/prompts")
-                              (filter (fn [f] (= "md" (fs/extension f))))
-                              (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
-       (db/update-prompt opts s content))
-     (db/add-refs
-      (concat
-       (->> (:register opts)
-            (map (fn [ref] [:static ref])))
-         ;; register dynamic prompts
-       (when (fs/exists? (fs/file registry))
-         (db/registry-refs registry))))
-     ;; watch dynamic prompts in background
+     ;; initialize shutdown hook
      (async/thread
-       (let [{x :container}
-             (docker/run-streaming-function-with-no-stdin
-              {:image "vonwig/inotifywait:latest"
-               :volumes ["docker-prompts:/prompts"]
-               :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
-              (fn [line]
-                (logger/info "change event" line)
-                (let [[_dir _event f] (string/split line #"\s+")]
-                  (when (= f "registry.yaml")
-                    (try
-                      (db/add-refs (logger/trace (into [] (db/registry-refs registry))))
-                      (producer/publish-tool-list-changed producer {})
-                      (producer/publish-prompt-list-changed producer {})
-                      (catch Throwable t
-                        (logger/error t "unable to parse registry.yaml"))))
-                  (when (string/ends-with? f ".md")
-                    (try
-                      (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
-                      (producer/publish-tool-list-changed producer {})
-                      (producer/publish-prompt-list-changed producer {})
-                      (catch Throwable t
-                        (logger/error t "unable to parse " f)))))))]
-         (shutdown/schedule-container-shutdown
-          (fn []
-            (logger/info "inotifywait shutting down")
-            (docker/kill-container x)
-            (docker/delete x)))))
+       (shutdown/init))
+     ;; initialize prompts
+     (initialize-prompts opts)
+     ;; watch dynamic prompts in background
+     (init-dynamic-prompt-watcher opts)
+     ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
+     ;; common server opts
+     (merge
+      {;:keyword-function identity
+       :log-ch log-ch
+       :trace-ch log-ch
+       :trace-level trace-level
+       :keyword-function keyword
+       :server-context-factory
+       (fn [server]
+         (let [producer (McpProducer. server db*)]
+           (swap! producers conj producer)
+           {:db* db*
+            :logger timbre-logger
+            :producer producer
+            :server server}))}
+      (when (:mcp opts)
+        {:in-chan-factory io-chan/mcp-input-stream->input-chan
+         :out-chan-factory io-chan/mcp-output-stream->output-chan})))))
+
+(defn run-socket-server! [opts server-opts]
+  (logger/info "Starting socket server on" (:port opts))
+  (socket-server/server (merge opts server-opts)))
+
+(defn run-server! [opts server-opts]
+  (lsp.server/discarding-stdout
+   (let [server (stdio-server
+                 (merge
+                  server-opts
+                  {:in (or (:in opts) System/in)
+                   :out System/out}))]
      (logger/info "Starting server...")
      ;; only on lsp.server/start will the stdio channels start being used
-     [producer (lsp.server/start server components)])))
-
-(comment
-  (def stuff (user-loop/create-pipe))
-  (def x (run-server! {:trace-level "off" :in (second stuff) :host-dir "/Users/slim/docker/labs-ai-tools-for-devs"}))
-  (alter-var-root
-   #'jsonrpc/notify
-   (constantly
-    (fn [method params]
-      (jsonrpc.producer/publish-docker-notify (first x) method params))))
-  ;; --------------------
-  ;; register
-  ;; --------------------
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "docker/prompts/register"
-    :id "4"
-    :params {:prompts "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"}})
-  (pprint/pprint @db/db*)
-  ;; --------------------
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "prompts/list"
-    :id "5"
-    :params {}})
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "tools/list"
-    :id "5"
-    :params {}})
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "prompts/get"
-    :id "5"
-    :params {:name "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md&ref=slim/server"}})
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "tools/call"
-    :id "5"
-    :params {:name "cat_file"
-             :arguments {:path "./Dockerfile"}}})
-  ;; --------------------
-  ((-> stuff first first)
-   {:jsonrpc "2.0"
-    :method "docker/prompts/run"
-    :id "4"
-    :params {:prompts {:content "\n# prompt user\nHow are you?\n"}}})
-  (->>
-   (->
-    (:db* (first x))
-    (deref)
-    :mcp/conversations)
-   vals
-   (map :state-promise)
-   (map deref)))
+     (let [{:keys [producer] :as context} ((:server-context-factory server-opts) server)]
+       [producer (lsp.server/start server context)]))))
 

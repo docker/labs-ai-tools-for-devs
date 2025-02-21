@@ -1,0 +1,18 @@
+services:
+  mcp_docker:
+    image: mcp/docker
+    ports:
+      - 8811:8811
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "docker-prompts:/prompts"
+    command:
+      - serve
+      - --mcp
+      - --port
+      - "8811"
+      - --register
+      - github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
+volumes:
+  docker-prompts:
+    external: true
