@@ -1,4 +1,5 @@
 ---
+name: Chrome web scraper
 model: claude-3-5-sonnet-20241022
 arguments:
   - name: query
@@ -64,14 +65,6 @@ tools:
       background: true
       ports:
         - "9222:9222"
-resources:
-  - name: Scrape the web with Chrome
-    description: A freeform tool to scrape the web with chrome.
-    uri: memo://scrape-chrome
-    mimeType: text/plain
-    matches: resource:///thread/scrape.txt
-    default:
-      text: "No chrome browser has been started yet."
 ---
 
 # prompt
