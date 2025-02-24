@@ -217,3 +217,4 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
         </Button>
     </Badge >
 }
+
