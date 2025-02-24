@@ -16,7 +16,7 @@ weight: 3
 2. Choose `Command` mode and then copy and paste the following string into the field labeled "Command".
 
    ```
-   docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock --mount type=volume,source=docker-prompts,target=/prompts mcp/docker:latest serve --mcp --register github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
+   docker run --rm -i alpine/socat:latest STDIO TCP:host.docker.internal:8811
    ```
 
    After entering this command, the server will start and you should see a list of available tools.
