@@ -8,12 +8,12 @@ import { ExecResult } from "@docker/extension-api-client-types/dist/v1";
 const DOCKER_MCP_CONFIG = {
     "command": "docker",
     "args": [
-      	"run", 
-	"-i", 
-	"--rm", 
-	"alpine/socat", 
-	"STDIO", 
-	"TCP:host.docker.internal:8811"
+        "run",
+        "-i",
+        "--rm",
+        "alpine/socat",
+        "STDIO",
+        "TCP:host.docker.internal:8811"
     ]
 }
 
@@ -99,21 +99,20 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
         if (claudeConfig === undefined) {
             return setStatus({ state: 'missing claude config', message: 'No claude desktop config found', color: 'error' })
         }
-        if (claudeConfig) {
+        else if (claudeConfig === null || claudeConfig.mcpServers === null) {
+            return setStatus({ state: 'empty claude config', message: 'No claude desktop config found', color: 'error' })
+        }
+        else {
             const servers = claudeConfig.mcpServers
-            if (!servers) {
-                setStatus({ state: 'invalid', message: 'No servers found in Claude Desktop Config', color: 'error' })
+            const hasDocker = Object.keys(servers).some(key => key === 'mcp_docker')
+            if (hasDocker) {
+                setStatus({ state: 'has docker_mcp', message: 'Claude Desktop Config is valid', color: 'success' })
+                setHasConfig(true)
+            } else {
+                setStatus({ state: 'missing docker_mcp', message: 'No Docker servers found in Claude Desktop Config', color: 'error' })
+                setHasConfig(false)
             }
-            else {
-                const hasDocker = Object.keys(servers).some(key => key === 'mcp_docker')
-                if (hasDocker) {
-                    setStatus({ state: 'has docker_mcp', message: 'Claude Desktop Config is valid', color: 'success' })
-                    setHasConfig(true)
-                } else {
-                    setStatus({ state: 'missing docker_mcp', message: 'No Docker servers found in Claude Desktop Config', color: 'error' })
-                    setHasConfig(false)
-                }
-            }
+
         }
     }, [claudeConfig])
 
@@ -148,7 +147,7 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                     }}>Add Docker MCP</Button>
                 }
                 {
-                    status.state === 'missing claude config' && <Button onClick={async () => {
+                    status.state === 'missing claude config' || status.state === 'empty claude config' && <Button onClick={async () => {
                         trackEvent('claude-config-changed', { action: 'write' })
                         await writeFilesToHost(client, [{
                             path: 'claude_desktop_config.json', content: JSON.stringify({
@@ -167,7 +166,7 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                         setDeleteReady(true)
                         setTimeout(() => {
                             setDeleteReady(false)
-                        }, 10000)
+                        }, 3000)
                     }
                     else {
                         trackEvent('claude-config-changed', { action: 'delete' })
@@ -176,18 +175,14 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                             refreshConfig()
                             setDeleteReady(false)
                         } catch (error) {
-
                             if ((error as ExecResult).stderr) {
                                 client.desktopUI.toast.error('Error deleting config' + (error as ExecResult).stderr)
                                 console.error('Error deleting config', error)
                             }
-
-
                         }
                     }
                 }
                 }>{deleteReady ? 'Click again to confirm deletion' : 'Delete Claude Desktop Config'}</Button>}
-
             </Stack>
             <DialogContent>
                 <DialogContentText component='pre'>

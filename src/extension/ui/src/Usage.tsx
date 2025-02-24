@@ -58,14 +58,15 @@ const processEventsQueue = () => {
 };
 
 const sendRecords = (records: Record[]) => {
-    const url = 'https://nd14xwptgj.execute-api.us-east-1.amazonaws.com/stage/v1/track';
-    const apiKey = '1234567890';
+    const url = 'https://api-stage.docker.com/events/v1/track';
+    const apiKey = 'wl9kXcw19A9pyY2xj5TcKa2jlCG1ZbIYabdnuFve';
 
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key': apiKey
+            'x-api-key': apiKey,
+            'x-test-key': 'test'
         },
         body: JSON.stringify({ records })
     });
