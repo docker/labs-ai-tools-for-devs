@@ -161,7 +161,7 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
                     }
                     }>Write Claude Desktop Config</Button>
                 }
-                {status.state !== 'missing claude config' && <Button color="error" variant={deleteReady ? 'contained' : 'outlined'} onClick={async () => {
+                {status.state !== 'missing claude config' && status.state !== 'empty claude config' && <Button color="error" variant={deleteReady ? 'contained' : 'outlined'} onClick={async () => {
                     if (!deleteReady) {
                         setDeleteReady(true)
                         setTimeout(() => {
