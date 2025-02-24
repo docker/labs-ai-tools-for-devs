@@ -19,7 +19,7 @@ or manually [configure claude desktop](../docs/claude-desktop) to use the `mcp/r
 
 Restarting desktop should be a one-time activity. However, Claude
 Desktop does not support the `tools/list_changed` notification so we
-currently have to restart desktop more less continuously. Fire up those keybinds :)
+currently have to restart desktop more less continuously. Use `alt + r` to restart Claude Desktop.
 
 ### Try a prompt
 

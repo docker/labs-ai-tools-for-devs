@@ -8,20 +8,12 @@ import { ExecResult } from "@docker/extension-api-client-types/dist/v1";
 const DOCKER_MCP_CONFIG = {
     "command": "docker",
     "args": [
-        "run",
-        "--rm",
-        "-i",
-        "--pull",
-        "always",
-        "-v",
-        "/var/run/docker.sock:/var/run/docker.sock",
-        "--mount",
-        "type=volume,source=docker-prompts,target=/prompts",
-        "mcp/docker:latest",
-        "serve",
-        "--mcp",
-        "--register",
-        "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"
+      	"run", 
+	"-i", 
+	"--rm", 
+	"alpine/socat", 
+	"STDIO", 
+	"TCP:host.docker.internal:8811"
     ]
 }
 
@@ -225,3 +217,4 @@ export const ClaudeConfigSyncStatus = ({ client, setHasConfig }: { client: v1.Do
         </Button>
     </Badge >
 }
+

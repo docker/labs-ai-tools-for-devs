@@ -10,15 +10,9 @@ import { tryRunImageSync, writeFilesToHost } from '../FileWatcher';
 const DOCKER_MCP_CONFIG_YML = {
     services: {
         mcp_docker: {
-            image: "mcp/docker",
-            command: ["serve", "--mcp", "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"],
-            volumes: ["/var/run/docker.sock:/var/run/docker.sock", "docker-prompts:/prompts"],
-            "x-mcp-autoremove": true,
-        }
-    },
-    volumes: {
-        docker_prompts: {
-            external: false
+            image: "alpine/socat",
+            command: ["STDIO", "TCP:host.docker.internal:8811"],
+            "x-mcp-autoremove": true
         }
     }
 }
@@ -55,10 +49,6 @@ const Gordon: React.FC<{ client: v1.DockerDesktopClient }> = ({ client }) => {
                             services: {
                                 ...current_config_yaml.services,
                                 mcp_docker: DOCKER_MCP_CONFIG_YML.services.mcp_docker
-                            },
-                            volumes: {
-                                ...current_config_yaml.volumes,
-                                docker_prompts: DOCKER_MCP_CONFIG_YML.volumes.docker_prompts
                             }
                         }
                         await writeFilesToHost(client, [{ path: 'gordon-mcp.yml', content: stringify(new_config) }], [{ source: path, target: '/project' }], '/project')

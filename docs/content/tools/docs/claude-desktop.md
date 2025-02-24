@@ -12,7 +12,7 @@ Use our Docker Desktop extension to automatically register and use our tools.
 
 # Manual Setup
 
-Enable mcp_run in your claude_desktop_config.json file using the following snippet.  See the [quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user) for more details.
+Enable mcp_docker in your claude_desktop_config.json file using the following snippet.  See the [quickstart for Claude Desktop Users](https://modelcontextprotocol.io/quickstart/user) for more details.
 
 ```json
 
@@ -21,15 +21,10 @@ Enable mcp_run in your claude_desktop_config.json file using the following snipp
     "mcp_docker": {
       "command": "docker",
       "args": [
-        "run", "--rm", "-i", "--pull", "always",
-        "-v", "/var/run/docker.sock:/var/run/docker.sock",
-        "--mount", "type=volume,source=docker-prompts,target=/prompts",
-        "mcp/docker:latest",
-        "serve",
-        "--mcp",
-        "--register", "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"
+    	"run", "-i", "--rm", "alpine/socat", "STDIO", "TCP:host.docker.internal:8811"
       ]
     }
+  }
 }
 ```
 
