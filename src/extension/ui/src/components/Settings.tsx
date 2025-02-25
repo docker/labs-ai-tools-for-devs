@@ -18,7 +18,9 @@ import {
     Stack,
     Grid2,
     Link,
-    CircularProgress
+    CircularProgress,
+    Alert,
+    AlertTitle
 } from '@mui/material';
 import {
     ExpandMore as ExpandMoreIcon,
@@ -110,14 +112,19 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                             ))}
                         </List>
                         <Divider />
-                        <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
-                            <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_CONFIG.command + ' ' + DOCKER_MCP_CONFIG.args.join(' '))}>
-                                <ContentCopy />
-                            </IconButton>
-                            <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto' })}>
-                                {DOCKER_MCP_CONFIG.command} {DOCKER_MCP_CONFIG.args.join(' ')}
-                            </Typography>
-                        </Stack>
+                        <Alert severity="info">
+                            <AlertTitle>Other MCP Clients</AlertTitle>
+                            You can connect other MCP clients to the same server by specifying the following command:
+                            <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
+                                <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_CONFIG.command + ' ' + DOCKER_MCP_CONFIG.args.join(' '))}>
+                                    <ContentCopy />
+                                </IconButton>
+                                <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto' })}>
+                                    {DOCKER_MCP_CONFIG.command} {DOCKER_MCP_CONFIG.args.join(' ')}
+                                </Typography>
+                            </Stack>
+                        </Alert>
+
                     </Paper>
                 </AccordionDetails>
             </Accordion >
@@ -196,7 +203,7 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
             </Accordion >
 
             {/* Developer Settings Section */}
-            < Accordion >
+            < Accordion sx={{ width: '100%' }}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="developer-settings-content"
@@ -207,7 +214,12 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                 <AccordionDetails>
                     <Paper elevation={0} sx={{ p: 2 }}>
                         <Grid2 container spacing={3}>
-
+                            <Grid2 size={12}>
+                                <Button variant="contained" color="primary" onClick={() => {
+                                    localStorage.clear();
+                                    window.location.reload();
+                                }}>Reset Local Storage</Button>
+                            </Grid2>
                         </Grid2>
                     </Paper>
                 </AccordionDetails>
