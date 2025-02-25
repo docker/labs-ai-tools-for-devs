@@ -1,6 +1,6 @@
 ---
 name: Chrome web scraper
-model: claude-3-7-sonnet-latest
+model: gpt-4o
 arguments:
   - name: query
     description: the question to answer
@@ -13,26 +13,23 @@ tools:
     parameters:
       type: object
       properties:
-        url:
+        endpoint:
           type: string
           description: The url of the websocket endpoint.
         message:
           type: string
           description: The message to send to websocat on stdin.
-        websocat_args:
-          type: string
-          description: The arguments to pass to websocat.
       required:
-        - url
+        - endpoint
         - message
-        - websocat_args
     container:
       image: vonwig/websocat:latest
       stdin: 
-        content: "{{message|safe}}"
+        content: '{{message|safe}}'
       command:
-        - "{{websocat_args}}"
-        - "{{url|safe}}"
+        - "-n1"
+        - "-H=Host: localhost:9222"
+        - '{{endpoint|safe}}'
   - name: curl
     description: Run a curl command.
     parameters:
@@ -89,11 +86,9 @@ Examples:
 curl -X PUT -H "Host: localhost:9222" -sg http://host.docker.internal:9222/json/new 
 
 # Navigate to a page
-# We are setting --jsonrpc mode, so the first word is the method name and the rest is the arguments.
-$MESSAGE='Page.navigate {"url":"https://www.docker.com"}' 
+$MESSAGE='{...}' 
 
-# Again be sure to set the host header to be localhost:9222 due to chrome's default behavior to only allow localhost
-$MESSAGE | websocat -n1 --jsonrpc -H "Host: localhost:9222" --jsonrpc-omit-jsonrpc ws://localhost:9222/devtools/page/<PAGE_ID>
+$MESSAGE | websocat ws://host.docker.internal:9222/devtools/page/<PAGE_ID>
 
 {"id":2,"result":{"frameId":"A331E56CCB8615EB4FCB720425A82259","loaderId":"EF5AAD19F2F8BB27FAF55F94FFB27DF9"}}
 ```
