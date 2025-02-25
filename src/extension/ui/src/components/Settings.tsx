@@ -4,15 +4,8 @@ import {
     Typography,
     Paper,
     Divider,
-    Switch,
-    FormControlLabel,
     TextField,
     Button,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Grid,
     Accordion,
     AccordionSummary,
     AccordionDetails,
@@ -21,40 +14,31 @@ import {
     List,
     ListItem,
     ListItemText,
-    ListItemSecondaryAction,
     Chip,
-    Card,
-    CardContent,
     Stack,
     Grid2,
-    ListItemIcon,
-    ButtonGroup,
-    Link
+    Link,
+    CircularProgress
 } from '@mui/material';
 import {
     ExpandMore as ExpandMoreIcon,
-    Save as SaveIcon,
-    Refresh as RefreshIcon,
-    Info as InfoIcon,
-    Add as AddIcon,
-    Delete as DeleteIcon,
-    Edit as EditIcon,
     ContentCopy,
-    RemoveCircleOutline,
-    ConnectWithoutContact,
     LinkOff,
     LinkRounded,
-    Delete
+    SaveOutlined
 } from '@mui/icons-material';
 import { DOCKER_MCP_CONFIG, MCPClient } from '../Constants';
 import { client } from '../App';
+import { MCPClientState } from '../MCPClients';
 
-const Settings = ({ settings, setSettings, mcpClientStates }: { settings: { showModal: boolean, pollIntervalSeconds: number }, setSettings: (settings: any) => void, mcpClientStates: { [name: string]: { exists: boolean, configured: boolean, error?: string } } }) => {
+const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpdate: () => Promise<void>, settings: { showModal: boolean, pollIntervalSeconds: number }, setSettings: (settings: any) => void, mcpClientStates: { [name: string]: MCPClientState } }) => {
 
     const updateAndSaveSettings = (settings: any) => {
         setSettings(settings);
         localStorage.setItem('settings', JSON.stringify(settings));
     }
+
+    const [buttonsLoading, setButtonsLoading] = useState<{ [name: string]: boolean }>({});
 
     return (
         <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
@@ -70,30 +54,48 @@ const Settings = ({ settings, setSettings, mcpClientStates }: { settings: { show
                 <AccordionDetails>
                     <Paper elevation={0} sx={{ p: 2 }}>
                         <List>
-                            {Object.entries(mcpClientStates).map(([name, state]) => (
+                            {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
                                 <ListItem key={name} secondaryAction={
                                     <>
-                                        {state.exists && state.configured &&
-                                            <Button color="warning" variant="outlined" size="small">
+                                        {mcpClientState.exists && mcpClientState.configured &&
+                                            <Button onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.disconnect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }} disabled={buttonsLoading[name]} color="warning" variant="outlined" size="small">
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <Typography>Disconnect</Typography>
                                                     <LinkOff />
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
                                                 </Stack>
                                             </Button>
                                         }
-                                        {state.exists && !state.configured &&
-                                            <Button color="primary" variant="outlined" size="small">
+                                        {mcpClientState.exists && !mcpClientState.configured &&
+                                            <Button onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.connect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }} disabled={buttonsLoading[name]} color="primary" variant="outlined" size="small">
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <Typography>Connect</Typography>
                                                     <LinkRounded />
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
                                                 </Stack>
                                             </Button>
                                         }
-                                        {!state.exists &&
-                                            <Button color="error" variant="outlined" size="small">
+                                        {!mcpClientState.exists &&
+                                            <Button color="error" variant="outlined" size="small" onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.connect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }}>
                                                 <Stack direction="row" alignItems="center" spacing={1}>
+                                                    <SaveOutlined />
                                                     <Typography>Write Config</Typography>
-                                                    <SaveIcon />
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
                                                 </Stack>
                                             </Button>
                                         }
@@ -101,8 +103,8 @@ const Settings = ({ settings, setSettings, mcpClientStates }: { settings: { show
                                 }>
                                     <ListItemText primary={<Stack direction="row" alignItems="center" spacing={1}>
                                         <Typography variant="h4">{name}</Typography>
-                                        {!state.exists && <Chip label='No Config Found' color='error' />}
-                                        {state.exists && <Chip label={state.configured ? 'Connected' : 'Disconnected'} color={state.configured ? 'success' : 'error'} />}
+                                        {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
+                                        {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
                                     </Stack>} />
                                 </ListItem>
                             ))}

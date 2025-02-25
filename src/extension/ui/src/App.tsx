@@ -12,7 +12,7 @@ import { CatalogGrid } from './components/CatalogGrid';
 import { MCPClient, POLL_INTERVAL } from './Constants';
 import MCPCatalogLogo from './MCP Catalog.svg'
 import Settings from './components/Settings';
-import { getMCPClientStates } from './MCPClients';
+import { getMCPClientStates, MCPClientState } from './MCPClients';
 
 export const client = createDockerDesktopClient();
 
@@ -26,7 +26,7 @@ export function App() {
   const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
   const [imagesLoadingResults, setImagesLoadingResults] = useState<ExecResult | null>(null);
   const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
-  const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: { exists: boolean, configured: boolean } }>({});
+  const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState }>({});
   const loadRegistry = async () => {
     setCanRegister(false);
     try {
@@ -58,13 +58,18 @@ export function App() {
     }
   }
 
+  const updateMCPClientStates = async () => {
+    const states = await getMCPClientStates(client)
+    setMcpClientStates(states);
+  }
+
   useEffect(() => {
     startImagesLoading();
     loadRegistry();
-    getMCPClientStates(client).then(setMcpClientStates);
+    updateMCPClientStates();
     const interval = setInterval(() => {
       loadRegistry();
-      getMCPClientStates(client).then(setMcpClientStates);
+      updateMCPClientStates();
     }, POLL_INTERVAL);
     return () => {
       clearInterval(interval)
@@ -87,7 +92,7 @@ export function App() {
           <Typography variant='h2' sx={{ fontWeight: 'bold', m: 2 }}>Catalog Settings</Typography>
         </DialogTitle>
         <DialogContent>
-          <Settings mcpClientStates={mcpClientStates} settings={settings} setSettings={setSettings} />
+          <Settings onUpdate={updateMCPClientStates} mcpClientStates={mcpClientStates} settings={settings} setSettings={setSettings} />
         </DialogContent>
       </Dialog>
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>

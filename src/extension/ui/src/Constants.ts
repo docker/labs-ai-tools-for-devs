@@ -18,8 +18,9 @@ export type MCPClient = {
     name: string;
     url: string;
     readFile: (client: v1.DockerDesktopClient) => Promise<string | undefined | null>;
-    writeFile: (client: v1.DockerDesktopClient, content: string) => Promise<void>;
-    checkConfig: (content: string) => boolean;
+    connect: (client: v1.DockerDesktopClient) => Promise<void>;
+    disconnect: (client: v1.DockerDesktopClient) => Promise<void>;
+    validateConfig: (content: string) => boolean;
 }
 
 export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [
@@ -51,27 +52,73 @@ export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [
                 return null;
             }
         },
-        writeFile: async (client: v1.DockerDesktopClient, content: string) => {
+        connect: async (client: v1.DockerDesktopClient) => {
             const platform = client.host.platform
             let path = ''
             switch (platform) {
                 case 'darwin':
-                    path = '/Users/$USER/Library/Application Support/Claude Desktop/config.json'
+                    path = '/Users/$USER/Library/Application Support/Claude/'
                     break;
                 case 'linux':
-                    path = '/home/$USER/.config/claude/claude_desktop_config.json'
+                    path = '/home/$USER/.config/claude/'
                     break;
                 case 'win32':
-                    path = '%APPDATA%\\Claude\\claude_desktop_config.json'
+                    path = '%APPDATA%\\Claude\\'
                     break;
                 default:
                     throw new Error('Unsupported platform: ' + platform)
             }
             const user = await getUser(client)
             path = path.replace('$USER', user)
-            await client.docker.cli.exec('run', ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path, content }] })}'`])
+            let payload = {
+                mcpServers: {
+                    mcp_docker: DOCKER_MCP_CONFIG
+                }
+            }
+            try {
+                const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])
+                if (result.stdout) {
+                    payload = JSON.parse(result.stdout)
+                    payload.mcpServers.mcp_docker = DOCKER_MCP_CONFIG
+                }
+            } catch (e) {
+                // No config or malformed config found, overwrite it
+            }
+            try {
+                await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload) }] })}'`])
+            } catch (e) {
+                client.desktopUI.toast.error((e as any).stderr)
+            }
         },
-        checkConfig: (content: string) => {
+        disconnect: async (client: v1.DockerDesktopClient) => {
+            const platform = client.host.platform
+            let path = ''
+            switch (platform) {
+                case 'darwin':
+                    path = '/Users/$USER/Library/Application Support/Claude/'
+                    break;
+                case 'linux':
+                    path = '/home/$USER/.config/claude/'
+                    break;
+                case 'win32':
+                    path = '%APPDATA%\\Claude\\'
+                    break;
+                default:
+                    throw new Error('Unsupported platform: ' + platform)
+            }
+            const user = await getUser(client)
+            path = path.replace('$USER', user)
+            try {
+                // This method is only called after the config has been validated, so we can safely assume it's a valid config.
+                const previousConfig = JSON.parse((await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])).stdout || '{}')
+                const newConfig = { ...previousConfig }
+                delete newConfig.mcpServers.mcp_docker
+                await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(newConfig) }] })}'`])
+            } catch (e) {
+                client.desktopUI.toast.error((e as any).stderr)
+            }
+        },
+        validateConfig: (content: string) => {
             const config = JSON.parse(content)
             return Object.keys(config.mcpServers).some(key => key.includes('mcp_docker'))
         }
