@@ -1,6 +1,6 @@
 ---
 name: Chrome web scraper
-model: claude-3-5-sonnet-20241022
+model: claude-3-7-sonnet-latest
 arguments:
   - name: query
     description: the question to answer
@@ -20,20 +20,18 @@ tools:
           type: string
           description: The message to send to websocat on stdin.
         websocat_args:
-          type: array
-          items:
-            type: string
+          type: string
           description: The arguments to pass to websocat.
       required:
         - url
         - message
-        - websocat_args      
+        - websocat_args
     container:
       image: vonwig/websocat:latest
       stdin: 
         content: "{{message|safe}}"
       command:
-        - "{{websocat_args|into}}"
+        - "{{websocat_args}}"
         - "{{url|safe}}"
   - name: curl
     description: Run a curl command.

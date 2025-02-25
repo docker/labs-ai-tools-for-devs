@@ -1,33 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, IconButton, CircularProgress, Alert, Stack, Button, Typography } from '@mui/material';
+import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link } from '@mui/material';
 import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
 import { getRegistry } from '../Registry';
-import { FolderOpenRounded } from '@mui/icons-material';
+import { FolderOpenRounded, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
+import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 
 interface CatalogGridProps {
     registryItems: { [key: string]: { ref: string } };
     canRegister: boolean;
     client: v1.DockerDesktopClient;
     onRegistryChange: () => void;
+    showSettings: () => void;
+    settingsBadgeProps: BadgeProps;
 }
 
-const CATALOG_URL = 'https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml'
+const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, showRegistered: boolean, showUnregistered: boolean) =>
+    catalogItems.filter((item) => (showRegistered || !Object.keys(registryItems).includes(item.name)) && (showUnregistered || Object.keys(registryItems).includes(item.name)));
 
+const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     registryItems,
     canRegister,
     client,
     onRegistryChange,
+    showSettings,
+    settingsBadgeProps
 }) => {
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [showRegistered, setShowRegistered] = useState<boolean>(true);
+    const [showUnregistered, setShowUnregistered] = useState<boolean>(true);
+    const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
+
+    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered);
 
     const loadCatalog = async (showNotification = true) => {
         const cachedCatalog = localStorage.getItem('catalog');
@@ -36,8 +46,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             const catalog = await response.text();
             const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
             const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            setCatalogItems(itemsWithName);
-            localStorage.setItem('catalog', JSON.stringify(itemsWithName));
+            const filteredItems = filterCatalog(itemsWithName, registryItems, showRegistered, showUnregistered);
+            setCatalogItems(filteredItems);
+            localStorage.setItem('catalog', JSON.stringify(filteredItems));
             if (showNotification) {
                 client.desktopUI.toast.success('Catalog updated successfully.');
             }
@@ -65,7 +76,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
             client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
             onRegistryChange();
-
+            setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
         }
         catch (error) {
             client.desktopUI.toast.error('Failed to register prompt: ' + error);
@@ -85,6 +96,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
             client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
             onRegistryChange();
+            setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
         }
         catch (error) {
             client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
@@ -92,8 +104,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }
 
     useEffect(() => {
-        const interval = setInterval(loadCatalog, 1000 * 30);
         loadCatalog(false);
+        const interval = setInterval(() => {
+            loadCatalog(false);
+        }, POLL_INTERVAL);
         return () => {
             clearInterval(interval);
         }
@@ -103,16 +117,49 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         catalogItems.some((c) => c.name === i)
     )
 
+
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} justifyContent='center' alignItems='center'>
+            <Dialog open={showReloadModal} onClose={() => setShowReloadModal(false)}>
+                <DialogTitle>Registry Updated</DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ marginBottom: 2 }}>
+                        You have updated the registry.
+                        Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                    </Typography>
+                    <Stack direction="row" justifyContent="space-between">
+                        <Button onClick={() => {
+                            setShowReloadModal(false)
+                        }}>Close</Button>
+                        <FormControlLabel control={<Checkbox defaultChecked={Boolean(localStorage.getItem(NEVER_SHOW_AGAIN_KEY))} onChange={(e) => localStorage.setItem(NEVER_SHOW_AGAIN_KEY, e.target.checked.toString())} />} label="Don't show this again" />
+                    </Stack>
+                </DialogContent>
+            </Dialog>
             {hasOutOfCatalog && <Alert action={<Button startIcon={<FolderOpenRounded />} variant='outlined' color='secondary' onClick={() => {
                 client.desktopUI.navigate.viewVolume('docker-prompts')
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            <Grid container spacing={2}>
-                {catalogItems.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} key={item.name} flex="1 1 0">
+            <FormGroup sx={{ width: '100%' }}>
+                <Stack direction="row" spacing={1} alignItems='center'>
+                    <FormControlLabel control={<Switch checked={showRegistered} onChange={(e) => setShowRegistered(e.target.checked)} />} label="Show Registered" />
+                    <FormControlLabel control={<Switch checked={showUnregistered} onChange={(e) => setShowUnregistered(e.target.checked)} />} label="Show Unregistered" />
+                    <Link sx={{ fontWeight: 'bold' }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
+                        client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
+                    }}>⇱ Documentation</Link>
+                    <Link sx={{ fontWeight: 'bold', ml: 2 }} href="https://github.com/docker/labs-ai-tools-for-devs" target="_blank" rel="noopener noreferrer" onClick={() => {
+                        client.host.openExternal('https://github.com/docker/labs-ai-tools-for-devs');
+                    }}>⇱ GitHub</Link>
+                    <IconButton sx={{ marginLeft: 'auto', marginRight: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={showSettings}>
+                        <Badge {...settingsBadgeProps}>
+                            <Settings sx={{ fontSize: '1.5em' }} />
+                        </Badge>
+                    </IconButton>
+                </Stack>
+            </FormGroup >
+            <Grid2 container spacing={2} width='100%' maxWidth={1000}>
+                {filteredCatalogItems.map((item) => (
+                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
                         <CatalogItemCard
                             openUrl={() => {
                                 client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
@@ -123,9 +170,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             register={registerCatalogItem}
                             unregister={unregisterCatalogItem}
                         />
-                    </Grid>
+                    </Grid2>
                 ))}
-                <Grid item xs={12} sm={6} md={4} flex="1 1 0">
+                <Grid2 size={12}>
                     <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <CardContent>
                             <IconButton sx={{ height: '100%' }} onClick={() => {
@@ -135,8 +182,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             </IconButton>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
-        </Stack>
+                </Grid2>
+            </Grid2>
+        </Stack >
     );
 };

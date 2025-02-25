@@ -22,23 +22,23 @@ export interface CatalogItemWithName extends CatalogItem {
 export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void> }) {
     const [isRegistering, setIsRegistering] = useState(false)
     return (
-        <Card sx={{ height: '100%' }}>
+        <Card sx={(theme) => ({ height: '100%', borderColor: registered ? theme.palette.docker.blue[500] : theme.palette.docker.grey[500], borderWidth: registered ? 2 : 1 })} variant="outlined" >
             <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
                 <CardContent>
                     <a href="">
                         <Stack onClick={openUrl} direction="row" spacing={2} justifyContent="space-between" sx={{ cursor: 'pointer' }}>
-                            <Typography gutterBottom variant="h5" component="div">
-                                {item.name}
+                            <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
+                                {item.name.replace('_', ' ')}
                             </Typography>
                             <CardMedia
                                 component="img"
-                                sx={{ maxWidth: 100, padding: 1, background: 'white', borderRadius: 1 }}
+                                sx={{ width: 50, height: 50, padding: 1, background: 'white', borderRadius: 1 }}
                                 alt={`Icon for ${item.name}`}
                                 image={item.icon}
                             />
                         </Stack>
                     </a>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 2 }}>
+                    <Typography variant="body2" sx={{ mt: 2 }}>
                         {item.description}
                     </Typography>
                 </CardContent>
@@ -64,6 +64,8 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                         </Stack>
                         <Button
                             size="small"
+                            color={registered ? 'error' : 'primary'}
+                            variant={registered ? 'outlined' : 'contained'}
                             onClick={() => {
                                 trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
                                 setIsRegistering(true)

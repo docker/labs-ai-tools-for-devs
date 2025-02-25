@@ -28,7 +28,7 @@ export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: stri
     }
 }
 
-const getUser = async (client: v1.DockerDesktopClient) => {
+export const getUser = async (client: v1.DockerDesktopClient) => {
     const result = await tryRunImageSync(client, ['--rm', '-e', 'USER', 'alpine:latest', 'sh', '-c', `"echo $USER"`])
     return result.trim()
 }
