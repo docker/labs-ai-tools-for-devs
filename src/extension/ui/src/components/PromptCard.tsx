@@ -22,7 +22,7 @@ export interface CatalogItemWithName extends CatalogItem {
 export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void> }) {
     const [isRegistering, setIsRegistering] = useState(false)
     return (
-        <Card sx={(theme) => ({ height: '100%', borderColor: registered ? theme.palette.docker.blue[500] : theme.palette.docker.grey[500], borderWidth: registered ? 2 : 1 })} variant="outlined" >
+        <Card sx={(theme) => ({ height: '100%', borderColor: registered ? theme.palette.docker.grey[600] : theme.palette.docker.grey[400], borderWidth: registered ? 2 : 1 })} variant="outlined" >
             <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
                 <CardContent>
                     <a href="">
@@ -81,7 +81,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                             }}
                             disabled={!canRegister || isRegistering}
                         >
-                            {isRegistering ? <CircularProgress size={20} /> : registered ? 'Remove' : 'Add'}
+                            {isRegistering ? <CircularProgress size={20} /> : registered ? 'Block' : 'Allow'}
                         </Button>
                     </Stack>
 

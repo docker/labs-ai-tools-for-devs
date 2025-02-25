@@ -142,8 +142,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             </Alert>}
             <FormGroup sx={{ width: '100%' }}>
                 <Stack direction="row" spacing={1} alignItems='center'>
-                    <FormControlLabel control={<Switch checked={showRegistered} onChange={(e) => setShowRegistered(e.target.checked)} />} label="Show Registered" />
-                    <FormControlLabel control={<Switch checked={showUnregistered} onChange={(e) => setShowUnregistered(e.target.checked)} />} label="Show Unregistered" />
+                    <FormControlLabel control={<Switch checked={showRegistered} onChange={(e) => setShowRegistered(e.target.checked)} />} label="Show Allowed Prompts" />
+                    <FormControlLabel control={<Switch checked={showUnregistered} onChange={(e) => setShowUnregistered(e.target.checked)} />} label="Show Blocked Prompts" />
                     <Link sx={{ fontWeight: 'bold' }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
                         client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
                     }}>⇱ Documentation</Link>

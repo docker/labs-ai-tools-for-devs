@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper, DialogActions } from '@mui/material';
+import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper, DialogActions, Box } from '@mui/material';
 import { CatalogItemWithName } from './components/PromptCard';
 import { RegistrySyncStatus } from './components/RegistrySyncStatus';
 import { getRegistry } from './Registry';
@@ -85,6 +85,8 @@ export function App() {
     </Paper>
   }
 
+  const hasMCPConfigured = Object.values(mcpClientStates).some(state => state.exists && state.configured)
+
   return (
     <div>
       <Dialog open={settings.showModal} onClose={() => setSettings({ ...settings, showModal: false })}>
@@ -97,8 +99,9 @@ export function App() {
       </Dialog>
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
         <img src={MCPCatalogLogo} alt="MCP Catalog" height={100} />
-        <CatalogGrid settingsBadgeProps={Object.values(mcpClientStates).some(state => state.exists && state.configured) ? {} : {
-          color: Object.values(mcpClientStates).some(state => state.exists) ? 'warning' : 'error',
+        {hasMCPConfigured ? <></> : <Alert action={<Button variant='outlined' color='secondary' onClick={() => setSettings({ ...settings, showModal: true })}>Configure</Button>} severity="error" sx={{ fontWeight: 'bold' }}>MCP Clients are not configured.  Please configure MCP Clients to use the MCP Catalog.</Alert>}
+        <CatalogGrid settingsBadgeProps={hasMCPConfigured ? {} : {
+          color: hasMCPConfigured ? 'default' : 'error',
           badgeContent: '0 MCP Clients',
           sx: {
             width: 80,
