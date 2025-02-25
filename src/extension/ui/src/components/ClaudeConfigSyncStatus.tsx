@@ -4,18 +4,7 @@ import { useEffect, useState } from "react";
 import { tryRunImageSync, writeFilesToHost } from "../FileWatcher";
 import { trackEvent } from "../Usage";
 import { ExecResult } from "@docker/extension-api-client-types/dist/v1";
-
-const DOCKER_MCP_CONFIG = {
-    "command": "docker",
-    "args": [
-        "run",
-        "-i",
-        "--rm",
-        "alpine/socat",
-        "STDIO",
-        "TCP:host.docker.internal:8811"
-    ]
-}
+import { DOCKER_MCP_CONFIG } from "../Constants";
 
 type ClaudeConfigStatus = {
     state: string,
