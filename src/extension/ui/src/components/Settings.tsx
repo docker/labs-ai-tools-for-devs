@@ -27,7 +27,8 @@ import {
     ContentCopy,
     LinkOff,
     LinkRounded,
-    SaveOutlined
+    SaveOutlined,
+    InfoOutlined
 } from '@mui/icons-material';
 import { DOCKER_MCP_CONFIG, MCPClient } from '../Constants';
 import { client } from '../App';
@@ -80,50 +81,52 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                         <List>
                             {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
                                 <ListItem key={name} secondaryAction={
-                                    <>
-                                        {mcpClientState.exists && mcpClientState.configured &&
-                                            <Button onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.disconnect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }} disabled={buttonsLoading[name]} color="warning" variant="outlined" size="small">
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <Typography>Disconnect</Typography>
-                                                    <LinkOff />
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                        {mcpClientState.exists && !mcpClientState.configured &&
-                                            <Button onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.connect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }} disabled={buttonsLoading[name]} color="primary" variant="outlined" size="small">
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <Typography>Connect</Typography>
-                                                    <LinkRounded />
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                        {!mcpClientState.exists &&
-                                            <Button color="error" variant="outlined" size="small" onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.connect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }}>
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <SaveOutlined />
-                                                    <Typography>Write Config</Typography>
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                    </>
+                                    <Tooltip title="You need to restart Claude Desktop after changing the connection.">
+                                        <span>
+                                            {mcpClientState.exists && mcpClientState.configured &&
+                                                <Button onClick={async () => {
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                    await mcpClientState.disconnect(client)
+                                                    await onUpdate();
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                                }} disabled={buttonsLoading[name]} color="warning" variant="outlined" size="small">
+                                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                                        <Typography>Disconnect</Typography>
+                                                        <LinkOff />
+                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                    </Stack>
+                                                </Button>
+                                            }
+                                            {mcpClientState.exists && !mcpClientState.configured &&
+                                                <Button onClick={async () => {
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                    await mcpClientState.connect(client)
+                                                    await onUpdate();
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                                }} disabled={buttonsLoading[name]} color="primary" variant="outlined" size="small">
+                                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                                        <Typography>Connect</Typography>
+                                                        <LinkRounded />
+                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                    </Stack>
+                                                </Button>
+                                            }
+                                            {!mcpClientState.exists &&
+                                                <Button color="error" variant="outlined" size="small" onClick={async () => {
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                    await mcpClientState.connect(client)
+                                                    await onUpdate();
+                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                                }}>
+                                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                                        <SaveOutlined />
+                                                        <Typography>Write Config</Typography>
+                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                    </Stack>
+                                                </Button>
+                                            }
+                                        </span>
+                                    </Tooltip>
                                 }>
                                     <ListItemText
                                         primary={

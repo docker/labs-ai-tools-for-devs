@@ -4,11 +4,12 @@ import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/mate
 import { Ref } from "../Refs";
 import { useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build } from "@mui/icons-material";
+import { Article, AttachFile, Build, LockRounded } from "@mui/icons-material";
 
 export interface CatalogItem {
     description?: string;
     icon?: string;
+    secrets?: { name: string }[];
     ref: string;
     prompts: number;
     resources: object[];
@@ -60,7 +61,18 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                     <Build />
                                 </Badge>
                             </Tooltip>
-
+                            {item.secrets?.length && (
+                                <Tooltip title={<Stack sx={{ pr: 1 }} direction="column" spacing={1}>
+                                    <Typography sx={{ fontWeight: 'bold' }}>Expected secrets:</Typography>
+                                    {item.secrets.map(secret => (
+                                        <Typography key={secret.name}>{secret.name}</Typography>
+                                    ))}
+                                </Stack>}>
+                                    <Badge badgeContent={item.secrets?.length || "0"} color="warning">
+                                        <LockRounded />
+                                    </Badge>
+                                </Tooltip>
+                            )}
                         </Stack>
                         <Button
                             size="small"
