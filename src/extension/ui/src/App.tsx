@@ -57,8 +57,16 @@ export function App() {
   }
 
   const updateMCPClientStates = async () => {
+    const oldStates = mcpClientStates;
     const states = await getMCPClientStates(client)
     setMcpClientStates(states);
+    // Whenever a client connection changes, show toast to user
+    if (Object.values(oldStates).some(state => state.exists && !state.configured) && Object.values(states).every(state => state.configured)) {
+      client.desktopUI.toast.success('MCP Client Connected. Restart Claude Desktop to use the MCP Catalog.');
+    }
+    if (Object.values(oldStates).every(state => state.configured) && Object.values(states).some(state => !state.configured)) {
+      client.desktopUI.toast.error('MCP Client Disconnected. Restart Claude Desktop to remove the MCP Catalog.');
+    }
   }
 
   useEffect(() => {
@@ -86,7 +94,7 @@ export function App() {
   const hasMCPConfigured = Object.values(mcpClientStates).some(state => state.exists && state.configured)
 
   return (
-    <div>
+    <>
       <Dialog open={settings.showModal} onClose={() => setSettings({ ...settings, showModal: false })}>
         <DialogTitle>
           <Typography variant='h2' sx={{ fontWeight: 'bold', m: 2 }}>Catalog Settings</Typography>
@@ -110,7 +118,7 @@ export function App() {
           },
         }} showSettings={() => setSettings({ ...settings, showModal: true })} registryItems={registryItems} canRegister={canRegister} client={client} onRegistryChange={loadRegistry} />
       </Stack>
-    </div>
+    </>
   )
 
 }
