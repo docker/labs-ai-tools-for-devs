@@ -38,11 +38,11 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                             />
                         </Stack>
                     </a>
-                    <Typography variant="body2" sx={{ mt: 2 }}>
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
                         {item.description}
                     </Typography>
                 </CardContent>
-                <CardActions>
+                <CardActions sx={{ pt: 0 }}>
                     <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                         <Stack direction="row" spacing={2}>
                             <Tooltip title="Prompts">

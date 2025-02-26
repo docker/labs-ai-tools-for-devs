@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField } from '@mui/material';
+import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip } from '@mui/material';
 import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
@@ -37,6 +37,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [showUnregistered, setShowUnregistered] = useState<boolean>(true);
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
+    const [tab, setTab] = useState<number>(0);
 
     const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered, search);
 
@@ -47,7 +48,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             const catalog = await response.text();
             const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
             const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            const filteredItems = filterCatalog(itemsWithName, registryItems, showRegistered, showUnregistered);
+            const filteredItems = filterCatalog(itemsWithName, registryItems, showRegistered, showUnregistered, search);
             setCatalogItems(filteredItems);
             localStorage.setItem('catalog', JSON.stringify(filteredItems));
             if (showNotification) {
@@ -141,25 +142,32 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            <FormGroup sx={{ width: '100%' }}>
-                <Stack direction="row" spacing={1} alignItems='center'>
-                    <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ width: 150 }} />
-                    <FormControlLabel control={<Switch checked={showRegistered} onChange={(e) => setShowRegistered(e.target.checked)} />} label="Show Allowed Prompts" />
-                    <FormControlLabel control={<Switch checked={showUnregistered} onChange={(e) => setShowUnregistered(e.target.checked)} />} label="Show Blocked Prompts" />
-                    <Link sx={{ fontWeight: 'bold' }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
+            <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 0, mt: 1 }}>
+                <Tooltip title="These are all of the prompts you have available across the catalog.">
+                    <Tab sx={{ fontSize: '1.5em' }} label="Available" />
+                </Tooltip>
+                <Tooltip title="These are prompts which you have allowed MCP clients to use.">
+                    <Tab sx={{ fontSize: '1.5em' }} label="Allowed" />
+                </Tooltip>
+            </Tabs>
+            <FormGroup sx={{ width: '100%', mt: 0 }}>
+                <Stack direction="row" spacing={1} alignItems='center' justifyContent="space-evenly">
+                    <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <Link sx={{ fontWeight: 'bold', justifySelf: 'flex-end', marginLeft: 'auto', }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
                         client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
                     }}>⇱ Documentation</Link>
-                    <Link sx={{ fontWeight: 'bold', ml: 2 }} href="https://github.com/docker/labs-ai-tools-for-devs" target="_blank" rel="noopener noreferrer" onClick={() => {
+                    <Link sx={{ fontWeight: 'bold', }} href="https://github.com/docker/labs-ai-tools-for-devs" target="_blank" rel="noopener noreferrer" onClick={() => {
                         client.host.openExternal('https://github.com/docker/labs-ai-tools-for-devs');
                     }}>⇱ GitHub</Link>
-                    <IconButton sx={{ marginLeft: 'auto', marginRight: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={showSettings}>
+                    <IconButton sx={{ ml: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={showSettings}>
                         <Badge {...settingsBadgeProps}>
                             <Settings sx={{ fontSize: '1.5em' }} />
                         </Badge>
                     </IconButton>
                 </Stack>
             </FormGroup >
-            <Grid2 container spacing={2} width='100%' maxWidth={1000}>
+
+            {tab === 0 && <Grid2 container spacing={2} width='100%' maxWidth={1000}>
                 {filteredCatalogItems.map((item) => (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
                         <CatalogItemCard
@@ -185,7 +193,16 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         </CardContent>
                     </Card>
                 </Grid2>
-            </Grid2>
+            </Grid2>}
+            {tab === 1 && <Grid2 container spacing={2} width='100%' maxWidth={1000}>
+                {Object.entries(registryItems).map(([name, item]) => (
+                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
+                        <CatalogItemCard item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
+                            client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
+                        }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} />
+                    </Grid2>
+                ))}
+            </Grid2>}
         </Stack >
     );
 };
