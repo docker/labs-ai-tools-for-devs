@@ -33,6 +33,43 @@ import { DOCKER_MCP_CONFIG, MCPClient } from '../Constants';
 import { client } from '../App';
 import { MCPClientState } from '../MCPClients';
 
+type Container = {
+    Id: string;
+    Names: string[];
+    Image: string;
+    ImageID: string;
+    Command: string;
+    Created: number;
+    Ports: [];
+    Labels: {};
+    State: string;
+    Status: string;
+    HostConfig: {
+        NetworkMode: string;
+    };
+    NetworkSettings: {
+        Networks: {
+            bridge: {
+                IPAMConfig: null,
+                Links: null,
+                Aliases: null,
+                MacAddress: string;
+                DriverOpts: null,
+                NetworkID: string;
+                EndpointID: string;
+                Gateway: string;
+                IPAddress: string;
+                IPPrefixLen: number;
+                IPv6Gateway: string;
+                GlobalIPv6Address: string;
+                GlobalIPv6PrefixLen: number;
+                DNSNames: null;
+            }
+        }
+    },
+    Mounts: []
+}
+
 const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpdate: () => Promise<void>, settings: { showModal: boolean, pollIntervalSeconds: number }, setSettings: (settings: any) => void, mcpClientStates: { [name: string]: MCPClientState } }) => {
 
     const updateAndSaveSettings = (settings: any) => {
@@ -129,7 +166,7 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                 </AccordionDetails>
             </Accordion >
 
-            <Accordion defaultExpanded sx={{ width: '100%' }}>
+            <Accordion sx={{ width: '100%' }}>
                 <AccordionSummary>
                     <Typography variant="h6">Registries</Typography>
                 </AccordionSummary>
@@ -212,16 +249,31 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                     <Typography variant="h6">Developer Settings</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Paper elevation={0} sx={{ p: 2 }}>
-                        <Grid2 container spacing={3}>
-                            <Grid2 size={12}>
-                                <Button variant="contained" color="primary" onClick={() => {
-                                    localStorage.clear();
-                                    window.location.reload();
-                                }}>Reset Local Storage</Button>
-                            </Grid2>
+                    <Grid2 container spacing={3}>
+                        <Grid2 size={4}>
+                            <Button variant="contained" color="warning" onClick={() => {
+                                localStorage.clear();
+                                window.location.reload();
+                            }}>Reset Local Storage</Button>
                         </Grid2>
-                    </Paper>
+                        <Grid2 size={4}>
+                            <Button variant="contained" color="primary" onClick={async () => {
+                                setButtonsLoading({ ...buttonsLoading, restartService: true });
+                                const containers = await client.docker.listContainers() as Container[];
+                                console.log(containers);
+                                const mcpDockerContainer = containers.find(container => container.Names.includes('/docker_labs-ai-tools-for-devs-desktop-extension-service'));
+                                if (mcpDockerContainer) {
+                                    try {
+                                        await client.docker.cli.exec('restart', [mcpDockerContainer.Id]);
+                                    } catch (error) {
+                                        console.error(error);
+                                        client.desktopUI.toast.error((error as any).stderr);
+                                    }
+                                }
+                                setButtonsLoading({ ...buttonsLoading, restartService: false });
+                            }} disabled={buttonsLoading.restartService}>{buttonsLoading.restartService && <CircularProgress sx={{ mr: 1 }} size={16} />} Restart mcp/docker Service</Button>
+                        </Grid2>
+                    </Grid2>
                 </AccordionDetails>
             </Accordion >
         </Stack >
