@@ -6,7 +6,7 @@ arguments:
     description: the question to answer
     required: true
 parameter-values:
-  query: "What is url of the logo for docker.com?"
+  query: "Show me the most viral yt thumbnail from the last 2 weeks."
 tools:
   - name: websocat
     description: A tool to send and receive messages over a websocket.
@@ -94,6 +94,10 @@ $MESSAGE | websocat ws://host.docker.internal:9222/devtools/page/<PAGE_ID>
 ```
 
 For more complex tasks, use websocat to send and receive messages to the browser. This can be used to execute javascript, navigate to a page, or screenshot the page.
+
+## Answering the Question
+
+Your goal is to control the Chrome instance to answer the user's question. You can also use curl to save things to the `/thread/` folder. Anything in the `/thread` folder will be memoized for you. This is particularly useful for saving screenshots.
 
 ## Cleanup
 
