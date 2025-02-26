@@ -556,3 +556,21 @@ registry:
         name: curl
     prompts: 2
     resources: {}
+  stripe:
+    description: itegrate with Stripe APIs
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
+    secrets:
+      - name: stripe.api_key
+  brave:
+    description: Web and local search using Brave's Search API
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/brave.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
+    secrets:
+      - name: brave.api_key
+  slack:
+    description: interact with Slack Workspaces
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
+    secrets:
+      - name: slack.team_id

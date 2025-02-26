@@ -5,15 +5,13 @@ weight: 3
 
 {{% steps %}}
 
-### Install
+### Go to Cursor Settings
 
-## Quick Start w/ Cursor
-
-1. Use the Features menu of the Cursor Settings
+Use the Features menu of the Cursor Settings
    
-   ![Claude Features](claude_features.png)
+![Claude Features](claude_features.png)
 
-2. Choose `Command` mode and then copy and paste the following string into the field labeled "Command".
+Choose `Command` mode and then copy and paste the following string into the field labeled "Command".
 
    ```
    docker run --rm -i alpine/socat:latest STDIO TCP:host.docker.internal:8811
@@ -27,8 +25,7 @@ weight: 3
 After updating the list of tools, users must click the refresh button to activate new tool definitions
 {{< /callout >}}
 
-
-## Use tools from compose agent
+### Use tools in agent mode of Composer
 
 Tools will only be available in the `agent` mode of the composer. Note that the composer tab has two distinct modes (`normal` and `agent`).
 

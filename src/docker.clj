@@ -124,9 +124,9 @@
        - coll of strings (e.g. [\"9222:9222\"])"
   [coll]
   (->>
-    (for [s coll :let [{:keys [container host]} (parse-port s)]]
-      [(format "%s/%s" (:port container) (:protocol container)) [{:HostPort (:port host)}]])
-    (into {})))
+   (for [s coll :let [{:keys [container host]} (parse-port s)]]
+     [(format "%s/%s" (:port container) (:protocol container)) [{:HostPort (:port host)}]])
+   (into {})))
 
 (comment
   (port-bindings ["9222:9222"])
@@ -142,15 +142,15 @@
 ;; Tty wraps the process in a pseudo terminal
 ;; StdinOnce closes the stdin after the first client detaches
 ;; OpenStdin just opens stdin
-(defn create-container [{:keys [image entrypoint workdir command host-dir env thread-id opts mounts volumes ports network_mode]
+(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode]
                          :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
                   opts
-                  (when env {:env (->> env
-                                       (map (fn [[k v]] (format "%s=%s" (name k) v)))
-                                       (into []))})
+                  (when environment {:Env (->> environment
+                                               (map (fn [[k v]] (format "%s=%s" (name k) v)))
+                                               (into []))})
                   {:HostConfig
                    (merge
                     {:Binds
@@ -432,6 +432,96 @@
     (catch Throwable t
       (logger/error "processing docker engine attach bytes: " t)
       "")))
+
+(defn write-to-stdin
+  "  params
+       client - SocketChannel for attached container"
+  [client s]
+  (let [buf (ByteBuffer/allocate (* 1024 20))]
+    (.clear ^ByteBuffer buf)
+    (try
+      (.put ^ByteBuffer buf (.getBytes ^String s))
+      (.flip ^ByteBuffer buf)
+      (while (.hasRemaining buf)
+        (.write ^SocketChannel client buf))
+      (catch Throwable t
+        (logger/error "write-string error " t)))))
+
+(defn read-loop
+  "  params
+       in - SocketChannel for attached container
+       c - channel to write multiplexed stdout stderr blocks"
+  [in c]
+  (async/go
+    (try
+      (let [header-buf (ByteBuffer/allocate 8)]
+        (loop [offset 0]
+          (let [result (.read ^SocketChannel in header-buf)]
+            (cond
+                ;;;;;;;;;; 
+              (= -1 result)
+              (async/close! c)
+
+                ;;;;;;;;;;
+              (= 8 (+ offset result))
+              (do
+                (.flip ^ByteBuffer header-buf)
+                (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
+                      stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
+                                    0 :stdin
+                                    1 :stdout
+                                    2 :stderr)
+                      buf (ByteBuffer/allocate size)]
+                  (loop [offset 0]
+                    (let [result (.read ^SocketChannel in buf)]
+                      (cond
+                        ;;;;;;;;;;
+                        (= -1 result)
+                        (async/close! c)
+
+                        ;;;;;;;;;;
+                        (= size (+ offset result))
+                        (async/>! c {stream-type (String. ^bytes (.array buf))})
+
+                        ;;;;;;;;;;
+                        :else
+                        (recur (+ offset result)))))
+                  (do
+                    (.clear ^ByteBuffer buf)
+                    (recur 0))))
+
+                ;;;;;;;;;;
+              :else
+              (do
+                (.clear ^ByteBuffer header-buf)
+                (recur (+ offset result)))))))
+      (catch Throwable t
+        (logger/error "streaming exception " t)
+        (async/close! c)))))
+
+(defn attach-socket
+  " returns SocketChannel"
+  [container-id]
+  (let [buf (ByteBuffer/allocate (* 1024 20))
+        address (UnixDomainSocketAddress/of "/var/run/docker.sock")
+        client (SocketChannel/open address)]
+    (.configureBlocking client true)
+    (.clear buf)
+    ;; make HTTP call
+    (.put buf (.getBytes (String. (format "POST /containers/%s/attach?stdin=true&stdout=true&stderr=true&stream=true HTTP/1.1\n" container-id))))
+    (.put buf (.getBytes (String. "Host: localhost\nConnection: Upgrade\nUpgrade: tcp\n\n")))
+    (try
+      (.flip ^ByteBuffer buf)
+      (while (.hasRemaining buf)
+        (.write client buf))
+      ;; TODO if successful, we should get a 101 UPGRADED response that will be exactly 117 bytes
+      (let [buf (ByteBuffer/allocate 117)]
+        ;; TODO read the HTTP upgrade message
+        (.read client buf)
+        (.read client buf))
+      (catch Throwable _
+        client))
+    client))
 
 (defn function-call-with-stdin
   "creates and starts container, then writes to stdin process

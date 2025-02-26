@@ -15,4 +15,5 @@ services:
       - github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
 volumes:
   docker-prompts:
+    name: docker-prompts
     external: true

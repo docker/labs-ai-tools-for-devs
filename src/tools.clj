@@ -83,14 +83,16 @@
                                          {:workdir (first (interpolate arg-context wd))}))
 
                                 (-> definition :container :stdin :file) (update-in [:stdin :file] (fn [s] (first (interpolate arg-context s))))
-                                
+
                                 (-> definition :container :stdin :content) (update-in [:stdin :content] (fn [s] (first (interpolate arg-context s)))))]
-            (jsonrpc/notify
-             :message
-             {:debug (format "function call %s"
-                             (with-out-str
-                               (pp/pprint (-> function-call
-                                              (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))})
+            (let [s (format "function call %s"
+                            (with-out-str
+                              (pp/pprint (-> function-call
+                                             (update :jwt (fn [s] (if s "xxxxxxx" "not-set")))))))]
+              (jsonrpc/notify
+               :message
+               {:debug s})
+              (logger/debug s))
             (trace/container-call (update function-call :jwt (fn [s] (if s "xxxxxxx" "not-set"))))
             (let [{:keys [pty-output exit-code done] :as result} (docker/run-container function-call)
                   exit-code-fail? (if (false? (:check-exit-code definition))
