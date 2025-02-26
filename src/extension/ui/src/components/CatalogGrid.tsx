@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link } from '@mui/material';
+import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField } from '@mui/material';
 import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
@@ -19,8 +19,8 @@ interface CatalogGridProps {
     settingsBadgeProps: BadgeProps;
 }
 
-const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, showRegistered: boolean, showUnregistered: boolean) =>
-    catalogItems.filter((item) => (showRegistered || !Object.keys(registryItems).includes(item.name)) && (showUnregistered || Object.keys(registryItems).includes(item.name)));
+const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, showRegistered: boolean, showUnregistered: boolean, search: string) =>
+    catalogItems.filter((item) => (showRegistered || !Object.keys(registryItems).includes(item.name)) && (showUnregistered || Object.keys(registryItems).includes(item.name)) && (item.name.toLowerCase().includes(search.toLowerCase())));
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
@@ -36,8 +36,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [showRegistered, setShowRegistered] = useState<boolean>(true);
     const [showUnregistered, setShowUnregistered] = useState<boolean>(true);
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>('');
 
-    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered);
+    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered, search);
 
     const loadCatalog = async (showNotification = true) => {
         const cachedCatalog = localStorage.getItem('catalog');
@@ -142,6 +143,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             </Alert>}
             <FormGroup sx={{ width: '100%' }}>
                 <Stack direction="row" spacing={1} alignItems='center'>
+                    <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ width: 150 }} />
                     <FormControlLabel control={<Switch checked={showRegistered} onChange={(e) => setShowRegistered(e.target.checked)} />} label="Show Allowed Prompts" />
                     <FormControlLabel control={<Switch checked={showUnregistered} onChange={(e) => setShowUnregistered(e.target.checked)} />} label="Show Blocked Prompts" />
                     <Link sx={{ fontWeight: 'bold' }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
