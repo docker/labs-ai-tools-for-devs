@@ -17,7 +17,7 @@ export const DOCKER_MCP_CONFIG = {
 export type MCPClient = {
     name: string;
     url: string;
-    readFile: (client: v1.DockerDesktopClient) => Promise<string | undefined | null>;
+    readFile: (client: v1.DockerDesktopClient) => Promise<{ content: string | null | undefined, path: string }>;
     connect: (client: v1.DockerDesktopClient) => Promise<void>;
     disconnect: (client: v1.DockerDesktopClient) => Promise<void>;
     validateConfig: (content: string) => boolean;
@@ -47,9 +47,9 @@ export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [
             path = path.replace('$USER', user)
             try {
                 const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
-                return result.stdout || undefined;
+                return { content: result.stdout || undefined, path: path };
             } catch (e) {
-                return null;
+                return { content: null, path: path };
             }
         },
         connect: async (client: v1.DockerDesktopClient) => {

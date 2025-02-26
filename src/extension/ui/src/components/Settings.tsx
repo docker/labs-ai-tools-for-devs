@@ -49,22 +49,7 @@ type Container = {
     };
     NetworkSettings: {
         Networks: {
-            bridge: {
-                IPAMConfig: null,
-                Links: null,
-                Aliases: null,
-                MacAddress: string;
-                DriverOpts: null,
-                NetworkID: string;
-                EndpointID: string;
-                Gateway: string;
-                IPAddress: string;
-                IPPrefixLen: number;
-                IPv6Gateway: string;
-                GlobalIPv6Address: string;
-                GlobalIPv6PrefixLen: number;
-                DNSNames: null;
-            }
+            bridge: any;
         }
     },
     Mounts: []
@@ -140,11 +125,22 @@ const Settings = ({ settings, setSettings, mcpClientStates, onUpdate }: { onUpda
                                         }
                                     </>
                                 }>
-                                    <ListItemText primary={<Stack direction="row" alignItems="center" spacing={1}>
-                                        <Typography variant="h4">{name}</Typography>
-                                        {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
-                                        {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
-                                    </Stack>} />
+                                    <ListItemText
+                                        primary={
+                                            <Stack direction="row" alignItems="center" spacing={1}>
+                                                <Typography variant="h4">{name}</Typography>
+                                                {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
+                                                {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                                            </Stack>
+                                        }
+                                        secondary={
+                                            <Stack direction="column" justifyContent="center" spacing={1}>
+                                                <Link width="100%" href={mcpClientState.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.url)}>{mcpClientState.url}</Link>
+                                                <Typography sx={{ fontWeight: 'bold' }}>Config Path:</Typography>
+                                                <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', width: '70%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1 }}>{mcpClientState.path}</Typography>
+                                            </Stack>
+                                        }
+                                    />
                                 </ListItem>
                             ))}
                         </List>
