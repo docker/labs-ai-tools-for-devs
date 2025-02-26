@@ -557,7 +557,7 @@ registry:
     prompts: 2
     resources: {}
   stripe:
-    description: itegrate with Stripe APIs
+    description: Provides a tool to interact with Stripe services over the Stripe API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
     secrets:
@@ -569,7 +569,7 @@ registry:
     secrets:
       - name: brave.api_key
   slack:
-    description: interact with Slack Workspaces
+    description: Provides a tool to interact with Slack Workspaces over the Slack API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
     secrets:
