@@ -14,12 +14,14 @@ title: defining container tools
 
 # parameters
 
-* volumes (list of strings)  supports interpolation         optional
-* command (list of strings)  supports interpolation         optional
-* workdir (string)           supports interpolation         optional
-* stdin (keys content, file) supports interpolation         optional
-* entrypoint (string)        does NOT suport interpolation  optional
-* image (string)             does not support interpolation mandatory
+* volumes (list of strings)    supports interpolation         optional
+* entrypoint (list of strings) supports interpolation         optional
+* command (list of strings)    supports interpolation         optional
+* workdir (string)             supports interpolation         optional
+* stdin (keys content, file)   supports interpolation         optional
+
+* environment (map)            does NOT support interpolation  optional
+* image (string)               does not support interpolation  mandatory
 
 # interpolation
 

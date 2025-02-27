@@ -556,6 +556,14 @@ registry:
         name: curl
     prompts: 2
     resources: {}
+  sequentialthinking:
+    description: provides a tool for dynamic and reflective problem-solving through a structured thinking process
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
+    icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
+    tools:
+      - type: function
+        function:
+          name: sequentialthinking
   stripe:
     description: Provides a tool to interact with Stripe services over the Stripe API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
@@ -574,3 +582,10 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
     secrets:
       - name: slack.team_id
+  redis:
+    description: interact with Slack Workspaces
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
+    secrets:
+      - name: redis.url
+

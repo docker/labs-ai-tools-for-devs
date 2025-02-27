@@ -1,7 +1,6 @@
 ---
 mcp:
-  - name: stripe
-    container:
+  - container:
       image: mcp/stripe:latest
       command:
         - "--tools=all"

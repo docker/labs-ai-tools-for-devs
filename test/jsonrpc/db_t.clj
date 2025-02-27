@@ -4,6 +4,8 @@
    [clojure.pprint :refer [pprint]]
    [clojure.test :as t]
    [jsonrpc.db :as db]
+   [jsonrpc.producer :as producer]
+   jsonrpc.server
    [lsp4clj.server :as server]))
 
 (def correct-refs
@@ -61,3 +63,21 @@
 
 (comment
   (pprint @db/db*))
+
+(comment
+  (def hey
+    (atom
+     {:mcp.prompts/resources
+      {"memo://insights"
+       {:uri "memo://insights"
+        :text "No Business Insights"
+        :matches "resource:///thread/insights.txt"}}}))
+  (jsonrpc.server/update-resources
+   {:db* hey
+    :producer (reify producer/IProducer (publish-resource-list-changed [_ _] (println "called")))}
+   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
+
+(comment
+  (jsonrpc.server/update-matched-resources
+   {"memo://insights" {:uri "memo://insights" :text "No Business Insights" :matches "resource:///thread/insights.txt"}}
+   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
