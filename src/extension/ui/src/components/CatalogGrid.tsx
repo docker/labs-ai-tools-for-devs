@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip } from '@mui/material';
+import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, InputAdornment } from '@mui/material';
 import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
 import { getRegistry } from '../Registry';
-import { FolderOpenRounded, Settings } from '@mui/icons-material';
+import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 
@@ -143,10 +143,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
             <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 0, mt: 1 }}>
-                <Tooltip title="These are all of the prompts you have available across the catalog.">
+                <Tooltip title="These are all of the tiles you have available across the catalog.">
                     <Tab sx={{ fontSize: '1.5em' }} label="Available" />
                 </Tooltip>
-                <Tooltip title="These are prompts which you have allowed MCP clients to use.">
+                <Tooltip title="These are tiles which you have allowed MCP clients to use.">
                     <Tab sx={{ fontSize: '1.5em' }} label="Allowed" />
                 </Tooltip>
             </Tabs>
@@ -167,7 +167,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 </Stack>
             </FormGroup >
 
-            {tab === 0 && <Grid2 container spacing={2} width='100%' maxWidth={1000}>
+            {tab === 0 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
                 {filteredCatalogItems.map((item) => (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
                         <CatalogItemCard
@@ -194,9 +194,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     </Card>
                 </Grid2>
             </Grid2>}
-            {tab === 1 && <Grid2 container spacing={2} width='100%' maxWidth={1000}>
+            {tab === 1 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
                 {Object.entries(registryItems).map(([name, item]) => (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
+                    name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                         <CatalogItemCard item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
                             client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
                         }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} />
