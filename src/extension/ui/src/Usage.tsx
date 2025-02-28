@@ -58,8 +58,8 @@ const processEventsQueue = () => {
 };
 
 const sendRecords = (records: Record[]) => {
-    const url = 'https://api-stage.docker.com/events/v1/track';
-    const apiKey = 'wl9kXcw19A9pyY2xj5TcKa2jlCG1ZbIYabdnuFve';
+    const url = 'https://api.docker.com/events/v1/track';
+    const apiKey = '3EEvlMngcn3meCbpuYoyC4k8TSF0dYcB5XIVixlt';
 
     fetch(url, {
         method: 'POST',
