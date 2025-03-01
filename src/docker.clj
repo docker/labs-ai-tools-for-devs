@@ -142,15 +142,19 @@
 ;; Tty wraps the process in a pseudo terminal
 ;; StdinOnce closes the stdin after the first client detaches
 ;; OpenStdin just opens stdin
-(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode]
+(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode secrets]
                          :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
                   opts
-                  (when environment {:Env (->> environment
-                                               (map (fn [[k v]] (format "%s=%s" (name k) v)))
-                                               (into []))})
+                  (when environment
+                    {:Env (->> environment
+                               (map (fn [[k v]] (format "%s=%s" (name k) v)))
+                               (into []))})
+                  {:Labels (->> secrets
+                                (map (fn [s] [(format "x-secret:%s" s) (format "/secret/%s" s)]))
+                                (into {}))}
                   {:HostConfig
                    (merge
                     {:Binds
@@ -452,52 +456,51 @@
        in - SocketChannel for attached container
        c - channel to write multiplexed stdout stderr blocks"
   [in c]
-  (async/go
-    (try
-      (let [header-buf (ByteBuffer/allocate 8)]
-        (loop [offset 0]
-          (let [result (.read ^SocketChannel in header-buf)]
-            (cond
+  (try
+    (let [header-buf (ByteBuffer/allocate 8)]
+      (loop [offset 0]
+        (let [result (.read ^SocketChannel in header-buf)]
+          (cond
                 ;;;;;;;;;; 
-              (= -1 result)
-              (async/close! c)
+            (= -1 result)
+            (async/close! c)
 
                 ;;;;;;;;;;
-              (= 8 (+ offset result))
-              (do
-                (.flip ^ByteBuffer header-buf)
-                (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
-                      stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
-                                    0 :stdin
-                                    1 :stdout
-                                    2 :stderr)
-                      buf (ByteBuffer/allocate size)]
-                  (loop [offset 0]
-                    (let [result (.read ^SocketChannel in buf)]
-                      (cond
+            (= 8 (+ offset result))
+            (do
+              (.flip ^ByteBuffer header-buf)
+              (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
+                    stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
+                                  0 :stdin
+                                  1 :stdout
+                                  2 :stderr)
+                    buf (ByteBuffer/allocate size)]
+                (loop [offset 0]
+                  (let [result (.read ^SocketChannel in buf)]
+                    (cond
                         ;;;;;;;;;;
-                        (= -1 result)
-                        (async/close! c)
+                      (= -1 result)
+                      (async/close! c)
 
                         ;;;;;;;;;;
-                        (= size (+ offset result))
-                        (async/>! c {stream-type (String. ^bytes (.array buf))})
+                      (= size (+ offset result))
+                      (async/>!! c {stream-type (String. ^bytes (.array buf))})
 
                         ;;;;;;;;;;
-                        :else
-                        (recur (+ offset result)))))
-                  (do
-                    (.clear ^ByteBuffer buf)
-                    (recur 0))))
+                      :else
+                      (recur (+ offset result)))))
+
+                (.clear ^ByteBuffer buf)
+                (recur 0)))
 
                 ;;;;;;;;;;
-              :else
-              (do
-                (.clear ^ByteBuffer header-buf)
-                (recur (+ offset result)))))))
-      (catch Throwable t
-        (logger/error "streaming exception " t)
-        (async/close! c)))))
+            :else
+            (do
+              (.clear ^ByteBuffer header-buf)
+              (recur (+ offset result)))))))
+    (catch Throwable t
+      (logger/error "streaming exception " t)
+      (async/close! c))))
 
 (defn attach-socket
   " returns SocketChannel"

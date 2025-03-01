@@ -188,11 +188,6 @@
           (map (fn [{{:keys [uri text]} :resource}] [(resource-uri db-resources uri) {:text text}]))
           (into {})))))
 
-(comment
-  (update-matched-resources
-   {"memo://insights" {:uri "memo://insights" :text "No Business Insights" :matches "resource:///thread/insights.txt"}}
-   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
-
 (defn update-resources
   "update the resource list in the db
      params - resources coll of mcp resources extracted from last tool call"
@@ -201,18 +196,18 @@
     (swap! db* update :mcp.prompts/resources update-matched-resources resources)
     (producer/publish-resource-list-changed producer {})))
 
-(comment
-  (def hey
-    (atom
-     {:mcp.prompts/resources
-      {"memo://insights"
-       {:uri "memo://insights"
-        :text "No Business Insights"
-        :matches "resource:///thread/insights.txt"}}}))
-  (update-resources
-   {:db* hey
-    :producer (reify producer/IProducer (publish-resource-list-changed [_ _] (println "called")))}
-   [{:resource {:uri "resource:///thread/insights.txt" :text "updated"}}]))
+(defn create-tool-outputs [tool-outputs]
+  (if (some :content tool-outputs)
+    ;; messages
+    [{:type "text"
+      :text (->>
+              tool-outputs
+              (map :content)
+              (apply str))}]
+    ;; tool call responses
+    (->> tool-outputs
+         (mapcat (comp :content :result))
+         (into []))))
 
 (defn mcp-tool-calls
   " params
@@ -221,32 +216,42 @@
   [{:keys [db*] :as components} params]
   (volumes/with-volume
     (fn [thread-id]
-      (concat
-       [{:type "text"
-         :text (->>
-                (tools/make-tool-calls
-                 0
-                 (partial
-                  tools/function-handler
-                  {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-                   :host-dir (-> @db* :host-dir)
-                   :thread-id thread-id})
-                 [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
-                (async/reduce conj [])
-                (async/<!!)
-                (map :content)
-                (apply str))}]
-       (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
+      ;; TODO non-mcp tool calls are maps of content, role tool_call_id
+      ;;      we turn them into one text message and respond to the jsonrpc request here
+      ;;      for mcp tool calls the response will already be valid content
+      ;;        so we can concat it and just return the result (or error)
+      ;; tool-outputs are :content, :role, :tool_call_id 
+      ;;   (MCP doesn't care about :role or :tool_call_id - these are client concerns)
+      (let [tool-outputs (->>
+                          (tools/make-tool-calls
+                           0
+                           (partial
+                            tools/function-handler
+                            {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+                             :host-dir (-> @db* :host-dir)
+                             :thread-id thread-id})
+                           ;; tool calls are functions, which are arguments,name maps, and ids
+                           ;; mcp tool call params are also maps of name, and arguments
+                           [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
+                          (async/reduce conj [])
+                          (async/<!!))]
+     ;; TODO with mcp, tool-calls with errors are still jsonrpc results
+     ;;      protocol errors are jsonrpc errors, with a code and a message
+     ;; TODO if result is ::method-not-found, we'll get a protocol error
+     ;;      responding with a map containing an :error key will also generate a protocol error
+        {:content
+         (concat
+          (create-tool-outputs tool-outputs)
+          (volumes/pick-up-mcp-resources thread-id (partial update-resources components)))
+         :is-error false}))))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]
   (logger/info "tools/call")
   (logger/info "with params" params)
   (lsp.server/discarding-stdout
-   (let [content (mcp-tool-calls components params)]
-     (logger/info "content " (with-out-str (pprint/pprint content)))
-     ;; TODO with mcp, tool-calls with errors can be explicit
-     {:content content
-      :is-error false})))
+   (let [response (mcp-tool-calls components params)]
+     (logger/info "content " (with-out-str (pprint/pprint response)))
+     response)))
 
 (defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
   (logger/info "docker/prompts/register"))

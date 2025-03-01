@@ -1,17 +1,13 @@
 ```sh
-docker build -t mcp/docker .
+docker build -t mcp/docker:0.0.1 .
 ```
 
 ```sh
-docker extension rm vonwig/labs-ai-tools-for-devs
+cd src/extension && make build-extension
 ```
 
 ```sh
-docker extension install vonwig/labs-ai-tools-for-devs:0.1.16
-```
-
-```sh
-docker extension update docker/labs-ai-tools-for-devs:0.1.4
+docker extension update docker/labs-ai-tools-for-devs:0.2.7
 ```
 
 ```sh
@@ -30,10 +26,10 @@ docker pull mcp/docker:prerelease
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag mcp/docker:latest \
+    --tag mcp/docker:0.0.1 \
     --file Dockerfile \
     --push .
-docker pull mcp/docker:latest
+docker pull mcp/docker:0.0.1
 ```
 
 ```sh
