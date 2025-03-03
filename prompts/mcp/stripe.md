@@ -1,9 +1,12 @@
 ---
 mcp:
   - container:
-      image: mcp/stripe:latest
+      image: vonwig/stripe:latest
+      workdir: /app
+      secrets:
+        stripe.api_key: API_KEY
       command:
         - "--tools=all"
-        - "--api-key={{stripe.api_key}}"
+        - "--api-key=$API_KEY"
 ---
 
