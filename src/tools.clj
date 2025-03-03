@@ -116,10 +116,11 @@
           (let [{:keys [pty-output exit-code done result error] :as response}
                 (if (= :mcp (:type function-call))
                   ;; start mcp container
-                  (client/call-tool
-                   function-call
-                   {:name function-name
-                    :arguments (json/parse-string json-arg-string keyword)})
+                  (async/<!!
+                    (client/call-tool
+                      function-call
+                      {:name function-name
+                       :arguments (json/parse-string json-arg-string keyword)}))
                   ;; start pure container
                   (docker/run-container function-call))
                 exit-code-fail? (if (false? (:check-exit-code definition))

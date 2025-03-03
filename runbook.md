@@ -59,3 +59,8 @@ docker run --rm -i --pull always -q --init \
 ```sh
 socat STDIO TCP:127.0.0.1:8811
 ```
+
+```sh
+docker x policy set my-policy '*'
+docker x secret set 'stripe.api_key=....' --policy my-policy
+```
