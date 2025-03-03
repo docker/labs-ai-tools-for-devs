@@ -99,7 +99,7 @@
                              (request (f)) ([v _] v)
                              dead-channel ([v _] v)
                              (async/timeout 15000) :timeout)]
-              (logger/info (format "%s response %s" (:image container-definition) response))
+              (logger/debug (format "%s response %s" (:image container-definition) response))
               (f1 response))
             (do
               (logger/error (format
@@ -120,25 +120,24 @@
     returns exit-code, done, and a response map with either result or error"
   [container params]
   (with-running-mcp
-    container
+    (docker/inject-secret-transform container)
     (fn [] {:method "tools/call" :params params})
     identity))
 
 (comment
   (async/<!!
-    (call-tool
-      (docker/inject-secret-transform
-        {:image "vonwig/stripe:latest"
-         :entrypoint ["node" "/app/dist/index.js"]
-         :secrets {"stripe.api_key" "API_KEY"} 
-         :command ["--tools=all"
-                   "--api-key=$API_KEY"]})
-      {:name "create_customer"
-       :arguments {:name "Jim Clark"}})))
+   (call-tool
+    {:image "vonwig/stripe:latest"
+     :entrypoint ["node" "/app/dist/index.js"]
+     :secrets {"stripe.api_key" "API_KEY"}
+     :command ["--tools=all"
+               "--api-key=$API_KEY"]}
+    {:name "create_customer"
+     :arguments {:name "Jim Clark"}})))
 
 (defn get-tools [container-definition]
   (with-running-mcp
-    container-definition
+    (docker/inject-secret-transform container-definition)
     (fn [] {:method "tools/list" :params {}})
     (fn [response]
       (->> (-> response :result :tools)
@@ -149,9 +148,11 @@
   [coll]
   (->> coll
        (mapcat (comp async/<!! get-tools :container))
-       (map #(-> %
-                 (assoc :parameters (:inputSchema %))
-                 (dissoc :inputSchema)))
+       (map (fn [tool]
+              {:type "function"
+               :function (-> tool
+                             (assoc :parameters (:inputSchema tool))
+                             (dissoc :inputSchema))}))
        (into [])))
 
 (comment
