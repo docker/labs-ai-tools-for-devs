@@ -11,13 +11,14 @@
    [jsonrpc]
    logging
    [markdown :as markdown-parser]
+   [mcp.client :as client]
    [medley.core :as medley]
    [openai]
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
    [registry]
-   [selmer.parser :as selmer]
-   schema))
+   schema
+   [selmer.parser :as selmer]))
 
 (set! *warn-on-reflection* true)
 
@@ -205,7 +206,14 @@
                                   (map (partial renderer {}))
                                   (map #(dissoc % :title)))))
          (update :metadata dissoc :functions :tools :extractors)
-         (assoc :functions (->> (or (:tools metadata) (:functions metadata)) (mapcat function-definition)))))))
+         (assoc :functions (concat
+                            (->> (or (:tools metadata) (:functions metadata))
+                                 (mapcat function-definition))
+                            (client/get-mcp-tools-from-prompt (:mcp metadata))))))))
+
+(comment
+  (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))
+  (get-prompts {:prompts (fs/file "./prompts/mcp/stripe.md")}))
 
 (comment
   (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})

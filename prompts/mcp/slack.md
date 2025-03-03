@@ -2,8 +2,9 @@
 mcp:
   - container:
       image: mcp/slack:latest
-      environment:
-        SLACK_BOT_TOKEN: "{{ slack.bot_token }}"
-        SLACK_TEAM_ID: "{{ slack.team_id }} "
+      workdir: /app
+      secrets:
+        slack.bot_token: SLACK_BOT_TOKEN
+        slack.team_id: SLACK_TEAM_ID
 ---
 

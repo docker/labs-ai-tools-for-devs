@@ -142,15 +142,20 @@
 ;; Tty wraps the process in a pseudo terminal
 ;; StdinOnce closes the stdin after the first client detaches
 ;; OpenStdin just opens stdin
-(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode]
+(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode secrets]
                          :or {opts {:Tty true}}}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
                   opts
-                  (when environment {:Env (->> environment
-                                               (map (fn [[k v]] (format "%s=%s" (name k) v)))
-                                               (into []))})
+                  (when environment
+                    {:Env (->> environment
+                               (map (fn [[k v]] (format "%s=%s" (name k) v)))
+                               (into []))})
+                  {:Labels (->> secrets
+                                keys
+                                (map (fn [secret-key] (let [s (name secret-key)] [(format "x-secret:%s" s) (string/trim (format "/secret/%s" s))])))
+                                (into {}))}
                   {:HostConfig
                    (merge
                     {:Binds
@@ -191,6 +196,12 @@
 (defn inspect-container [{:keys [Id]}]
   (curl/get
    (format "http://localhost/containers/%s/json" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :throw false}))
+
+(defn inspect-image [{:keys [Id]}]
+  (curl/get
+   (format "http://localhost/images/%s/json" Id)
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -263,6 +274,7 @@
 (def thread-volume (comp (status? 201 "create-volume") create-volume))
 (def delete-thread-volume (comp (status? 204 "remove-volume") remove-volume))
 (def inspect (comp ->json (status? 200 "inspect container") inspect-container))
+(def image-inspect (comp ->json (status? 200 "inspect image") inspect-image))
 (def start (comp (status? 204 "start-container") start-container))
 (def wait (comp (status? 200 "wait-container") wait-container))
 (def attach (comp (status? 200 "attach-container") attach-container))
@@ -271,7 +283,27 @@
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
 
-(defn- add-latest [image]
+(defn injected-entrypoint [secrets s]
+  (format "%s ; %s"
+          (->> secrets
+               (map (fn [[k v]] 
+                      (format "%s=$(cat /secret/%s | sed -e \"s/^[[:space:]]*//\")" v (name k))))
+               (string/join " ; "))
+          s))
+
+(defn inject-secret-transform [container-definition]
+  (let [{:keys [Entrypoint Cmd]}
+        (->
+         (image-inspect
+          (-> (images {"reference" [(:image container-definition)]})
+              first))
+         :Config)
+        real-entrypoint (string/join " " (concat Entrypoint (or (:command container-definition) :Cmd)))]
+    (-> container-definition
+        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint (:secrets container-definition) real-entrypoint)])
+        (dissoc :command))))
+
+(defn add-latest [image]
   (let [[_ tag] (re-find #".*(:.*)$" image)]
     (if tag
       image
@@ -281,7 +313,7 @@
   (add-latest "vonwig/go-linguist")
   (add-latest "blah/what:tag"))
 
-(defn- -pull [m]
+(defn -pull [m]
   (pull (merge m
                {:image (add-latest (:image m))}
                {:serveraddress "https://index.docker.io/v1/"}
@@ -448,59 +480,63 @@
         (logger/error "write-string error " t)))))
 
 (defn read-loop
-  "  params
+  "the socket read loop for the stdout/stderr streams of a container
+   de-plexes the streams and writes out blocks of stdout and stderr to a channel
+
+   The channel should eventually close becuase the socket will close when the process exits
+
+    params
        in - SocketChannel for attached container
        c - channel to write multiplexed stdout stderr blocks"
   [in c]
-  (async/go
-    (try
-      (let [header-buf (ByteBuffer/allocate 8)]
-        (loop [offset 0]
-          (let [result (.read ^SocketChannel in header-buf)]
-            (cond
+  (try
+    (let [header-buf (ByteBuffer/allocate 8)]
+      (loop [offset 0]
+        (let [result (.read ^SocketChannel in header-buf)]
+          (cond
                 ;;;;;;;;;; 
-              (= -1 result)
-              (async/close! c)
+            (= -1 result)
+            (async/close! c)
 
                 ;;;;;;;;;;
-              (= 8 (+ offset result))
-              (do
-                (.flip ^ByteBuffer header-buf)
-                (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
-                      stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
-                                    0 :stdin
-                                    1 :stdout
-                                    2 :stderr)
-                      buf (ByteBuffer/allocate size)]
-                  (loop [offset 0]
-                    (let [result (.read ^SocketChannel in buf)]
-                      (cond
+            (= 8 (+ offset result))
+            (do
+              (.flip ^ByteBuffer header-buf)
+              (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
+                    stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
+                                  0 :stdin
+                                  1 :stdout
+                                  2 :stderr)
+                    buf (ByteBuffer/allocate size)]
+                (loop [offset 0]
+                  (let [result (.read ^SocketChannel in buf)]
+                    (cond
                         ;;;;;;;;;;
-                        (= -1 result)
-                        (async/close! c)
+                      (= -1 result)
+                      (async/close! c)
 
                         ;;;;;;;;;;
-                        (= size (+ offset result))
-                        (async/>! c {stream-type (String. ^bytes (.array buf))})
+                      (= size (+ offset result))
+                      (async/>!! c {stream-type (String. ^bytes (.array buf))})
 
                         ;;;;;;;;;;
-                        :else
-                        (recur (+ offset result)))))
-                  (do
-                    (.clear ^ByteBuffer buf)
-                    (recur 0))))
+                      :else
+                      (recur (+ offset result)))))
+
+                (.clear ^ByteBuffer buf)
+                (recur 0)))
 
                 ;;;;;;;;;;
-              :else
-              (do
-                (.clear ^ByteBuffer header-buf)
-                (recur (+ offset result)))))))
-      (catch Throwable t
-        (logger/error "streaming exception " t)
-        (async/close! c)))))
+            :else
+            (do
+              (.clear ^ByteBuffer header-buf)
+              (recur (+ offset result)))))))
+    (catch Throwable t
+      (logger/error "streaming exception " t)
+      (async/close! c))))
 
 (defn attach-socket
-  " returns SocketChannel"
+  " returns SocketChannel (upgraded attach connection with all streams active)"
   [container-id]
   (let [buf (ByteBuffer/allocate (* 1024 20))
         address (UnixDomainSocketAddress/of "/var/run/docker.sock")
