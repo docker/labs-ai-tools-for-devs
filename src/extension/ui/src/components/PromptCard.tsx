@@ -2,9 +2,10 @@ import { Badge, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, I
 import Button from '@mui/material/Button';
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build, CheckBox, LockRounded } from "@mui/icons-material";
+import { Article, AttachFile, Build, CheckBox, Delete, LockReset, LockRounded, Save } from "@mui/icons-material";
+import Secrets from "../Secrets";
 
 const iconSize = 16
 
@@ -22,10 +23,20 @@ export interface CatalogItemWithName extends CatalogItem {
     name: string;
 }
 
-export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void> }) {
+export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => void, secrets: Secrets.Secret[] }) {
+    const loadAssignedSecrets = () => {
+        const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
+        setAssignedSecrets(assignedSecrets)
+    }
     const [isRegistering, setIsRegistering] = useState(false)
     const [showSecretDialog, setShowSecretDialog] = useState(false)
-    const [secrets, setSecrets] = useState<{ name: string, value: string }[]>(item.secrets?.map(secret => ({ name: secret.name, value: '' })) || [])
+    const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
+    const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
+
+    useEffect(() => {
+        loadAssignedSecrets()
+    }, [secrets])
+
     return (
         <>
             <Dialog open={showSecretDialog} onClose={() => setShowSecretDialog(false)}>
@@ -36,8 +47,16 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                 </DialogTitle>
                 <DialogContent>
                     <Stack direction="column" spacing={2}>
-                        {item.secrets?.map(secret => (
-                            <TextField type="password" key={secret.name} label={secret.name} value={secrets.find(s => s.name === secret.name)?.value || ''} onChange={(event) => setSecrets(secrets.map(s => s.name === secret.name ? { ...s, value: event.target.value } : s))} />
+                        {assignedSecrets?.map(secret => (
+                            <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
+                                <TextField placeholder={assignedSecrets.find(s => s.name === secret.name)?.assigned ? '********' : 'Enter secret value'} type="password" key={secret.name} label={secret.name} value={changedSecrets[secret.name] || ''} onChange={(event) => setChangedSecrets({ ...changedSecrets, [secret.name]: event.target.value })} />
+                                {assignedSecrets.find(s => s.name === secret.name)?.assigned && changedSecrets[secret.name] && <IconButton onClick={() => setChangedSecrets({ ...changedSecrets, [secret.name]: undefined })}>
+                                    <LockReset />
+                                </IconButton>}
+                                {changedSecrets[secret.name] && <IconButton onClick={() => onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' })}>
+                                    <Save />
+                                </IconButton>}
+                            </Stack>
                         ))}
                     </Stack>
                 </DialogContent>
@@ -97,7 +116,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                         </Stack>
                                     }>
                                         <IconButton onClick={() => setShowSecretDialog(!showSecretDialog)}>
-                                            <Badge badgeContent={item.secrets?.length || "0"} color="warning">
+                                            <Badge badgeContent={item.secrets?.length || "0"} color={assignedSecrets?.every(s => s.assigned) ? 'success' : 'warning'}>
                                                 <LockRounded sx={{ fontSize: iconSize }} />
                                             </Badge>
                                         </IconButton>

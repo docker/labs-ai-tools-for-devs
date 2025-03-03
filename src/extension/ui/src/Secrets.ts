@@ -25,9 +25,14 @@ namespace Secrets {
         return JSON.parse(response?.stdout || '[]');
     }
 
+
     export async function addSecret(client: v1.DockerDesktopClient, secret: Secret): Promise<void> {
-        const response = await client.extension.host?.cli.exec('host-binary', ['add', secret.name, secret.value]);
-        console.log(response);
+        try {
+            await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', secret.value]);
+            client.desktopUI.toast.success('Secret set successfully')
+        } catch (error) {
+            client.desktopUI.toast.error('Failed to set secret: ' + error)
+        }
     }
 
     // Get all relevant secrets for a given set of catalog items

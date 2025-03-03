@@ -2,6 +2,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { getUser, readFileInPromptsVolume } from "./FileWatcher";
 
 export const POLL_INTERVAL = 1000 * 30;
+export const MCP_POLICY_NAME = 'MCP=*';
 export const CATALOG_URL = 'https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml'
 export const DOCKER_MCP_CONFIG = {
     "command": "docker",

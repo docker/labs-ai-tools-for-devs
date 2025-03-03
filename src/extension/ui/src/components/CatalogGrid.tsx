@@ -8,7 +8,7 @@ import { parse, stringify } from 'yaml';
 import { getRegistry } from '../Registry';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
-import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
+import { CATALOG_URL, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
 import { SecretList } from './SecretList';
 import Secrets from '../Secrets';
 
@@ -25,6 +25,14 @@ const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [ke
     catalogItems.filter((item) => (showRegistered || !Object.keys(registryItems).includes(item.name)) && (showUnregistered || Object.keys(registryItems).includes(item.name)) && (item.name.toLowerCase().includes(search.toLowerCase())));
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
+
+const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+}
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     registryItems,
@@ -70,9 +78,13 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
 
     const loadSecrets = async () => {
         const response = await Secrets.getSecrets(client);
-        console.log(response);
-        setSecrets(response);
+        setSecrets(response || []);
     }
+
+    const debouncedAddSecret = debounce((client: v1.DockerDesktopClient, name: string, value: string) => {
+        Secrets.addSecret(client, { name, value, policies: [MCP_POLICY_NAME] })
+        loadSecrets();
+    }, 1000);
 
     const registerCatalogItem = async (item: CatalogItemWithName) => {
         try {
@@ -193,6 +205,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             registered={Object.keys(registryItems).some((i) => i === item.name)}
                             register={registerCatalogItem}
                             unregister={unregisterCatalogItem}
+                            onSecretChange={(secret) => {
+                                debouncedAddSecret(client, secret.name, secret.value);
+                            }}
+                            secrets={secrets}
                         />
                     </Grid2>
                 ))}
@@ -213,7 +229,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                         <CatalogItemCard item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
                             client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                        }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} />
+                        }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={(secret) => {
+                            debouncedAddSecret(client, secret.name, secret.value);
+                        }} secrets={secrets} />
                     </Grid2>
                 ))}
             </Grid2>}
