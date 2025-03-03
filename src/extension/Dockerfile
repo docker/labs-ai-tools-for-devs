@@ -10,7 +10,8 @@ RUN --mount=type=cache,target=/usr/src/app/.npm \
 COPY ui /ui
 RUN npm run build
 
-FROM alpine
+FROM scratch
+ARG TARGETARCH
 LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
     org.opencontainers.image.description="MCP Tool Catalog" \
     org.opencontainers.image.vendor="Docker Inc" \
@@ -26,6 +27,9 @@ LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
 COPY docker-compose.yaml .
 COPY metadata.json .
 COPY docker.svg /docker.svg
+COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary.exe
+COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
+COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
 COPY --from=client-builder /ui/build ui
 
 CMD sleep 600
