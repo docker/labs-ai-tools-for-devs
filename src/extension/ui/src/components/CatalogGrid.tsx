@@ -9,6 +9,8 @@ import { getRegistry } from '../Registry';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
+import { SecretList } from './SecretList';
+import Secrets from '../Secrets';
 
 interface CatalogGridProps {
     registryItems: { [key: string]: { ref: string } };
@@ -38,6 +40,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
+    const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
 
     const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered, search);
 
@@ -63,6 +66,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 client.desktopUI.toast.error(`Failed to get latest catalog.${cachedCatalog ? ' Using cached catalog.' : ''}` + error);
             }
         }
+    }
+
+    const loadSecrets = async () => {
+        const response = await Secrets.getSecrets(client);
+        console.log(response);
+        setSecrets(response);
     }
 
     const registerCatalogItem = async (item: CatalogItemWithName) => {
@@ -107,8 +116,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
 
     useEffect(() => {
         loadCatalog(false);
+        loadSecrets();
         const interval = setInterval(() => {
             loadCatalog(false);
+            loadSecrets();
         }, POLL_INTERVAL);
         return () => {
             clearInterval(interval);
@@ -144,10 +155,13 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             </Alert>}
             <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 0, mt: 1 }}>
                 <Tooltip title="These are all of the tiles you have available across the catalog.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Available" />
+                    <Tab sx={{ fontSize: '1.5em' }} label="Tool Catalog" />
                 </Tooltip>
                 <Tooltip title="These are tiles which you have allowed MCP clients to use.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Allowed" />
+                    <Tab sx={{ fontSize: '1.5em' }} label="Your Tools" />
+                </Tooltip>
+                <Tooltip title="These are secrets which you have set for your MCP clients.">
+                    <Tab sx={{ fontSize: '1.5em' }} label="Secrets" />
                 </Tooltip>
             </Tabs>
             <FormGroup sx={{ width: '100%', mt: 0 }}>
@@ -203,6 +217,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     </Grid2>
                 ))}
             </Grid2>}
+            {tab === 2 && <SecretList secrets={secrets} />}
         </Stack >
     );
 };

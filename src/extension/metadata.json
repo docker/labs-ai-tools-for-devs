@@ -18,17 +18,17 @@
       {
         "darwin": [
           {
-            "path": "/darwin/api-client"
+            "path": "/darwin/host-binary"
           }
         ],
         "linux": [
           {
-            "path": "/linux/api-client"
+            "path": "/linux/host-binary"
           }
         ],
         "windows": [
           {
-            "path": "/windows/api-client.exe"
+            "path": "/windows/host-binary.exe"
           }
         ]
       }

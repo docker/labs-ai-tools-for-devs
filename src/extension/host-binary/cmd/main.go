@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
-	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
 	"os"
 	"os/signal"
 	"syscall"
-
+	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +18,7 @@ func main() {
 	defer closeFunc()
 	paths.Init(paths.OnHost)
 	cmd := AddSecret(ctx)
+	cmd.AddCommand(ListSecrets(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -66,6 +67,18 @@ func AddSecret(ctx context.Context) *cobra.Command {
 	return cmd
 }
 
+func ListSecrets(ctx context.Context) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List all secrets",
+		Args:  cobra.NoArgs,
+		RunE: func(*cobra.Command, []string) error {
+			return runListSecrets(ctx)
+		},
+	}
+	return cmd
+}
+
 const mcpPolicyName = "MCP"
 
 func runAddSecret(ctx context.Context, opts addOptions) error {
@@ -77,6 +90,18 @@ func runAddSecret(ctx context.Context, opts addOptions) error {
 		return err
 	}
 	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Name, Value: opts.Value, Policies: []string{mcpPolicyName}})
+}
+
+func runListSecrets(ctx context.Context) error {
+	c, err := newApiClient()
+	if err != nil {
+		return err
+	}
+	secrets, err := c.ListSecrets(ctx)
+	if err != nil {
+		return err
+	}
+	return json.NewEncoder(os.Stdout).Encode(secrets)
 }
 
 func assertMcpPolicyExists(ctx context.Context, apiClient client.ApiClient) error {
