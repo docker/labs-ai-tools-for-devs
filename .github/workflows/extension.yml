@@ -12,6 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Build Host Binary
+        run: |
+          cd src/extension
+          make cross
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
