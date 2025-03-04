@@ -26,28 +26,6 @@ const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [ke
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
-const debounce = (func: (...args: any[]) => Promise<void>, wait: number, immediate: boolean) => {
-    let timeout: NodeJS.Timeout | null = null;
-    return function (...args: any[]) {
-        return new Promise((resolve) => {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-            timeout = setTimeout(() => {
-                timeout = null
-                if (!immediate) {
-                    // @ts-expect-error
-                    Promise.resolve(func.apply(this as any, [...args])).then(resolve)
-                }
-            }, wait)
-            if (immediate && !timeout) {
-                // @ts-expect-error
-                Promise.resolve(func.apply(this as any, [...args])).then(resolve)
-            }
-        })
-    }
-}
-
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     registryItems,
     canRegister,
@@ -94,11 +72,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         const response = await Secrets.getSecrets(client);
         setSecrets(response || []);
     }
-
-    const debouncedAddSecret = debounce(async (client: v1.DockerDesktopClient, name: string, value: string) => {
-        await Secrets.addSecret(client, { name, value, policies: [MCP_POLICY_NAME] })
-        loadSecrets();
-    }, 1000, false);
 
     const registerCatalogItem = async (item: CatalogItemWithName) => {
         try {
@@ -220,7 +193,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             register={registerCatalogItem}
                             unregister={unregisterCatalogItem}
                             onSecretChange={async (secret) => {
-                                await debouncedAddSecret(client, secret.name, secret.value);
+                                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
+                                loadSecrets();
                             }}
                             secrets={secrets}
                         />
@@ -244,7 +218,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         <CatalogItemCard item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
                             client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
                         }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
-                            debouncedAddSecret(client, secret.name, secret.value);
+                            await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
+                            loadSecrets();
                         }} secrets={secrets} />
                     </Grid2>
                 ))}
