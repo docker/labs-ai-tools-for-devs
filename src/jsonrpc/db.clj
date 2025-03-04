@@ -16,11 +16,14 @@
   [{:keys [register] :as opts}]
   (->> register
        (map (fn [{:keys [cached-path ref-string]}]
-              (let [m (prompts/get-prompts (assoc opts :prompts cached-path))]
-                [(or (-> m :metadata :name) ref-string) m])))
+              (try
+                (let [m (prompts/get-prompts (assoc opts :prompts cached-path))]
+                  [(or (-> m :metadata :name) ref-string) m])
+                (catch Throwable t
+                  (logger/error (format "error loading %s: %s" ref-string t))))))
        (into {})))
 
-(defn- extract-resources 
+(defn- extract-resources
   "extract resource map from a prompt"
   [m]
   (->> (vals m)
@@ -33,7 +36,7 @@
                       {:text (-> entry :default :text)}))]))
        (into {})))
 
-(defn- add-static-prompts 
+(defn- add-static-prompts
   [db m]
   (-> db
       (update :mcp.prompts/registry (fnil merge {}) m)
@@ -91,13 +94,13 @@
                              (constantly (or (:mcp.prompts/static db) {})))))))
   (logger/info "resources are " (:mcp.prompts/resources @db*)))
 
-(defn update-prompt 
+(defn update-prompt
   "update the db with new markdown prompt content being dynamically registered"
   [opts s content]
   (let [m (prompts/get-prompts
            (assoc opts :prompt-content content))]
-    (swap! db* (fn [db] 
-                 (-> db 
+    (swap! db* (fn [db]
+                 (-> db
                      (update-in [:mcp.prompts/registry s] (constantly m))
                      (update-in [:mcp.prompts/static s] (constantly m))
                      (update [:mcp.prompts/resources] (fnil merge {}) (extract-resources m)))))))
