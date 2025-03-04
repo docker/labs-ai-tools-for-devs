@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper, DialogActions, Box } from '@mui/material';
 import { CatalogItemWithName } from './components/PromptCard';

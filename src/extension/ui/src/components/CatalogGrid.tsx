@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, InputAdornment } from '@mui/material';
+import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, InputAdornment, CircularProgress } from '@mui/material';
 import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
@@ -8,7 +8,7 @@ import { parse, stringify } from 'yaml';
 import { getRegistry } from '../Registry';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
-import { CATALOG_URL, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
+import { CATALOG_URL, DD_BUILD_WITH_SECRET_SUPPORT, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
 import { SecretList } from './SecretList';
 import Secrets from '../Secrets';
 
@@ -21,9 +21,17 @@ interface CatalogGridProps {
     settingsBadgeProps: BadgeProps;
 }
 
-const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, showRegistered: boolean, showUnregistered: boolean, search: string) =>
-    catalogItems.filter((item) => (showRegistered || !Object.keys(registryItems).includes(item.name)) && (showUnregistered || Object.keys(registryItems).includes(item.name)) && (item.name.toLowerCase().includes(search.toLowerCase())));
+const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
+    catalogItems.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
 
+const parseDDVersion = (ddVersion: string) => {
+    //eg: Docker Desktop 4.40.0 (184396)
+    const [, , version, build] = ddVersion.split(' ');
+    return {
+        version,
+        build: parseInt(build.replace('(', '').replace(')', ''))
+    }
+}
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
@@ -35,14 +43,13 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     settingsBadgeProps
 }) => {
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
-    const [showRegistered, setShowRegistered] = useState<boolean>(true);
-    const [showUnregistered, setShowUnregistered] = useState<boolean>(true);
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
     const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
+    const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
 
-    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, showRegistered, showUnregistered, search);
+    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, search);
 
     const loadCatalog = async (showNotification = true) => {
         const cachedCatalog = localStorage.getItem('catalog');
@@ -51,7 +58,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             const catalog = await response.text();
             const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
             const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            const filteredItems = filterCatalog(itemsWithName, registryItems, showRegistered, showUnregistered, search);
+            const filteredItems = filterCatalog(itemsWithName, registryItems, search);
             setCatalogItems(filteredItems);
             localStorage.setItem('catalog', JSON.stringify(filteredItems));
             if (showNotification) {
@@ -73,7 +80,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         setSecrets(response || []);
     }
 
-    const registerCatalogItem = async (item: CatalogItemWithName) => {
+    const loadDDVersion = async () => {
+        const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
+        setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
+    }
+
+    const registerCatalogItem = async (item: CatalogItemWithName, showNotification = true) => {
         try {
             const currentRegistry = await getRegistry(client);
             const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
@@ -84,12 +96,18 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 }]
             })
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
+            if (showNotification) {
+                client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
+            }
             onRegistryChange();
-            setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
+            if (showNotification) {
+                setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
+            }
         }
         catch (error) {
-            client.desktopUI.toast.error('Failed to register prompt: ' + error);
+            if (showNotification) {
+                client.desktopUI.toast.error('Failed to register prompt: ' + error);
+            }
         }
     }
 
@@ -116,6 +134,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     useEffect(() => {
         loadCatalog(false);
         loadSecrets();
+        loadDDVersion();
         const interval = setInterval(() => {
             loadCatalog(false);
             loadSecrets();
@@ -128,6 +147,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
         catalogItems.some((c) => c.name === i)
     )
+
+    if (!ddVersion) {
+        return <CircularProgress />
+    }
 
 
     return (
@@ -188,6 +211,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                                 client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
                             }}
                             item={item}
+                            ddVersion={ddVersion}
                             canRegister={canRegister}
                             registered={Object.keys(registryItems).some((i) => i === item.name)}
                             register={registerCatalogItem}
@@ -215,7 +239,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             {tab === 1 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
                 {Object.entries(registryItems).map(([name, item]) => (
                     name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                        <CatalogItemCard item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
+                        <CatalogItemCard ddVersion={ddVersion} item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
                             client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
                         }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
                             await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
@@ -224,7 +248,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     </Grid2>
                 ))}
             </Grid2>}
-            {tab === 2 && <SecretList secrets={secrets} />}
+            {tab === 2 && ddVersion && <SecretList secrets={secrets} ddVersion={ddVersion} />}
         </Stack >
     );
 };

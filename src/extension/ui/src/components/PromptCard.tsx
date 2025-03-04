@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
 import { Article, AttachFile, Build, CheckBox, Delete, LockReset, LockRounded, Save } from "@mui/icons-material";
 import Secrets from "../Secrets";
+import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../Constants";
 
 const iconSize = 16
 
@@ -23,7 +24,7 @@ export interface CatalogItemWithName extends CatalogItem {
     name: string;
 }
 
-export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[] }) {
+export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[], ddVersion: { version: string, build: number } }) {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -37,6 +38,15 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
     useEffect(() => {
         loadAssignedSecrets()
     }, [secrets])
+
+    useEffect(() => {
+        if (registered && !hasAllSecrets) {
+            unregister(item, false)
+        }
+    }, [registered])
+
+    const hasAllSecrets = assignedSecrets.every(s => s.assigned)
+    const hasDDVersionWithSecretSupport = ddVersion && ddVersion.build >= DD_BUILD_WITH_SECRET_SUPPORT;
 
     return (
         <>
@@ -111,7 +121,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                         <Build sx={{ fontSize: iconSize }} />
                                     </Badge>
                                 </Tooltip>
-                                {item.secrets?.length && (
+                                {item.secrets?.length && (hasDDVersionWithSecretSupport ? (
                                     <Tooltip title={
                                         <Stack sx={{ pr: 1 }} direction="column" spacing={1}>
                                             <List subheader={<Typography sx={{ fontWeight: 'bold' }}>Expected secrets:</Typography>} dense sx={{ p: 0 }}>
@@ -130,13 +140,19 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                             </Badge>
                                         </IconButton>
                                     </Tooltip>
-                                )}
+                                ) : (
+                                    <Tooltip title={getUnsupportedSecretMessage(ddVersion)}>
+                                        <IconButton>
+                                            <LockRounded sx={{ fontSize: iconSize }} />
+                                        </IconButton>
+                                    </Tooltip>
+                                ))}
                             </Stack>
-                            <Tooltip title={registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected."}>
-                                {isRegistering ? <CircularProgress size={20} /> : <Switch
+                            <Tooltip title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
+                                {!hasAllSecrets ? <LockRounded /> : isRegistering ? <CircularProgress size={20} /> : <Switch
                                     size="small"
                                     color={registered ? 'success' : 'primary'}
-                                    checked={registered}
+                                    checked={registered && hasAllSecrets}
                                     onChange={(event, checked) => {
                                         trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
                                         setIsRegistering(true)
