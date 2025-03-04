@@ -26,26 +26,28 @@ const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [ke
 
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
-const debounce = (inner: (...args: any[]) => Promise<void>, ms = 0) => {
-    let timer: NodeJS.Timeout | null = null;
-    let resolves: ((value: void | PromiseLike<void>) => void)[] = [];
-
+const debounce = (func: (...args: any[]) => Promise<void>, wait: number, immediate: boolean) => {
+    let timeout: NodeJS.Timeout | null = null;
     return function (...args: any[]) {
-        // Run the function after a certain amount of time
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            // Get the result of the inner function, then apply it to the resolve function of
-            // each promise that has been created since the last time the inner function was run
-            let result = inner(...args);
-            resolves.forEach(r => r(result));
-            resolves = [];
-        }, ms);
-
-        return new Promise(r => resolves.push(r));
-    };
+        return new Promise((resolve) => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(() => {
+                timeout = null
+                if (!immediate) {
+                    // @ts-expect-error
+                    Promise.resolve(func.apply(this as any, [...args])).then(resolve)
+                }
+            }, wait)
+            if (immediate && !timeout) {
+                // @ts-expect-error
+                Promise.resolve(func.apply(this as any, [...args])).then(resolve)
+            }
+        })
+    }
 }
+
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     registryItems,
     canRegister,
@@ -96,7 +98,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const debouncedAddSecret = debounce(async (client: v1.DockerDesktopClient, name: string, value: string) => {
         await Secrets.addSecret(client, { name, value, policies: [MCP_POLICY_NAME] })
         loadSecrets();
-    }, 1000);
+    }, 1000, false);
 
     const registerCatalogItem = async (item: CatalogItemWithName) => {
         try {
