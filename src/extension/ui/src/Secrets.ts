@@ -28,7 +28,8 @@ namespace Secrets {
 
     export async function addSecret(client: v1.DockerDesktopClient, secret: Secret): Promise<void> {
         try {
-            await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', secret.value]);
+            const response = await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', secret.value]);
+            console.log('Response', response)
             client.desktopUI.toast.success('Secret set successfully')
         } catch (error) {
             client.desktopUI.toast.error('Failed to set secret: ' + error)

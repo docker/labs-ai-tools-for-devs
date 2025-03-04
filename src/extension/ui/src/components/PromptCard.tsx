@@ -23,7 +23,7 @@ export interface CatalogItemWithName extends CatalogItem {
     name: string;
 }
 
-export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => void, secrets: Secrets.Secret[] }) {
+export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[] }) {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -32,6 +32,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
     const [showSecretDialog, setShowSecretDialog] = useState(false)
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
     const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
+    const [secretLoading, setSecretLoading] = useState(false)
 
     useEffect(() => {
         loadAssignedSecrets()
@@ -53,8 +54,16 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                 {assignedSecrets.find(s => s.name === secret.name)?.assigned && changedSecrets[secret.name] && <IconButton onClick={() => setChangedSecrets({ ...changedSecrets, [secret.name]: undefined })}>
                                     <LockReset />
                                 </IconButton>}
-                                {changedSecrets[secret.name] && <IconButton onClick={() => onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' })}>
-                                    <Save />
+                                {changedSecrets[secret.name] && <IconButton onClick={() => {
+                                    setSecretLoading(true)
+                                    onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
+                                        setSecretLoading(false)
+                                        const newChangedSecrets = { ...changedSecrets }
+                                        delete newChangedSecrets[secret.name]
+                                        setChangedSecrets(newChangedSecrets)
+                                    })
+                                }}>
+                                    {secretLoading ? <CircularProgress size={20} /> : <Save />}
                                 </IconButton>}
                             </Stack>
                         ))}
