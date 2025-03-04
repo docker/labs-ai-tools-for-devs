@@ -287,7 +287,7 @@
   (format "%s ; %s"
           (->> secrets
                (map (fn [[k v]] 
-                      (format "%s=$(cat /secret/%s | sed -e \"s/^[[:space:]]*//\")" v (name k))))
+                      (format "export %s=$(cat /secret/%s | sed -e \"s/^[[:space:]]*//\")" v (name k))))
                (string/join " ; "))
           s))
 
@@ -298,7 +298,7 @@
           (-> (images {"reference" [(:image container-definition)]})
               first))
          :Config)
-        real-entrypoint (string/join " " (concat Entrypoint (or (:command container-definition) :Cmd)))]
+        real-entrypoint (string/join " " (concat Entrypoint (or (:command container-definition) Cmd)))]
     (-> container-definition
         (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint (:secrets container-definition) real-entrypoint)])
         (dissoc :command))))

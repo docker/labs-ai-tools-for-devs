@@ -125,6 +125,14 @@
     identity))
 
 (comment
+  (docker/run-container
+    {:image "vonwig/stripe:latest"
+     :secrets {:stripe.api_key "API_KEY"}
+     :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
+  (docker/run-container
+    {:image "vonwig/stripe:latest"
+     :secrets {:stripe.api_key "API_KEY"}
+     :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
   (async/<!!
    (call-tool
     {:image "vonwig/stripe:latest"
@@ -157,18 +165,16 @@
 
 (comment
   (get-mcp-tools-from-prompt [{:container {:image "mcp/stripe:latest"
+                                           :secrets {:stripe.api_key "API_KEY"}
                                            :command ["--tools=all"
-                                                     "--api-key=sk_asd"]}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/stripe:latest"
-                                           :command ["--tools=all"
-                                                     "--api-key={{ stripe.api_key }}"]}}])
+                                                     "--api-key=$API_KEY"]}}])
   (get-mcp-tools-from-prompt [{:container {:image "mcp/brave-search:latest"
                                            :workdir "/app"
-                                           :environment {"BRAVE_API_KEY" "{{ brave.api_key }}"}}}])
+                                           :secrets {:brave.api_key "BRAVE_API_KEY"} }}])
   (get-mcp-tools-from-prompt [{:container {:image "mcp/slack:latest"
                                            :workdir "/app"
-                                           :environment {"SLACK_BOT_TOKEN" "{{ slack.bot_token }}"
-                                                         "SLACK_TEAM_ID" "{{ slack.team_id }}"}}}])
+                                           :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
+                                                     :slack.team_id "SLACK_TEAM_ID"}}}])
   (get-mcp-tools-from-prompt [{:container {:image "mcp/redis:latest"}}]))
 
 (comment
