@@ -584,9 +584,10 @@ registry:
       - name: slack.team_id
       - name: slack.bot_token
   redis:
-    description: interact with Slack Workspaces
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
+    description: provides access to Redis database operations.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
     secrets:
-      - name: redis.url
+      - name: redis.host
+      - name: redis.port
 
