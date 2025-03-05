@@ -618,4 +618,4 @@ registry:
     description: web content fetching capabilities
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
-  
+
