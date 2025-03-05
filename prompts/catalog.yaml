@@ -599,19 +599,25 @@ registry:
   google-maps:
     description: MCP Server for the Google Maps API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/google-maps.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
     secrets:
       - name: google.api_key
+  gdrive:
+    description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
+    secrets:
+      - name: google.gcp-oauth.keys.json
   time:
     description: MCP Server for the Google Maps API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
     icon: https://img.icons8.com/ios/50/time_2.png
   fetch:
-    description: web content fetching capabilities
+    description: Fetches a URL from the internet and extracts its contents as markdown
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
-    icon: https://img.icons8.com/ios/50/time_2.png
+    icon: https://img.icons8.com/ios/50/fetch-rewards.png
   git:
-    description: web content fetching capabilities
+    description: A Model Context Protocol server for Git repository interaction and automation
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
 
