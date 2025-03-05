@@ -590,4 +590,32 @@ registry:
     secrets:
       - name: redis.host
       - name: redis.port
-
+  github:
+    description: MCP Server for the GitHub API, enabling file operations, repository management, search functionality, and more.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    secrets:
+      - name: github.personal_access_token
+  google-maps:
+    description: MCP Server for the Google Maps API.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/google-maps.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    secrets:
+      - name: google.api_key
+  time:
+    description: MCP Server for the Google Maps API.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
+    icon: https://img.icons8.com/ios/50/time_2.png
+    secrets:
+      - name: google.api_key
+  fetch:
+    description: web content fetching capabilities
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
+    icon: https://img.icons8.com/ios/50/time_2.png
+    secrets:
+      - name: google.api_key
+  git:
+    description: web content fetching capabilities
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
+  
