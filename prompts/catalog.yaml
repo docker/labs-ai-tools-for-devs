@@ -606,14 +606,10 @@ registry:
     description: MCP Server for the Google Maps API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
     icon: https://img.icons8.com/ios/50/time_2.png
-    secrets:
-      - name: google.api_key
   fetch:
     description: web content fetching capabilities
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
     icon: https://img.icons8.com/ios/50/time_2.png
-    secrets:
-      - name: google.api_key
   git:
     description: web content fetching capabilities
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
