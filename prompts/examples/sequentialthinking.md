@@ -97,7 +97,7 @@ tools:
         - thoughtNumber
         - totalThoughts
     container:
-      image: vonwig/sequential-thinking:latest
+      image: vonwig/sequentialthinking:latest
       volumes: 
         - "mcp-sequentialthinking:/sequentialthinking"
 ---

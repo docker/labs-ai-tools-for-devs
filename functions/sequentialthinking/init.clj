@@ -1,5 +1,6 @@
-(ns init 
+(ns init
   (:require
+   [cheshire.core :as json]
    [clojure.spec.alpha :as s]))
 
 ;; validate initial thought
@@ -12,4 +13,42 @@
 (s/def ::thoughtNumber number?)
 (s/def ::totalThoughts number?)
 (s/def ::nextThoughtNeeded boolean?)
-(s/def ::thought-data (s/keys :req-un [::thought ::thoughtNumber ::totalThoughts ::nextThoughtNeeded]))
+
+(s/def ::isRevision boolean?)
+(s/def ::revisesThought number?)
+(s/def ::branchFromThought number?)
+(s/def ::branchId string?)
+(s/def ::needsMoreThoughts boolean?)
+(s/def ::thought-data (s/keys :req-un [::thought ::thoughtNumber ::totalThoughts ::nextThoughtNeeded]
+                              :opt-un [::isRevision ::revisesThought ::branchFromThought ::branchId ::needsMoreThoughts]))
+
+(defn process-thought
+  [m]
+  (if (not (s/valid? ::thought-data m))
+    (throw (ex-info "Invalid thought data" (s/explain-data ::thought-data m)))
+    (let  [thought-history (json/parse-string (slurp "thought-history.json") keyword)
+           branches (json/parse-string (slurp "branches.json") keyword)]
+      (spit "/sequentialthinking/thought-history.json"
+            (json/generate-string
+              (conj thought-history (cond-> m
+                                      (> (:thoughtNumber m) (:totalThoughts m)) (assoc :totalThoughts (:thoughtNumber m))))))
+      (when (= (:branchFromThought m) (:branchId m)) 
+        (spit "/sequentialthinking/branches.json"
+              (json/generate-string
+                (update branches (:branchId m) (fnil conj []) m))))
+      (-> m
+          (select-keys [:thoughtNumber :totalThoughts :nextThoughtNeeded])
+          (assoc :branches (keys branches))
+          (assoc :thoughtHistoryLength (count thought-history))))))
+
+(defn -main [& args]
+  (try
+    (-> (json/parse-string (first args))
+        (process-thought)
+        (json/generate-string)
+        (println)) 
+    (catch Throwable t
+      (println (.getMessage t))
+      (System/exit 1))))
+
+(apply -main *command-line-args*)
