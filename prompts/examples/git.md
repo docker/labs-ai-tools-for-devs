@@ -1,22 +1,7 @@
-<!--
 ---
 tools:
-  - name: append
-    parameters:
-      type: object
-      properties:
-        file:
-          type: string
-          description: the file to append to
-        message:
-          type: string
-          description: special message
-    container:
-      image: vonwig/bash_alpine
-      command:
-        - "-c"
-        - "echo \"{{message}}\" >> {{file}}"
   - name: git
+    description: execute something with git
     parameters:
       type: object
       properties:
@@ -33,13 +18,8 @@ tools:
      command:
        - --no-pager
        - "{{args|into}}"
-  - name: gh
-    container:
-      env:
-        GITHUB_TOKEN: "{{pat}}"
 workdir: /thread/docker-test
 ---
--->
 
 # Background
 
