@@ -283,26 +283,6 @@
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
 
-(defn injected-entrypoint [secrets s]
-  (format "%s ; %s"
-          (->> secrets
-               (map (fn [[k v]] 
-                      (format "export %s=$(cat /secret/%s | sed -e \"s/^[[:space:]]*//\")" v (name k))))
-               (string/join " ; "))
-          s))
-
-(defn inject-secret-transform [container-definition]
-  (let [{:keys [Entrypoint Cmd]}
-        (->
-         (image-inspect
-          (-> (images {"reference" [(:image container-definition)]})
-              first))
-         :Config)
-        real-entrypoint (string/join " " (concat Entrypoint (or (:command container-definition) Cmd)))]
-    (-> container-definition
-        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint (:secrets container-definition) real-entrypoint)])
-        (dissoc :command))))
-
 (defn add-latest [image]
   (let [[_ tag] (re-find #".*(:.*)$" image)]
     (if tag
@@ -331,11 +311,56 @@
         (and digest (= digest Id))))
      (images {}))))
 
+(defn check-then-pull [container-definition]
+  (when (not (has-image? (:image container-definition)))
+    (-pull container-definition)))
+
+(defn injected-entrypoint [secrets environment s]
+  (->> (concat
+        (let [s (->> secrets
+                     (map (fn [[k v]]
+                            (format "export %s=$(cat /secret/%s | sed -e \"s/^[[:space:]]*//\")" v (name k))))
+                     (string/join " ; "))]
+          (when (and s (not (= "" s)))
+            [s]))
+        (let [env (->> environment
+                       (map (fn [s] (when-let [[_ k v] (and s (re-find #"(.*)=(.*)" s))]
+                                      [k v])))
+                       (filter identity)
+                       (map (fn [[k v]]
+                              (format "export %s=%s" k v)))
+                       (string/join " ; "))]
+          (when (and env (not (= "" env)))
+            [env]))
+        [s])
+       (string/join " ; ")))
+
+(comment
+  (injected-entrypoint {:a "A"} ["BLAH=whatever"] "my command")
+  (injected-entrypoint nil nil "my command")
+  (injected-entrypoint {:a "A"} nil "my command")
+  (injected-entrypoint nil nil nil)
+  )
+
+(defn inject-secret-transform [container-definition]
+  (check-then-pull container-definition)
+  (let [{:keys [Entrypoint Cmd Env]}
+        (->
+         (image-inspect
+          (-> (images {"reference" [(:image container-definition)]})
+              first))
+         :Config)
+        real-entrypoint (string/join " " (concat 
+                                           (or (:entrypoint container-definition) Entrypoint) 
+                                           (or (:command container-definition) Cmd)))]
+    (-> container-definition
+        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint (:secrets container-definition) Env real-entrypoint)])
+        (dissoc :command))))
+
 (defn run-streaming-function-with-no-stdin
   "run container function with no stdin, and no timeout, but streaming stdout"
   [m cb]
-  (when (not (has-image? (:image m)))
-    (-pull m))
+  (check-then-pull m)
   (let [x (-> m
               (update :opts
                       (fnil merge {})
@@ -377,8 +402,7 @@
 (defn run-background-function
   "run container function with no stdin, and no streaming output"
   [m]
-  (when (not (has-image? (:image m)))
-    (-pull m))
+  (check-then-pull m)
   (let [x (create m)]
     (start x)
     (shutdown/schedule-container-shutdown
@@ -391,8 +415,7 @@
 (defn run-function
   "run container function with no stdin, and no streaming output"
   [{:keys [timeout] :or {timeout 600000} :as m}]
-  (when (not (has-image? (:image m)))
-    (-pull m))
+  (check-then-pull m)
   (let [x (create m)
         finished-channel (async/promise-chan)]
     (start x)

@@ -147,7 +147,7 @@
                     (fn [m]
                       (update-in m [:prompts] (fn [coll] (remove (fn [{:keys [type]}] (= type (second args))) coll))))))
     "run" (fn []
-            (logger/setup (jsonrpc.server/->TimbreLogger))
+            (logger/setup (jsonrpc.logger/->TimbreLogger))
 
             (let [[in send]
                   (let [[[w c] in] (user-loop/create-pipe)]

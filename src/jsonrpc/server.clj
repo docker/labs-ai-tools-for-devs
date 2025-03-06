@@ -7,6 +7,7 @@
    [clojure.core.async :as async]
    [clojure.pprint :as pprint]
    [clojure.string :as string]
+   [jsonrpc.extras]
    docker
    git
    graph
@@ -23,8 +24,6 @@
    [promesa.core :as p]
    shutdown
    state
-   [taoensso.timbre :as timbre]
-   [taoensso.timbre.appenders.core :as appenders]
    tools
    user-loop
    volumes)
@@ -53,11 +52,6 @@
   ;; We don't really care because we always log all levels.
   (logger/info (str level (apply str args)))
   #_(timbre/log! level :p args))
-
-(defn log! [level args fmeta]
-  (timbre/log! level :p args {:?line (:line fmeta)
-                              :?file (:file fmeta)
-                              :?ns-str (:ns-str fmeta)}))
 
 (defn ^:private exit-server [server]
   (logger/info "Exiting...")
@@ -105,6 +99,10 @@
      (when arguments
        {:arguments arguments}))))
 
+;; -----------------
+;; MCP prompts
+;; -----------------
+
 (defmethod lsp.server/receive-request "prompts/list" [_ {:keys [db*]} params]
   ;; TODO might contain a cursor
   (logger/info "prompts/list" params)
@@ -127,6 +125,10 @@
          name)]
     {:description description
      :messages (prompt-function (or arguments {}))}))
+
+;; -----------------
+;; MCP resources
+;; -----------------
 
 (defmethod lsp.server/receive-request "resources/list" [_ {:keys [db*]} _]
   (logger/info "resources/list")
@@ -155,6 +157,10 @@
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ params]
   (logger/info "resources/subscribe" params)
   {:resource-templates []})
+
+;; -----------------
+;; MCP Tools
+;; -----------------
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
   ;; TODO cursors
@@ -253,40 +259,6 @@
      (logger/info "content " (with-out-str (pprint/pprint response)))
      response)))
 
-(defmethod lsp.server/receive-request "docker/prompts/register" [_ {:keys [db* id]} params]
-  (logger/info "docker/prompts/register"))
-
-(defmethod lsp.server/receive-request "docker/prompts/run"
-  [_ {:keys [db* id] :as components} {:keys [thread-id] {:keys [file content uri]} :prompts :as params}]
-  (lsp.server/discarding-stdout
-   (let [conversation-id (str (java.util.UUID/randomUUID))
-         prompt-string (cond
-                         file (slurp file)
-                         content content
-                         uri (slurp (git/prompt-file uri)))]
-     (swap! db* update-in [:mcp/conversations] (fnil assoc {}) conversation-id
-            {:state-promise
-             (p/create
-              (fn [resolve reject]
-                (resolve
-                 (async/<!!
-                  (volumes/with-volume
-                    (fn [thread-id]
-                      (let [m (-> {}
-                                  (assoc-in [:opts :conversation-id] conversation-id)
-                                  (assoc-in [:opts :thread-id] thread-id)
-                                  (assoc-in [:opts :prompt-content] prompt-string)
-                                  (state/construct-initial-state-from-prompts))]
-                        (graph/stream
-                         (if (-> m :metadata :agent)
-                           ((graph/require-graph (-> m :metadata :agent)) m)
-                           (graph/chat-with-tools m))
-                         m)))
-                    (if thread-id
-                      {:thread-id thread-id :save-thread-volume false}
-                      {}))))))})
-     {:conversation-id conversation-id})))
-
 (defn ^:private monitor-server-logs [log-ch]
   ;; NOTE: if this were moved to `initialize`, after timbre has been configured,
   ;; the server's startup logs and traces would appear in the regular log file
@@ -297,79 +269,7 @@
       (apply log-wrapper-fn log-args)
       (recur))))
 
-(defn decide-log-path []
-  (let [prompts-dir (fs/file "/prompts")]
-    (if (fs/exists? prompts-dir)
-      (do
-        (fs/create-dirs (fs/file prompts-dir "log"))
-        (fs/file prompts-dir "log/docker-mcp-server.out"))
-      (do
-        (fs/create-dirs (fs/file "./log"))
-        (fs/file "./log/docker-mcp-server.out")))))
-
-(defrecord TimbreLogger []
-  logger/ILogger
-  (setup [this]
-    (let [log-path (str (decide-log-path))]
-      (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
-                             :appenders {:println {:enabled? false}
-                                         :spit (appenders/spit-appender {:fname log-path})}})
-      (timbre/handle-uncaught-jvm-exceptions!)
-      (logger/set-logger! this)
-      log-path))
-
-  (set-log-path [_this log-path]
-    (timbre/merge-config! {:appenders {:spit (appenders/spit-appender {:fname log-path})}}))
-
-  (-info [_this fmeta arg1] (log! :info [arg1] fmeta))
-  (-info [_this fmeta arg1 arg2] (log! :info [arg1 arg2] fmeta))
-  (-info [_this fmeta arg1 arg2 arg3] (log! :info [arg1 arg2 arg3] fmeta))
-  (-warn [_this fmeta arg1] (log! :warn [arg1] fmeta))
-  (-warn [_this fmeta arg1 arg2] (log! :warn [arg1 arg2] fmeta))
-  (-warn [_this fmeta arg1 arg2 arg3] (log! :warn [arg1 arg2 arg3] fmeta))
-  (-error [_this fmeta arg1] (log! :error [arg1] fmeta))
-  (-error [_this fmeta arg1 arg2] (log! :error [arg1 arg2] fmeta))
-  (-error [_this fmeta arg1 arg2 arg3] (log! :error [arg1 arg2 arg3] fmeta))
-  (-debug [_this fmeta arg1] (log! :debug [arg1] fmeta))
-  (-debug [_this fmeta arg1 arg2] (log! :debug [arg1 arg2] fmeta))
-  (-debug [_this fmeta arg1 arg2 arg3] (log! :debug [arg1 arg2 arg3] fmeta)))
-
 (def producers (atom []))
-
-(defrecord ^:private McpProducer
-           [server db*]
-  producer/IProducer
-
-  (publish-exit [_this p]
-    (logger/info "publish-exit " p)
-    (lsp.server/discarding-stdout
-     (->> p (lsp.server/send-notification server "$/exit"))))
-  ; params is a map of progressToken, progress, and total
-  (publish-progress [_this params]
-    (lsp.server/discarding-stdout
-     (->> params (lsp.server/send-notification server "notifications/progress"))))
-  ; params is a map of level, logger, data
-  ; level is debug info notice warning error critical alert emergency
-  (publish-log [_this params]
-    (->> params (lsp.server/send-notification server "notifications/message")))
-
-  (publish-prompt-list-changed [_ params]
-    (logger/info "send prompt list changed")
-    (->> params (lsp.server/send-notification server "notifications/prompts/list_changed")))
-
-  (publish-resource-list-changed [_ params]
-    (logger/info "send resource list changed")
-    (->> params (lsp.server/send-notification server "notifications/resources/list_changed")))
-
-  (publish-resource-updated [_ params]
-    (->> params (lsp.server/send-notification server "notifications/resources/updated")))
-
-  (publish-tool-list-changed [_ params]
-    (logger/info "send tool list changed")
-    (->> params (lsp.server/send-notification server "notifications/tools/list_changed")))
-  (publish-docker-notify [_ method params]
-    (logger/info (format "%s - %s" method params))
-    (lsp.server/send-notification server method params)))
 
 (defn get-prompts-dir []
   (if (fs/exists? (fs/file "/prompts"))
@@ -433,7 +333,7 @@
   "create chan server options for any io chan server that we build"
   [{:keys [trace-level] :or {trace-level "off"} :as opts}]
   (lsp.server/discarding-stdout
-   (let [timbre-logger (->TimbreLogger)
+   (let [timbre-logger (logger/->TimbreLogger)
          log-path (logger/setup timbre-logger)
          db* db/db*
          log-ch (async/chan (async/sliding-buffer 20))]
@@ -457,7 +357,7 @@
        :keyword-function keyword
        :server-context-factory
        (fn [server]
-         (let [producer (McpProducer. server db*)]
+         (let [producer (producer/->McpProducer server db*)]
            (swap! producers conj producer)
            {:db* db*
             :logger timbre-logger

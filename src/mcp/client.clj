@@ -8,8 +8,7 @@
 (def counter (atom 0))
 
 (defn- mcp-stdio-stateless-server [container]
-  (when (not (docker/has-image? (:image container)))
-    (docker/-pull container))
+  (docker/check-then-pull container)
   (let [x (docker/create (assoc container
                                 :opts {:StdinOnce true
                                        :OpenStdin true
@@ -42,14 +41,16 @@
 
           ;; real stdout message
           (and block (:stdout block))
-          (let [message (json/parse-string (:stdout block) keyword)]
-            (when-let [p (get @response-promises (:id message))]
-              (async/put! p message))
+
+          (let [message (try (json/parse-string (:stdout block) keyword) (catch Throwable _))]
+            (if-let [p (get @response-promises (:id message))]
+              (async/put! p message)
+              (logger/debug "no promise found: " block))
             (recur (async/alt!
                      c ([v _] v)
                      (async/timeout 15000) :timeout)))
 
-          ;; channel is closed
+;; channel is closed
           (nil? block)
           (do
             (logger/info "channel closed")
@@ -58,7 +59,7 @@
           ;; non-stdout message probably
           :else
           (do
-            (logger/debug "socket read loop " block)
+            (logger/debug "socket read loop " (:stderr block))
             (recur (async/alt!
                      c ([v _] v)
                      (async/timeout 15000) :timeout)))))
@@ -70,10 +71,16 @@
                          c (async/promise-chan)]
                      (swap! response-promises assoc id c)
                      (try
-                       (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n"))
+                       (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n\n"))
                        (catch Throwable t
                          (println "error closing " t)))
                      c))
+                 :notification
+                 (fn [message]
+                   (try
+                       (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
+                       (catch Throwable t
+                         (println "error closing " t))))
                  :dead-channel dead-channel)))))
 
 (defn with-running-mcp
@@ -86,21 +93,26 @@
       a channel with the response the channel will emit [] if there's an error"
   [container-definition f f1]
   (try
-    (let [{:keys [request dead-channel] :as container} (mcp-stdio-stateless-server container-definition)]
+    (let [{:keys [request notification dead-channel] :as container} (mcp-stdio-stateless-server container-definition)]
       (Thread/sleep 2000)
       (async/go
         (try
           (if (= :initialized
                  (async/alt!
-                   (request {:method "initialize" :params {}}) :initialized
+                   (request {:method "initialize" :params {:protocolVersion "2024-11-05"
+                                                           :capabilities {:tools {}}
+                                                           :clientInfo {:name "docker"
+                                                                        :version "0.1.0"}}}) :initialized
                    dead-channel ([v _] v)
                    (async/timeout 15000) :timeout))
-            (let [response (async/alt!
-                             (request (f)) ([v _] v)
-                             dead-channel ([v _] v)
-                             (async/timeout 15000) :timeout)]
-              (logger/debug (format "%s response %s" (:image container-definition) response))
-              (f1 response))
+            (do
+              (notification {:method "notifications/initialized" :params {}})
+              (let [response (async/alt!
+                               (request (f)) ([v _] v)
+                               dead-channel ([v _] v)
+                               (async/timeout 15000) :timeout)]
+                (logger/debug (format "%s response %s" (:image container-definition) response))
+                (f1 response)))
             (do
               (logger/error (format
                              "mcp server channel did not initialize for %s"
@@ -126,13 +138,13 @@
 
 (comment
   (docker/run-container
-    {:image "vonwig/stripe:latest"
-     :secrets {:stripe.api_key "API_KEY"}
-     :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
+   {:image "vonwig/stripe:latest"
+    :secrets {:stripe.api_key "API_KEY"}
+    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
   (docker/run-container
-    {:image "vonwig/stripe:latest"
-     :secrets {:stripe.api_key "API_KEY"}
-     :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
+   {:image "vonwig/stripe:latest"
+    :secrets {:stripe.api_key "API_KEY"}
+    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
   (async/<!!
    (call-tool
     {:image "vonwig/stripe:latest"
@@ -164,18 +176,34 @@
        (into [])))
 
 (comment
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/stripe:latest"
+  (docker/inject-secret-transform {:image "mcp/stripe:latest"
+                                   :secrets {:stripe.api_key "API_KEY"}
+                                   :command ["--tools=all"
+                                             "--api-key=$API_KEY"]})
+  (get-mcp-tools-from-prompt [{:container {:image "vonwig/stripe:latest"
                                            :secrets {:stripe.api_key "API_KEY"}
                                            :command ["--tools=all"
                                                      "--api-key=$API_KEY"]}}])
   (get-mcp-tools-from-prompt [{:container {:image "mcp/brave-search:latest"
                                            :workdir "/app"
-                                           :secrets {:brave.api_key "BRAVE_API_KEY"} }}])
+                                           :secrets {:brave.api_key "BRAVE_API_KEY"}}}])
   (get-mcp-tools-from-prompt [{:container {:image "mcp/slack:latest"
                                            :workdir "/app"
                                            :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
                                                      :slack.team_id "SLACK_TEAM_ID"}}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/redis:latest"}}]))
+  (get-mcp-tools-from-prompt [{:container {:image "mcp/redis:latest"
+                                           :workdir "/app"}}])
+  (get-mcp-tools-from-prompt [{:container {:image "mcp/fetch:latest"
+                                           :workdir "/app"}}])
+  (get-mcp-tools-from-prompt [{:container {:image "mcp/time:latest"
+                                           :workdir "/app"}}])
+  (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
+                                                         :workdir "/app"}))
+  (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
+                                                         :workdir "/app"
+                                                         :secrets {:stripe.api_key "API_KEY"}
+                                                         :entrypoint ["cat" "/secret/stripe.api_key"]
+                                                         :command []})))
 
 (comment
   (def x "HTTP/1.1 101 UPGRADED\nConnection: Upgrade\nContent-Type: application/vnd.docker.multiplexed-stream\nUpgrade: tcp\n\n")

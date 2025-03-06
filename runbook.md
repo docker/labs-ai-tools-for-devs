@@ -1,19 +1,10 @@
-```sh
-docker buildx build \
-    --builder hydrobuild \
-    --platform linux/amd64,linux/arm64 \
-    --tag mcp/docker:0.0.1 \
-    --file Dockerfile \
-    --push .
-docker pull mcp/docker:0.0.1
-```
 
 ```sh
 cd src/extension && make build-extension
 ```
 
 ```sh
-docker extension update docker/labs-ai-tools-for-devs:0.2.7
+docker extension update docker/labs-ai-tools-for-devs:0.2.8
 ```
 
 ```sh
@@ -32,10 +23,10 @@ docker pull mcp/docker:prerelease
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag mcp/docker:0.0.1 \
+    --tag mcp/docker:0.0.4 \
     --file Dockerfile \
     --push .
-docker pull mcp/docker:0.0.1
+docker pull mcp/docker:0.0.4
 ```
 
 ```sh
