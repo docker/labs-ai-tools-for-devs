@@ -620,4 +620,12 @@ registry:
     description: A Model Context Protocol server for Git repository interaction and automation
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
+  kubernetes:
+    description: connect to a Kubernetes cluster and manage it
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/kubernetes.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
+  docker:
+    description: use the docker cli
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/docker.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
 
