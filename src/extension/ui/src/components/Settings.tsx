@@ -64,105 +64,103 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
     >
         <Typography variant="h6">MCP Clients</Typography>
     </AccordionSummary>
-    <AccordionDetails>
-        <Paper elevation={0} sx={{ p: 2 }}>
-            <List>
-                {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
-                    <ListItem key={name}>
-                        <ListItemText
-                            primary={
+    <AccordionDetails sx={{ p: 1 }}>
+        <List sx={{ p: 0 }}>
+            {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
+                <ListItem key={name}>
+                    <ListItemText
+                        primary={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography variant="h4">{name}</Typography>
+                                {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
+                                {mcpClientState.exists && mcpClientState.client.name !== 'Gordon' && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                                {mcpClientState.exists && mcpClientState.client.name === 'Gordon' && <Chip label='Automatic Connection Not Supported' color='warning' />}
+                                <Tooltip title={mcpClientState.preventAutoConnectMessage}>
+                                    <span style={{ marginLeft: 'auto' }}>
+                                        {mcpClientState.exists && mcpClientState.configured &&
+                                            <Button onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.client.disconnect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="warning" variant="outlined" size="small">
+                                                <Stack direction="row" alignItems="center" spacing={1}>
+                                                    <Typography>Disconnect</Typography>
+                                                    <LinkOff />
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                </Stack>
+                                            </Button>
+                                        }
+                                        {mcpClientState.exists && !mcpClientState.configured &&
+                                            <Button onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.client.connect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="primary" size="small">
+                                                <Stack direction="row" alignItems="center" spacing={1}>
+                                                    <Typography>Connect</Typography>
+                                                    <LinkRounded />
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                </Stack>
+                                            </Button>
+                                        }
+                                        {!mcpClientState.exists &&
+                                            <Button color="error" variant="outlined" size="small" onClick={async () => {
+                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                                await mcpClientState.client.connect(client)
+                                                await onUpdate();
+                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                            }}>
+                                                <Stack direction="row" alignItems="center" spacing={1}>
+                                                    <SaveOutlined />
+                                                    <Typography>Write Config</Typography>
+                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
+                                                </Stack>
+                                            </Button>
+                                        }
+                                    </span>
+                                </Tooltip>
+                            </Stack>
+                        }
+                        secondary={
+                            <Stack direction="column" justifyContent="center" spacing={1}>
                                 <Stack direction="row" alignItems="center" spacing={1}>
-                                    <Typography variant="h4">{name}</Typography>
-                                    {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
-                                    {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
-                                    <Tooltip title={mcpClientState.client.name === 'Cursor' ? 'Connecting Cursor automatically is not yet supported. Please configure manually.' : `You may need to restart ${mcpClientState.client.name} after changing the connection.`}>
-                                        <span style={{ marginLeft: 'auto' }}>
-                                            {mcpClientState.exists && mcpClientState.configured &&
-                                                <Button onClick={async () => {
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                    await mcpClientState.client.disconnect(client)
-                                                    await onUpdate();
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                                }} disabled={buttonsLoading[name] || mcpClientState.client.name === 'Cursor'} color="warning" variant="outlined" size="small">
-                                                    <Stack direction="row" alignItems="center" spacing={1}>
-                                                        <Typography>Disconnect</Typography>
-                                                        <LinkOff />
-                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                    </Stack>
-                                                </Button>
-                                            }
-                                            {mcpClientState.exists && !mcpClientState.configured &&
-                                                <Button onClick={async () => {
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                    await mcpClientState.client.connect(client)
-                                                    await onUpdate();
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                                }} disabled={buttonsLoading[name] || mcpClientState.client.name === 'Cursor'} color="primary" size="small">
-                                                    <Stack direction="row" alignItems="center" spacing={1}>
-                                                        <Typography>Connect</Typography>
-                                                        <LinkRounded />
-                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                    </Stack>
-                                                </Button>
-                                            }
-                                            {!mcpClientState.exists &&
-                                                <Button color="error" variant="outlined" size="small" onClick={async () => {
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                    await mcpClientState.client.connect(client)
-                                                    await onUpdate();
-                                                    setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                                }}>
-                                                    <Stack direction="row" alignItems="center" spacing={1}>
-                                                        <SaveOutlined />
-                                                        <Typography>Write Config</Typography>
-                                                        {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                    </Stack>
-                                                </Button>
-                                            }
-                                        </span>
-                                    </Tooltip>
+                                    <Link href={mcpClientState.client.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.client.url)}>{mcpClientState.client.url}</Link>
+
                                 </Stack>
-                            }
-                            secondary={
-                                <Stack direction="column" justifyContent="center" spacing={1}>
-                                    <Stack direction="row" alignItems="center" spacing={1}>
-                                        <Link href={mcpClientState.client.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.client.url)}>{mcpClientState.client.url}</Link>
 
-                                    </Stack>
-
-                                    <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
-                                    <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1, fontSize: '12px' }}>
-                                        {mcpClientState.client.expectedConfigPath[client.host.platform as 'win32' | 'darwin' | 'linux']}
-                                    </Typography>
-                                    <Typography sx={{ fontWeight: 'bold' }}>Manually Configure:</Typography>
-                                    <List sx={{ listStyleType: 'decimal', p: 0, pl: 2 }}>
-                                        {mcpClientState.client.manualConfigSteps.map((step, index) => (
-                                            <ListItem sx={{ display: 'list-item', p: 0 }} key={index}>
-                                                <ListItemText primary={<div dangerouslySetInnerHTML={{ __html: step }} />} />
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Stack>
-                            }
-                        />
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <Alert severity="info">
-                <AlertTitle>Other MCP Clients</AlertTitle>
-                You can connect other MCP clients to the same server by specifying the following command:
-                <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
-                    <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
-                        <ContentCopy />
-                    </IconButton>
-                    <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto' })}>
-                        {DOCKER_MCP_COMMAND}
-                    </Typography>
-                </Stack>
-            </Alert>
-
-        </Paper>
+                                <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
+                                <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1, fontSize: '12px' }}>
+                                    {mcpClientState.client.expectedConfigPath[client.host.platform as 'win32' | 'darwin' | 'linux']}
+                                </Typography>
+                                <Typography sx={{ fontWeight: 'bold' }}>Manually Configure:</Typography>
+                                <List sx={{ listStyleType: 'decimal', p: 0, pl: 2 }}>
+                                    {mcpClientState.client.manualConfigSteps.map((step, index) => (
+                                        <ListItem sx={{ display: 'list-item', p: 0 }} key={index}>
+                                            <ListItemText primary={<div dangerouslySetInnerHTML={{ __html: step }} />} />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Stack>
+                        }
+                    />
+                </ListItem>
+            ))}
+        </List>
+        <Divider />
+        <Alert severity="info">
+            <AlertTitle>Other MCP Clients</AlertTitle>
+            You can connect other MCP clients to the same server by specifying the following command:
+            <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
+                <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
+                    <ContentCopy />
+                </IconButton>
+                <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto' })}>
+                    {DOCKER_MCP_COMMAND}
+                </Typography>
+            </Stack>
+        </Alert>
     </AccordionDetails>
 </Accordion >
 
