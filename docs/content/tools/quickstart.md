@@ -29,3 +29,10 @@ For example, if you've enabled the _hello world_ tool, then you could type the f
 > Use hello world to send a greeting and then respond to what comes back.
 
 {{% /steps %}}
+
+{{< callout >}}
+Claude Desktop has not yet implemented the `notifications/tools/list_changed`. This means that
+Claude doesn't reload our tool definitions until it is restarted. It's easier to develop
+prompts in VSCode where we can create a much more efficient inner loop.
+{{< /callout >}}
+
