@@ -82,7 +82,7 @@
   (if (fs/directory? prompts-file) (io/file prompts-file "README.md") prompts-file))
 
 (def hub-images
-  #{"curl" "qrencode" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
+  #{"curl" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
 
 (defn function-definition [m]
   (if-let [tool (hub-images (:name m))]

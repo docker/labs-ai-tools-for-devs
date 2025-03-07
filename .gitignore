@@ -24,3 +24,5 @@
 /functions/memory/memory.json
 /log/
 .idea
+/catalog.updated.yaml
+claude_desktop_config.json
