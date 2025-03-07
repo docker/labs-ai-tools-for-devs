@@ -204,7 +204,7 @@ registry:
           command: ['{{raw|safe}}', man]
     - type: function
       function:
-        description: Run a qrencode command.
+        description: generate a QR code and write it to /thread/qrcode.png
         parameters:
           type: object
           properties:
@@ -213,7 +213,7 @@ registry:
           image: vonwig/qrencode:latest
           command: ['{{raw|safe}}']
         name: qrencode
-    prompts: 1
+    prompts: 0
     resources: {}
   speculative_execution:
     description: "Use lorax from Claude. Lorax is a speculative execution tool that can be used  to make edits and run tools in an isolated sandbox. \n"
