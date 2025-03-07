@@ -32,7 +32,11 @@ namespace Secrets {
             console.log('Response', response)
             client.desktopUI.toast.success('Secret set successfully')
         } catch (error) {
-            client.desktopUI.toast.error('Failed to set secret: ' + error)
+            if ((error as any).stderr) {
+                client.desktopUI.toast.error('Failed to set secret: ' + JSON.stringify(error))
+            } else {
+                client.desktopUI.toast.error('Failed to set secret: ' + error)
+            }
         }
     }
 
