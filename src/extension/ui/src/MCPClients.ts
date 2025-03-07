@@ -1,7 +1,9 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { MCPClient, SUPPORTED_MCP_CLIENTS } from "./Constants";
+import { SUPPORTED_MCP_CLIENTS } from "./mcp-clients";
+import { MCPClient } from "./mcp-clients";
 
-export interface MCPClientState extends MCPClient {
+export type MCPClientState = {
+    client: MCPClient;
     exists: boolean;
     configured: boolean;
     path: string;
@@ -12,12 +14,12 @@ export const getMCPClientStates = async (ddClient: v1.DockerDesktopClient) => {
     for (const mcpClient of SUPPORTED_MCP_CLIENTS) {
         const { path, content } = await mcpClient.readFile(ddClient);
         if (content === null) {
-            mcpClientStates[mcpClient.name] = { exists: false, configured: false, path, ...mcpClient };
+            mcpClientStates[mcpClient.name] = { exists: false, configured: false, path, client: mcpClient };
         } else if (content === undefined) {
-            mcpClientStates[mcpClient.name] = { exists: true, configured: false, path, ...mcpClient };
+            mcpClientStates[mcpClient.name] = { exists: true, configured: false, path, client: mcpClient };
         }
         else {
-            mcpClientStates[mcpClient.name] = { exists: true, configured: mcpClient.validateConfig(content), path: path, ...mcpClient };
+            mcpClientStates[mcpClient.name] = { exists: true, configured: mcpClient.validateConfig(content), path: path, client: mcpClient };
         }
     }
     return mcpClientStates;

@@ -6,7 +6,7 @@ import { getRegistry } from './Registry';
 import { Close, FolderOpenRounded, } from '@mui/icons-material';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { CatalogGrid } from './components/CatalogGrid';
-import { MCPClient, POLL_INTERVAL } from './Constants';
+import { POLL_INTERVAL } from './Constants';
 import MCPCatalogLogo from './MCP Catalog.svg'
 import Settings from './components/Settings';
 import { getMCPClientStates, MCPClientState } from './MCPClients';
@@ -45,6 +45,7 @@ export function App() {
     try {
       const result = await client.docker.cli.exec('pull', ['vonwig/function_write_files:latest'])
       await client.docker.cli.exec('pull', ['alpine:latest'])
+      await client.docker.cli.exec('pull', ['keinos/sqlite3:latest'])
       setImagesLoadingResults(result);
     }
     catch (error) {
@@ -63,7 +64,7 @@ export function App() {
     if (Object.values(oldStates).some(state => state.exists && !state.configured) && Object.values(states).every(state => state.configured)) {
       client.desktopUI.toast.success('MCP Client Connected. Restart Claude Desktop to use the MCP Catalog.');
     }
-    if (Object.values(oldStates).every(state => state.configured) && Object.values(states).some(state => !state.configured)) {
+    if (Object.values(oldStates).some(state => state.exists && state.configured) && Object.values(states).every(state => !state.configured)) {
       client.desktopUI.toast.error('MCP Client Disconnected. Restart Claude Desktop to remove the MCP Catalog.');
     }
   }
@@ -94,7 +95,7 @@ export function App() {
 
   return (
     <>
-      <Dialog open={settings.showModal} onClose={() => setSettings({ ...settings, showModal: false })}>
+      <Dialog open={settings.showModal} onClose={() => setSettings({ ...settings, showModal: false })} fullWidth maxWidth='md'>
         <DialogTitle>
           <Typography variant='h2' sx={{ fontWeight: 'bold', m: 2 }}>Catalog Settings</Typography>
         </DialogTitle>
