@@ -18,6 +18,8 @@ const CURSOR_MCP_CONFIG: CursorMCPConfig['mcpServers'][number] = {
     type: 'stdio'
 }
 
+const configPathPlaceholder = 'Configuration must be done manually in Cursor Settings.'
+
 class CursorDesktopClient implements MCPClient {
     name = 'Cursor'
     url = 'https://www.cursor.com/downloads'
@@ -31,9 +33,9 @@ class CursorDesktopClient implements MCPClient {
         '</pre>'
     ]
     expectedConfigPath = {
-        darwin: '/Users/$USER/Library/Application Support/Cursor/User/globalStorage/state.vscdb',
-        linux: '/home/$USER/.config/cursor/User/globalStorage/state.vscdb',
-        win32: '%APPDATA%\\Cursor\\User\\globalStorage\\state.vscdb'
+        darwin: configPathPlaceholder,
+        linux: configPathPlaceholder,
+        win32: configPathPlaceholder
     }
     readFile = async (client: v1.DockerDesktopClient) => {
         const platform = client.host.platform

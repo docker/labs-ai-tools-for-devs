@@ -4,8 +4,12 @@ import { MCPClient } from ".";
 import { DOCKER_MCP_COMMAND } from "../Constants";
 
 const DOCKER_MCP_CONFIG = {
-    "command": DOCKER_MCP_COMMAND.split(' ')[0],
-    "args": DOCKER_MCP_COMMAND.split(' ').slice(1),
+    mcpServers: {
+        MCP_DOCKER: {
+            "command": DOCKER_MCP_COMMAND.split(' ')[0],
+            "args": DOCKER_MCP_COMMAND.split(' ').slice(1),
+        }
+    }
 }
 
 class ClaudeDesktopClient implements MCPClient {
@@ -16,7 +20,7 @@ class ClaudeDesktopClient implements MCPClient {
         'Select <strong>Claude Settings</strong>',
         'Click on the <strong>Developer</strong> tab',
         'Click on the <strong>Edit Config</strong> button',
-        'Copy and paste the following JSON into the <code>mcpServers</code> section:' +
+        'Add MCP_DOCKER to <code>mcpServers</code> section:' +
         '<pre style="font-family: monospace; overflow: auto; width: 80%; background-color: grey.200; padding: 1; border-radius: 1; font-size: 12px;">' +
         JSON.stringify(DOCKER_MCP_CONFIG, null, 2) +
         '</pre>'
