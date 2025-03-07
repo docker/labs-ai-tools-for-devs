@@ -20,7 +20,7 @@ const CURSOR_MCP_CONFIG: CursorMCPConfig['mcpServers'][number] = {
 
 class CursorDesktopClient implements MCPClient {
     name = 'Cursor'
-    url = 'https://www.cursor.com/download'
+    url = 'https://www.cursor.com/downloads'
     manualConfigSteps = [
         'Open <strong>Cursor Settings</strong>',
         'Click on the <strong>MCP</strong> tab',

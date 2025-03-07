@@ -8,6 +8,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import Cursor from "./Cursor";
 import ClaudeDesktop from "./ClaudeDesktop";
+import Gordon from "./Gordon";
 
 export type MCPClient = {
     name: string;
@@ -21,6 +22,7 @@ export type MCPClient = {
 }
 
 export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [
+    Gordon,
     ClaudeDesktop,
-    Cursor
+    Cursor,
 ]
