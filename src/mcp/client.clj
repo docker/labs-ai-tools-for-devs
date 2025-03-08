@@ -1,13 +1,30 @@
 (ns mcp.client
   (:require
+   [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
+   [clojure.edn :as edn]
    [docker]
-   [jsonrpc.logger :as logger]))
+   [flatland.ordered.map :refer [ordered-map]]
+   [jsonrpc.logger :as logger]
+   [prompts.core :refer [get-prompts-dir]]
+   repl))
 
 (def counter (atom 0))
 
-(defn- mcp-stdio-stateless-server [container]
+(defn- mcp-stdio-stateless-server
+  "create a running container with an attached socket-client 
+   and a running Thread that is reading messages from the socket (both stdout and stderr)
+     - there is also one go process blocked waiting for the container to exit
+  
+   returns 
+     a map with the container info plus request and notification functions 
+     to write jsonrpc messages to the socket,
+     and a dead-channel channel that will emit :stopped or :closed when the container stops for any reason 
+       the request function will return a promise channel for the matching response
+       the notification function is just a side-effect
+  "
+  [container]
   (docker/check-then-pull container)
   (let [x (docker/create (assoc container
                                 :opts {:StdinOnce true
@@ -41,7 +58,6 @@
 
           ;; real stdout message
           (and block (:stdout block))
-
           (let [message (try (json/parse-string (:stdout block) keyword) (catch Throwable _))]
             (if-let [p (get @response-promises (:id message))]
               (async/put! p message)
@@ -50,11 +66,9 @@
                      c ([v _] v)
                      (async/timeout 15000) :timeout)))
 
-;; channel is closed
+          ;; channel is closed
           (nil? block)
-          (do
-            (logger/info "channel closed")
-            (async/put! dead-channel :closed))
+          (async/put! dead-channel :closed)
 
           ;; non-stdout message probably
           :else
@@ -78,13 +92,13 @@
                  :notification
                  (fn [message]
                    (try
-                       (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
-                       (catch Throwable t
-                         (println "error closing " t))))
+                     (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
+                     (catch Throwable t
+                       (println "error closing " t))))
                  :dead-channel dead-channel)))))
 
 (defn with-running-mcp
-  "send a message to an mcp servers and then shut it down
+  "send a message to an mcp server and then shuts it down
     params
       container-definition - for the mcp server
       f - function to generate a jsonrpc request to send post initialize
@@ -111,7 +125,6 @@
                                (request (f)) ([v _] v)
                                dead-channel ([v _] v)
                                (async/timeout 15000) :timeout)]
-                (logger/debug (format "%s response %s" (:image container-definition) response))
                 (f1 response)))
             (do
               (logger/error (format
@@ -155,19 +168,63 @@
     {:name "create_customer"
      :arguments {:name "Jim Clark"}})))
 
+(defn -get-tools [container-definition]
+  (async/<!!
+   (with-running-mcp
+     (docker/inject-secret-transform container-definition)
+     (fn [] {:method "tools/list" :params {}})
+     (fn [response]
+       (->> (-> response :result :tools)
+            (map #(assoc % :container (assoc container-definition :type :mcp)))
+            (into []))))))
+
+(defn mcp-metadata-cache-file [] (fs/file (get-prompts-dir) "mcp-metadata-cache.edn"))
+(def mcp-metadata-cache (atom {}))
+(def cache-channel (async/chan))
+(defn initialize-cache []
+  (swap! mcp-metadata-cache (constantly
+                             (try
+                               (edn/read-string 
+                                 {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
+                                 (slurp (mcp-metadata-cache-file)))
+                               (catch Throwable e
+                                 (logger/error "error initializing cache " e) 
+                                 {})))))
+
+(async/go-loop []
+  (let [[k v] (async/<! cache-channel)
+        updated-cache (swap! mcp-metadata-cache assoc k v)]
+    (spit
+     (mcp-metadata-cache-file)
+     (pr-str updated-cache))
+    (recur)))
+
+(defn inspect-image [container-definition]
+  (:Id
+   (docker/image-inspect
+    (-> (docker/images {"reference" [(:image container-definition)]})
+        first))))
+
+(defn add-digest [container-definition]
+  (docker/check-then-pull container-definition)
+  (assoc container-definition :digest (inspect-image container-definition)))
+
+(def cached-mcp-get-tools
+  (memoize (fn [{:keys [digest] :as container-definition}]
+             (if-let [m (get @mcp-metadata-cache digest)]
+               m
+               (let [m (-get-tools container-definition)]
+                 (async/>!! cache-channel [digest m])
+                 m)))))
+
 (defn get-tools [container-definition]
-  (with-running-mcp
-    (docker/inject-secret-transform container-definition)
-    (fn [] {:method "tools/list" :params {}})
-    (fn [response]
-      (->> (-> response :result :tools)
-           (map #(assoc % :container (assoc container-definition :type :mcp)))
-           (into [])))))
+  (cached-mcp-get-tools
+   (add-digest container-definition)))
 
 (defn get-mcp-tools-from-prompt
   [coll]
   (->> coll
-       (mapcat (comp async/<!! get-tools :container))
+       (mapcat (comp get-tools :container))
        (map (fn [tool]
               {:type "function"
                :function (-> tool
@@ -176,6 +233,7 @@
        (into [])))
 
 (comment
+  (repl/setup-stdout-logger)
   (docker/inject-secret-transform {:image "mcp/stripe:latest"
                                    :secrets {:stripe.api_key "API_KEY"}
                                    :command ["--tools=all"

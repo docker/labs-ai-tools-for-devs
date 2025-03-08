@@ -7,21 +7,23 @@
    [clojure.core.async :as async]
    [clojure.pprint :as pprint]
    [clojure.string :as string]
-   [jsonrpc.extras]
    docker
    git
    graph
    jsonrpc
    [jsonrpc.db :as db]
+   [jsonrpc.extras]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
+   [jsonrpc.socket-server :as socket-server]
    [lsp4clj.coercer :as coercer]
    [lsp4clj.io-chan :as io-chan]
    [lsp4clj.io-server :refer [stdio-server]]
-   [jsonrpc.socket-server :as socket-server]
    [lsp4clj.server :as lsp.server]
+   [mcp.client :as client]
    [medley.core :as medley]
    [promesa.core :as p]
+   [prompts.core :refer [get-prompts-dir registry]]
    shutdown
    state
    tools
@@ -82,7 +84,7 @@
   (logger/info "Initialized!"))
 
 ; level is debug info notice warning error critical alert emergency
-(defmethod lsp.server/receive-request "logging/setLevel" [_ {:keys [logger db*]} {:keys [level]}]
+(defmethod lsp.server/receive-request "logging/setLevel" [_ {:keys [db*]} {:keys [level]}]
   (swap! db* assoc :mcp.log/level level)
   {})
 
@@ -115,7 +117,7 @@
 
 (defmethod lsp.server/receive-request "prompts/get" [_ {:keys [db*]} {:keys [name arguments]}]
   (logger/info "prompts/get " name)
-  (let [{:keys [prompt-function description] :as m}
+  (let [{:keys [prompt-function description]}
         (get
          (->> @db*
               :mcp.prompts/registry
@@ -164,11 +166,6 @@
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
   ;; TODO cursors
-  (logger/info "tools/list " (->> (:mcp.prompts/registry @db*)
-                                  (vals)
-                                  (mapcat :functions)
-                                  (map :function)
-                                  (into [])))
   {:tools (->> (:mcp.prompts/registry @db*)
                (vals)
                (mapcat :functions)
@@ -271,13 +268,6 @@
 
 (def producers (atom []))
 
-(defn get-prompts-dir []
-  (if (fs/exists? (fs/file "/prompts"))
-    "/prompts"
-    (format "%s/prompts" (System/getenv "HOME"))))
-
-(def registry "/prompts/registry.yaml")
-
 (defn- init-dynamic-prompt-watcher [opts]
   (async/thread
     (let [{x :container}
@@ -290,7 +280,7 @@
              (let [[_dir _event f] (string/split line #"\s+")]
                (when (= f "registry.yaml")
                  (try
-                   (db/add-refs (logger/trace (into [] (db/registry-refs registry))))
+                   (db/add-refs (into [] (db/registry-refs registry)))
                    (doseq [producer @producers]
                      (try
                        (producer/publish-tool-list-changed producer {})
@@ -315,6 +305,8 @@
          (docker/delete x))))))
 
 (defn initialize-prompts [opts]
+  ;; initialize mcp cache
+  (client/initialize-cache)
   ;; register static prompts
   (doseq [[s content] (->> (fs/list-dir (get-prompts-dir))
                            (filter (fn [f] (= "md" (fs/extension f))))

@@ -20,13 +20,14 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
+VERSION="0.0.5"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag mcp/docker:0.0.4 \
+    --tag mcp/docker:$VERSION \
     --file Dockerfile \
     --push .
-docker pull mcp/docker:0.0.4
+docker pull mcp/docker:$VERSION
 ```
 
 ```sh
