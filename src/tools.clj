@@ -20,6 +20,15 @@
                                [:safe [:coll (into [] v)]]
                                v)))
 
+(filters/add-filter! :volume (fn [v]
+                                (if (coll? v)
+                                  (->> v (map #(format "%s:%s" % %)) (into []))
+                                  v)))
+
+(comment
+  "this allows us to expand strings into lists of strings to be spread into container definitions"
+  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}}))
+
 (defn interpolate [m template]
   (when-let [s (selmer/render template m {})]
     (if-let [parsed (try (edn/read-string s) (catch Throwable _ nil))]
@@ -117,10 +126,10 @@
                 (if (= :mcp (:type function-call))
                   ;; start mcp container
                   (async/<!!
-                    (client/call-tool
-                      function-call
-                      {:name function-name
-                       :arguments (json/parse-string json-arg-string keyword)}))
+                   (client/call-tool
+                    function-call
+                    {:name function-name
+                     :arguments (json/parse-string json-arg-string keyword)}))
                   ;; start pure container
                   (docker/run-container function-call))
                 exit-code-fail? (if (false? (:check-exit-code definition))

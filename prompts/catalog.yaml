@@ -2159,6 +2159,28 @@ registry:
     prompts: 0
     resources: {}
   puppeteer:
-    description: Browser automation and web scraping using Puppeteer.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    description: |
+      UNDER CONSTRUCTION (support long running browser cache)
+      Browser automation and web scraping using Puppeteer.
+    ref: https://img.icons8.com/officel/80/under-construction.png
+    icon: https://img.icons8.com/officel/80/under-construction.png
+  filesystem:
+    description: |
+      UNDER CONSTRUCTION (needs config parameters)
+      Local filesystem access with configurable allowed paths
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
+    icon: https://img.icons8.com/officel/80/under-construction.png
+    config: 
+      - name: filesystem
+        description: The MCP server is allowed to access these paths
+        parameters:
+          paths:
+            type: array
+            items:
+              type: string
+  webresearch:
+    description: |
+      UNDER CONSTRUCTION (declarative state caching in volumes) A Model Context Protocol (MCP) server for web research, enabling real-time information retrieval and webpage content extraction for Claude.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/webresearch.md
+    icon: https://img.icons8.com/officel/80/under-construction.png
+
