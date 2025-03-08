@@ -2159,4 +2159,6 @@ registry:
     prompts: 0
     resources: {}
   puppeteer:
+    description: Browser automation and web scraping using Puppeteer.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
