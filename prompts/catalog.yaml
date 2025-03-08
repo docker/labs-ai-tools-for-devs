@@ -2158,3 +2158,5 @@ registry:
           command: ['{{args|into}}']
     prompts: 0
     resources: {}
+  puppeteer:
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
