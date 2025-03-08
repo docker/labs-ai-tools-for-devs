@@ -174,11 +174,11 @@
         (cond
           ;; prompt content is already in opts
           prompt-content
-          (markdown-parser/parse-prompts prompt-content)
+          (markdown-parser/memoized-parse-prompts prompt-content)
 
           ;; file based prompts
           :else
-          (markdown-parser/parse-prompts (slurp prompts)))
+          (markdown-parser/memoized-parse-prompts (slurp prompts)))
 
         m (merge
            (run-extractors (:extractors metadata) opts)

@@ -266,6 +266,9 @@
           (into []))
      :metadata  metadata}))
 
+(def memoized-parse-prompts
+  (memoize parse-prompts))
+
 ;; ---------- future ---------
 
 (defn parse-new [content query]
