@@ -182,8 +182,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 <Tooltip title="These are tiles which you have allowed MCP clients to use.">
                     <Tab sx={{ fontSize: '1.5em' }} label="Your Tools" />
                 </Tooltip>
-                <Tooltip title="These are secrets which you have set for your MCP clients.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Secrets" />
+                <Tooltip title="These are environment variables and secrets which you have set for your MCP clients.">
+                    <Tab sx={{ fontSize: '1.5em' }} label="Your Environment" />
                 </Tooltip>
             </Tabs>
             <FormGroup sx={{ width: '100%', mt: 0 }}>
