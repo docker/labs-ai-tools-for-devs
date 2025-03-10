@@ -4,7 +4,7 @@ import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/mate
 import { Ref } from "../Refs";
 import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build, CheckBox, Delete, LockReset, LockRounded, Save } from "@mui/icons-material";
+import { Article, AttachFile, Build, CheckBox, Delete, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save } from "@mui/icons-material";
 import Secrets from "../Secrets";
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../Constants";
 
@@ -34,6 +34,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
     const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
     const [secretLoading, setSecretLoading] = useState(false)
+    const [tooltipOpen, setTooltipOpen] = useState(false) // Tooltip is controlled because it needs to be programatically closed.
 
     useEffect(() => {
         loadAssignedSecrets()
@@ -127,6 +128,9 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                             <List subheader={<Typography sx={{ fontWeight: 'bold' }}>Expected secrets:</Typography>} dense sx={{ p: 0 }}>
                                                 {item.secrets.map(secret => (
                                                     <ListItem key={secret.name}>
+                                                        <ListItemIcon>
+                                                            {assignedSecrets.find(s => s.name === secret.name)?.assigned ? <LockRounded sx={{ color: 'success.main' }} /> : <NoEncryptionGmailerrorred sx={{ color: 'warning.main' }} />}
+                                                        </ListItemIcon>
                                                         <ListItemText primary={secret.name} />
                                                     </ListItem>
                                                 ))}
@@ -148,12 +152,13 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                     </Tooltip>
                                 ))}
                             </Stack>
-                            <Tooltip title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
+                            <Tooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} onOpen={() => setTooltipOpen(true)} title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
                                 {!hasAllSecrets ? <LockRounded /> : isRegistering ? <CircularProgress size={20} /> : <Switch
                                     size="small"
                                     color={registered ? 'success' : 'primary'}
                                     checked={registered && hasAllSecrets}
-                                    onChange={(event, checked) => {
+                                    onChange={() => {
+                                        setTooltipOpen(false)
                                         trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
                                         setIsRegistering(true)
                                         if (registered) {
@@ -165,6 +170,7 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                                 setIsRegistering(false)
                                             })
                                         }
+
                                     }}
                                     disabled={!canRegister || isRegistering}
                                 />}
