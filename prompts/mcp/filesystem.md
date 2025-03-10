@@ -6,7 +6,7 @@ mcp:
       volumes:
         - "{{filesystem.paths|volume|into}}"
       command:
-        - "{{filesystem.paths|into}}
+        - "{{filesystem.paths|into}}"
 parameters-values:
   filesystem.allowed_paths:
     - /Users/slim
