@@ -5,7 +5,10 @@ import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileWatcher
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const parseRegistry = async () => {
         const registry = await readFileInPromptsVolume(client, 'registry.yaml')
-        return parse(registry)['registry'] as Promise<{ [key: string]: { ref: string } }>;
+        if (registry) {
+            return parse(registry)['registry'] as Promise<{ [key: string]: { ref: string } }>;
+        }
+        return {};
     }
     try {
         return await parseRegistry()
