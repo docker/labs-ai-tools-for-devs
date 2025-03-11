@@ -5,7 +5,8 @@
    dir
    docker
    [hasch.core :as hasch]
-   jsonrpc))
+   jsonrpc
+   [jsonrpc.logger :as logger]))
 
 (set! *warn-on-reflection* true)
 
@@ -130,6 +131,7 @@
               (pull {:dir dir :ref ref})
               (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
       (when (not (= 0 (:exit-code m)))
+        (logger/error (format "git error (%d): %s" (:exit-code m) (:pty-output m)))
         (jsonrpc/notify :error {:content (str m)}))
       (if path
         (let [cached-path (fs/file dir path)]
