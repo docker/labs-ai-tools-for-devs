@@ -249,23 +249,25 @@
                                    :secrets {:stripe.api_key "API_KEY"}
                                    :command ["--tools=all"
                                              "--api-key=$API_KEY"]})
-  (get-mcp-tools-from-prompt [{:container {:image "vonwig/stripe:latest"
-                                           :secrets {:stripe.api_key "API_KEY"}
-                                           :command ["--tools=all"
-                                                     "--api-key=$API_KEY"]}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/brave-search:latest"
-                                           :workdir "/app"
-                                           :secrets {:brave.api_key "BRAVE_API_KEY"}}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/slack:latest"
-                                           :workdir "/app"
-                                           :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
-                                                     :slack.team_id "SLACK_TEAM_ID"}}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/redis:latest"
-                                           :workdir "/app"}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/fetch:latest"
-                                           :workdir "/app"}}])
-  (get-mcp-tools-from-prompt [{:container {:image "mcp/time:latest"
-                                           :workdir "/app"}}])
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/stripe:latest"
+                                                 :secrets {:stripe.api_key "API_KEY"}
+                                                 :command ["--tools=all"
+                                                           "--api-key=$API_KEY"]}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/brave-search:latest"
+                                                 :workdir "/app"
+                                                 :secrets {:brave.api_key "BRAVE_API_KEY"}}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/slack:latest"
+                                                 :workdir "/app"
+                                                 :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
+                                                           :slack.team_id "SLACK_TEAM_ID"}}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/redis:latest"
+                                                 :workdir "/app"}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/fetch:latest"
+                                                 :workdir "/app"}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/time:latest"
+                                                 :workdir "/app"}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/youtube-transcript:latest"
+                                                 :workdir "/app"}}]})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"

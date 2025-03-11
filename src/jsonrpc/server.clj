@@ -308,7 +308,7 @@
 (defn initialize-prompts [opts]
   ;; initialize mcp cache
   (client/initialize-cache)
-  ;; register static prompts
+  ;; register private non-catalog prompts
   (doseq [[s content] (->> (fs/list-dir (get-prompts-dir))
                            (filter (fn [f] (= "md" (fs/extension f))))
                            (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
