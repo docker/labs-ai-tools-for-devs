@@ -235,6 +235,7 @@
                              :thread-id thread-id})
                            ;; tool calls are functions, which are arguments,name maps, and ids
                            ;; mcp tool call params are also maps of name, and arguments
+                           ;; TODO add the config parameters for just the registry entry that defines the tool
                            [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
                           (async/reduce conj [])
                           (async/<!!))]
@@ -280,7 +281,7 @@
              (let [[_dir _event f] (string/split line #"\s+")]
                (when (= f "registry.yaml")
                  (try
-                   (db/add-refs (into [] (db/registry-refs registry)))
+                   (db/add-refs (db/registry-refs registry))
                    (doseq [producer @producers]
                      (try
                        (producer/publish-tool-list-changed producer {})
@@ -307,16 +308,15 @@
 (defn initialize-prompts [opts]
   ;; initialize mcp cache
   (client/initialize-cache)
-  ;; register static prompts
+  ;; register private non-catalog prompts
   (doseq [[s content] (->> (fs/list-dir (get-prompts-dir))
                            (filter (fn [f] (= "md" (fs/extension f))))
                            (map (fn [f] [(string/replace (fs/file-name (fs/file f)) #"\.md" "") (slurp (fs/file f))])))]
     (db/update-prompt opts s content))
   ;; add dynamic refs from prompts volume
   (db/add-refs
-   (concat
-    (->> (:register opts)
-         (map (fn [ref] [:static ref])))
+   (concat (->> (:register opts)
+         (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
     (when (fs/exists? (fs/file registry))
       (db/registry-refs registry)))))

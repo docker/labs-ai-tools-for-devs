@@ -1,9 +1,16 @@
 (ns jsonrpc.db
+  "update the jsonrpc db with prompt-file maps that are either
+   statically referenced on the command line, dynamically added
+   to a registry.yaml or generated from a private conversation"
   (:require
    [clj-yaml.core :as yaml]
+   [clojure.pprint :refer [pprint]]
    git
    [jsonrpc.logger :as logger]
-   prompts))
+   [medley.core :as medley]
+   prompts
+   prompts.core
+   repl))
 
 (set! *warn-on-reflection* true)
 
@@ -15,10 +22,14 @@
        register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path ref-string]}]
+       (map (fn [{:keys [cached-path ref-string config] :as registration-entry}]
+              (logger/info registration-entry)
               (try
-                (let [m (prompts/get-prompts (assoc opts :prompts cached-path))]
-                  [(or (-> m :metadata :name) ref-string) m])
+                (let [m (prompts/get-prompts (-> opts
+                                                 (assoc :config config)
+                                                 (assoc :prompts cached-path)))]
+                  [(or (-> m :metadata :name) ref-string)
+                   m])
                 (catch Throwable t
                   (logger/error (format "error loading %s: %s" ref-string t))))))
        (into {})))
@@ -57,20 +68,23 @@
 
 (defn- missing-cached-prompt-file? [m]
   (when (not (contains? m :cached-path))
-    (logger/warn "missing cached path: %s" (:ref-string m))
+    (logger/warn (format "missing cached path: %s" (:ref-string m)))
     m))
+
+(defn git-cache-refs [refs]
+  (->> refs
+       (map (fn [{:keys [ref] :as v}] (assoc v :ref-string ref :ref (git/parse-github-ref ref))))
+       (map (fn [m] (assoc-in m [:ref :ref-hash] (git/hashch (:ref m)))))
+       (map (fn [m] (assoc-in m [:ref :dir] (git/cache-dir (:ref m)))))))
 
 (defn add-refs
   "update the db with new refs after rereshing the cache from git
      params
-       refs - coll of [type ref] type is static or dynamic"
+       refs - collection of registry maps with s/keys :type :ref"
   [refs]
   (if (seq refs)
     ;; turn static/dynamic refs into maps of type, ref-string, and parsed ref with cache dir
-    (let [git-map-coll (->> refs
-                            (map (fn [[t ref]] {:type t :ref-string ref :ref (git/parse-github-ref ref)}))
-                            (map (fn [m] (assoc-in m [:ref :ref-hash] (git/hashch (:ref m)))))
-                            (map (fn [m] (assoc-in m [:ref :dir] (git/cache-dir (:ref m))))))]
+    (let [git-map-coll (git-cache-refs refs)]
       ;; refresh cache (side effect)
       (-> git-map-coll
           git/collect-unique-cache-dirs
@@ -118,5 +132,19 @@
    (yaml/parse-string (slurp f))
    :registry
    (vals)
-   (map (fn [{:keys [ref]}] [:dynamic ref]))))
+   (map (fn [m] (assoc m :type :dynamic)))))
 
+(comment
+  (repl/setup-stdout-logger)
+  ; in /$HOME/registry.yaml
+  (git/collect-unique-cache-dirs
+    (git-cache-refs
+      (registry-refs prompts.core/registry)))
+  
+  ; prompts will come from prompts-cache
+  ;   /prompts or $HOME/.prompts-cache
+  (git/hashch {:owner "docker" :repo "labs-ai-tools-for-devs" :ref "slim/config"})
+  (add-refs (registry-refs prompts.core/registry))
+  (-> @db*
+      :mcp.prompts/registry
+      pprint))

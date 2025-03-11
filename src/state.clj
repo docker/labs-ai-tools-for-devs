@@ -4,6 +4,7 @@
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    git
+   interpolate
    jsonrpc
    [jsonrpc.logger :as logger]
    prompts
@@ -84,7 +85,7 @@
   [state]
   (let [definition (state/get-function-definition state)
         arg-context (let [raw-args (-> state :messages last :tool_calls first :function :arguments)]
-                      (tools/arg-context raw-args))]
+                      (interpolate/arg-context raw-args))]
       ; this is the only place where parameters can be passed into the next prompts (extractors only)
     (-> state
         (dissoc :messages)

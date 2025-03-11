@@ -15,4 +15,11 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
   speculative_execution:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md
+  filesystem:
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
+    config:
+      filesystem:
+        paths:
+          - "/Users/slim"
+
 

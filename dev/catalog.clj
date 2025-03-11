@@ -2,11 +2,21 @@
   (:require
    [babashka.fs :as fs]
    [clj-yaml.core :as yaml]
+   [clojure.edn :as edn]
+   [flatland.ordered.map :refer [ordered-map]]
    git
-   repl
    [markdown :as markdown-parser]
    [medley.core :as medley]
-   prompts))
+   prompts
+   repl))
+
+(defn mcp-metadata-cache [f]
+  (edn/read-string
+    {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
+    (slurp f)))
+
+(comment
+  (mcp-metadata-cache "test/resources/mcp-metadata-cache.edn"))
 
 (defn prompt-metadata [s]
   (try
@@ -32,14 +42,14 @@
 (defn generate-updated-catalog []
   (spit "catalog.updated.yaml"
         (yaml/generate-string
-          (let [catalog (yaml/parse-string (slurp "prompts/catalog.yaml"))]
-            (medley/deep-merge
-              catalog
-              {:registry
-               (->> (apply interleave ((juxt keys (comp extra-metadata vals)) (seq (:registry catalog))))
-                    (partition 2)
-                    (map #(into [] %))
-                    (into {}))})))))
+         (let [catalog (yaml/parse-string (slurp "prompts/catalog.yaml"))]
+           (medley/deep-merge
+            catalog
+            {:registry
+             (->> (apply interleave ((juxt keys (comp extra-metadata vals)) (seq (:registry catalog))))
+                  (partition 2)
+                  (map #(into [] %))
+                  (into {}))})))))
 
 (comment
   ;; setup stdout logger

@@ -1,4 +1,6 @@
 (ns prompts
+  "functions to take prompt markdown definitions
+   and turn them into schema/prompts-file maps"
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
@@ -169,7 +171,7 @@
          parameters - external params bound at rendering time
        
      returns a :schema/prompts-file"
-  [{:keys [parameters prompts user platform host-dir prompt-content] :as opts}]
+  [{:keys [parameters prompts user platform host-dir prompt-content config] :as opts}]
   (let [{:keys [metadata] :as prompt-data}
         (cond
           ;; prompt content is already in opts
@@ -205,11 +207,13 @@
                              (->> messages
                                   (map (partial renderer {}))
                                   (map #(dissoc % :title)))))
-         (update :metadata dissoc :functions :tools :extractors)
+         (update :metadata (fn [m] (-> m
+                                       (dissoc :functions :tools :extractors)
+                                       (update :parameter-values (fnil medley.core/deep-merge {}) config))))
          (assoc :functions (concat
                             (->> (or (:tools metadata) (:functions metadata))
                                  (mapcat function-definition))
-                            (client/get-mcp-tools-from-prompt (:mcp metadata))))))))
+                            (client/get-mcp-tools-from-prompt (update metadata :parameter-values (fnil medley.core/deep-merge {}) config))))))))
 
 (comment
   (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))
