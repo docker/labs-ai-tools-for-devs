@@ -7,5 +7,5 @@
     "/prompts"
     (format "%s/prompts" (System/getenv "HOME"))))
 
-(def registry "/prompts/registry.yaml")
+(def registry (format "%s/registry.yaml" (get-prompts-dir)))
 

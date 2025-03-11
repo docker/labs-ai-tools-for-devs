@@ -87,7 +87,7 @@
        :volumes ["docker-prompts-git:/git"]
        :command (concat ["clone" "--depth" "1" (format "https://github.com/%s/%s" owner repo)]
                         (when ref ["-b" ref])
-                        [(format "/project/%s" ref-hash)])}))))
+                        ["/project"])}))))
 
 (comment
   (clone {:dir "/Users/slim/crap" :owner "docker" :repo "labs-make-runbook" :ref "main" :ref-hash "crap"}))

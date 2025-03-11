@@ -6,6 +6,7 @@
    [clojure.edn :as edn]
    [docker]
    [flatland.ordered.map :refer [ordered-map]]
+   interpolate
    [jsonrpc.logger :as logger]
    [prompts.core :refer [get-prompts-dir]]
    repl))
@@ -66,7 +67,7 @@
                      c ([v _] v)
                      (async/timeout 15000) :timeout)))
 
-          ;; channel is closed
+        ;; channel is closed
           (nil? block)
           (async/put! dead-channel :closed)
 
@@ -171,7 +172,15 @@
 (defn -get-tools [container-definition]
   (async/<!!
    (with-running-mcp
-     (docker/inject-secret-transform container-definition)
+     (-> container-definition
+         ;; interpolate parameters
+         ((fn [c] (interpolate/container-definition 
+                    {:container (dissoc c :parameter-values)} 
+                    {}
+                    (json/generate-string
+                      (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
      (fn [] {:method "tools/list" :params {}})
      (fn [response]
        (->> (-> response :result :tools)
@@ -184,11 +193,11 @@
 (defn initialize-cache []
   (swap! mcp-metadata-cache (constantly
                              (try
-                               (edn/read-string 
-                                 {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
-                                 (slurp (mcp-metadata-cache-file)))
+                               (edn/read-string
+                                {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
+                                (slurp (mcp-metadata-cache-file)))
                                (catch Throwable e
-                                 (logger/error "error initializing cache " e) 
+                                 (logger/error "error initializing cache " e)
                                  {})))))
 
 (async/go-loop []
@@ -222,8 +231,10 @@
    (add-digest container-definition)))
 
 (defn get-mcp-tools-from-prompt
-  [coll]
-  (->> coll
+  [{:keys [mcp parameter-values]}]
+  (->> mcp
+       (map (fn [mcp-definition] 
+              (assoc-in mcp-definition [:container :parameter-values] parameter-values)))
        (mapcat (comp get-tools :container))
        (map (fn [tool]
               {:type "function"

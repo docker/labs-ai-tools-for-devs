@@ -9,22 +9,25 @@
    [lsp4clj.server :as server]))
 
 (def correct-refs
-  [ [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md"]
- [:dynamic
-  "github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md"]])
+  [{:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md" }
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md"} 
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md" }
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md" }
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md" }
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md"}
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md"}
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md"}
+   {:type :dynamic
+    :ref "github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md"
+    :config {:filesystem {:paths ["/Users/slim"]}}}])
 
 (t/deftest registry-ref-tests
   (t/testing "parse-registry"
@@ -34,32 +37,31 @@
 (comment
   (do
     (db/add-refs
-      (concat
-        (->> []
-             (map (fn [ref] [:static ref])))
+     (concat
+      (->> []
+           (map (fn [ref] [:static ref])))
         ;; register dynamic prompts
-        (when (fs/exists? (fs/file "test/registry.yaml"))
-          (db/registry-refs "test/registry.yaml"))))
+      (when (fs/exists? (fs/file "test/registry.yaml"))
+        (db/registry-refs "test/registry.yaml"))))
     (->> @db/db*
          :mcp.prompts/registry
-         vals
-         )
+         vals)
     (get-in (deref db/db*) [:mcp.prompts/registry "curl"])
     (server/receive-request "prompts/list" {:db* db/db*} {})
-    (server/receive-request 
-      "prompts/get" 
-      {:db* db/db*} 
-      {:name "curl:fetch gists" :arguments {:user "slimslender"}})))
+    (server/receive-request
+     "prompts/get"
+     {:db* db/db*}
+     {:name "curl:fetch gists" :arguments {:user "slimslender"}})))
 
 (comment
-  (db/add-refs 
-    (db/registry-refs "test/registry.yaml"))
+  (db/add-refs
+   (db/registry-refs "test/registry.yaml"))
 
   (db/add-refs
-    [[:dynamic "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"]
-     [:dynamic "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile1.md"]
-     [:dynamic "github:docker/labs-ai-tools-for-devs?ref=branch&path=prompts/examples/explain_dockerfile1.md"]
-     [:dynamic "github:docker/labs-ai-tools-for-devs?ref=branch&path=prompts/examples/explain_dockerfile1.md"]]))
+   [[:dynamic "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile.md"]
+    [:dynamic "github:docker/labs-ai-tools-for-devs?path=prompts/examples/explain_dockerfile1.md"]
+    [:dynamic "github:docker/labs-ai-tools-for-devs?ref=branch&path=prompts/examples/explain_dockerfile1.md"]
+    [:dynamic "github:docker/labs-ai-tools-for-devs?ref=branch&path=prompts/examples/explain_dockerfile1.md"]]))
 
 (comment
   (pprint @db/db*))
