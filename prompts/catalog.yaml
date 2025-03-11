@@ -2187,3 +2187,16 @@ registry:
     description: retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/youtube_transcript.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
+  postgres readonly:
+    description: provides read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgres.md
+    icon: https://img.icons8.com/ios/50/postgreesql.png
+    secrets:
+      - name: postgres.url
+  postgres:
+    description: |
+      provides PostgreSQL database management capabilities. 
+      This server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
+    icon: https://img.icons8.com/ios/50/postgreesql.png
+
