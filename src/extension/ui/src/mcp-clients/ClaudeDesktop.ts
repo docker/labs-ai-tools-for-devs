@@ -3,7 +3,7 @@ import { getUser } from "../FileWatcher";
 import { MCPClient } from ".";
 import { DOCKER_MCP_COMMAND } from "../Constants";
 
-const DOCKER_MCP_CONFIG = {
+const SAMPLE_MCP_CONFIG = {
     mcpServers: {
         MCP_DOCKER: {
             "command": DOCKER_MCP_COMMAND.split(' ')[0],
@@ -22,7 +22,7 @@ class ClaudeDesktopClient implements MCPClient {
         'Click on the <strong>Edit Config</strong> button',
         'Add MCP_DOCKER to <code>mcpServers</code> section:' +
         '<pre style="font-family: monospace; overflow: auto; width: 80%; background-color: grey.200; padding: 1; border-radius: 1; font-size: 12px;">' +
-        JSON.stringify(DOCKER_MCP_CONFIG, null, 2) +
+        JSON.stringify(SAMPLE_MCP_CONFIG, null, 2) +
         '</pre>'
     ]
     expectedConfigPath = {
@@ -75,14 +75,14 @@ class ClaudeDesktopClient implements MCPClient {
         path = path.replace('$USER', user)
         let payload = {
             mcpServers: {
-                mcp_docker: DOCKER_MCP_CONFIG
+                mcp_docker: SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
             }
         }
         try {
             const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])
             if (result.stdout) {
                 payload = JSON.parse(result.stdout)
-                payload.mcpServers.mcp_docker = DOCKER_MCP_CONFIG
+                payload.mcpServers.mcp_docker = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
             }
         } catch (e) {
             // No config or malformed config found, overwrite it
