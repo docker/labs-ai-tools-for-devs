@@ -10,20 +10,19 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
         }
         return {};
     }
+    const writeRegistryIfNotExists = async () => {
+        const registry = await readFileInPromptsVolume(client, 'registry.yaml')
+
+        if (!registry) {
+            console.log('writeRegistryIfNotExists: no registry')
+            await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: 'registry: {}' }] }))
+        }
+    }
     try {
+        await writeRegistryIfNotExists()
         return await parseRegistry()
     }
     catch (error) {
-        if (typeof error === 'object' && error && 'stderr' in error && error.stderr && (error.stderr as string).includes('No such file or directory')) {
-            const payload = JSON.stringify({
-                files: [{
-                    path: 'registry.yaml',
-                    content: 'registry: {}'
-                }]
-            })
-            await writeFileToPromptsVolume(client, payload)
-            return await parseRegistry();
-        }
         client.desktopUI.toast.error('Failed to get prompt registry: ' + error)
         return {};
     }
