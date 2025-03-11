@@ -19,8 +19,8 @@
        register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path ref-string config]}]
-              (logger/info cached-path ref-string config)
+       (map (fn [{:keys [cached-path ref-string config] :as registration-entry}]
+              (logger/info registration-entry)
               (try
                 (let [m (prompts/get-prompts (-> opts
                                                  (assoc :config config)

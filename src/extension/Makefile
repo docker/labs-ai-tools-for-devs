@@ -1,5 +1,5 @@
 IMAGE?=docker/labs-ai-tools-for-devs
-TAG?=0.2.7
+TAG?=0.2.17
 
 BUILDER=buildx-multi-arch
 
@@ -14,7 +14,7 @@ cross:
 	cd host-binary && $(MAKE) cross
 
 build-extension: cross ## Build service image to be deployed as a desktop extension
-	docker buildx build --load --platform=linux/amd64,linux/arm64,darwin/amd64,darwin/arm64,windows/amd64,windows/arm64 --tag=$(IMAGE):$(TAG) .
+	docker buildx build --load --tag=$(IMAGE):$(TAG) .
 	
 install-extension: build-extension ## Install the extension
 	docker extension install $(IMAGE):$(TAG)
