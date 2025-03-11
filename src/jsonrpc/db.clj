@@ -1,4 +1,7 @@
 (ns jsonrpc.db
+  "update the jsonrpc db with prompt-file maps that are either
+   statically referenced on the command line, dynamically added
+   to a registry.yaml or generated from a private conversation"
   (:require
    [clj-yaml.core :as yaml]
    [clojure.pprint :refer [pprint]]

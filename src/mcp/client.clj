@@ -1,4 +1,6 @@
 (ns mcp.client
+  "functions that use mcp definitions in prompts-files to
+   to create function definitions"
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]

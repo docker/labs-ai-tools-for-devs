@@ -1,4 +1,6 @@
 (ns prompts
+  "functions to take prompt markdown definitions
+   and turn them into schema/prompts-file maps"
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
