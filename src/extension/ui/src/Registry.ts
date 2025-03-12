@@ -6,7 +6,7 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const parseRegistry = async () => {
         const registry = await readFileInPromptsVolume(client, 'registry.yaml')
         if (registry) {
-            return parse(registry)['registry'] as Promise<{ [key: string]: { ref: string } }>;
+            return parse(registry)['registry'] as Promise<{ [key: string]: { ref: string; config: any } }>;
         }
         return {};
     }
