@@ -26,8 +26,8 @@
   [m]
   (if (not (s/valid? ::thought-data m))
     (throw (ex-info "Invalid thought data" (s/explain-data ::thought-data m)))
-    (let  [thought-history (json/parse-string (slurp "thought-history.json") keyword)
-           branches (json/parse-string (slurp "branches.json") keyword)]
+    (let  [thought-history (try (json/parse-string (slurp "/sequentialthining/thought-history.json") keyword) (catch Throwable _ []))
+           branches (try (json/parse-string (slurp "branches.json") keyword) (catch Throwable _ {}))]
       (spit "/sequentialthinking/thought-history.json"
             (json/generate-string
               (conj thought-history (cond-> m
@@ -43,7 +43,7 @@
 
 (defn -main [& args]
   (try
-    (-> (json/parse-string (first args))
+    (-> (json/parse-string (first args) keyword)
         (process-thought)
         (json/generate-string)
         (println)) 
