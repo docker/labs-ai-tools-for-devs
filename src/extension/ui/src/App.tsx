@@ -10,6 +10,7 @@ import { POLL_INTERVAL } from './Constants';
 import MCPCatalogLogo from './MCP Catalog.svg'
 import Settings from './components/Settings';
 import { getMCPClientStates, MCPClientState } from './MCPClients';
+import PromptConfig from './components/PromptConfig';
 
 export const client = createDockerDesktopClient();
 
@@ -20,10 +21,12 @@ const DEFAULT_SETTINGS = {
 
 export function App() {
   const [canRegister, setCanRegister] = useState(false);
-  const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string } }>({});
+  const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string; config: any } }>({});
   const [imagesLoadingResults, setImagesLoadingResults] = useState<ExecResult | null>(null);
   const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
   const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState }>({});
+  const [configuringItem, setConfiguringItem] = useState<CatalogItemWithName | null>(null);
+
   const loadRegistry = async () => {
     setCanRegister(false);
     try {
@@ -70,15 +73,21 @@ export function App() {
   }
 
   useEffect(() => {
-    startImagesLoading();
-    loadRegistry();
-    updateMCPClientStates();
-    const interval = setInterval(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    startImagesLoading().then(() => {
       loadRegistry();
       updateMCPClientStates();
-    }, POLL_INTERVAL);
+      interval = setInterval(() => {
+        loadRegistry();
+        updateMCPClientStates();
+      }, POLL_INTERVAL);
+    })
+
     return () => {
-      clearInterval(interval)
+      if (interval) {
+        clearInterval(interval)
+      }
     }
   }, []);
 
@@ -103,20 +112,37 @@ export function App() {
           <Settings onUpdate={updateMCPClientStates} mcpClientStates={mcpClientStates} settings={settings} setSettings={setSettings} />
         </DialogContent>
       </Dialog>
+      {configuringItem && <Dialog open={configuringItem !== null} onClose={() => setConfiguringItem(null)}>
+        <DialogTitle>
+          <Typography variant="h6">
+            Config
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <PromptConfig client={client} catalogItem={configuringItem!} registryItem={registryItems[configuringItem!.name]} onRegistryChange={loadRegistry} />
+        </DialogContent>
+      </Dialog>}
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
         <img src={MCPCatalogLogo} alt="MCP Catalog" height={100} />
         {hasMCPConfigured ? <></> : <Alert action={<Button variant='outlined' color='secondary' onClick={() => setSettings({ ...settings, showModal: true })}>Configure</Button>} severity="error" sx={{ fontWeight: 'bold' }}>MCP Clients are not configured.  Please configure MCP Clients to use the MCP Catalog.</Alert>}
-        <CatalogGrid settingsBadgeProps={hasMCPConfigured ? {} : {
-          color: hasMCPConfigured ? 'default' : 'error',
-          badgeContent: '0 MCP Clients',
-          sx: {
-            width: 80,
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-        }} showSettings={() => setSettings({ ...settings, showModal: true })} registryItems={registryItems} canRegister={canRegister} client={client} onRegistryChange={loadRegistry} />
+        <CatalogGrid
+          settingsBadgeProps={hasMCPConfigured ? {} : {
+            color: hasMCPConfigured ? 'default' : 'error',
+            badgeContent: '0 MCP Clients',
+            sx: {
+              width: 80,
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          }}
+          setConfiguringItem={setConfiguringItem}
+          showSettings={() => setSettings({ ...settings, showModal: true })}
+          registryItems={registryItems}
+          canRegister={canRegister}
+          client={client}
+          onRegistryChange={loadRegistry} />
       </Stack>
     </>
   )

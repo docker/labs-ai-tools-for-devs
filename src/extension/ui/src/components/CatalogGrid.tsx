@@ -19,6 +19,7 @@ interface CatalogGridProps {
     onRegistryChange: () => void;
     showSettings: () => void;
     settingsBadgeProps: BadgeProps;
+    setConfiguringItem: (item: CatalogItemWithName) => void;
 }
 
 const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
@@ -40,7 +41,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     client,
     onRegistryChange,
     showSettings,
-    settingsBadgeProps
+    settingsBadgeProps,
+    setConfiguringItem
 }) => {
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
@@ -207,6 +209,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 {filteredCatalogItems.map((item) => (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
                         <CatalogItemCard
+                            setConfiguringItem={setConfiguringItem}
                             openUrl={() => {
                                 client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
                             }}
@@ -244,7 +247,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
                             await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
                             loadSecrets();
-                        }} secrets={secrets} />
+                        }} secrets={secrets} setConfiguringItem={setConfiguringItem} />
                     </Grid2>
                 ))}
             </Grid2>}

@@ -1,14 +1,17 @@
-import { Badge, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Tooltip } from "@mui/material";
+import { Badge, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Tooltip, useTheme } from "@mui/material";
 import Button from '@mui/material/Button';
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
 import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build, CheckBox, Delete, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save } from "@mui/icons-material";
+import { Article, AttachFile, Build, CheckBox, Delete, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save, Settings } from "@mui/icons-material";
 import Secrets from "../Secrets";
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../Constants";
-
+import { DataType, githubDarkTheme, githubLightTheme, JsonEditor, NodeData } from "json-edit-react";
+import PromptConfig, { Config } from "./PromptConfig";
 const iconSize = 16
+
+
 
 export interface CatalogItem {
     description?: string;
@@ -18,13 +21,15 @@ export interface CatalogItem {
     prompts: number;
     resources: object[];
     tools: object[];
+    config?: Config;
 }
 
 export interface CatalogItemWithName extends CatalogItem {
     name: string;
 }
 
-export function CatalogItemCard({ openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: { openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[], ddVersion: { version: string, build: number } }) {
+
+export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: { setConfiguringItem: (item: CatalogItemWithName) => void, openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[], ddVersion: { version: string, build: number } }) {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -152,29 +157,39 @@ export function CatalogItemCard({ openUrl, item, canRegister, registered, regist
                                     </Tooltip>
                                 ))}
                             </Stack>
-                            <Tooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} onOpen={() => setTooltipOpen(true)} title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
-                                {!hasAllSecrets ? <LockRounded /> : isRegistering ? <CircularProgress size={20} /> : <Switch
-                                    size="small"
-                                    color={registered ? 'success' : 'primary'}
-                                    checked={registered && hasAllSecrets}
-                                    onChange={() => {
-                                        setTooltipOpen(false)
-                                        trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
-                                        setIsRegistering(true)
-                                        if (registered) {
-                                            unregister(item).then(() => {
-                                                setIsRegistering(false)
-                                            })
-                                        } else {
-                                            register(item).then(() => {
-                                                setIsRegistering(false)
-                                            })
-                                        }
+                            <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
+                                {/* WIP */}
+                                {item.config && registered && (
+                                    <Tooltip title="Configure this item">
+                                        <IconButton onClick={() => setConfiguringItem(item)}>
+                                            <Settings />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                                <Tooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} onOpen={() => setTooltipOpen(true)} title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
+                                    {!hasAllSecrets ? <LockRounded /> : isRegistering ? <CircularProgress size={20} /> : <Switch
+                                        size="small"
+                                        color={registered ? 'success' : 'primary'}
+                                        checked={registered && hasAllSecrets}
+                                        onChange={() => {
+                                            setTooltipOpen(false)
+                                            trackEvent('registry-changed', { name: item.name, ref: item.ref, action: registered ? 'remove' : 'add' });
+                                            setIsRegistering(true)
+                                            if (registered) {
+                                                unregister(item).then(() => {
+                                                    setIsRegistering(false)
+                                                })
+                                            } else {
+                                                register(item).then(() => {
+                                                    setIsRegistering(false)
+                                                })
+                                            }
+                                        }}
+                                        disabled={!canRegister || isRegistering}
+                                    />}
+                                </Tooltip>
 
-                                    }}
-                                    disabled={!canRegister || isRegistering}
-                                />}
-                            </Tooltip>
+                            </Stack>
                         </Stack>
 
                     </CardActions>
