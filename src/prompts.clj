@@ -19,6 +19,7 @@
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
    [registry]
+   repl
    schema
    [selmer.parser :as selmer]))
 
@@ -220,9 +221,12 @@
   (get-prompts {:prompts (fs/file "./prompts/mcp/stripe.md")}))
 
 (comment
+  (repl/setup-stdout-logger)
   (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
   (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
   (get-prompts {:prompts (fs/file "./README.md")})
+  (get-prompts {:prompts (fs/file "./prompts/mcp/postgres.md")})
+  (get-prompts {:prompts (fs/file "./prompts/mcp/postgresql.md")})
   (=
    ((:prompt-function (get-prompts {:prompts (fs/file "./prompts/examples/qrencode.md")})) {:content "mycontent"})
    [{:role "user",

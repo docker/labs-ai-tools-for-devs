@@ -204,9 +204,9 @@
     ;; messages
     [{:type "text"
       :text (->>
-              tool-outputs
-              (map :content)
-              (apply str))}]
+             tool-outputs
+             (map :content)
+             (apply str))}]
     ;; tool call responses
     (->> tool-outputs
          (mapcat (comp :content :result))
@@ -236,7 +236,14 @@
                            ;; tool calls are functions, which are arguments,name maps, and ids
                            ;; mcp tool call params are also maps of name, and arguments
                            ;; TODO add the config parameters for just the registry entry that defines the tool
-                           [{:function (update params :arguments (fn [arguments] (json/generate-string arguments))) :id "1"}])
+                           [{:function (update
+                                        params :arguments
+                                        (fn [arguments]
+                                          (logger/trace
+                                            (-> arguments
+                                                (merge (db/parameter-values (:name params)))
+                                                (json/generate-string)))))
+                             :id "1"}])
                           (async/reduce conj [])
                           (async/<!!))]
      ;; TODO with mcp, tool-calls with errors are still jsonrpc results
@@ -316,10 +323,10 @@
   ;; add dynamic refs from prompts volume
   (db/add-refs
    (concat (->> (:register opts)
-         (map (fn [ref] {:type :static :ref ref})))
+                (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
-    (when (fs/exists? (fs/file registry))
-      (db/registry-refs registry)))))
+           (when (fs/exists? (fs/file registry))
+             (db/registry-refs registry)))))
 
 (defn server-context
   "create chan server options for any io chan server that we build"
