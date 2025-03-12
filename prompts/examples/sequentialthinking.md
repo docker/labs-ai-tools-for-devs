@@ -100,6 +100,10 @@ tools:
       image: vonwig/sequentialthinking:latest
       volumes: 
         - "mcp-sequentialthinking:/sequentialthinking"
+      command:
+        - "{{raw|safe}}"
 ---
 
-# anything
+# background
+
+Hypothesize by breaking down tasks into sequential, and branching thoughts about how to solve something.
