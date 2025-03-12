@@ -75,14 +75,14 @@ class ClaudeDesktopClient implements MCPClient {
         path = path.replace('$USER', user)
         let payload = {
             mcpServers: {
-                mcp_docker: SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
+                MCP_DOCKER: SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
             }
         }
         try {
             const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])
             if (result.stdout) {
                 payload = JSON.parse(result.stdout)
-                payload.mcpServers.mcp_docker = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
+                payload.mcpServers.MCP_DOCKER = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
             }
         } catch (e) {
             // No config or malformed config found, overwrite it
@@ -115,7 +115,7 @@ class ClaudeDesktopClient implements MCPClient {
             // This method is only called after the config has been validated, so we can safely assume it's a valid config.
             const previousConfig = JSON.parse((await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])).stdout || '{}')
             const newConfig = { ...previousConfig }
-            delete newConfig.mcpServers.mcp_docker
+            delete newConfig.mcpServers.MCP_DOCKER
             await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(newConfig) }] })}'`])
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
@@ -123,7 +123,7 @@ class ClaudeDesktopClient implements MCPClient {
     }
     validateConfig = (content: string) => {
         const config = JSON.parse(content)
-        return Object.keys(config.mcpServers).some(key => key.includes('mcp_docker'))
+        return Object.keys(config.mcpServers).some(key => key.includes('MCP_DOCKER'))
     }
 }
 
