@@ -1,17 +1,13 @@
 import { Badge, Box, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Tooltip, useTheme } from "@mui/material";
-import Button from '@mui/material/Button';
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
-import { Ref } from "../Refs";
 import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build, CheckBox, Delete, DoNotDisturb, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save, Settings } from "@mui/icons-material";
+import { Article, AttachFile, Build, DoNotDisturb, LockReset, LockRounded, NoEncryptionGmailerrorred, Save, Settings } from "@mui/icons-material";
 import Secrets from "../Secrets";
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../Constants";
-import { DataType, githubDarkTheme, githubLightTheme, JsonEditor, NodeData } from "json-edit-react";
-import PromptConfig, { Config } from "./PromptConfig";
+import { Config } from "./PromptConfig";
+
 const iconSize = 16
-
-
 
 export interface CatalogItem {
     description?: string;

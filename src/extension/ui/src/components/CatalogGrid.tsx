@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, InputAdornment, CircularProgress } from '@mui/material';
-import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
-import AddIcon from '@mui/icons-material/Add';
-import { Ref } from '../Refs';
+import React, { Suspense, useEffect, useState } from 'react';
+import { IconButton, Alert, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
+import { CatalogItemWithName, CatalogItem } from './PromptCard';
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
 import { getRegistry, syncConfigWithRegistry, syncRegistryWithConfig } from '../Registry';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
-import { CATALOG_URL, DD_BUILD_WITH_SECRET_SUPPORT, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
-import { SecretList } from './SecretList';
+import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 import Secrets from '../Secrets';
 import { ParsedParameters } from './PromptConfig';
+
+const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
+const YourTools = React.lazy(() => import('./tabs/YourTools'));
+const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
 
 interface CatalogGridProps {
     registryItems: { [key: string]: { ref: string, config: any } };
@@ -184,7 +185,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 0, mt: 1 }}>
+            <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ width: '100%' }}>
                 <Tooltip title="These are all of the tiles you have available across the catalog.">
                     <Tab sx={{ fontSize: '1.5em' }} label="Tool Catalog" />
                 </Tooltip>
@@ -210,63 +211,34 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         </Badge>
                     </IconButton>
                 </Stack>
-            </FormGroup >
+            </FormGroup>
 
-            {tab === 0 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {filteredCatalogItems.map((catalogItem) => {
-                    const expectedProperties = catalogItem.config?.map((c: { name: string, parameters: ParsedParameters }) => Object.keys(c.parameters)).flat() || []
-                    const hasAllConfig = !expectedProperties.length || expectedProperties.every((p: string) => config[catalogItem.name]?.[p])
-                    return (
-                        <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
-                            <CatalogItemCard
-                                hasAllConfig={hasAllConfig}
-                                setConfiguringItem={setConfiguringItem}
-                                openUrl={() => {
-                                    client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL(true));
-                                }}
-                                item={catalogItem}
-                                ddVersion={ddVersion}
-                                canRegister={canRegister}
-                                registered={Object.keys(registryItems).some((i) => i === catalogItem.name)}
-                                register={registerCatalogItem}
-                                unregister={unregisterCatalogItem}
-                                onSecretChange={async (secret) => {
-                                    await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                                    loadSecrets();
-                                }}
-                                secrets={secrets}
-                            />
-                        </Grid2>
-                    )
-                })}
-                <Grid2 size={12}>
-                    <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <CardContent>
-                            <IconButton sx={{ height: '100%' }} onClick={() => {
-                                client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
-                            }}>
-                                <AddIcon sx={{ width: '100%', height: 100 }} />
-                            </IconButton>
-                        </CardContent>
-                    </Card>
-                </Grid2>
-            </Grid2>}
-            {tab === 1 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {Object.entries(registryItems).map(([name, item]) => {
-                    const hasAllConfig = item.config?.map((c: any) => c.name).every((c: any) => config[name]?.[c])
-                    return (
-                        name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                            <CatalogItemCard hasAllConfig={hasAllConfig} ddVersion={ddVersion} item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
-                                client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                            }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
-                                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                                loadSecrets();
-                            }} secrets={secrets} setConfiguringItem={setConfiguringItem} />
-                        </Grid2>
-                    )
-                })}
-            </Grid2>}
-            {tab === 2 && ddVersion && <SecretList secrets={secrets} ddVersion={ddVersion} />}
-        </Stack >
+            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
+                {tab === 0 && (
+                    <ToolCatalog
+                        search={search}
+                        catalogItems={catalogItems}
+                        client={client}
+                    />
+                )}
+                {tab === 1 && (
+                    <YourTools
+                        search={search}
+                        registryItems={registryItems}
+                        config={config}
+                        ddVersion={ddVersion}
+                        canRegister={canRegister}
+                        setConfiguringItem={setConfiguringItem}
+                        secrets={secrets}
+                    />
+                )}
+                {tab === 2 && ddVersion && (
+                    <YourEnvironment
+                        secrets={secrets}
+                        ddVersion={ddVersion}
+                    />
+                )}
+            </Suspense>
+        </Stack>
     );
 };

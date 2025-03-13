@@ -1,18 +1,24 @@
 /**
+ * Type for any object with string keys
+ */
+export type DeepObject = { [key: string]: any };
+
+/**
  * Simple object check.
  * @param item
  * @returns {boolean}
  */
-export function isObject(item: any) {
-    return (item && typeof item === 'object' && !Array.isArray(item));
+export function isObject(item: unknown): item is DeepObject {
+    return Boolean(item && typeof item === 'object' && !Array.isArray(item));
 }
 
 /**
  * Deep merge two objects.
- * @param target
- * @param ...sources
+ * @param target The target object to merge into
+ * @param sources The source objects to merge from
+ * @returns The merged object
  */
-export function mergeDeep(target: any, ...sources: any[]) {
+export function mergeDeep<T extends DeepObject>(target: T, ...sources: DeepObject[]): T {
     if (!sources.length) return target;
     const source = sources.shift();
 
