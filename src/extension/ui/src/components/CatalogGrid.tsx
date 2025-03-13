@@ -216,9 +216,16 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
                 {tab === 0 && (
                     <ToolCatalog
+                        registryItems={registryItems}
                         search={search}
                         catalogItems={catalogItems}
                         client={client}
+                        ddVersion={ddVersion}
+                        canRegister={canRegister}
+                        register={registerCatalogItem}
+                        unregister={unregisterCatalogItem}
+                        onSecretChange={loadSecrets}
+                        secrets={secrets}
                     />
                 )}
                 {tab === 1 && (
@@ -236,6 +243,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     <YourEnvironment
                         secrets={secrets}
                         ddVersion={ddVersion}
+                        config={config}
                     />
                 )}
             </Suspense>

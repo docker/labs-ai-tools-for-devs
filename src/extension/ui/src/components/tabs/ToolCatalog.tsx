@@ -4,14 +4,22 @@ import { CatalogItemCard, CatalogItemWithName } from '../PromptCard';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../../Refs';
 import { v1 } from "@docker/extension-api-client-types";
+import Secrets from '../../Secrets';
 
 interface ToolCatalogProps {
     search: string;
     catalogItems: CatalogItemWithName[];
     client: v1.DockerDesktopClient;
+    ddVersion: { version: string, build: number };
+    canRegister: boolean;
+    register: (item: CatalogItemWithName) => Promise<void>;
+    unregister: (item: CatalogItemWithName) => Promise<void>;
+    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
+    secrets: Secrets.Secret[];
+    registryItems: { [key: string]: { ref: string, config: any } };
 }
 
-const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, catalogItems, client }) => {
+const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, catalogItems, client, ddVersion, canRegister, register, unregister, onSecretChange, secrets, registryItems }) => {
     const filteredCatalogItems = catalogItems.filter(item =>
         item.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -27,13 +35,13 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, catalogItems, client 
                             client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL(true));
                         }}
                         item={catalogItem}
-                        ddVersion={{ version: '0.0.0', build: 0 }}
-                        canRegister={false}
-                        registered={false}
-                        register={async () => { }}
-                        unregister={async () => { }}
-                        onSecretChange={async () => { }}
-                        secrets={[]}
+                        ddVersion={ddVersion}
+                        canRegister={canRegister}
+                        registered={registryItems[catalogItem.name]?.ref !== undefined}
+                        register={register}
+                        unregister={unregister}
+                        onSecretChange={onSecretChange}
+                        secrets={secrets}
                     />
                 </Grid2>
             ))}
