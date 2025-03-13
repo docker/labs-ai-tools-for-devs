@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper, DialogActions, Box } from '@mui/material';
 import { CatalogItemWithName } from './components/PromptCard';
-import { getRegistry } from './Registry';
+import { getRegistry, getStoredConfig, syncConfigWithRegistry, syncRegistryWithConfig } from './Registry';
 import { Close, FolderOpenRounded, } from '@mui/icons-material';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { CatalogGrid } from './components/CatalogGrid';
@@ -10,7 +10,7 @@ import { POLL_INTERVAL } from './Constants';
 import MCPCatalogLogo from './MCP Catalog.svg'
 import Settings from './components/Settings';
 import { getMCPClientStates, MCPClientState } from './MCPClients';
-import PromptConfig from './components/PromptConfig';
+import PromptConfig, { ParsedParameters } from './components/PromptConfig';
 
 export const client = createDockerDesktopClient();
 
@@ -26,6 +26,7 @@ export function App() {
   const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
   const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState }>({});
   const [configuringItem, setConfiguringItem] = useState<CatalogItemWithName | null>(null);
+  const [config, setConfig] = useState<{ [key: string]: { [key: string]: ParsedParameters } }>({});
 
   const loadRegistry = async () => {
     setCanRegister(false);
@@ -72,23 +73,28 @@ export function App() {
     }
   }
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+  const loadConfig = async () => {
+    const config = await getStoredConfig(client);
+    setConfig(config);
+  }
 
+  const startSyncing = async () => {
+    await updateMCPClientStates();
+    await syncConfigWithRegistry(client);
+    await syncRegistryWithConfig(client);
+    await loadRegistry();
+    await loadConfig();
+  }
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
     startImagesLoading().then(() => {
-      loadRegistry();
-      updateMCPClientStates();
+      startSyncing();
       interval = setInterval(() => {
-        loadRegistry();
-        updateMCPClientStates();
+        startSyncing();
       }, POLL_INTERVAL);
     })
-
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
+    return () => clearInterval(interval);
   }, []);
 
   if (!imagesLoadingResults || imagesLoadingResults.stderr) {
@@ -115,7 +121,7 @@ export function App() {
       {configuringItem && <Dialog open={configuringItem !== null} onClose={() => setConfiguringItem(null)}>
         <DialogTitle>
           <Typography variant="h6">
-            Config
+            Config for {configuringItem.name}
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -142,7 +148,9 @@ export function App() {
           registryItems={registryItems}
           canRegister={canRegister}
           client={client}
-          onRegistryChange={loadRegistry} />
+          onRegistryChange={loadRegistry}
+          config={config}
+        />
       </Stack>
     </>
   )

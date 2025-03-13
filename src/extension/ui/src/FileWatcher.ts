@@ -7,15 +7,15 @@ import { ExecResult } from "@docker/extension-api-client-types/dist/v0"
 
 const allWatches: { [key: string]: any } = {}
 
-export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: string[]) => {
-    const showError = client.desktopUI.toast.error
+export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: string[], ignoreError = false) => {
+    const showError = ignoreError ? () => { } : client.desktopUI.toast.error
     try {
         const result = await client.docker.cli.exec('run', args)
         if (result.stderr) {
             console.error(result.stderr)
             showError(result.stderr)
         }
-        return result.stdout
+        return result.stdout || ''
     }
     catch (e) {
         if (e instanceof Error) {
@@ -34,7 +34,7 @@ export const getUser = async (client: v1.DockerDesktopClient) => {
 }
 
 export const readFileInPromptsVolume = async (client: v1.DockerDesktopClient, path: string) => {
-    return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'alpine:latest', 'sh', '-c', `"cat ${path}"`])
+    return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'alpine:latest', 'sh', '-c', `"cat ${path}"`], true)
 }
 
 export const writeFileToPromptsVolume = async (client: v1.DockerDesktopClient, content: string) => {
