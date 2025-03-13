@@ -5,21 +5,23 @@ import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../Refs';
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
-import { getRegistry } from '../Registry';
+import { getRegistry, syncConfigWithRegistry, syncRegistryWithConfig } from '../Registry';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
 import { CATALOG_URL, DD_BUILD_WITH_SECRET_SUPPORT, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
 import { SecretList } from './SecretList';
 import Secrets from '../Secrets';
+import { ParsedParameters } from './PromptConfig';
 
 interface CatalogGridProps {
-    registryItems: { [key: string]: { ref: string } };
+    registryItems: { [key: string]: { ref: string, config: any } };
     canRegister: boolean;
     client: v1.DockerDesktopClient;
     onRegistryChange: () => void;
     showSettings: () => void;
     settingsBadgeProps: BadgeProps;
     setConfiguringItem: (item: CatalogItemWithName) => void;
+    config: { [key: string]: { [key: string]: ParsedParameters } };
 }
 
 const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
@@ -42,7 +44,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     onRegistryChange,
     showSettings,
     settingsBadgeProps,
-    setConfiguringItem
+    setConfiguringItem,
+    config
 }) => {
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
@@ -105,6 +108,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             if (showNotification) {
                 setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
             }
+            await syncConfigWithRegistry(client);
+            await syncRegistryWithConfig(client);
         }
         catch (error) {
             if (showNotification) {
@@ -127,6 +132,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
             onRegistryChange();
             setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
+            await syncConfigWithRegistry(client);
+            await syncRegistryWithConfig(client);
         }
         catch (error) {
             client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
@@ -206,27 +213,32 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             </FormGroup >
 
             {tab === 0 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {filteredCatalogItems.map((item) => (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
-                        <CatalogItemCard
-                            setConfiguringItem={setConfiguringItem}
-                            openUrl={() => {
-                                client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                            }}
-                            item={item}
-                            ddVersion={ddVersion}
-                            canRegister={canRegister}
-                            registered={Object.keys(registryItems).some((i) => i === item.name)}
-                            register={registerCatalogItem}
-                            unregister={unregisterCatalogItem}
-                            onSecretChange={async (secret) => {
-                                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                                loadSecrets();
-                            }}
-                            secrets={secrets}
-                        />
-                    </Grid2>
-                ))}
+                {filteredCatalogItems.map((catalogItem) => {
+                    const expectedProperties = catalogItem.config?.map((c: { name: string, parameters: ParsedParameters }) => Object.keys(c.parameters)).flat() || []
+                    const hasAllConfig = !expectedProperties.length || expectedProperties.every((p: string) => config[catalogItem.name]?.[p])
+                    return (
+                        <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
+                            <CatalogItemCard
+                                hasAllConfig={hasAllConfig}
+                                setConfiguringItem={setConfiguringItem}
+                                openUrl={() => {
+                                    client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL(true));
+                                }}
+                                item={catalogItem}
+                                ddVersion={ddVersion}
+                                canRegister={canRegister}
+                                registered={Object.keys(registryItems).some((i) => i === catalogItem.name)}
+                                register={registerCatalogItem}
+                                unregister={unregisterCatalogItem}
+                                onSecretChange={async (secret) => {
+                                    await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
+                                    loadSecrets();
+                                }}
+                                secrets={secrets}
+                            />
+                        </Grid2>
+                    )
+                })}
                 <Grid2 size={12}>
                     <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <CardContent>
@@ -240,16 +252,19 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 </Grid2>
             </Grid2>}
             {tab === 1 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {Object.entries(registryItems).map(([name, item]) => (
-                    name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                        <CatalogItemCard ddVersion={ddVersion} item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
-                            client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                        }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
-                            await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                            loadSecrets();
-                        }} secrets={secrets} setConfiguringItem={setConfiguringItem} />
-                    </Grid2>
-                ))}
+                {Object.entries(registryItems).map(([name, item]) => {
+                    const hasAllConfig = item.config?.map((c: any) => c.name).every((c: any) => config[name]?.[c])
+                    return (
+                        name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
+                            <CatalogItemCard hasAllConfig={hasAllConfig} ddVersion={ddVersion} item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
+                                client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
+                            }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
+                                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
+                                loadSecrets();
+                            }} secrets={secrets} setConfiguringItem={setConfiguringItem} />
+                        </Grid2>
+                    )
+                })}
             </Grid2>}
             {tab === 2 && ddVersion && <SecretList secrets={secrets} ddVersion={ddVersion} />}
         </Stack >

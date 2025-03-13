@@ -2,11 +2,11 @@ import { githubLightTheme, NodeData } from "json-edit-react"
 
 import { githubDarkTheme } from "json-edit-react"
 
-import { useTheme } from "@mui/material";
+import { CircularProgress, useTheme } from "@mui/material";
 import { JsonEditor } from "json-edit-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "./PromptCard";
-import { getRegistry } from "../Registry";
+import { getRegistry, getStoredConfig } from "../Registry";
 import { v1 } from "@docker/extension-api-client-types";
 import { mergeDeep } from "../MergeDeep";
 import { stringify } from "yaml";
@@ -35,13 +35,13 @@ type ParameterObject = {
 
 type Parameters = Parameter | ParameterArray | ParameterObject;
 
-type ParsedParameter = string | number | boolean | { [key: string]: ParsedParameter } | ParsedParameter[];
+export type ParsedParameter = string | number | boolean | { [key: string]: ParsedParameter } | ParsedParameter[];
 
 type ParsedParameterArray = ParsedParameter[];
 
 type ParsedParameterObject = Record<string, ParsedParameter>;
 
-type ParsedParameters = ParsedParameter | ParsedParameterArray | ParsedParameterObject;
+export type ParsedParameters = ParsedParameter | ParsedParameterArray | ParsedParameterObject;
 
 export type Config = {
     name: string;
@@ -110,7 +110,6 @@ const jsonEditorFilterFunction = ({ value }: NodeData) => {
 
 const PromptConfig = ({
     catalogItem,
-    registryItem,
     onRegistryChange,
     client
 }: {
@@ -119,16 +118,26 @@ const PromptConfig = ({
     onRegistryChange: () => void
     client: v1.DockerDesktopClient
 }) => {
+    const [existingConfigInYaml, setExistingConfigInYaml] = useState<ParsedParameters | undefined>(undefined)
     const theme = useTheme()
-    const existingConfig = registryItem.config || {}
-    const saveConfigToRegistry = async (newConfig: ParsedParameters) => {
+    const [isLoading, setIsLoading] = useState(true)
+    useEffect(() => {
+        const loadExistingConfigInYaml = async () => {
+            const currentStoredConfig = await getStoredConfig(client);
+            setExistingConfigInYaml(currentStoredConfig[catalogItem.name] || {})
+            setIsLoading(false)
+        }
+        loadExistingConfigInYaml()
+    }, [])
+    const saveConfigToYaml = async (newConfig: { [key: string]: ParsedParameters }) => {
         try {
-            const currentRegistry = await getRegistry(client);
-            currentRegistry[catalogItem.name].config = newConfig
+            setIsLoading(true)
+            const currentStoredConfig = await getStoredConfig(client);
+            currentStoredConfig[catalogItem.name] = newConfig
             const payload = JSON.stringify({
                 files: [{
-                    path: 'registry.yaml',
-                    content: stringify({ registry: currentRegistry })
+                    path: 'config.yaml',
+                    content: stringify(currentStoredConfig)
                 }]
             })
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
@@ -137,29 +146,33 @@ const PromptConfig = ({
         catch (error) {
             client.desktopUI.toast.error('Failed to update config: ' + error);
         }
+        setIsLoading(false)
     }
-    return <>{
-        catalogItem.config!.map(config => (
-            <JsonEditor
-                key={config.name}
-                theme={theme.palette.mode === 'dark' ? githubDarkTheme : githubLightTheme}
-                onEdit={({ newData }) => {
-                    newData = { [config.name]: newData }
-                    const newConfig = mergeDeep(existingConfig, newData)
-                    saveConfigToRegistry(newConfig)
-                }}
-                rootName={config.name}
-                restrictAdd={({ value }) => {
-                    return !Array.isArray(value)
-                }}
-                defaultValue={""}
-                restrictDelete={true}
-                restrictEdit={jsonEditorFilterFunction}
-                restrictTypeSelection={(e) => jsonEditorTypeFilterFunction(e, config.parameters)}
-                data={{ ...(convertParametersToEditableJSON(config.parameters) as ParameterObject), ...existingConfig[config.name] }}
-            />
-        ))
+    if (!existingConfigInYaml || isLoading) {
+        return <CircularProgress />
     }
+    return <>
+        {
+            catalogItem.config!.map(config => (
+                <JsonEditor
+                    key={config.name}
+                    theme={theme.palette.mode === 'dark' ? githubDarkTheme : githubLightTheme}
+                    onEdit={({ newData }) => {
+                        const newConfig = mergeDeep(existingConfigInYaml, newData)
+                        saveConfigToYaml(newConfig)
+                    }}
+                    rootName={config.name}
+                    restrictAdd={({ value }) => {
+                        return !Array.isArray(value)
+                    }}
+                    defaultValue={""}
+                    restrictDelete={true}
+                    restrictEdit={jsonEditorFilterFunction}
+                    restrictTypeSelection={(e) => jsonEditorTypeFilterFunction(e, config.parameters)}
+                    data={{ ...(convertParametersToEditableJSON(config.parameters) as ParameterObject), ...(existingConfigInYaml as ParameterObject) }}
+                />
+            ))
+        }
     </>
 }
 
