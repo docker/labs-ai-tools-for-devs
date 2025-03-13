@@ -2199,4 +2199,11 @@ registry:
       This server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
     icon: https://img.icons8.com/ios/50/postgreesql.png
+  perplexity-ask:
+    description: |
+      integrates the Sonar API to provide Claude with unparalleled real-time, web-wide research.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/perplexity.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    secrets:
+      - name: perplexity-ask.api_key
 
