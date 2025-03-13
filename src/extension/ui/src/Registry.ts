@@ -1,18 +1,23 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { parse } from "yaml";
+import { parse, stringify } from "yaml";
 import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileWatcher";
+import { ParsedParameters } from "./components/PromptConfig";
+import { mergeDeep } from "./MergeDeep";
 
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const parseRegistry = async () => {
         const registry = await readFileInPromptsVolume(client, 'registry.yaml')
         if (registry) {
-            return parse(registry)['registry'] as Promise<{ [key: string]: { ref: string; config: any } }>;
+            const value = parse(registry)['registry'] as { [key: string]: { ref: string, config: any } }
+            if (!value) {
+                client.desktopUI.toast.error('Failed to get parse registry.yaml.registry: ' + registry)
+            }
+            return value;
         }
         return {};
     }
     const writeRegistryIfNotExists = async () => {
         const registry = await readFileInPromptsVolume(client, 'registry.yaml')
-
         if (!registry) {
             console.log('writeRegistryIfNotExists: no registry')
             await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: 'registry: {}' }] }))
@@ -26,4 +31,64 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
         client.desktopUI.toast.error('Failed to get prompt registry: ' + error)
         return {};
     }
+}
+
+export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
+    const parseConfig = async () => {
+        const config = await readFileInPromptsVolume(client, 'config.yaml')
+        if (config) {
+            return parse(config) as Promise<{ [key: string]: { [key: string]: ParsedParameters } }>;
+        }
+        return {};
+    }
+    const writeConfigIfNotExists = async () => {
+        const config = await readFileInPromptsVolume(client, 'config.yaml')
+        if (!config) {
+            console.log('writeConfigIfNotExists: no config')
+            await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: '{}' }] }))
+        }
+    }
+    try {
+        await writeConfigIfNotExists()
+        return await parseConfig()
+    }
+    catch (error) {
+        client.desktopUI.toast.error('Failed to get stored configs: ' + error)
+        return {};
+    }
+}
+
+// if registry.yaml has a config, it must be the same as what you have stored
+// if that’s not true and the registry.yaml value is valid then you should sync with it
+// if it’s not true and the registry.yaml is invalid then the catalog item needs user assistance because the catalog has probably been updated with a breaking change
+
+// Replace conflicting config values with registry values
+export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient) => {
+    const registry = await getRegistry(client) || {}
+    const storedConfig = await getStoredConfig(client) || {}
+
+    for (const [key, item] of Object.entries(registry)) {
+        const itemConfig = item.config || {}
+        const storedConfigItem = storedConfig[key]
+        if (storedConfigItem) {
+            const mergedConfig = mergeDeep(storedConfigItem, itemConfig)
+            storedConfig[key] = mergedConfig
+        }
+    }
+    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(storedConfig) }] }))
+}
+
+//  Replace conflicting registry values with config values
+export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient) => {
+    const storedRegistry = await getRegistry(client) || {}
+    const storedConfig = await getStoredConfig(client) || {}
+    for (const [key, item] of Object.entries(storedConfig)) {
+        const itemConfig = item || {}
+        const registryItem = storedRegistry[key]
+        if (registryItem) {
+            const mergedConfig = mergeDeep(registryItem.config, itemConfig)
+            storedRegistry[key].config = mergedConfig
+        }
+    }
+    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry: storedRegistry }) }] }))
 }

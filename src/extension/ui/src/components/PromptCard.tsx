@@ -1,10 +1,10 @@
-import { Badge, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Tooltip, useTheme } from "@mui/material";
+import { Badge, Box, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Tooltip, useTheme } from "@mui/material";
 import Button from '@mui/material/Button';
 import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { Ref } from "../Refs";
 import { useEffect, useState } from "react";
 import { trackEvent } from "../Usage";
-import { Article, AttachFile, Build, CheckBox, Delete, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save, Settings } from "@mui/icons-material";
+import { Article, AttachFile, Build, CheckBox, Delete, DoNotDisturb, LockOpenRounded, LockReset, LockRounded, NoEncryptionGmailerrorred, Save, Settings } from "@mui/icons-material";
 import Secrets from "../Secrets";
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../Constants";
 import { DataType, githubDarkTheme, githubLightTheme, JsonEditor, NodeData } from "json-edit-react";
@@ -29,7 +29,7 @@ export interface CatalogItemWithName extends CatalogItem {
 }
 
 
-export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: { setConfiguringItem: (item: CatalogItemWithName) => void, openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[], ddVersion: { version: string, build: number } }) {
+export function CatalogItemCard({ hasAllConfig, setConfiguringItem, openUrl, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: { hasAllConfig: boolean, setConfiguringItem: (item: CatalogItemWithName) => void, openUrl: () => void, item: CatalogItemWithName, canRegister: boolean, registered: boolean, register: (item: CatalogItemWithName) => Promise<void>, unregister: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>, onSecretChange: (secret: { name: string, value: string }) => Promise<void>, secrets: Secrets.Secret[], ddVersion: { version: string, build: number } }) {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -49,9 +49,13 @@ export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister
         if (registered && !hasAllSecrets) {
             unregister(item, false)
         }
+        if (registered && hasAllConfig === false) {
+            unregister(item, false)
+        }
     }, [registered])
 
     const hasAllSecrets = assignedSecrets.every(s => s.assigned)
+
     const hasDDVersionWithSecretSupport = ddVersion && ddVersion.build >= DD_BUILD_WITH_SECRET_SUPPORT;
 
     return (
@@ -109,24 +113,29 @@ export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister
                             />
                         </Stack>
                     </CardContent>
-                    <CardActions sx={{ padding: 2, paddingTop: 0 }}>
+                    <CardActions sx={{ padding: 1, paddingTop: 0 }}>
                         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                             <Stack direction="row" spacing={2} alignItems="center">
-                                <Tooltip title="Prompts">
-                                    <Badge badgeContent={item.prompts || "0"} color="primary">
-                                        <Article sx={{ fontSize: iconSize }} />
-                                    </Badge>
-                                </Tooltip>
-                                <Tooltip title="Resources">
-                                    <Badge badgeContent={item.resources?.length || "0"} color="secondary">
-                                        <AttachFile sx={{ fontSize: iconSize }} />
-                                    </Badge>
-                                </Tooltip>
-                                <Tooltip title="Tools">
-                                    <Badge badgeContent={item.tools?.length || "0"} color="success">
-                                        <Build sx={{ fontSize: iconSize }} />
-                                    </Badge>
-                                </Tooltip>
+                                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, padding: 1, boxSizing: 'border-box' }}>
+                                    <Tooltip title="Prompts">
+                                        <Badge badgeContent={item.prompts || "0"} color="primary">
+                                            <Article sx={{ fontSize: iconSize, color: 'secondary.main' }} />
+                                        </Badge>
+                                    </Tooltip>
+                                    <Tooltip title="Resources">
+                                        <Badge badgeContent={item.resources?.length || "0"} color="secondary">
+                                            <AttachFile sx={{ fontSize: iconSize, color: 'secondary.main' }} />
+                                        </Badge>
+                                    </Tooltip>
+                                    <Tooltip title="Tools">
+                                        <Badge badgeContent={item.tools?.length || "0"} color="success">
+                                            <Build sx={{ fontSize: iconSize, color: 'secondary.main' }} />
+                                        </Badge>
+                                    </Tooltip>
+                                </Box>
+
+                            </Stack>
+                            <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
                                 {item.secrets?.length && (hasDDVersionWithSecretSupport ? (
                                     <Tooltip title={
                                         <Stack sx={{ pr: 1 }} direction="column" spacing={1}>
@@ -145,29 +154,26 @@ export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister
                                     }>
                                         <IconButton onClick={() => setShowSecretDialog(!showSecretDialog)}>
                                             <Badge badgeContent={item.secrets?.length || "0"} color={assignedSecrets?.every(s => s.assigned) ? 'success' : 'warning'}>
-                                                <LockRounded sx={{ fontSize: iconSize }} />
+                                                <LockRounded sx={{ color: 'text.primary' }} />
                                             </Badge>
                                         </IconButton>
                                     </Tooltip>
                                 ) : (
                                     <Tooltip title={getUnsupportedSecretMessage(ddVersion)}>
                                         <IconButton>
-                                            <LockRounded sx={{ fontSize: iconSize }} />
+                                            <LockRounded sx={{ color: 'warning.main' }} />
                                         </IconButton>
                                     </Tooltip>
                                 ))}
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
-                                {/* WIP */}
-                                {item.config && registered && (
-                                    <Tooltip title="Configure this item">
+                                {item.config && item.config.length > 0 && (
+                                    <Tooltip title="Config">
                                         <IconButton onClick={() => setConfiguringItem(item)}>
-                                            <Settings />
+                                            <Settings sx={{ color: 'text.primary' }} />
                                         </IconButton>
                                     </Tooltip>
                                 )}
-                                <Tooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} onOpen={() => setTooltipOpen(true)} title={hasAllSecrets ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets to allow this tile."}>
-                                    {!hasAllSecrets ? <LockRounded /> : isRegistering ? <CircularProgress size={20} /> : <Switch
+                                <Tooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} onOpen={() => setTooltipOpen(true)} title={hasAllSecrets && hasAllConfig ? registered ? "Blocking this tile will remove its tools, resources and prompts from being used in any MCP clients you have connected." : "Allowing this tile will expose its tools, resources and prompts to any MCP clients you have connected." : "You need to set all expected secrets and config values to allow this tile."}>
+                                    {!hasAllSecrets || !hasAllConfig ? <DoNotDisturb sx={{ color: 'warning.main' }} /> : isRegistering ? <CircularProgress size={20} /> : <Switch
                                         size="small"
                                         color={registered ? 'success' : 'primary'}
                                         checked={registered && hasAllSecrets}
@@ -188,12 +194,11 @@ export function CatalogItemCard({ setConfiguringItem, openUrl, item, canRegister
                                         disabled={!canRegister || isRegistering}
                                     />}
                                 </Tooltip>
-
                             </Stack>
-                        </Stack>
 
+                        </Stack>
                     </CardActions>
-                </Stack>
+                </Stack >
             </Card >
         </>
     )
