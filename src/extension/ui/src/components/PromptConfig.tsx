@@ -141,7 +141,7 @@ const PromptConfig = ({
                 }]
             })
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            onRegistryChange();
+            setTimeout(onRegistryChange, 500)
         }
         catch (error) {
             client.desktopUI.toast.error('Failed to update config: ' + error);
