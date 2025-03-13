@@ -217,6 +217,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 {tab === 0 && (
                     <ToolCatalog
                         registryItems={registryItems}
+                        config={config}
                         search={search}
                         catalogItems={catalogItems}
                         client={client}
@@ -226,6 +227,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         unregister={unregisterCatalogItem}
                         onSecretChange={loadSecrets}
                         secrets={secrets}
+                        setConfiguringItem={setConfiguringItem}
                     />
                 )}
                 {tab === 1 && (
