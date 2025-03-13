@@ -1,14 +1,10 @@
-import { githubLightTheme, NodeData } from "json-edit-react"
-
-import { githubDarkTheme } from "json-edit-react"
-
+import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react"
 import { CircularProgress, useTheme } from "@mui/material";
-import { JsonEditor } from "json-edit-react"
 import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "./PromptCard";
-import { getRegistry, getStoredConfig } from "../Registry";
+import { getStoredConfig } from "../Registry";
 import { v1 } from "@docker/extension-api-client-types";
-import { mergeDeep } from "../MergeDeep";
+import { DeepObject, mergeDeep } from "../MergeDeep";
 import { stringify } from "yaml";
 import { tryRunImageSync } from "../FileWatcher";
 
@@ -158,7 +154,7 @@ const PromptConfig = ({
                     key={config.name}
                     theme={theme.palette.mode === 'dark' ? githubDarkTheme : githubLightTheme}
                     onEdit={({ newData }) => {
-                        const newConfig = mergeDeep(existingConfigInYaml, newData)
+                        const newConfig = mergeDeep(existingConfigInYaml as DeepObject, newData as DeepObject)
                         saveConfigToYaml(newConfig)
                     }}
                     rootName={config.name}

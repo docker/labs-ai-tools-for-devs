@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, ButtonGroup, Grid, debounce, Card, CardContent, IconButton, Alert, DialogTitle, Dialog, DialogContent, FormControlLabel, Checkbox, CircularProgress, Paper, DialogActions, Box } from '@mui/material';
+import { Stack, Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box } from '@mui/material';
 import { CatalogItemWithName } from './components/PromptCard';
 import { getRegistry, getStoredConfig, syncConfigWithRegistry, syncRegistryWithConfig } from './Registry';
-import { Close, FolderOpenRounded, } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
 import MCPCatalogLogo from './MCP Catalog.svg'
-import Settings from './components/Settings';
 import { getMCPClientStates, MCPClientState } from './MCPClients';
 import PromptConfig, { ParsedParameters } from './components/PromptConfig';
+
+const Settings = React.lazy(() => import('./components/Settings'));
 
 export const client = createDockerDesktopClient();
 
@@ -110,14 +111,30 @@ export function App() {
 
   return (
     <>
-      <Dialog open={settings.showModal} onClose={() => setSettings({ ...settings, showModal: false })} fullWidth maxWidth='md'>
-        <DialogTitle>
-          <Typography variant='h2' sx={{ fontWeight: 'bold', m: 2 }}>Catalog Settings</Typography>
-        </DialogTitle>
-        <DialogContent>
-          <Settings onUpdate={updateMCPClientStates} mcpClientStates={mcpClientStates} settings={settings} setSettings={setSettings} />
-        </DialogContent>
-      </Dialog>
+      {settings.showModal && (
+        <Dialog open={settings.showModal} fullWidth maxWidth="xl">
+          <DialogTitle>
+            Settings
+            <IconButton
+              aria-label="close"
+              onClick={() => setSettings({ ...settings, showModal: false })}
+              sx={{ position: 'absolute', right: 8, top: 8 }}
+            >
+              <Close />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
+              <Settings
+                settings={settings}
+                setSettings={setSettings}
+                mcpClientStates={mcpClientStates}
+                onUpdate={loadRegistry}
+              />
+            </Suspense>
+          </DialogContent>
+        </Dialog>
+      )}
       {configuringItem && <Dialog open={configuringItem !== null} onClose={() => setConfiguringItem(null)}>
         <DialogTitle>
           <Typography variant="h6">
