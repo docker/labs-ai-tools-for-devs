@@ -125,7 +125,7 @@ export function App() {
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <PromptConfig client={client} catalogItem={configuringItem!} registryItem={registryItems[configuringItem!.name]} onRegistryChange={loadRegistry} />
+          <PromptConfig client={client} catalogItem={configuringItem!} registryItem={registryItems[configuringItem!.name]} onRegistryChange={startSyncing} />
         </DialogContent>
       </Dialog>}
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
