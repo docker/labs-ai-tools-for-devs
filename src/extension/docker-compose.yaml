@@ -1,6 +1,6 @@
 services:
   mcp_docker:
-    image: mcp/docker:0.0.6
+    image: mcp/docker:0.0.7
     ports:
       - 8811:8811
     volumes:
@@ -11,8 +11,6 @@ services:
       - --mcp
       - --port
       - "8811"
-      - --register
-      - github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
 volumes:
   docker-prompts:
     name: docker-prompts

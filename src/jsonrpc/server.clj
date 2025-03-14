@@ -68,11 +68,11 @@
   (logger/info "ping")
   {})
 
-(defmethod lsp.server/receive-request "initialize" [_ {:keys [db*]} params]
-  (logger/info "Initializing " params)
+(defmethod lsp.server/receive-request "initialize" [_ {:keys [db* server-id]} params]
+  (logger/info (format "Initializing server id %d %s" server-id params))
 
   ;; merges client-info capabilities and client protocol-version
-  (swap! db* merge params)
+  (swap! db* assoc-in [:servers server-id] params)
   {:protocol-version "2024-11-05"
    :capabilities {:prompts {:listChanged true}
                   :tools {:listChanged true}
@@ -80,8 +80,25 @@
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
-(defmethod lsp.server/receive-notification "notifications/initialized" [_ _ _]
-  (logger/info "Initialized!"))
+(defmethod lsp.server/receive-notification "notifications/initialized" [_ {:keys [db* server server-id]} _]
+  (logger/info "Initialized! " (-> @db* :servers (get server-id)))
+  (lsp.server/discarding-stdout
+   (when (get-in @db* [:servers server-id :capabilities :roots])
+     (let [response (lsp.server/deref-or-cancel
+                     (lsp.server/send-request server "roots/list" {})
+                     10e3 ::timeout)]
+       (cond
+           ;;
+         (= ::timeout response)
+         (logger/error "No response from client for workspace/inlayHint/refresh")
+           ;;
+         (:roots response)
+         (do
+           (logger/info "client sent roots " (:roots response))
+           (swap! db* update-in [:servers server-id] (fnil merge {}) response))
+           ;;
+         :else
+         (logger/warn "unexpected response " response))))))
 
 ; level is debug info notice warning error critical alert emergency
 (defmethod lsp.server/receive-request "logging/setLevel" [_ {:keys [db*]} {:keys [level]}]
@@ -216,7 +233,7 @@
   " params
   db* - uses mcp.prompts/registry and host-dir
   params - tools/call mcp params"
-  [{:keys [db*] :as components} params]
+  [{:keys [db* server-id] :as components} params]
   (volumes/with-volume
     (fn [thread-id]
       ;; TODO non-mcp tool calls are maps of content, role tool_call_id
@@ -235,14 +252,15 @@
                              :thread-id thread-id})
                            ;; tool calls are functions, which are arguments,name maps, and ids
                            ;; mcp tool call params are also maps of name, and arguments
-                           ;; TODO add the config parameters for just the registry entry that defines the tool
                            [{:function (update
                                         params :arguments
                                         (fn [arguments]
                                           (logger/trace
-                                            (-> arguments
-                                                (merge (db/parameter-values (:name params)))
-                                                (json/generate-string)))))
+                                           (-> arguments
+                                               (merge 
+                                                 (db/parameter-values (:name params))
+                                                 (select-keys (-> @db* :servers (get server-id)) [:roots]))
+                                               (json/generate-string)))))
                              :id "1"}])
                           (async/reduce conj [])
                           (async/<!!))]
@@ -328,6 +346,8 @@
            (when (fs/exists? (fs/file registry))
              (db/registry-refs registry)))))
 
+(def server-counter (atom 0))
+
 (defn server-context
   "create chan server options for any io chan server that we build"
   [{:keys [trace-level] :or {trace-level "off"} :as opts}]
@@ -361,6 +381,7 @@
            {:db* db*
             :logger timbre-logger
             :producer producer
+            :server-id (swap! server-counter inc)
             :server server}))}
       (when (:mcp opts)
         {:in-chan-factory io-chan/mcp-input-stream->input-chan

@@ -37,3 +37,11 @@ docker push docker<image-name>
 ```
 
 That's it! With these commands, you should be able to build, run, and share your project with ease.
+
+```sh
+make build-extension
+```
+
+```sh
+docker extension update docker/labs-ai-tools-for-devs:0.2.25
+```

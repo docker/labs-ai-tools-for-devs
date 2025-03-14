@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.6"
+VERSION="0.0.7"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
