@@ -1,7 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from "yaml";
 import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileWatcher";
-import { ParsedParameters } from "./components/PromptConfig";
+import { ParsedParameters } from "./components/ConfigurationModal";
 import { mergeDeep } from "./MergeDeep";
 
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
@@ -63,10 +63,8 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
 // if it’s not true and the registry.yaml is invalid then the catalog item needs user assistance because the catalog has probably been updated with a breaking change
 
 // Replace conflicting config values with registry values
-export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient) => {
-    const registry = await getRegistry(client) || {}
+export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }) => {
     const storedConfig = await getStoredConfig(client) || {}
-
     for (const [key, item] of Object.entries(registry)) {
         const itemConfig = item.config || {}
         const storedConfigItem = storedConfig[key]
@@ -79,16 +77,15 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient) => 
 }
 
 //  Replace conflicting registry values with config values
-export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient) => {
-    const storedRegistry = await getRegistry(client) || {}
+export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }) => {
     const storedConfig = await getStoredConfig(client) || {}
     for (const [key, item] of Object.entries(storedConfig)) {
         const itemConfig = item || {}
-        const registryItem = storedRegistry[key]
+        const registryItem = registry[key]
         if (registryItem) {
             const mergedConfig = mergeDeep(registryItem.config, itemConfig)
-            storedRegistry[key].config = mergedConfig
+            registry[key].config = mergedConfig
         }
     }
-    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry: storedRegistry }) }] }))
+    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))
 }

@@ -71,12 +71,7 @@ interface AppContentProps {
 }
 
 function AppContent({ settings, setSettings, mcpClientStates, configuringItem, setConfiguringItem, updateMCPClientStates }: AppContentProps) {
-  const { imagesLoadingResults, loadImagesIfNeeded, registryItems, secrets, tryUpdateSecrets } = useCatalogContext();
-
-  useEffect(() => {
-    // Initialize necessary resources
-    loadImagesIfNeeded();
-  }, []);
+  const { imagesLoadingResults, loadImagesIfNeeded, secrets, tryUpdateSecrets, tryUpdateCatalog, catalogItems, registryItems } = useCatalogContext();
 
   if (!imagesLoadingResults || imagesLoadingResults.stderr) {
     return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -84,6 +79,27 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
       {!imagesLoadingResults && <Typography>Loading images...</Typography>}
       {imagesLoadingResults && <Alert sx={{ fontSize: '1.5em' }} action={<Button variant='outlined' color='secondary' onClick={() => loadImagesIfNeeded()}>Retry</Button>} title="Error loading images" severity="error">{imagesLoadingResults.stderr}</Alert>}
       <Typography>{imagesLoadingResults?.stdout}</Typography>
+    </Paper>
+  }
+
+  if (!secrets) {
+    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <CircularProgress />
+      <Typography>Loading secrets...</Typography>
+    </Paper>
+  }
+
+  if (!catalogItems) {
+    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <CircularProgress />
+      <Typography>Loading catalog...</Typography>
+    </Paper>
+  }
+
+  if (!registryItems) {
+    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <CircularProgress />
+      <Typography>Loading registry...</Typography>
     </Paper>
   }
 

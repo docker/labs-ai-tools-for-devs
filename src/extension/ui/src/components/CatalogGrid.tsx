@@ -8,7 +8,6 @@ import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { tryRunImageSync } from '../FileWatcher';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 import Secrets from '../Secrets';
-import { ParsedParameters } from './PromptConfig';
 import { useCatalogContext } from '../context/CatalogContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 
@@ -48,12 +47,15 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         registryItems,
         canRegister,
         config,
-        tryUpdateCatalog,
         registerCatalogItem,
         unregisterCatalogItem,
         tryUpdateSecrets,
         secrets
     } = useCatalogContext();
+
+    if (!registryItems) {
+        return <CircularProgress />
+    }
 
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
