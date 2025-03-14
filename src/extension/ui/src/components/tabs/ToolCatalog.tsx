@@ -1,11 +1,12 @@
 import React from 'react';
 import { Card, CardContent, Grid2, IconButton } from '@mui/material';
-import { CatalogItemCard, CatalogItemWithName } from '../PromptCard';
+import Tile, { CatalogItemWithName } from '../tile/Tile';
 import AddIcon from '@mui/icons-material/Add';
 import { Ref } from '../../Refs';
 import { v1 } from "@docker/extension-api-client-types";
 import Secrets from '../../Secrets';
-import { config } from 'process';
+import TileActions from '../tile/TileActions';
+import { useCatalogContext } from '../../context/CatalogContext';
 
 interface ToolCatalogProps {
     search: string;
@@ -34,20 +35,26 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
                 const hasAllConfig = !catalogItem.config || expectedKeys?.every((c: any) => config[catalogItem.name]?.[c] !== undefined);
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
-                        <CatalogItemCard
-                            hasAllConfig={hasAllConfig}
-                            setConfiguringItem={setConfiguringItem}
+                        <Tile
                             openUrl={() => {
                                 client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL(true));
                             }}
                             item={catalogItem}
-                            ddVersion={ddVersion}
-                            canRegister={canRegister}
                             registered={registryItems[catalogItem.name]?.ref !== undefined}
-                            register={register}
-                            unregister={unregister}
                             onSecretChange={onSecretChange}
                             secrets={secrets}
+                            ActionsSlot={<TileActions
+                                canRegister={canRegister}
+                                hasAllConfig={hasAllConfig}
+                                setConfiguringItem={setConfiguringItem}
+                                item={catalogItem}
+                                ddVersion={ddVersion}
+                                registered={registryItems[catalogItem.name]?.ref !== undefined}
+                                register={register}
+                                unregister={unregister}
+                                onSecretChange={onSecretChange}
+                                secrets={secrets}
+                            />}
                         />
                     </Grid2>
                 )
