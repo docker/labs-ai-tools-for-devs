@@ -11,6 +11,7 @@
     "@mui/icons-material": "6.4.5",
     "@mui/material": "6.4.5",
     "ansi-to-html": "^0.7.2",
+    "json-edit-react": "^1.23.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "yaml": "^2.3.1"
