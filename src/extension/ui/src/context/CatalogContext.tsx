@@ -15,7 +15,7 @@ interface CatalogContextType {
     config: { [key: string]: { [key: string]: ParsedParameters } };
     secrets: Secrets.Secret[];
     catalogItems: CatalogItemWithName[];
-    registryItems: { [key: string]: { ref: string; config: any } };
+    registryItems: { [key: string]: { ref: string; config: any } } | undefined;
     canRegister: boolean;
     imagesLoadingResults: ExecResult | null;
 
@@ -49,7 +49,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     const [config, setConfig] = useState<{ [key: string]: { [key: string]: ParsedParameters } }>({});
     const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
-    const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string; config: any } }>({});
+    const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string; config: any } } | undefined>(undefined);
     const [canRegister, setCanRegister] = useState<boolean>(false);
     const [imagesLoadingResults, setImagesLoadingResults] = useState<ExecResult | null>(null);
 
@@ -125,7 +125,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     // Register catalog item
     const registerCatalogItem = async (item: CatalogItemWithName, showNotification = true) => {
         try {
-            const currentRegistry = await getRegistry(client);
+            const currentRegistry = registryItems || {};
             const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
             if (item.config) {
                 newRegistry[item.name] = { ref: item.ref, config: item.config };
@@ -188,10 +188,13 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
 
     // Start syncing process
     const startSyncing = async () => {
-        await syncConfigWithRegistry(client);
-        await syncRegistryWithConfig(client);
         await tryUpdateRegistry();
         await tryUpdateConfig();
+        if (registryItems && config) {
+            console.log('syncing')
+            await syncConfigWithRegistry(client, registryItems);
+            await syncRegistryWithConfig(client, registryItems);
+        }
     };
 
     // Initialize everything
@@ -219,7 +222,6 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         registryItems,
         canRegister,
         imagesLoadingResults,
-
         tryUpdateConfig,
         tryUpdateSecrets,
         tryUpdateCatalog,
