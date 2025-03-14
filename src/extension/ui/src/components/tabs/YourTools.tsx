@@ -1,9 +1,14 @@
 import React from 'react';
 import { Grid2 } from '@mui/material';
-import { CatalogItemCard, CatalogItemWithName } from '../PromptCard';
-import { Ref } from '../../Refs';
+import Tile, { CatalogItemWithName } from '../tile/Tile';
 import Secrets from '../../Secrets';
 import { MCP_POLICY_NAME } from '../../Constants';
+import TileActions from '../tile/TileActions';
+import { v1 } from '@docker/extension-api-client-types';
+import { createDockerDesktopClient } from '@docker/extension-api-client';
+
+// Initialize the Docker Desktop client
+const client = createDockerDesktopClient();
 
 interface YourToolsProps {
     search: string;
@@ -11,7 +16,7 @@ interface YourToolsProps {
     config: { [key: string]: { [key: string]: any } };
     ddVersion: { version: string, build: number };
     canRegister: boolean;
-    setConfiguringItem: (item: any) => void;
+    setConfiguringItem: (item: CatalogItemWithName) => void;
     secrets: Secrets.Secret[];
 }
 
@@ -41,21 +46,24 @@ const YourTools: React.FC<YourToolsProps> = ({
 
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                        <CatalogItemCard
-                            hasAllConfig={hasAllConfig}
-                            ddVersion={ddVersion}
-                            item={catalogItem}
+                        <Tile
                             openUrl={() => { }}
-                            canRegister={canRegister}
+                            item={catalogItem}
                             registered={true}
-                            register={async () => { }}
-                            unregister={async () => { }}
-                            onSecretChange={async (secret) => {
-                                // This is a placeholder - actual implementation would need the client
-                                console.log('Secret change:', secret);
-                            }}
+                            onSecretChange={async () => { }}
                             secrets={secrets}
-                            setConfiguringItem={setConfiguringItem}
+                            ActionsSlot={<TileActions
+                                hasAllConfig={hasAllConfig}
+                                setConfiguringItem={setConfiguringItem}
+                                item={catalogItem}
+                                ddVersion={ddVersion}
+                                registered={true}
+                                register={async () => { }}
+                                unregister={async () => { }}
+                                onSecretChange={async () => { }}
+                                secrets={secrets}
+                                canRegister={canRegister}
+                            />}
                         />
                     </Grid2>
                 );

@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { IconButton, Alert, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
-import { CatalogItemWithName, CatalogItem } from './PromptCard';
+import { CatalogItemWithName, CatalogItem } from './tile/Tile';
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from 'yaml';
 import { getRegistry, syncConfigWithRegistry, syncRegistryWithConfig } from '../Registry';
@@ -9,20 +9,20 @@ import { tryRunImageSync } from '../FileWatcher';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 import Secrets from '../Secrets';
 import { ParsedParameters } from './PromptConfig';
+import { useCatalogContext } from '../context/CatalogContext';
+import { createDockerDesktopClient } from '@docker/extension-api-client';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
 const YourTools = React.lazy(() => import('./tabs/YourTools'));
 const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
 
+// Initialize the Docker Desktop client
+const client = createDockerDesktopClient();
+
 interface CatalogGridProps {
-    registryItems: { [key: string]: { ref: string, config: any } };
-    canRegister: boolean;
-    client: v1.DockerDesktopClient;
-    onRegistryChange: () => void;
     showSettings: () => void;
     settingsBadgeProps: BadgeProps;
     setConfiguringItem: (item: CatalogItemWithName) => void;
-    config: { [key: string]: { [key: string]: ParsedParameters } };
 }
 
 const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
@@ -39,119 +39,34 @@ const parseDDVersion = (ddVersion: string) => {
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
-    registryItems,
-    canRegister,
-    client,
-    onRegistryChange,
     showSettings,
     settingsBadgeProps,
     setConfiguringItem,
-    config
 }) => {
-    const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
+    const {
+        catalogItems,
+        registryItems,
+        canRegister,
+        config,
+        tryUpdateCatalog,
+        registerCatalogItem,
+        unregisterCatalogItem,
+        tryUpdateSecrets,
+        secrets
+    } = useCatalogContext();
+
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
-    const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
-
-    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, search);
-
-    const loadCatalog = async (showNotification = true) => {
-        const cachedCatalog = localStorage.getItem('catalog');
-        try {
-            const response = await fetch(CATALOG_URL);
-            const catalog = await response.text();
-            const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
-            const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            const filteredItems = filterCatalog(itemsWithName, registryItems, search);
-            setCatalogItems(filteredItems);
-            localStorage.setItem('catalog', JSON.stringify(filteredItems));
-            if (showNotification) {
-                client.desktopUI.toast.success('Catalog updated successfully.');
-            }
-        }
-        catch (error) {
-            if (cachedCatalog) {
-                setCatalogItems(JSON.parse(cachedCatalog));
-            }
-            if (showNotification) {
-                client.desktopUI.toast.error(`Failed to get latest catalog.${cachedCatalog ? ' Using cached catalog.' : ''}` + error);
-            }
-        }
-    }
-
-    const loadSecrets = async () => {
-        const response = await Secrets.getSecrets(client);
-        setSecrets(response || []);
-    }
 
     const loadDDVersion = async () => {
         const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
         setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
     }
 
-    const registerCatalogItem = async (item: CatalogItemWithName, showNotification = true) => {
-        try {
-            const currentRegistry = await getRegistry(client);
-            const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
-            const payload = JSON.stringify({
-                files: [{
-                    path: 'registry.yaml',
-                    content: stringify({ registry: newRegistry })
-                }]
-            })
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            if (showNotification) {
-                client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
-            }
-            onRegistryChange();
-            if (showNotification) {
-                setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
-            }
-            await syncConfigWithRegistry(client);
-            await syncRegistryWithConfig(client);
-        }
-        catch (error) {
-            if (showNotification) {
-                client.desktopUI.toast.error('Failed to register prompt: ' + error);
-            }
-        }
-    }
-
-    const unregisterCatalogItem = async (item: CatalogItemWithName) => {
-        try {
-            const currentRegistry = await getRegistry(client);
-            delete currentRegistry[item.name];
-            const payload = JSON.stringify({
-                files: [{
-                    path: 'registry.yaml',
-                    content: stringify({ registry: currentRegistry })
-                }]
-            })
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
-            onRegistryChange();
-            setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
-            await syncConfigWithRegistry(client);
-            await syncRegistryWithConfig(client);
-        }
-        catch (error) {
-            client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
-        }
-    }
-
     useEffect(() => {
-        loadCatalog(false);
-        loadSecrets();
         loadDDVersion();
-        const interval = setInterval(() => {
-            loadCatalog(false);
-            loadSecrets();
-        }, POLL_INTERVAL);
-        return () => {
-            clearInterval(interval);
-        }
     }, []);
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
@@ -161,7 +76,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     if (!ddVersion) {
         return <CircularProgress />
     }
-
 
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
@@ -225,7 +139,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         canRegister={canRegister}
                         register={registerCatalogItem}
                         unregister={unregisterCatalogItem}
-                        onSecretChange={loadSecrets}
+                        onSecretChange={tryUpdateSecrets}
                         secrets={secrets}
                         setConfiguringItem={setConfiguringItem}
                     />
