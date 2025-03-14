@@ -1,13 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { IconButton, Alert, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
-import { CatalogItemWithName, CatalogItem } from './tile/Tile';
-import { v1 } from "@docker/extension-api-client-types";
-import { parse, stringify } from 'yaml';
-import { getRegistry, syncConfigWithRegistry, syncRegistryWithConfig } from '../Registry';
+import { CatalogItemWithName } from './tile/Tile';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
-import { tryRunImageSync } from '../FileWatcher';
-import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
-import Secrets from '../Secrets';
 import { useCatalogContext } from '../context/CatalogContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 
@@ -23,9 +17,6 @@ interface CatalogGridProps {
     settingsBadgeProps: BadgeProps;
     setConfiguringItem: (item: CatalogItemWithName) => void;
 }
-
-const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
-    catalogItems.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
 
 const parseDDVersion = (ddVersion: string) => {
     //eg: Docker Desktop 4.40.0 (184396)
@@ -49,7 +40,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         config,
         registerCatalogItem,
         unregisterCatalogItem,
-        tryUpdateSecrets,
+        tryLoadSecrets,
         secrets
     } = useCatalogContext();
 
@@ -76,6 +67,11 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     )
 
     if (!ddVersion) {
+        return <CircularProgress />
+    }
+
+
+    if (!config) {
         return <CircularProgress />
     }
 
@@ -141,7 +137,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         canRegister={canRegister}
                         register={registerCatalogItem}
                         unregister={unregisterCatalogItem}
-                        onSecretChange={tryUpdateSecrets}
+                        onSecretChange={tryLoadSecrets}
                         secrets={secrets}
                         setConfiguringItem={setConfiguringItem}
                     />
