@@ -42,7 +42,7 @@ export interface TileActionsProps {
     ddVersion: { version: string, build: number };
 }
 
-const TileActions = ({ hasAllConfig, setConfiguringItem, item, canRegister, registered, register, unregister, onSecretChange, secrets, ddVersion }: TileActionsProps) => {
+const TileActions = ({ hasAllConfig, item, registered, register, unregister, onSecretChange, secrets, ddVersion }: TileActionsProps) => {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -91,12 +91,14 @@ const TileActions = ({ hasAllConfig, setConfiguringItem, item, canRegister, regi
                 </IconButton>
             </Tooltip>}
             <Tooltip title={registered ? "Unregistering this tile will hide it from MCP clients." : "Registering this tile will expose it to MCP clients."}>
-                <Switch checked={registered} onChange={(event, checked) => {
+                <Switch checked={registered} onChange={async (event, checked) => {
+                    setIsRegistering(true)
                     if (checked) {
-                        register(item)
+                        await register(item)
                     } else {
-                        unregister(item)
+                        await unregister(item)
                     }
+                    setIsRegistering(false)
                 }} />
             </Tooltip>
         </Stack>

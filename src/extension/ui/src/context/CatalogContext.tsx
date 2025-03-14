@@ -12,7 +12,7 @@ import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 interface CatalogContextType {
     // State
-    config: { [key: string]: { [key: string]: ParsedParameters } };
+    config: { [key: string]: { [key: string]: ParsedParameters } } | undefined;
     secrets: Secrets.Secret[];
     catalogItems: CatalogItemWithName[];
     registryItems: { [key: string]: { ref: string; config: any } } | undefined;
@@ -20,13 +20,14 @@ interface CatalogContextType {
     imagesLoadingResults: ExecResult | null;
 
     // Actions
-    tryUpdateConfig: () => Promise<void>;
-    tryUpdateSecrets: (secret: { name: string, value: string }) => Promise<void>;
-    tryUpdateCatalog: (showNotification?: boolean) => Promise<void>;
+    tryLoadConfig: () => Promise<void>;
+    tryLoadSecrets: () => Promise<void>;
+    tryLoadCatalog: (showNotification?: boolean) => Promise<void>;
+    tryLoadRegistry: () => Promise<void>;
     registerCatalogItem: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>;
     unregisterCatalogItem: (item: CatalogItemWithName) => Promise<void>;
     loadImagesIfNeeded: () => Promise<void>;
-    startSyncing: () => Promise<void>;
+    startPull: () => Promise<void>;
 }
 
 const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
@@ -46,7 +47,7 @@ interface CatalogProviderProps {
 
 export function CatalogProvider({ children, client }: CatalogProviderProps) {
     // State
-    const [config, setConfig] = useState<{ [key: string]: { [key: string]: ParsedParameters } }>({});
+    const [config, setConfig] = useState<{ [key: string]: { [key: string]: ParsedParameters } } | undefined>(undefined);
     const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
     const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
     const [registryItems, setRegistryItems] = useState<{ [key: string]: { ref: string; config: any } } | undefined>(undefined);
@@ -54,7 +55,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     const [imagesLoadingResults, setImagesLoadingResults] = useState<ExecResult | null>(null);
 
     // Load config from storage
-    const tryUpdateConfig = async () => {
+    const tryLoadConfig = async () => {
         try {
             const config = await getStoredConfig(client);
             setConfig(config);
@@ -67,14 +68,14 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     const tryUpdateSecrets = async (secret: { name: string, value: string }) => {
         try {
             await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
-            await loadSecrets();
+            await tryLoadSecrets();
         } catch (error) {
             client.desktopUI.toast.error('Failed to update secret: ' + error);
         }
     };
 
     // Load secrets
-    const loadSecrets = async () => {
+    const tryLoadSecrets = async () => {
         try {
             const response = await Secrets.getSecrets(client);
             setSecrets(response || []);
@@ -84,7 +85,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     };
 
     // Load catalog
-    const tryUpdateCatalog = async (showNotification = true) => {
+    const tryLoadCatalog = async (showNotification = true) => {
         const cachedCatalog = localStorage.getItem('catalog');
         try {
             const response = await fetch(CATALOG_URL);
@@ -107,7 +108,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     };
 
     // Load registry
-    const tryUpdateRegistry = async () => {
+    const tryLoadRegistry = async () => {
         setCanRegister(false);
         try {
             const result = await getRegistry(client);
@@ -128,7 +129,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             const currentRegistry = registryItems || {};
             const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
             if (item.config) {
-                newRegistry[item.name] = { ref: item.ref, config: item.config };
+                newRegistry[item.name] = { ref: item.ref, config: config?.[item.name] || {} };
             }
 
             const payload = JSON.stringify({
@@ -141,7 +142,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             if (showNotification) {
                 client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
             }
-            await tryUpdateRegistry();
+            await tryLoadRegistry();
             // Logic for showing reload modal would go here
         } catch (error) {
             if (showNotification) {
@@ -163,7 +164,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             });
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
             client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
-            await tryUpdateRegistry();
+            await tryLoadRegistry();
             // Logic for showing reload modal would go here
         } catch (error) {
             client.desktopUI.toast.error('Failed to unregister prompt: ' + error);
@@ -187,33 +188,36 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     };
 
     // Start syncing process
-    const startSyncing = async () => {
-        await tryUpdateRegistry();
-        await tryUpdateConfig();
-        if (registryItems && config) {
-            console.log('syncing')
-            await syncConfigWithRegistry(client, registryItems);
-            await syncRegistryWithConfig(client, registryItems);
-        }
+    const startPull = async () => {
+        await tryLoadRegistry();
+        await tryLoadConfig();
+        await tryLoadCatalog(false);
+        await tryLoadSecrets();
     };
+
+    const startSync = async () => {
+        if (registryItems && config) {
+            await syncConfigWithRegistry(client, registryItems, config);
+            await syncRegistryWithConfig(client, registryItems, config);
+        }
+    }
 
     // Initialize everything
     useEffect(() => {
         loadImagesIfNeeded().then(() => {
-            startSyncing();
-            tryUpdateCatalog(false);
-            loadSecrets();
-
+            startPull();
             // Set up polling
             const interval = setInterval(() => {
-                startSyncing();
-                tryUpdateCatalog(false);
-                loadSecrets();
+                startPull();
             }, POLL_INTERVAL);
 
             return () => clearInterval(interval);
         });
     }, []);
+
+    useEffect(() => {
+        startSync();
+    }, [registryItems, config])
 
     const value = {
         config,
@@ -222,13 +226,14 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         registryItems,
         canRegister,
         imagesLoadingResults,
-        tryUpdateConfig,
-        tryUpdateSecrets,
-        tryUpdateCatalog,
+        tryLoadConfig,
+        tryLoadSecrets,
+        tryLoadCatalog,
+        tryLoadRegistry,
         registerCatalogItem,
         unregisterCatalogItem,
         loadImagesIfNeeded,
-        startSyncing,
+        startPull,
     };
 
     return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

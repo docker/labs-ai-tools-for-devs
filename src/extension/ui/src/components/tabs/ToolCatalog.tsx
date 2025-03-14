@@ -31,7 +31,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
     return (
         <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
             {filteredCatalogItems.map((catalogItem) => {
-                const expectedKeys = catalogItem.config?.map((c: any) => Object.keys(c.parameters)).flat() || [];
+                const expectedKeys = catalogItem.config?.map((c: any) => c.name) || [];
                 const hasAllConfig = !catalogItem.config || expectedKeys?.every((c: any) => config[catalogItem.name]?.[c] !== undefined);
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>

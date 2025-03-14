@@ -63,28 +63,27 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
 // if it’s not true and the registry.yaml is invalid then the catalog item needs user assistance because the catalog has probably been updated with a breaking change
 
 // Replace conflicting config values with registry values
-export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }) => {
-    const storedConfig = await getStoredConfig(client) || {}
-    for (const [key, item] of Object.entries(registry)) {
-        const itemConfig = item.config || {}
-        const storedConfigItem = storedConfig[key]
-        if (storedConfigItem) {
-            const mergedConfig = mergeDeep(storedConfigItem, itemConfig)
-            storedConfig[key] = mergedConfig
+export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
+    console.log('Attempting to sync config using registry.', 'registry', registry, 'config', config)
+    for (const [registryItemName, registryItem] of Object.entries(registry)) {
+        const configInRegistry = registryItem.config
+        const configInConfigFile = config[registryItemName]
+        if (configInConfigFile) {
+            const mergedConfig = mergeDeep(configInConfigFile, configInRegistry)
+            config[registryItemName] = mergedConfig
         }
     }
-    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(storedConfig) }] }))
+    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(config) }] }))
 }
 
 //  Replace conflicting registry values with config values
-export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }) => {
-    const storedConfig = await getStoredConfig(client) || {}
-    for (const [key, item] of Object.entries(storedConfig)) {
-        const itemConfig = item || {}
-        const registryItem = registry[key]
+export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
+    console.log('Attempting to sync registry using config.', 'registry', registry, 'config', config)
+    for (const [itemName, itemConfig] of Object.entries(config)) {
+        const registryItem = registry[itemName]
         if (registryItem) {
             const mergedConfig = mergeDeep(registryItem.config, itemConfig)
-            registry[key].config = mergedConfig
+            registry[itemName].config = mergedConfig
         }
     }
     await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))

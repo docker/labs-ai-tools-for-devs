@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "./tile/Tile";
 import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
-import { getStoredConfig } from "../Registry";
+import { getStoredConfig, syncRegistryWithConfig } from "../Registry";
 import { stringify } from "yaml";
 import { tryRunImageSync } from "../FileWatcher";
 import { useCatalogContext } from "../context/CatalogContext";
@@ -146,7 +146,7 @@ const ConfigurationModal = ({
     secrets,
     onSecretChange
 }: ConfigurationModalProps) => {
-    const { config, registryItems, tryUpdateConfig, startSyncing } = useCatalogContext();
+    const { config, startPull, registryItems } = useCatalogContext();
     const theme = useTheme();
 
     // State for tabs
@@ -170,7 +170,7 @@ const ConfigurationModal = ({
     // Load config
     useEffect(() => {
         try {
-            const item = config[catalogItem.name] || {};
+            const item = config?.[catalogItem.name] || {};
             setLoadedConfig(item);
         } catch (error) {
             console.error(error);
@@ -185,10 +185,15 @@ const ConfigurationModal = ({
 
     // Save config to YAML
     const saveConfigToYaml = async (newConfig: { [key: string]: any }) => {
+        if (!registryItems || !config) {
+            return;
+        }
         try {
             setConfigLoading(true);
-            const currentStoredConfig = await getStoredConfig(client);
+            const currentStoredConfig = config;
+            console.log('currentStoredConfig', currentStoredConfig);
             currentStoredConfig[catalogItem.name] = newConfig;
+            console.log('newConfig', newConfig);
             const payload = JSON.stringify({
                 files: [{
                     path: 'config.yaml',
@@ -196,8 +201,11 @@ const ConfigurationModal = ({
                 }]
             });
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
-            await startSyncing();
-            console.log('Config saved successfully');
+            console.log('Config saved successfully, syncing');
+            await syncRegistryWithConfig(client, registryItems, currentStoredConfig);
+            await startPull();
+            console.log('Syncing complete');
+            client.desktopUI.toast.success('Config saved successfully.');
             setTimeout(() => {
                 setConfigLoading(false);
             }, 500);
@@ -217,6 +225,10 @@ const ConfigurationModal = ({
             setTabValue(0); // Config tab
         }
     }, [hasSecrets, hasConfig]);
+
+    if (!registryItems) {
+        return <CircularProgress />
+    }
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">

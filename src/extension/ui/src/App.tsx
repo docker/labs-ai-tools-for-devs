@@ -71,7 +71,7 @@ interface AppContentProps {
 }
 
 function AppContent({ settings, setSettings, mcpClientStates, configuringItem, setConfiguringItem, updateMCPClientStates }: AppContentProps) {
-  const { imagesLoadingResults, loadImagesIfNeeded, secrets, tryUpdateSecrets, tryUpdateCatalog, catalogItems, registryItems } = useCatalogContext();
+  const { imagesLoadingResults, loadImagesIfNeeded, secrets, catalogItems, registryItems, tryLoadSecrets } = useCatalogContext();
 
   if (!imagesLoadingResults || imagesLoadingResults.stderr) {
     return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -140,7 +140,7 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
           catalogItem={configuringItem}
           client={client}
           secrets={secrets}
-          onSecretChange={tryUpdateSecrets}
+          onSecretChange={tryLoadSecrets}
         />
       )}
 
