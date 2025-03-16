@@ -270,6 +270,9 @@
                                                  :workdir "/app"}}]})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/youtube-transcript:latest"
                                                  :workdir "/app"}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/notion-server:latest"
+                                                 :workdir "/app"
+                                                 :secrets {:notion.api_token "NOTION_API_TOKEN"} }}]})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
