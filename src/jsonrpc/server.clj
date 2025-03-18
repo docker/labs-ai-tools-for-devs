@@ -16,12 +16,14 @@
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
    [jsonrpc.socket-server :as socket-server]
+   jsonrpc.state
    [lsp4clj.coercer :as coercer]
    [lsp4clj.io-chan :as io-chan]
    [lsp4clj.io-server :refer [stdio-server]]
    [lsp4clj.server :as lsp.server]
    [mcp.client :as client]
    [medley.core :as medley]
+   nrepl
    [promesa.core :as p]
    [prompts.core :refer [get-prompts-dir registry]]
    shutdown
@@ -249,6 +251,7 @@
                             tools/function-handler
                             {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
                              :host-dir (-> @db* :host-dir)
+                             :server-id server-id
                              :thread-id thread-id})
                            ;; tool calls are functions, which are arguments,name maps, and ids
                            ;; mcp tool call params are also maps of name, and arguments
@@ -292,8 +295,6 @@
       (apply log-wrapper-fn log-args)
       (recur))))
 
-(def producers (atom []))
-
 (defn- init-dynamic-prompt-watcher [opts]
   (async/thread
     (let [{x :container}
@@ -307,7 +308,7 @@
                (when (= f "registry.yaml")
                  (try
                    (db/add-refs (db/registry-refs registry))
-                   (doseq [producer @producers]
+                   (doseq [producer @jsonrpc.state/producers]
                      (try
                        (producer/publish-tool-list-changed producer {})
                        (producer/publish-prompt-list-changed producer {})
@@ -317,7 +318,7 @@
                (when (string/ends-with? f ".md")
                  (try
                    (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
-                   (doseq [producer @producers]
+                   (doseq [producer @jsonrpc.state/producers]
                      (try
                        (producer/publish-tool-list-changed producer {})
                        (producer/publish-prompt-list-changed producer {})
@@ -346,8 +347,6 @@
            (when (fs/exists? (fs/file registry))
              (db/registry-refs registry)))))
 
-(def server-counter (atom 0))
-
 (defn server-context
   "create chan server options for any io chan server that we build"
   [{:keys [trace-level] :or {trace-level "off"} :as opts}]
@@ -367,6 +366,8 @@
      (init-dynamic-prompt-watcher opts)
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
+     ;; this won't do anything if nrepl is not present
+     (nrepl/setup-nrepl)
      ;; common server opts
      (merge
       {;:keyword-function identity
@@ -377,11 +378,10 @@
        :server-context-factory
        (fn [server]
          (let [producer (producer/->McpProducer server db*)]
-           (swap! producers conj producer)
+           (swap! jsonrpc.state/producers conj producer)
            {:db* db*
             :logger timbre-logger
             :producer producer
-            :server-id (swap! server-counter inc)
             :server server}))}
       (when (:mcp opts)
         {:in-chan-factory io-chan/mcp-input-stream->input-chan
@@ -400,6 +400,9 @@
                    :out System/out}))]
      (logger/info "Starting server...")
      ;; only on lsp.server/start will the stdio channels start being used
-     (let [{:keys [producer] :as context} ((:server-context-factory server-opts) server)]
+     (let [{:keys [producer] :as context} 
+           (assoc 
+             ((:server-context-factory server-opts) server)
+             :server-id (swap! jsonrpc.state/server-counter inc))]
        [producer (lsp.server/start server context)]))))
 

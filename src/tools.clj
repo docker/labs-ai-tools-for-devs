@@ -26,8 +26,8 @@
        resolve fail - callbacks"
   [{:keys [functions] :as defaults} function-name json-arg-string {:keys [resolve fail respond]}]
   (if-let [definition (->
-                       (->> (filter #(= function-name (-> % :function :name)) functions)
-                            first)
+                       (filter #(= function-name (-> % :function :name)) functions)
+                       first
                        :function)]
     (try
       (if (:container definition) ;; synchronous call to container function
@@ -90,7 +90,7 @@
     (fail "no function found")))
 
 (defn call-function
-  "  returns channel that will emit one message and then close"
+  "  returns a promise channel that will emit one message and then close"
   [level function-handler function-name arguments tool-call-id]
   (let [c (async/chan)]
     (try
@@ -98,6 +98,7 @@
        function-name
        arguments
        {:respond
+        ;; just forward the tool call response
         (fn [response]
           (jsonrpc/notify :start {:level level :role "tool" :content function-name})
           (jsonrpc/notify :message {:content (format "\n%s\n" response)})
@@ -105,6 +106,7 @@
             (async/>! c response)
             (async/close! c)))
         :resolve
+        ;; regular containers resolving successfully
         (fn [output]
           (jsonrpc/notify :start {:level level :role "tool" :content function-name})
           (jsonrpc/notify :message {:content (format "\n%s\n" output)})
@@ -112,6 +114,7 @@
             (async/>! c {:content output :role "tool" :tool_call_id tool-call-id})
             (async/close! c)))
         :fail
+        ;; regular containers failing
         (fn [output]
           (jsonrpc/notify :start {:level level :role "tool" :content function-name})
           (jsonrpc/notify :message {:content (format "function call failed %s" output)})

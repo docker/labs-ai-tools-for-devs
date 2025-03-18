@@ -28,7 +28,9 @@
   (prompts/get-prompts {:prompts f}))
 
 (defn tile-metadata [m]
-  {:tools (-> m :functions)
+  {:tools (->> (:functions m)
+               (map #(select-keys [:name] (:function %)))
+               (into []))
    :prompts (count (:messages m))
    :resources (or (:resources m) {})})
 

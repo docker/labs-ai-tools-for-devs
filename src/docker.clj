@@ -354,7 +354,14 @@
                                            (or (:entrypoint container-definition) Entrypoint) 
                                            (or (:command container-definition) Cmd)))]
     (-> container-definition
-        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint (:secrets container-definition) Env real-entrypoint)])
+        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint 
+                                             (:secrets container-definition) 
+                                             (concat
+                                               Env
+                                               (->> (:environment container-definition)
+                                                    (map (fn [[k v]] (format "%s=%s" k v)))
+                                                    (into []))) 
+                                             real-entrypoint)])
         (dissoc :command))))
 
 (defn run-streaming-function-with-no-stdin

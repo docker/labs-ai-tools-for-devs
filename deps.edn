@@ -17,4 +17,7 @@
         funcool/promesa {:mvn/version "9.0.470"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}
            :build {:ns-default build
-                   :deps {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}}}}
+                   :deps {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}}
+           :main-repl {:main-opts ["-m" "docker.main"]
+                       :extra-deps {cider/cider-nrepl {:mvn/version "0.47.1"}
+                                    borkdude/dynaload {:mvn/version "0.3.5"}}}}}
