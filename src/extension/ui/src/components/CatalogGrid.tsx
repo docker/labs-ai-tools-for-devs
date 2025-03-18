@@ -144,13 +144,16 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 )}
                 {tab === 1 && (
                     <YourTools
-                        search={search}
                         registryItems={registryItems}
                         config={config}
-                        ddVersion={ddVersion}
-                        canRegister={canRegister}
-                        setConfiguringItem={setConfiguringItem}
+                        search={search}
+                        catalogItems={catalogItems}
+                        unregister={unregisterCatalogItem}
+                        onSecretChange={tryLoadSecrets}
                         secrets={secrets}
+                        setConfiguringItem={setConfiguringItem}
+                        canRegister={canRegister}
+                        ddVersion={ddVersion}
                     />
                 )}
                 {tab === 2 && ddVersion && (
