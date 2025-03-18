@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid2 } from '@mui/material';
+import { Alert, AlertTitle, Grid2 } from '@mui/material';
 import Tile, { CatalogItemWithName } from '../tile/Tile';
 import Secrets from '../../Secrets';
 import { MCP_POLICY_NAME } from '../../Constants';
@@ -14,36 +14,40 @@ interface YourToolsProps {
     search: string;
     registryItems: { [key: string]: { ref: string, config: any } };
     config: { [key: string]: { [key: string]: any } };
-    ddVersion: { version: string, build: number };
     canRegister: boolean;
+    unregister: (item: CatalogItemWithName) => Promise<void>;
     setConfiguringItem: (item: CatalogItemWithName) => void;
     secrets: Secrets.Secret[];
+    catalogItems: CatalogItemWithName[];
+    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
+    ddVersion: { version: string, build: number };
 }
 
 const YourTools: React.FC<YourToolsProps> = ({
     search,
     registryItems,
-    config,
+    catalogItems,
     ddVersion,
     canRegister,
     setConfiguringItem,
-    secrets
+    secrets,
+    unregister,
+    onSecretChange,
+    config
 }) => {
     return (
         <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
             {Object.entries(registryItems).map(([name, item]) => {
-                const hasAllConfig = item.config?.map((c: any) => c.name).every((c: any) => config[name]?.[c]);
                 if (!name.toLowerCase().includes(search.toLowerCase())) return null;
-
-                const catalogItem: CatalogItemWithName = {
-                    name,
-                    ref: item.ref,
-                    prompts: 0,
-                    resources: [],
-                    tools: [],
-                    config: item.config
-                };
-
+                const catalogItem = catalogItems.find(c => c.name === name);
+                const unassignedConfig = catalogItem?.config?.filter((c: any) => !config[name]?.[c]) || [];
+                const unassignedSecrets = catalogItem?.secrets?.filter((s: any) => !secrets.find((s: any) => s.name === s)) || [];
+                if (!catalogItem) return <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
+                    <Alert severity="error">
+                        <AlertTitle>Catalog item not found</AlertTitle>
+                        You have registered a tile named <strong>{name}</strong> but it is not in the catalog.If this is not intentional, the catalog may have changed since.
+                    </Alert>
+                </Grid2>;
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                         <Tile
@@ -53,16 +57,16 @@ const YourTools: React.FC<YourToolsProps> = ({
                             onSecretChange={async () => { }}
                             secrets={secrets}
                             ActionsSlot={<TileActions
-                                hasAllConfig={hasAllConfig}
                                 setConfiguringItem={setConfiguringItem}
                                 item={catalogItem}
                                 ddVersion={ddVersion}
                                 registered={true}
-                                register={async () => { }}
-                                unregister={async () => { }}
-                                onSecretChange={async () => { }}
+                                register={() => Promise.resolve()}
+                                unregister={unregister}
+                                onSecretChange={onSecretChange}
                                 secrets={secrets}
                                 canRegister={canRegister}
+                                unAssignedConfig={[]}
                             />}
                         />
                     </Grid2>
