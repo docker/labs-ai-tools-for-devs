@@ -78,13 +78,20 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
 
 //  Replace conflicting registry values with config values
 export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
-    console.log('Attempting to sync registry using config.', 'registry', registry, 'config', config)
+    const oldRegString = JSON.stringify({ registry })
     for (const [itemName, itemConfig] of Object.entries(config)) {
         const registryItem = registry[itemName]
         if (registryItem) {
-            const mergedConfig = mergeDeep(registryItem.config, itemConfig)
+            const mergedConfig = mergeDeep(registryItem.config || {}, itemConfig)
             registry[itemName].config = mergedConfig
         }
     }
-    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))
+    const newRegString = JSON.stringify({ registry })
+    if (oldRegString !== newRegString) {
+        console.log('Updating registry with new config.', 'oldRegString', oldRegString, 'newRegString', newRegString)
+        await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))
+    }
+    else {
+        console.log('No changes to registry.', 'oldRegString', oldRegString, 'newRegString', newRegString)
+    }
 }
