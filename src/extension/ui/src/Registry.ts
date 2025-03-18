@@ -64,7 +64,7 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
 
 // Replace conflicting config values with registry values
 export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
-    console.log('Attempting to sync config using registry.', 'registry', registry, 'config', config)
+    const oldConfigString = JSON.stringify({ config })
     for (const [registryItemName, registryItem] of Object.entries(registry)) {
         const configInRegistry = registryItem.config
         const configInConfigFile = config[registryItemName]
@@ -73,7 +73,14 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
             config[registryItemName] = mergedConfig
         }
     }
-    await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(config) }] }))
+    const newConfigString = JSON.stringify({ config })
+    if (oldConfigString !== newConfigString) {
+        console.log('Updating config with new registry.', 'oldConfigString', oldConfigString, 'newConfigString', newConfigString)
+        await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(config) }] }))
+    }
+    else {
+        console.log('No registry changes to sync with config.', 'oldConfigString', oldConfigString, 'newConfigString', newConfigString)
+    }
 }
 
 //  Replace conflicting registry values with config values
@@ -92,6 +99,6 @@ export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, reg
         await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))
     }
     else {
-        console.log('No changes to registry.', 'oldRegString', oldRegString, 'newRegString', newRegString)
+        console.log('No config changes to sync with registry.', 'oldRegString', oldRegString, 'newRegString', newRegString)
     }
 }
