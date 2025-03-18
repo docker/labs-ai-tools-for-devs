@@ -1,4 +1,4 @@
-import { Badge, Box, CircularProgress, IconButton, Stack, Switch, Tooltip, useTheme } from "@mui/material";
+import { Alert, Badge, Box, CircularProgress, IconButton, Stack, Switch, Tooltip, useTheme } from "@mui/material";
 import { Article, AttachFile, Build, Settings } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import Secrets from "../../Secrets";
@@ -30,7 +30,6 @@ export interface CatalogItemWithName extends CatalogItem {
 }
 
 export interface TileActionsProps {
-    hasAllConfig: boolean;
     setConfiguringItem: (item: CatalogItemWithName) => void;
     item: CatalogItemWithName; // Associated CatalogItemWithName
     canRegister: boolean;
@@ -40,9 +39,24 @@ export interface TileActionsProps {
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
     secrets: Secrets.Secret[];
     ddVersion: { version: string, build: number };
+    unAssignedConfig: { name: string, assigned: boolean }[];
 }
 
-const TileActions = ({ hasAllConfig, item, registered, register, unregister, onSecretChange, secrets, ddVersion }: TileActionsProps) => {
+const TileConfigBadge = ({ children, unAssignedConfig, unAssignedSecrets }: { children: React.ReactNode, unAssignedConfig: { name: string, assigned: boolean }[], unAssignedSecrets: { name: string, assigned: boolean }[] }) => {
+    if (unAssignedConfig.length > 0) {
+        return <Badge badgeContent={unAssignedConfig.length} color="error">
+            {children}
+        </Badge>
+    }
+    if (unAssignedSecrets.length > 0) {
+        return <Badge badgeContent={unAssignedSecrets.length} color="error">
+            {children}
+        </Badge>
+    }
+    return <>{children}</>;
+}
+
+const TileActions = ({ item, registered, register, unregister, onSecretChange, secrets, ddVersion, unAssignedConfig }: TileActionsProps) => {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -50,17 +64,20 @@ const TileActions = ({ hasAllConfig, item, registered, register, unregister, onS
     const [isRegistering, setIsRegistering] = useState(false)
     const [showConfigModal, setShowConfigModal] = useState(false)
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
-    const [tooltipOpen, setTooltipOpen] = useState(false) // Tooltip is controlled because it needs to be programatically closed.
 
     useEffect(() => {
         loadAssignedSecrets()
     }, [secrets])
 
-    const hasAllSecrets = assignedSecrets.every(s => s.assigned)
+    const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
+
+    const hasAllSecrets = unAssignedSecrets.length === 0
 
     const hasDDVersionWithSecretSupport = ddVersion && ddVersion.build >= DD_BUILD_WITH_SECRET_SUPPORT;
 
     const canBeConfigured = assignedSecrets.length > 0 || item.config
+
+    const hasAllConfig = unAssignedConfig.length === 0
 
     const getActionButton = () => {
         if (isRegistering) {
@@ -68,11 +85,16 @@ const TileActions = ({ hasAllConfig, item, registered, register, unregister, onS
                 <CircularProgress size={20} />
             </Tooltip>
         }
+
         if (!hasAllSecrets || !hasAllConfig) {
             return <Stack direction="row" spacing={0} alignItems="center">
                 <Tooltip title={hasAllSecrets ? "Missing configuration. Click to set." : hasDDVersionWithSecretSupport ? "Missing secrets. Click to set." : getUnsupportedSecretMessage(ddVersion)}>
                     <IconButton onClick={() => setShowConfigModal(true)}>
-                        <Settings sx={{ color: 'text.secondary' }} />
+                        <TileConfigBadge unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets}>
+
+                            <Settings sx={{ color: 'text.secondary' }} />
+
+                        </TileConfigBadge>
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="This tile needs configuration before it can be used.">

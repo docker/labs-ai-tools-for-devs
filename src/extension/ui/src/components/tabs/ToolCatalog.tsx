@@ -33,6 +33,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
             {filteredCatalogItems.map((catalogItem) => {
                 const expectedKeys = catalogItem.config?.map((c: any) => c.name) || [];
                 const hasAllConfig = !catalogItem.config || expectedKeys?.every((c: any) => config[catalogItem.name]?.[c] !== undefined);
+                const unAssignedConfig = expectedKeys?.filter((c: any) => config[catalogItem.name]?.[c] === undefined);
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                         <Tile
@@ -45,7 +46,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
                             secrets={secrets}
                             ActionsSlot={<TileActions
                                 canRegister={canRegister}
-                                hasAllConfig={hasAllConfig}
+                                unAssignedConfig={unAssignedConfig}
                                 setConfiguringItem={setConfiguringItem}
                                 item={catalogItem}
                                 ddVersion={ddVersion}
