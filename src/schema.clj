@@ -62,7 +62,7 @@
 (s/def :container/network_mode (s/or :standard #{"host" "none" "bridge"}
                                      :container (fn [s] (re-find #"container:.*" s))
                                      :custom string?))
-(s/def :container/environment (s/map-of string? string?))
+(s/def :container/environment (s/map-of keyword? string?))
 (s/def :tool/container (s/keys :req-un [:container/image]
                                :opt-un [::host-dir
                                         ::thread-id
