@@ -388,3 +388,8 @@ registry:
     - {name: notion_search}
     prompts: 0
     resources: {}
+  openapi-schema:
+    description: |
+      exposes OpenAPI schema information to Large Language Models (LLMs) like Claude. This server allows an LLM to explore and understand OpenAPI specifications through a set of specialized tools.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/openapi-schema.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
