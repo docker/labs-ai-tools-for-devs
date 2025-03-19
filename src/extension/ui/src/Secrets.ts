@@ -1,7 +1,7 @@
 // From secrets.yaml
 
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from "./components/PromptCard";
+import { CatalogItemWithName } from "./components/tile/Tile";
 
 namespace Secrets {
     export type Secret = {
