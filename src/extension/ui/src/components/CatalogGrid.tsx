@@ -4,6 +4,7 @@ import { CatalogItemWithName } from './tile/Tile';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { useCatalogContext } from '../context/CatalogContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
+import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
 const YourTools = React.lazy(() => import('./tabs/YourTools'));
@@ -54,8 +55,17 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
 
     const loadDDVersion = async () => {
-        const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
-        setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
+        try {
+            const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
+            setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
+        } catch (error) {
+            if ((error as ExecResult).stderr) {
+                client.desktopUI.toast.error('Error loading Docker Desktop version: ' + (error as ExecResult).stderr);
+            }
+            else {
+                client.desktopUI.toast.error('Error loading Docker Desktop version: ' + (error as Error).message);
+            }
+        }
     }
 
     useEffect(() => {

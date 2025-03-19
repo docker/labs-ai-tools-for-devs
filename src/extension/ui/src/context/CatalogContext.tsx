@@ -28,6 +28,7 @@ interface CatalogContextType {
     unregisterCatalogItem: (item: CatalogItemWithName) => Promise<void>;
     loadImagesIfNeeded: () => Promise<void>;
     startPull: () => Promise<void>;
+    tryUpdateSecrets: (secret: { name: string, value: string }) => Promise<void>;
 }
 
 const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
@@ -234,6 +235,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         unregisterCatalogItem,
         loadImagesIfNeeded,
         startPull,
+        tryUpdateSecrets
     };
 
     return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

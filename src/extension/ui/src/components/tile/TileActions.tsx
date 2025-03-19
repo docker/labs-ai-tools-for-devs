@@ -134,8 +134,6 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
                 onClose={() => setShowConfigModal(false)}
                 catalogItem={item}
                 client={client}
-                secrets={secrets}
-                onSecretChange={onSecretChange}
             />
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>

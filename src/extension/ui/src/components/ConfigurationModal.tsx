@@ -134,8 +134,6 @@ interface ConfigurationModalProps {
     onClose: () => void;
     catalogItem: CatalogItemWithName;
     client: v1.DockerDesktopClient;
-    secrets: Secrets.Secret[];
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
 }
 
 const ConfigurationModal = ({
@@ -143,10 +141,8 @@ const ConfigurationModal = ({
     onClose,
     catalogItem,
     client,
-    secrets,
-    onSecretChange
 }: ConfigurationModalProps) => {
-    const { config, startPull, registryItems } = useCatalogContext();
+    const { config, startPull, registryItems, tryUpdateSecrets, secrets } = useCatalogContext();
     const theme = useTheme();
 
     // State for tabs
@@ -273,11 +269,9 @@ const ConfigurationModal = ({
                                             {changedSecrets[secret.name] && (
                                                 <IconButton onClick={() => {
                                                     setSecretLoading(true);
-                                                    onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
+                                                    tryUpdateSecrets({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
                                                         setSecretLoading(false);
-                                                        const newChangedSecrets = { ...changedSecrets };
-                                                        delete newChangedSecrets[secret.name];
-                                                        setChangedSecrets(newChangedSecrets);
+                                                        setChangedSecrets({ ...changedSecrets, [secret.name]: undefined });
                                                     });
                                                 }}>
                                                     {secretLoading ? <CircularProgress size={20} /> : <Save />}

@@ -139,8 +139,6 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
           onClose={() => setConfiguringItem(null)}
           catalogItem={configuringItem}
           client={client}
-          secrets={secrets}
-          onSecretChange={tryLoadSecrets}
         />
       )}
 
