@@ -44,12 +44,12 @@ export interface TileActionsProps {
 
 const TileConfigBadge = ({ children, unAssignedConfig, unAssignedSecrets }: { children: React.ReactNode, unAssignedConfig: { name: string, assigned: boolean }[], unAssignedSecrets: { name: string, assigned: boolean }[] }) => {
     if (unAssignedConfig.length > 0) {
-        return <Badge badgeContent={unAssignedConfig.length} color="error">
+        return <Badge badgeContent={unAssignedConfig.length} color="secondary">
             {children}
         </Badge>
     }
     if (unAssignedSecrets.length > 0) {
-        return <Badge badgeContent={unAssignedSecrets.length} color="error">
+        return <Badge badgeContent={unAssignedSecrets.length} color="secondary">
             {children}
         </Badge>
     }
