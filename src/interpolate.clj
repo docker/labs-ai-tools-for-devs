@@ -19,7 +19,8 @@
 
 (comment
   "this allows us to expand strings into lists of strings to be spread into container definitions"
-  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}}))
+  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}})
+  (selmer/render "{{hello.you|volume|into}}" {}))
 
 (defn interpolate [m template]
   (when-let [s (selmer/render template m {})]
@@ -53,9 +54,9 @@
                         (-> definition :container :command)
                         arg-context)}
              (when (-> definition :container :entrypoint)
-               {:mounts (->> (-> definition :container :entrypoint)
-                             (map (fn [s] (first (interpolate arg-context s))))
-                             (into []))})
+               {:entrypoint (->> (-> definition :container :entrypoint)
+                                 (map (fn [s] (first (interpolate arg-context s))))
+                                 (into []))})
              (when (-> definition :container :mounts)
                {:mounts (->> (-> definition :container :mounts)
                              (map (fn [s] (first (interpolate arg-context s))))

@@ -162,6 +162,7 @@
                      dead-channel ([v _] v)
                      (async/timeout 15000) :timeout)]
       (->> (-> response :result :tools)
+           ;; add container definition to every tool
            (map #(assoc % :container (assoc container-definition :type :mcp)))
            (into [])))))
 

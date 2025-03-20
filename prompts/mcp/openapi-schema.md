@@ -4,6 +4,6 @@ mcp:
       image: vonwig/openapi-schema:latest
       workdir: /app
       volumes:
-        - "{{openApiSchemaPath}}:{{openApiSchemaPath}}"
+        - "{{openApiSchemaPath|volume|into}}"
 ---
 
