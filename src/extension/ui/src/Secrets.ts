@@ -1,7 +1,7 @@
 // From secrets.yaml
 
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from "./components/PromptCard";
+import { CatalogItemWithName } from "./components/tile/Tile";
 
 namespace Secrets {
     export type Secret = {
@@ -29,7 +29,6 @@ namespace Secrets {
     export async function addSecret(client: v1.DockerDesktopClient, secret: Secret): Promise<void> {
         try {
             const response = await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', secret.value]);
-            console.log('Response', response)
             client.desktopUI.toast.success('Secret set successfully')
         } catch (error) {
             if ((error as any).stderr) {

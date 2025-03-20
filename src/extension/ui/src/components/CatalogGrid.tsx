@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, IconButton, Alert, Stack, Button, Typography, Grid2, Select, MenuItem, FormControl, InputLabel, Switch, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, InputAdornment, CircularProgress } from '@mui/material';
-import { CatalogItemWithName, CatalogItemCard, CatalogItem } from './PromptCard';
-import AddIcon from '@mui/icons-material/Add';
-import { Ref } from '../Refs';
-import { v1 } from "@docker/extension-api-client-types";
-import { parse, stringify } from 'yaml';
-import { getRegistry } from '../Registry';
+import React, { Suspense, useEffect, useState } from 'react';
+import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
+import { CatalogItemWithName } from './tile/Tile';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
-import { tryRunImageSync } from '../FileWatcher';
-import { CATALOG_URL, DD_BUILD_WITH_SECRET_SUPPORT, MCP_POLICY_NAME, POLL_INTERVAL } from '../Constants';
-import { SecretList } from './SecretList';
-import Secrets from '../Secrets';
+import { useCatalogContext } from '../context/CatalogContext';
+import { createDockerDesktopClient } from '@docker/extension-api-client';
+import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
+
+const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
+const YourTools = React.lazy(() => import('./tabs/YourTools'));
+const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
+
+// Initialize the Docker Desktop client
+const client = createDockerDesktopClient();
 
 interface CatalogGridProps {
-    registryItems: { [key: string]: { ref: string } };
-    canRegister: boolean;
-    client: v1.DockerDesktopClient;
-    onRegistryChange: () => void;
     showSettings: () => void;
     settingsBadgeProps: BadgeProps;
+    setConfiguringItem: (item: CatalogItemWithName) => void;
 }
-
-const filterCatalog = (catalogItems: CatalogItemWithName[], registryItems: { [key: string]: { ref: string } }, search: string) =>
-    catalogItems.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
 
 const parseDDVersion = (ddVersion: string) => {
     //eg: Docker Desktop 4.40.0 (184396)
@@ -35,113 +30,46 @@ const parseDDVersion = (ddVersion: string) => {
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
-    registryItems,
-    canRegister,
-    client,
-    onRegistryChange,
     showSettings,
-    settingsBadgeProps
+    settingsBadgeProps,
+    setConfiguringItem,
 }) => {
-    const [catalogItems, setCatalogItems] = useState<CatalogItemWithName[]>([]);
+    const {
+        catalogItems,
+        registryItems,
+        canRegister,
+        config,
+        registerCatalogItem,
+        unregisterCatalogItem,
+        tryLoadSecrets,
+        secrets
+    } = useCatalogContext();
+
+    if (!registryItems) {
+        return <CircularProgress />
+    }
+
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
-    const [secrets, setSecrets] = useState<Secrets.Secret[]>([]);
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
 
-    const filteredCatalogItems = filterCatalog(catalogItems, registryItems, search);
-
-    const loadCatalog = async (showNotification = true) => {
-        const cachedCatalog = localStorage.getItem('catalog');
-        try {
-            const response = await fetch(CATALOG_URL);
-            const catalog = await response.text();
-            const items = parse(catalog)['registry'] as { [key: string]: CatalogItem }
-            const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            const filteredItems = filterCatalog(itemsWithName, registryItems, search);
-            setCatalogItems(filteredItems);
-            localStorage.setItem('catalog', JSON.stringify(filteredItems));
-            if (showNotification) {
-                client.desktopUI.toast.success('Catalog updated successfully.');
-            }
-        }
-        catch (error) {
-            if (cachedCatalog) {
-                setCatalogItems(JSON.parse(cachedCatalog));
-            }
-            if (showNotification) {
-                client.desktopUI.toast.error(`Failed to get latest catalog.${cachedCatalog ? ' Using cached catalog.' : ''}` + error);
-            }
-        }
-    }
-
-    const loadSecrets = async () => {
-        const response = await Secrets.getSecrets(client);
-        setSecrets(response || []);
-    }
-
     const loadDDVersion = async () => {
-        const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
-        setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
-    }
-
-    const registerCatalogItem = async (item: CatalogItemWithName, showNotification = true) => {
         try {
-            const currentRegistry = await getRegistry(client);
-            const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
-            const payload = JSON.stringify({
-                files: [{
-                    path: 'registry.yaml',
-                    content: stringify({ registry: newRegistry })
-                }]
-            })
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            if (showNotification) {
-                client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
+            const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
+            setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
+        } catch (error) {
+            if ((error as ExecResult).stderr) {
+                client.desktopUI.toast.error('Error loading Docker Desktop version: ' + (error as ExecResult).stderr);
             }
-            onRegistryChange();
-            if (showNotification) {
-                setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
+            else {
+                client.desktopUI.toast.error('Error loading Docker Desktop version: ' + (error as Error).message);
             }
-        }
-        catch (error) {
-            if (showNotification) {
-                client.desktopUI.toast.error('Failed to register prompt: ' + error);
-            }
-        }
-    }
-
-    const unregisterCatalogItem = async (item: CatalogItemWithName) => {
-        try {
-            const currentRegistry = await getRegistry(client);
-            delete currentRegistry[item.name];
-            const payload = JSON.stringify({
-                files: [{
-                    path: 'registry.yaml',
-                    content: stringify({ registry: currentRegistry })
-                }]
-            })
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`])
-            client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
-            onRegistryChange();
-            setShowReloadModal(!localStorage.getItem(NEVER_SHOW_AGAIN_KEY));
-        }
-        catch (error) {
-            client.desktopUI.toast.error('Failed to unregister prompt: ' + error)
         }
     }
 
     useEffect(() => {
-        loadCatalog(false);
-        loadSecrets();
         loadDDVersion();
-        const interval = setInterval(() => {
-            loadCatalog(false);
-            loadSecrets();
-        }, POLL_INTERVAL);
-        return () => {
-            clearInterval(interval);
-        }
     }, []);
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
@@ -153,14 +81,21 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }
 
 
+    if (!config) {
+        return <CircularProgress />
+    }
+
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
             <Dialog open={showReloadModal} onClose={() => setShowReloadModal(false)}>
                 <DialogTitle>Registry Updated</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ marginBottom: 2 }}>
-                        You have updated the registry.
-                        Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                        You have updated the registry. Please refresh your MCP clients so that they get the new tools.
+                        <Alert severity="info">
+                            <AlertTitle>Claude Desktop</AlertTitle>
+                            Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                        </Alert>
                     </Typography>
                     <Stack direction="row" justifyContent="space-between">
                         <Button onClick={() => {
@@ -175,7 +110,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            <Tabs value={tab} onChange={(e, v) => setTab(v)} sx={{ mb: 0, mt: 1 }}>
+            <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ width: '100%' }}>
                 <Tooltip title="These are all of the tiles you have available across the catalog.">
                     <Tab sx={{ fontSize: '1.5em' }} label="Tool Catalog" />
                 </Tooltip>
@@ -201,54 +136,47 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         </Badge>
                     </IconButton>
                 </Stack>
-            </FormGroup >
+            </FormGroup>
 
-            {tab === 0 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {filteredCatalogItems.map((item) => (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.name}>
-                        <CatalogItemCard
-                            openUrl={() => {
-                                client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                            }}
-                            item={item}
-                            ddVersion={ddVersion}
-                            canRegister={canRegister}
-                            registered={Object.keys(registryItems).some((i) => i === item.name)}
-                            register={registerCatalogItem}
-                            unregister={unregisterCatalogItem}
-                            onSecretChange={async (secret) => {
-                                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                                loadSecrets();
-                            }}
-                            secrets={secrets}
-                        />
-                    </Grid2>
-                ))}
-                <Grid2 size={12}>
-                    <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <CardContent>
-                            <IconButton sx={{ height: '100%' }} onClick={() => {
-                                client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
-                            }}>
-                                <AddIcon sx={{ width: '100%', height: 100 }} />
-                            </IconButton>
-                        </CardContent>
-                    </Card>
-                </Grid2>
-            </Grid2>}
-            {tab === 1 && <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
-                {Object.entries(registryItems).map(([name, item]) => (
-                    name.toLowerCase().includes(search.toLowerCase()) && <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                        <CatalogItemCard ddVersion={ddVersion} item={catalogItems.find((i) => i.name === name)!} openUrl={() => {
-                            client.host.openExternal(Ref.fromRef(item.ref).toURL(true));
-                        }} canRegister={canRegister} registered={true} register={registerCatalogItem} unregister={unregisterCatalogItem} onSecretChange={async (secret) => {
-                            await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [MCP_POLICY_NAME] })
-                            loadSecrets();
-                        }} secrets={secrets} />
-                    </Grid2>
-                ))}
-            </Grid2>}
-            {tab === 2 && ddVersion && <SecretList secrets={secrets} ddVersion={ddVersion} />}
-        </Stack >
+            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
+                {tab === 0 && (
+                    <ToolCatalog
+                        registryItems={registryItems}
+                        config={config}
+                        search={search}
+                        catalogItems={catalogItems}
+                        client={client}
+                        ddVersion={ddVersion}
+                        canRegister={canRegister}
+                        register={registerCatalogItem}
+                        unregister={unregisterCatalogItem}
+                        onSecretChange={tryLoadSecrets}
+                        secrets={secrets}
+                        setConfiguringItem={setConfiguringItem}
+                    />
+                )}
+                {tab === 1 && (
+                    <YourTools
+                        registryItems={registryItems}
+                        config={config}
+                        search={search}
+                        catalogItems={catalogItems}
+                        unregister={unregisterCatalogItem}
+                        onSecretChange={tryLoadSecrets}
+                        secrets={secrets}
+                        setConfiguringItem={setConfiguringItem}
+                        canRegister={canRegister}
+                        ddVersion={ddVersion}
+                    />
+                )}
+                {tab === 2 && ddVersion && (
+                    <YourEnvironment
+                        secrets={secrets}
+                        ddVersion={ddVersion}
+                        config={config}
+                    />
+                )}
+            </Suspense>
+        </Stack>
     );
 };
