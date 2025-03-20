@@ -60,6 +60,19 @@
    https://docs.docker.com/reference/dockerfile/#volume
    see https://hub.docker.com/r/alpine/git for usage guidelines")
 
+(defn reset-hard [{:keys [dir ref]}]
+  (docker/run-container
+   (merge
+    {:image "alpine/git:latest"
+     :command (concat ["reset" "--hard"]
+                      (if ref [(format "origin/%s" ref)] ["origin/main"]))}
+    (if (string/starts-with? (str dir) "/prompts")
+      {:workdir (str dir)
+       :volumes ["docker-prompts-git:/git"
+                 "docker-prompts:/prompts:rw"]}
+      {:host-dir (str dir)
+       :volumes ["docker-prompts-git:/git"]}))))
+
 (defn pull [{:keys [dir ref]}]
   (docker/run-container
    (merge
@@ -102,14 +115,20 @@
        (partition-by (comp :ref-hash :ref))
        (map first)))
 
+(defn check-for-divergent [{:keys [exit-code pty-output] :as v}]
+  (if (and (= 128 exit-code) (string/includes? pty-output "divergent"))
+    (logger/info (format "repair divergent branches: %s" pty-output))
+    v))
+
 (defn refresh-cache
   " pure side-effect - clone or pull the cache"
   [coll]
   (doseq [m coll]
     (let [c (if (fs/exists? (-> m :ref :dir))
-              (pull (:ref m))
+              (or (check-for-divergent (pull (:ref m))) (reset-hard (:ref m)))
               (clone (:ref m)))]
       (when (not (= 0 (:exit-code c)))
+        (logger/error (format "%s git error (%d): %s" (:ref m) (:exit-code c) (:pty-output c)))
         (jsonrpc/notify :error {:content (str c)})))))
 
 (defn cached-prompt-file [{{:keys [dir path]} :ref :as m}]

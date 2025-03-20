@@ -15,6 +15,8 @@
 
 (def counter (atom 0))
 
+(def stateful-stdio-servers (atom {}))
+
 (defn- mcp-stdio-stateless-server
   "create a running container with an attached socket-client 
    and a running Thread that is reading messages from the socket (both stdout and stderr)
@@ -52,7 +54,7 @@
                               c ([v _] v)
                               (async/timeout 15000) :timeout)]
         (cond
-          ;; read-loop has stopped
+          ;; read-loop has stopped or timed out
           (#{:stopped :timeout} block)
           (do
             (logger/info "socket read loop " block)
@@ -73,121 +75,121 @@
           (nil? block)
           (async/put! dead-channel :closed)
 
-          ;; non-stdout message probably
+          ;; non-stdout message - show to user
           :else
           (do
-            (logger/debug "socket read loop " (:stderr block))
+            (logger/info "socket read loop " (:stderr block))
             (recur (async/alt!
                      c ([v _] v)
                      (async/timeout 15000) :timeout)))))
+
       ;; add a function to send a jsonrpc request
-      (-> x
-          (assoc :request
-                 (fn [message]
-                   (let [id (swap! counter inc)
-                         c (async/promise-chan)]
-                     (swap! response-promises assoc id c)
-                     (try
-                       (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n\n"))
-                       (catch Throwable t
-                         (println "error closing " t)))
-                     c))
-                 :notification
-                 (fn [message]
-                   (try
-                     (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
-                     (catch Throwable t
-                       (println "error closing " t))))
-                 :dead-channel dead-channel)))))
+      (assoc x
+             :request
+             (fn [message]
+               (let [id (swap! counter inc)
+                     c (async/promise-chan)]
+                 (swap! response-promises assoc id c)
+                 (try
+                   (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n\n"))
+                   (catch Throwable t
+                     (println "error closing " t)))
+                 c))
+             :notification
+             (fn [message]
+               (try
+                 (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
+                 (catch Throwable t
+                   (println "error closing " t))))
+             :dead-channel dead-channel
+             :remove (fn []
+                       (docker/kill-container x)
+                       (docker/delete x))))))
 
 (defn with-running-mcp
   "send a message to an mcp server and then shuts it down
-    params
-      container-definition - for the mcp server
-      f - function to generate a jsonrpc request to send post initialize
-      f1 - handler for the jsonrpc response (could be just identity)
-    returns
-      a channel with the response the channel will emit [] if there's an error"
-  [container-definition f f1]
+  params
+  container-definition - for the mcp server
+  f - function to generate a jsonrpc request to send post initialize
+  f1 - handler for the jsonrpc response (could be just identity)
+  returns
+  a channel with the response the channel will emit [] if there's an error"
+  [{:keys [server-id stateful] :as container-definition} f]
   (try
-    (let [{:keys [request notification dead-channel] :as container} (mcp-stdio-stateless-server container-definition)]
-      (Thread/sleep 2000)
+    (let [{:keys [request notification dead-channel remove] :as server} (mcp-stdio-stateless-server container-definition)]
+      ;; dead-channel will emit either :stopped :timeout or :closed
       (async/go
         (try
-          (if (= :initialized
-                 (async/alt!
-                   (request {:method "initialize" :params {:protocolVersion "2024-11-05"
-                                                           :capabilities {:tools {}}
-                                                           :clientInfo {:name "docker"
-                                                                        :version "0.1.0"}}}) :initialized
-                   dead-channel ([v _] v)
-                   (async/timeout 15000) :timeout))
-            (do
-              (notification {:method "notifications/initialized" :params {}})
-              (let [response (async/alt!
-                               (request (f)) ([v _] v)
-                               dead-channel ([v _] v)
-                               (async/timeout 15000) :timeout)]
-                (f1 response)))
-            (do
-              (logger/error (format
-                             "mcp server channel did not initialize for %s"
-                             (:image container-definition)))
-              []))
+          (let [{:keys [initialized response]}
+                (async/alt!
+                  (request {:method "initialize" :params {:protocolVersion "2024-11-05"
+                                                          :capabilities {:tools {}}
+                                                          :clientInfo {:name "docker"
+                                                                       :version "0.1.0"}}}) ([v _] {:initialized true
+                                                                                                    :response v})
+                  dead-channel ([v _] v)
+                  (async/timeout 15000) :timeout)]
+            (if (true? initialized)
+              (do
+                (notification {:method "notifications/initialized" :params {}})
+                (async/<! (f server response)))
+              (do
+                (logger/error (format
+                                "mcp server channel did not initialize for %s"
+                                (:image container-definition)))
+                [])))
           (finally
-            (docker/kill-container container)
-            (docker/delete container)))))
+            (when (not (true? stateful))
+              (remove))))))
     (catch Throwable t
       (logger/error "error " t)
       (let [c (async/promise-chan)]
         (async/>!! c [])
         c))))
 
+(defn- send-call-tool-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "tools/call" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      response)))
+
+(defn- send-list-tools-message [container-definition {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "tools/list" :params {}}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      (->> (-> response :result :tools)
+           ;; add container definition to every tool
+           (map #(assoc % :container (assoc container-definition :type :mcp)))
+           (into [])))))
+
 (defn call-tool
-  "
+  "call tool in server container - might call running server if server is stateful
     returns exit-code, done, and a response map with either result or error"
   [container params]
   (with-running-mcp
     (docker/inject-secret-transform container)
-    (fn [] {:method "tools/call" :params params})
-    identity))
+    (partial send-call-tool-message params)))
 
-(comment
-  (docker/run-container
-   {:image "vonwig/stripe:latest"
-    :secrets {:stripe.api_key "API_KEY"}
-    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
-  (docker/run-container
-   {:image "vonwig/stripe:latest"
-    :secrets {:stripe.api_key "API_KEY"}
-    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
-  (async/<!!
-   (call-tool
-    {:image "vonwig/stripe:latest"
-     :entrypoint ["node" "/app/dist/index.js"]
-     :secrets {"stripe.api_key" "API_KEY"}
-     :command ["--tools=all"
-               "--api-key=$API_KEY"]}
-    {:name "create_customer"
-     :arguments {:name "Jim Clark"}})))
-
-(defn -get-tools [container-definition]
+(defn -get-tools 
+  "get tool definitions from container - this container can always be shutdown"
+  [container-definition]
   (async/<!!
    (with-running-mcp
      (-> container-definition
-         ;; interpolate parameters
-         ((fn [c] (interpolate/container-definition 
-                    {:container (dissoc c :parameter-values)} 
-                    {}
-                    (json/generate-string
-                      (:parameter-values c)))))
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
          ;; inject secrets from container definition
          docker/inject-secret-transform)
-     (fn [] {:method "tools/list" :params {}})
-     (fn [response]
-       (->> (-> response :result :tools)
-            (map #(assoc % :container (assoc container-definition :type :mcp)))
-            (into []))))))
+     (partial send-list-tools-message container-definition))))
 
 (defn mcp-metadata-cache-file [] (fs/file (get-prompts-dir) "mcp-metadata-cache.edn"))
 (def mcp-metadata-cache (atom {}))
@@ -221,11 +223,11 @@
   (assoc container-definition :digest (inspect-image container-definition)))
 
 (def cached-mcp-get-tools
-  (memoize (fn [{:keys [digest] :as container-definition}]
-             (if-let [m (get @mcp-metadata-cache digest)]
+  (memoize (fn [container-definition]
+             (if-let [m (get @mcp-metadata-cache container-definition)]
                m
                (let [m (-get-tools container-definition)]
-                 (async/>!! cache-channel [digest m])
+                 (async/>!! cache-channel [container-definition m])
                  m)))))
 
 (defn get-tools [container-definition]
@@ -233,11 +235,14 @@
    (add-digest container-definition)))
 
 (defn get-mcp-tools-from-prompt
-  [{:keys [mcp parameter-values]}]
+  "ask MCP server container for the list of tools
+     always shutdown these servers even if they're stateful. They only 
+     accumulate state if they've received tool calls."
+  [{:keys [mcp parameter-values local-get-tools] :or {local-get-tools get-tools}}]
   (->> mcp
-       (map (fn [mcp-definition] 
+       (map (fn [mcp-definition]
               (assoc-in mcp-definition [:container :parameter-values] parameter-values)))
-       (mapcat (comp get-tools :container))
+       (mapcat (comp local-get-tools :container))
        (map (fn [tool]
               {:type "function"
                :function (-> tool
@@ -261,7 +266,8 @@
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/slack:latest"
                                                  :workdir "/app"
                                                  :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
-                                                           :slack.team_id "SLACK_TEAM_ID"}}}]})
+                                                           :slack.team_id "SLACK_TEAM_ID"}}}]
+                              :local-get-tools -get-tools})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/redis:latest"
                                                  :workdir "/app"}}]})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/fetch:latest"
@@ -272,7 +278,12 @@
                                                  :workdir "/app"}}]})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/notion-server:latest"
                                                  :workdir "/app"
-                                                 :secrets {:notion.api_token "NOTION_API_TOKEN"} }}]})
+                                                 :secrets {:notion.api_token "NOTION_API_TOKEN"}}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/puppeteer:latest"
+                                                 :environment {"DOCKER_CONTAINER" "true"}}}]
+                              :local-get-tools -get-tools})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
+                              :local-get-tools -get-tools})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
@@ -285,3 +296,21 @@
   (def x "HTTP/1.1 101 UPGRADED\nConnection: Upgrade\nContent-Type: application/vnd.docker.multiplexed-stream\nUpgrade: tcp\n\n")
   (count x))
 
+(comment
+  (docker/run-container
+   {:image "vonwig/stripe:latest"
+    :secrets {:stripe.api_key "API_KEY"}
+    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
+  (docker/run-container
+   {:image "vonwig/stripe:latest"
+    :secrets {:stripe.api_key "API_KEY"}
+    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
+  (async/<!!
+   (call-tool
+    {:image "vonwig/stripe:latest"
+     :entrypoint ["node" "/app/dist/index.js"]
+     :secrets {"stripe.api_key" "API_KEY"}
+     :command ["--tools=all"
+               "--api-key=$API_KEY"]}
+    {:name "create_customer"
+     :arguments {:name "Jim Clark"}})))

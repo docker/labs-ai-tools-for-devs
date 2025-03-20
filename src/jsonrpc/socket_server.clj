@@ -1,10 +1,12 @@
 (ns jsonrpc.socket-server
   (:require
    [jsonrpc.logger :as logger]
+   jsonrpc.state
    [lsp4clj.io-server :as io-server]
-   [lsp4clj.server :as server])
+   [lsp4clj.server :as server]
+   shutdown)
   (:import
-   [java.net InetAddress ServerSocket Socket]))
+   [java.net ServerSocket Socket]))
 
 (set! *warn-on-reflection* true)
 
@@ -24,11 +26,18 @@
   ([opts ^Socket connection component-factory] ;; this arity is mostly for tests
    ;; chan servers have on-close callbacks
    ;; connections have both input and output streams
-   (let [on-close #(do 
-                     (.close connection))
+   (let [server-id (swap! jsonrpc.state/server-counter inc)
+         context-factory (fn [s]
+                           (assoc 
+                             (component-factory s)
+                             :server-id server-id))
+         on-close #(do 
+                     (shutdown/on-connection-close server-id)
+                     (.close connection)
+                     (logger/info (format "closed connection %s" server-id)))
          s (io-server/server (assoc opts
                                     :in connection
                                     :out connection
                                     :on-close on-close))]
-     (server/start s (component-factory s)))))
+     (server/start s (context-factory s)))))
 

@@ -15,11 +15,17 @@
 (filters/add-filter! :volume (fn [v]
                                (if (coll? v)
                                  (->> v (map #(format "%s:%s" % %)) (into []))
-                                 v)))
+                                 (format "%s:%s" v v))))
+
+(filters/add-filter! :or (fn [v s]
+                           (if (or (nil? v) (= "" v))
+                             []
+                             v)))
 
 (comment
   "this allows us to expand strings into lists of strings to be spread into container definitions"
-  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}}))
+  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}})
+  (selmer/render "{{hello.you|volume|into}}" {}))
 
 (defn interpolate [m template]
   (when-let [s (selmer/render template m {})]
@@ -53,17 +59,13 @@
                         (-> definition :container :command)
                         arg-context)}
              (when (-> definition :container :entrypoint)
-               {:mounts (->> (-> definition :container :entrypoint)
-                             (map (fn [s] (first (interpolate arg-context s))))
-                             (into []))})
+               {:entrypoint (->> (-> definition :container :entrypoint)
+                                 (map (fn [s] (first (interpolate arg-context s))))
+                                 (into []))})
              (when (-> definition :container :mounts)
-               {:mounts (->> (-> definition :container :mounts)
-                             (map (fn [s] (first (interpolate arg-context s))))
-                             (into []))})
+               {:mounts (interpolate-coll (-> definition :container :mounts) arg-context)})
              (when (-> definition :container :volumes)
-               {:volumes (->> (-> definition :container :volumes)
-                              (map (fn [s] (first (interpolate arg-context s))))
-                              (into []))})
+               {:volumes (interpolate-coll (-> definition :container :volumes) arg-context)})
              (when (-> definition :container :environment)
                {:environment (->> (seq (-> definition :container :environment))
                                   (map (fn [[k v]] [k (first (interpolate arg-context v))]))

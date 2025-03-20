@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.7"
+VERSION="0.0.8"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
@@ -35,7 +35,7 @@ docker run --rm -t --init -v docker-prompts:/prompts alpine:latest tail -f /prom
 ```
 
 ```sh
-clj -M:main serve --mcp --port 8811 --register "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"
+clj -M:main-repl serve --mcp --port 8811
 ```
 
 ```sh

@@ -10,6 +10,9 @@
       m
       (throw (ex-info "invalid args" {:explanation (s/explain-data k m)})))))
 
+(s/def ::name string?)
+(s/def ::description string?)
+
 (s/def :context/parameters (s/map-of string? any?))
 
 ;; ========= Spec Definitions =========
@@ -59,11 +62,13 @@
 (s/def :container/network_mode (s/or :standard #{"host" "none" "bridge"}
                                      :container (fn [s] (re-find #"container:.*" s))
                                      :custom string?))
+(s/def :container/environment (s/map-of keyword? string?))
 (s/def :tool/container (s/keys :req-un [:container/image]
                                :opt-un [::host-dir
                                         ::thread-id
                                         ::user
                                         ::jwt
+                                        :container/environment
                                         :container/background
                                         :container/stdin
                                         :container/command
@@ -91,7 +96,6 @@
 ;; functions and tools are aliases
 (s/def ::functions ::tools)
 
-
 ;; -- Spec definitions for prompt metadata --
 (s/def ::agent string?)
 (s/def ::model string?)
@@ -116,21 +120,31 @@
 (s/def ::messages (s/coll-of (s/keys :req-un [::role ::content])))
 (s/def ::state (s/keys :req-un [::metadata ::opts ::functions ::messages]))
 ;; this is the data that can be extracted from a prompts file, whether it's yaml or markdown
-(s/def ::prompts-file (s/keys :req-un [::messages ::functions ::metadata]))
+(s/def ::prompt-function fn?)
+(s/def :mcp/prompt-registry (s/map-of string? (s/keys :req-un [::description ::prompt-function])))
+(s/def ::prompts-file (s/keys :req-un [::messages ::functions ::metadata]
+                              :req [:mcp/prompt-registry]))
 
-;; we need to parse a lot of tool_calls here
-(def message-with-tool-calls
-  {:role "assistant"
-   :content ""
-   :tool_calls
-   [{:id "tool-call-id"
-     :function
-     {:name ""
-      :arguments "serialized json"}}]})
+(s/def ::mimeType string?)
+(s/def ::uri string?)
+(s/def ::text string?)
+(s/def ::blob string?)
+(s/def :mcp.prompts.resources/item (s/keys :req-un [::uri ::name ::description ::mimeType]
+                                           :opt-un [::text ::blob]))
+(s/def :mcp.prompts/resources (s/map-of ::uri :mcp.prompts.resources/item))
+(s/def :mcp.prompts/registry (s/map-of string? ::prompts-file))
+(s/def ::db (s/keys :req [:mcp.prompts/registry :mcp.prompts/resources]))
 
 ;; response from both openai and claude sampling
 (comment
-  (s/def ::name string?)
+  (def message-with-tool-calls
+    {:role "assistant"
+     :content ""
+     :tool_calls
+     [{:id "tool-call-id"
+       :function
+       {:name ""
+        :arguments "serialized json"}}]})
   (s/def ::arguments string?)
   (s/def ::id string?)
   (s/def :response/function (s/keys :req-un [::name ::arguments]))

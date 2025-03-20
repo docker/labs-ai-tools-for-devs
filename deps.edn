@@ -14,7 +14,10 @@
         org.babashka/http-client {:mvn/version "0.4.12"}
         com.taoensso/timbre {:mvn/version "5.2.1"}
         io.github.slimslenderslacks/lsp4clj {:git/sha "04390f9b1dcf0946dff335b48951617bc6bf6a9d"}
-        funcool/promesa {:mvn/version "9.0.470"}}
+        funcool/promesa {:mvn/version "9.0.470"}
+        borkdude/dynaload {:mvn/version "0.3.5"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}
            :build {:ns-default build
-                   :deps {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}}}}
+                   :deps {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}}
+           :main-repl {:main-opts ["-m" "docker.main"]
+                       :extra-deps {cider/cider-nrepl {:mvn/version "0.47.1"}}}}}
