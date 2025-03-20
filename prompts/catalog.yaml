@@ -271,10 +271,9 @@ registry:
     resources: {}
   filesystem:
     description: |
-      UNDER CONSTRUCTION (needs config parameters)
       Local filesystem access with configurable allowed paths
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
-    icon: https://img.icons8.com/officel/80/under-construction.png
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     config:
     - name: filesystem
       description: The MCP server is allowed to access these paths
