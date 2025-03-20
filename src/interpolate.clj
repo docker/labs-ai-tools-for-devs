@@ -15,7 +15,12 @@
 (filters/add-filter! :volume (fn [v]
                                (if (coll? v)
                                  (->> v (map #(format "%s:%s" % %)) (into []))
-                                 v)))
+                                 (format "%s:%s" v v))))
+
+(filters/add-filter! :or (fn [v s]
+                           (if (or (nil? v) (= "" v))
+                             []
+                             v)))
 
 (comment
   "this allows us to expand strings into lists of strings to be spread into container definitions"
@@ -58,13 +63,9 @@
                                  (map (fn [s] (first (interpolate arg-context s))))
                                  (into []))})
              (when (-> definition :container :mounts)
-               {:mounts (->> (-> definition :container :mounts)
-                             (map (fn [s] (first (interpolate arg-context s))))
-                             (into []))})
+               {:mounts (interpolate-coll (-> definition :container :mounts) arg-context)})
              (when (-> definition :container :volumes)
-               {:volumes (->> (-> definition :container :volumes)
-                              (map (fn [s] (first (interpolate arg-context s))))
-                              (into []))})
+               {:volumes (interpolate-coll (-> definition :container :volumes) arg-context)})
              (when (-> definition :container :environment)
                {:environment (->> (seq (-> definition :container :environment))
                                   (map (fn [[k v]] [k (first (interpolate arg-context v))]))
