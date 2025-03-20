@@ -27,17 +27,14 @@
    ;; chan servers have on-close callbacks
    ;; connections have both input and output streams
    (let [server-id (swap! jsonrpc.state/server-counter inc)
-         context-factory (fn [s]
-                           (assoc 
-                             (component-factory s)
-                             :server-id server-id))
          on-close #(do 
                      (shutdown/on-connection-close server-id)
                      (.close connection)
+                     (swap! jsonrpc.state/producers dissoc server-id)
                      (logger/info (format "closed connection %s" server-id)))
          s (io-server/server (assoc opts
                                     :in connection
                                     :out connection
                                     :on-close on-close))]
-     (server/start s (context-factory s)))))
+     (server/start s (component-factory s server-id)))))
 

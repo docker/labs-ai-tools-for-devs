@@ -2,5 +2,5 @@
 
 (def server-counter (atom 0))
 
-(def producers (atom []))
+(def producers (atom {}))
 

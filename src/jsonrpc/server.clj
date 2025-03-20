@@ -259,9 +259,9 @@
                                         (fn [arguments]
                                           (logger/trace
                                            (-> arguments
-                                               (merge 
-                                                 (db/parameter-values (:name params))
-                                                 (select-keys (-> @db* :servers (get server-id)) [:roots]))
+                                               (merge
+                                                (db/parameter-values (:name params))
+                                                (select-keys (-> @db* :servers (get server-id)) [:roots]))
                                                (json/generate-string)))))
                              :id "1"}])
                           (async/reduce conj [])
@@ -307,7 +307,7 @@
                (when (= f "registry.yaml")
                  (try
                    (db/add-refs (db/registry-refs registry))
-                   (doseq [producer @jsonrpc.state/producers]
+                   (doseq [producer (vals @jsonrpc.state/producers)]
                      (try
                        (producer/publish-tool-list-changed producer {})
                        (producer/publish-prompt-list-changed producer {})
@@ -317,7 +317,7 @@
                (when (string/ends-with? f ".md")
                  (try
                    (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
-                   (doseq [producer @jsonrpc.state/producers]
+                   (doseq [producer (vals @jsonrpc.state/producers)]
                      (try
                        (producer/publish-tool-list-changed producer {})
                        (producer/publish-prompt-list-changed producer {})
@@ -375,9 +375,9 @@
        :trace-level trace-level
        :keyword-function keyword
        :server-context-factory
-       (fn [server]
+       (fn [server state-id]
          (let [producer (producer/->McpProducer server db*)]
-           (swap! jsonrpc.state/producers conj producer)
+           (swap! jsonrpc.state/producers assoc state-id producer)
            {:db* db*
             :logger timbre-logger
             :producer producer
@@ -399,9 +399,8 @@
                    :out System/out}))]
      (logger/info "Starting server...")
      ;; only on lsp.server/start will the stdio channels start being used
-     (let [{:keys [producer] :as context} 
-           (assoc 
-             ((:server-context-factory server-opts) server)
-             :server-id (swap! jsonrpc.state/server-counter inc))]
+     (let [server-id (swap! jsonrpc.state/server-counter inc)
+           {:keys [producer] :as context}
+           ((:server-context-factory server-opts) server server-id)]
        [producer (lsp.server/start server context)]))))
 
