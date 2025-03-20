@@ -375,12 +375,13 @@
        :trace-level trace-level
        :keyword-function keyword
        :server-context-factory
-       (fn [server state-id]
+       (fn [server server-id]
          (let [producer (producer/->McpProducer server db*)]
-           (swap! jsonrpc.state/producers assoc state-id producer)
+           (swap! jsonrpc.state/producers assoc server-id producer)
            {:db* db*
             :logger timbre-logger
             :producer producer
+            :server-id server-id
             :server server}))}
       (when (:mcp opts)
         {:in-chan-factory io-chan/mcp-input-stream->input-chan
