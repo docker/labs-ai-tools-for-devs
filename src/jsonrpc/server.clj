@@ -67,7 +67,6 @@
   (exit-server server))
 
 (defmethod lsp.server/receive-request "ping" [_ _ _]
-  (logger/info "ping")
   {})
 
 (defmethod lsp.server/receive-request "initialize" [_ {:keys [db* server-id]} params]
