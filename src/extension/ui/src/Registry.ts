@@ -64,6 +64,15 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
 
 // Replace conflicting config values with registry values
 export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
+    if (Object.keys(registry).length === 0) {
+        console.log('No registry to sync with config.')
+        return;
+    }
+    if (Object.keys(config).length === 0) {
+        console.log('No config to sync with registry.')
+        return;
+    }
+    console.log('SYNC STARTED. REGISTRY -> CONFIG', registry, config)
     const oldConfigString = JSON.stringify({ config })
     for (const [registryItemName, registryItem] of Object.entries(registry)) {
         const configInRegistry = registryItem.config
@@ -85,6 +94,15 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
 
 //  Replace conflicting registry values with config values
 export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
+    if (Object.keys(config).length === 0) {
+        console.log('No config to sync with registry.')
+        return;
+    }
+    if (Object.keys(registry).length === 0) {
+        console.log('No registry to sync with config.')
+        return;
+    }
+    console.log('SYNC STARTED. CONFIG -> REGISTRY', config, registry)
     const oldRegString = JSON.stringify({ registry })
     for (const [itemName, itemConfig] of Object.entries(config)) {
         const registryItem = registry[itemName]

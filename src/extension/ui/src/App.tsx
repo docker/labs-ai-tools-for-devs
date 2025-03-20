@@ -30,10 +30,10 @@ export function App() {
     setMcpClientStates(states);
     // Whenever a client connection changes, show toast to user
     if (Object.values(oldStates).some(state => state.exists && !state.configured) && Object.values(states).every(state => state.configured)) {
-      client.desktopUI.toast.success('MCP Client Connected. Restart Claude Desktop to use the MCP Catalog.');
+      client.desktopUI.toast.success('MCP Client Connected. Restart it to load the Catalog.');
     }
     if (Object.values(oldStates).some(state => state.exists && state.configured) && Object.values(states).every(state => !state.configured)) {
-      client.desktopUI.toast.error('MCP Client Disconnected. Restart Claude Desktop to remove the MCP Catalog.');
+      client.desktopUI.toast.error('MCP Client Disconnected. Restart it to remove the Catalog.');
     }
   }
 

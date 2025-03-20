@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useState } from 'react';
-import { IconButton, Alert, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
+import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
 import { CatalogItemWithName } from './tile/Tile';
 import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
 import { useCatalogContext } from '../context/CatalogContext';
@@ -91,8 +91,11 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 <DialogTitle>Registry Updated</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ marginBottom: 2 }}>
-                        You have updated the registry.
-                        Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                        You have updated the registry. Please refresh your MCP clients so that they get the new tools.
+                        <Alert severity="info">
+                            <AlertTitle>Claude Desktop</AlertTitle>
+                            Use the keybind {client.host.platform === 'win32' ? 'Ctrl' : '⌘'} + R to refresh MCP servers in Claude Desktop.
+                        </Alert>
                     </Typography>
                     <Stack direction="row" justifyContent="space-between">
                         <Button onClick={() => {

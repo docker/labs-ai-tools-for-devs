@@ -141,7 +141,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             });
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
             if (showNotification) {
-                client.desktopUI.toast.success('Prompt registered successfully. Restart Claude Desktop to apply.');
+                client.desktopUI.toast.success('Prompt registered successfully. Reload your MCP clients to apply.');
             }
             await tryLoadRegistry();
             // Logic for showing reload modal would go here
@@ -164,7 +164,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 }]
             });
             await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
-            client.desktopUI.toast.success('Prompt unregistered successfully. Restart Claude Desktop to apply.');
+            client.desktopUI.toast.success('Prompt unregistered successfully. Reload your MCP clients to apply.');
             await tryLoadRegistry();
             // Logic for showing reload modal would go here
         } catch (error) {
