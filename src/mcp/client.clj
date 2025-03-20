@@ -223,11 +223,11 @@
   (assoc container-definition :digest (inspect-image container-definition)))
 
 (def cached-mcp-get-tools
-  (memoize (fn [{:keys [digest] :as container-definition}]
-             (if-let [m (get @mcp-metadata-cache digest)]
+  (memoize (fn [container-definition]
+             (if-let [m (get @mcp-metadata-cache container-definition)]
                m
                (let [m (-get-tools container-definition)]
-                 (async/>!! cache-channel [digest m])
+                 (async/>!! cache-channel [container-definition m])
                  m)))))
 
 (defn get-tools [container-definition]
