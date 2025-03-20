@@ -281,6 +281,8 @@
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/puppeteer:latest"
                                                  :environment {"DOCKER_CONTAINER" "true"}}}]
                               :local-get-tools -get-tools})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
+                              :local-get-tools -get-tools})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"

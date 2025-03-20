@@ -25,7 +25,7 @@
       (println t))))
 
 (defn f->prompt [f]
-  (prompts/get-prompts {:prompts f}))
+  (try (prompts/get-prompts {:prompts f}) (catch Throwable t (println t) {})))
 
 (defn tile-metadata [m]
   {:tools (->> (:functions m)
@@ -56,7 +56,7 @@
 (comment
   ;; setup stdout logger
   (repl/setup-stdout-logger)
-
+  (generate-updated-catalog)
   ;; parse catalog
   (def catalog (yaml/parse-string (slurp "prompts/catalog.yaml")))
 
