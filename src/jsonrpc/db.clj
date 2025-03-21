@@ -7,7 +7,6 @@
    [clojure.pprint :refer [pprint]]
    git
    [jsonrpc.logger :as logger]
-   [medley.core :as medley]
    prompts
    prompts.core
    repl))
@@ -22,8 +21,8 @@
        register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path ref-string config] :as registration-entry}]
-              (logger/info registration-entry)
+       (map (fn [{:keys [cached-path ref-string config]}]
+              (logger/info (format "%-80s %s" ref-string cached-path))
               (try
                 (let [m (prompts/get-prompts (-> opts
                                                  (assoc :config config)
@@ -55,8 +54,6 @@
       (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))
 
 (defn- add-dynamic-prompts [db m]
-  (logger/info "dynamic keys" (keys (:mcp.prompts/registry db)))
-  (logger/info "static keys" (keys (:mcp.prompts/static db)))
   (-> db
       (assoc :mcp.prompts/registry (merge m (:mcp.prompts/static db)))
       (update :mcp.prompts/resources (fnil merge {}) (extract-resources m))))

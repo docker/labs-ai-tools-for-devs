@@ -15,6 +15,7 @@
    [jsonrpc.extras]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
+   jsonrpc.prompt-change-events
    [jsonrpc.socket-server :as socket-server]
    jsonrpc.state
    [lsp4clj.coercer :as coercer]
@@ -294,42 +295,6 @@
       (apply log-wrapper-fn log-args)
       (recur))))
 
-(defn- init-dynamic-prompt-watcher [opts]
-  (async/thread
-    (let [{x :container}
-          (docker/run-streaming-function-with-no-stdin
-           {:image "vonwig/inotifywait:latest"
-            :volumes ["docker-prompts:/prompts"]
-            :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
-           (fn [line]
-             (logger/info "change event" line)
-             (let [[_dir _event f] (string/split line #"\s+")]
-               (when (= f "registry.yaml")
-                 (try
-                   (db/add-refs (db/registry-refs registry))
-                   (doseq [producer (vals @jsonrpc.state/producers)]
-                     (try
-                       (producer/publish-tool-list-changed producer {})
-                       (producer/publish-prompt-list-changed producer {})
-                       (catch Throwable _)))
-                   (catch Throwable t
-                     (logger/error t "unable to parse registry.yaml"))))
-               (when (string/ends-with? f ".md")
-                 (try
-                   (db/update-prompt opts (string/replace f #"\.md" "") (slurp (str "/prompts/" f)))
-                   (doseq [producer (vals @jsonrpc.state/producers)]
-                     (try
-                       (producer/publish-tool-list-changed producer {})
-                       (producer/publish-prompt-list-changed producer {})
-                       (catch Throwable _)))
-                   (catch Throwable t
-                     (logger/error t "unable to parse " f)))))))]
-      (shutdown/schedule-container-shutdown
-       (fn []
-         (logger/info "inotifywait shutting down")
-         (docker/kill-container x)
-         (docker/delete x))))))
-
 (defn initialize-prompts [opts]
   ;; initialize mcp cache
   (client/initialize-cache)
@@ -362,7 +327,10 @@
      ;; initialize prompts
      (initialize-prompts opts)
      ;; watch dynamic prompts in background
-     (init-dynamic-prompt-watcher opts)
+     (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher 
+       opts
+       jsonrpc.prompt-change-events/registry-updated
+       jsonrpc.prompt-change-events/markdown-tool-updated)
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
      ;; this won't do anything if nrepl is not present
