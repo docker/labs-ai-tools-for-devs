@@ -392,3 +392,31 @@ registry:
       exposes OpenAPI schema information to Large Language Models (LLMs) like Claude. This server allows an LLM to explore and understand OpenAPI specifications through a set of specialized tools.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/openapi-schema.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+  atlassian:
+    description: |
+      Server for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/atlassian.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
+    secrets:
+      - name: atlassian.jira.token
+        required: false
+      - name: atlassian.confluence.token
+        required: false
+    config:
+      - name: atlassian
+        description: The MCP server is allowed to access these paths
+        parameters:
+          confluence:
+            type: object
+            properties:
+              url:
+                type: string
+              username:
+                type: string
+          jira:
+            type: object
+            properties:
+              url:
+                type: string
+              username:
+                type: string
