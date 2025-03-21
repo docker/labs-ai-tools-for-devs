@@ -12,7 +12,7 @@ tools:
         - "3000:3000"
       environment:
         GDRIVE_CREDENTIALS_PATH: /gdrive-server/credentials.json
-        GDRIVE_OAUTH_PATH: /secret/gdrive.gcp-oauth.keys.json
+        GDRIVE_OAUTH_PATH: /secret/google.gcp-oauth.keys.json
       secrets:
         google.gcp-oauth.keys.json: GDRIVE
       command:
