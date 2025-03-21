@@ -11,14 +11,14 @@ import ClaudeDesktop from "./ClaudeDesktop";
 import Gordon from "./Gordon";
 
 export type MCPClient = {
-    name: string;
-    url: string;
-    readFile: (client: v1.DockerDesktopClient) => Promise<{ content: string | null | undefined, path: string }>;
-    connect: (client: v1.DockerDesktopClient) => Promise<void>;
-    disconnect: (client: v1.DockerDesktopClient) => Promise<void>;
-    validateConfig: (content: string) => boolean;
-    expectedConfigPath: { [key in 'win32' | 'darwin' | 'linux']: string };
-    manualConfigSteps: string[];
+    name: string; // The name of the client to display in the UI
+    url: string; // URL to the client's website to download the client
+    readFile: (client: v1.DockerDesktopClient) => Promise<{ content: string | null | undefined, path: string }>; // Read the client's config file
+    connect: (client: v1.DockerDesktopClient) => Promise<void>; // Write or update the client's config file to connect to Docker MCP
+    disconnect: (client: v1.DockerDesktopClient) => Promise<void>; // Remove Docker MCP from the client's config file
+    validateConfig: (content: string) => boolean; // Validate the client's config file has the correct format and has the correct Docker MCP server
+    expectedConfigPath: { [key in 'win32' | 'darwin' | 'linux']: string }; // The default path to the client's config file for each platform
+    manualConfigSteps: string[]; // Array of HTML strings to display as steps to manually configure the client's config file
 }
 
 export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [

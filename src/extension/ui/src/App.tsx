@@ -1,16 +1,36 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box } from '@mui/material';
+import { Stack, Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
 import { CatalogItemWithName } from './components/tile/Tile';
 import { Close } from '@mui/icons-material';
 import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
-import MCPCatalogLogo from './MCP Catalog.svg'
-import { getMCPClientStates, MCPClientState } from './MCPClients';
 import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
+import { MCPClientProvider } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
+import { Settings as SettingsIcon } from '@mui/icons-material';
 
 const Settings = React.lazy(() => import('./components/Settings'));
+
+
+
+// Create lazy-loaded logo components
+const LazyDarkLogo = React.lazy(() => import('./components/DarkLogo'));
+const LazyLightLogo = React.lazy(() => import('./components/LightLogo'));
+
+// Logo component that uses Suspense for conditional loading
+const Logo = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
+  return (
+    <Suspense fallback={<Box sx={{ height: '5em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={24} /></Box>}>
+      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+        {isDarkMode ? <LazyDarkLogo /> : <LazyLightLogo />}
+      </Box>
+    </Suspense>
+  );
+}
 
 export const client = createDockerDesktopClient();
 
@@ -21,42 +41,19 @@ const DEFAULT_SETTINGS = {
 
 export function App() {
   const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
-  const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState }>({});
   const [configuringItem, setConfiguringItem] = useState<CatalogItemWithName | null>(null);
-
-  const updateMCPClientStates = async () => {
-    const oldStates = mcpClientStates;
-    const states = await getMCPClientStates(client)
-    setMcpClientStates(states);
-    // Whenever a client connection changes, show toast to user
-    if (Object.values(oldStates).some(state => state.exists && !state.configured) && Object.values(states).every(state => state.configured)) {
-      client.desktopUI.toast.success('MCP Client Connected. Restart it to load the Catalog.');
-    }
-    if (Object.values(oldStates).some(state => state.exists && state.configured) && Object.values(states).every(state => !state.configured)) {
-      client.desktopUI.toast.error('MCP Client Disconnected. Restart it to remove the Catalog.');
-    }
-  }
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    updateMCPClientStates();
-    interval = setInterval(() => {
-      updateMCPClientStates();
-    }, POLL_INTERVAL);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Wrap the entire application with our CatalogProvider
+  const theme = useTheme();
+  // Wrap the entire application with our providers
   return (
     <CatalogProvider client={client}>
-      <AppContent
-        settings={settings}
-        setSettings={setSettings}
-        mcpClientStates={mcpClientStates}
-        configuringItem={configuringItem}
-        setConfiguringItem={setConfiguringItem}
-        updateMCPClientStates={updateMCPClientStates}
-      />
+      <MCPClientProvider client={client}>
+        <AppContent
+          settings={settings}
+          setSettings={setSettings}
+          configuringItem={configuringItem}
+          setConfiguringItem={setConfiguringItem}
+        />
+      </MCPClientProvider>
     </CatalogProvider>
   );
 }
@@ -64,15 +61,14 @@ export function App() {
 interface AppContentProps {
   settings: { showModal: boolean, pollIntervalSeconds: number };
   setSettings: React.Dispatch<React.SetStateAction<{ showModal: boolean, pollIntervalSeconds: number }>>;
-  mcpClientStates: { [name: string]: MCPClientState };
   configuringItem: CatalogItemWithName | null;
   setConfiguringItem: React.Dispatch<React.SetStateAction<CatalogItemWithName | null>>;
-  updateMCPClientStates: () => Promise<void>;
 }
 
-function AppContent({ settings, setSettings, mcpClientStates, configuringItem, setConfiguringItem, updateMCPClientStates }: AppContentProps) {
-  const { imagesLoadingResults, loadImagesIfNeeded, secrets, catalogItems, registryItems, tryLoadSecrets } = useCatalogContext();
-
+function AppContent({ settings, setSettings, configuringItem, setConfiguringItem }: AppContentProps) {
+  const { imagesLoadingResults, loadImagesIfNeeded, secrets, catalogItems, registryItems, } = useCatalogContext();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   if (!imagesLoadingResults || imagesLoadingResults.stderr) {
     return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       {!imagesLoadingResults && <CircularProgress sx={{ marginBottom: 2 }} />}
@@ -103,8 +99,6 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
     </Paper>
   }
 
-  const hasMCPConfigured = Object.values(mcpClientStates).some(state => state.exists && state.configured);
-
   return (
     <>
       {settings.showModal && (
@@ -124,8 +118,6 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
               <Settings
                 settings={settings}
                 setSettings={setSettings}
-                mcpClientStates={mcpClientStates}
-                onUpdate={updateMCPClientStates}
               />
             </Suspense>
           </DialogContent>
@@ -143,20 +135,13 @@ function AppContent({ settings, setSettings, mcpClientStates, configuringItem, s
       )}
 
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
-        <img src={MCPCatalogLogo} alt="MCP Catalog" height={100} />
-        {hasMCPConfigured ? <></> : <Alert action={<Button variant='outlined' color='secondary' onClick={() => setSettings({ ...settings, showModal: true })}>Configure</Button>} severity="error" sx={{ fontWeight: 'bold' }}>MCP Clients are not configured.  Please configure MCP Clients to use the MCP Catalog.</Alert>}
+        <Stack direction="row" spacing={1} justifyContent='space-evenly' alignItems='center' sx={{ width: '100%', maxWidth: '1000px' }}>
+          <Logo />
+          <IconButton sx={{ ml: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={() => setSettings({ ...settings, showModal: true })}>
+            <SettingsIcon sx={{ fontSize: '1.5em' }} />
+          </IconButton>
+        </Stack>
         <CatalogGrid
-          settingsBadgeProps={hasMCPConfigured ? {} : {
-            color: hasMCPConfigured ? 'default' : 'error',
-            badgeContent: '0 MCP Clients',
-            sx: {
-              width: 80,
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-          }}
           setConfiguringItem={setConfiguringItem}
           showSettings={() => setSettings({ ...settings, showModal: true })}
         />

@@ -1,10 +1,12 @@
 import React, { Suspense, useEffect, useState } from 'react';
-import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box } from '@mui/material';
+import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box, Select, MenuItem, Menu, Divider } from '@mui/material';
 import { CatalogItemWithName } from './tile/Tile';
-import { FolderOpenRounded, Search, Settings } from '@mui/icons-material';
+import { Archive, ArrowDropDown, Edit, FileCopy, FolderOpenRounded, MoreHoriz, Search, Settings, Sort, SwapVert } from '@mui/icons-material';
 import { useCatalogContext } from '../context/CatalogContext';
+import { useMCPClientContext } from '../context/MCPClientContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
+import YourClients from './tabs/YourClients';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
 const YourTools = React.lazy(() => import('./tabs/YourTools'));
@@ -15,7 +17,6 @@ const client = createDockerDesktopClient();
 
 interface CatalogGridProps {
     showSettings: () => void;
-    settingsBadgeProps: BadgeProps;
     setConfiguringItem: (item: CatalogItemWithName) => void;
 }
 
@@ -31,7 +32,6 @@ const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     showSettings,
-    settingsBadgeProps,
     setConfiguringItem,
 }) => {
     const {
@@ -45,6 +45,13 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         secrets
     } = useCatalogContext();
 
+    const {
+        mcpClientStates,
+        buttonsLoading,
+        setButtonsLoading,
+        updateMCPClientStates
+    } = useMCPClientContext();
+
     if (!registryItems) {
         return <CircularProgress />
     }
@@ -53,6 +60,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
+    const [openMenus, setOpenMenus] = useState<{ [key: string]: { anchorEl: HTMLElement | null, open: boolean } }>({
+        'demo-customized-menu': { anchorEl: null, open: false }
+    });
 
     const loadDDVersion = async () => {
         try {
@@ -85,6 +95,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         return <CircularProgress />
     }
 
+    const hasMCPConfigured = Object.values(mcpClientStates).some(state => state.exists && state.configured);
+
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
             <Dialog open={showReloadModal} onClose={() => setShowReloadModal(false)}>
@@ -110,34 +122,63 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ width: '100%' }}>
-                <Tooltip title="These are all of the tiles you have available across the catalog.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Tool Catalog" />
-                </Tooltip>
-                <Tooltip title="These are tiles which you have allowed MCP clients to use.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Your Tools" />
-                </Tooltip>
-                <Tooltip title="These are environment variables and secrets which you have set for your MCP clients.">
-                    <Tab sx={{ fontSize: '1.5em' }} label="Your Environment" />
-                </Tooltip>
-            </Tabs>
-            <FormGroup sx={{ width: '100%', mt: 0 }}>
-                <Stack direction="row" spacing={1} alignItems='center' justifyContent="space-evenly">
-                    <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
-                    <Link sx={{ fontWeight: 'bold', justifySelf: 'flex-end', marginLeft: 'auto', }} href="https://vonwig.github.io/prompts.docs/tools/docs/" target="_blank" rel="noopener noreferrer" onClick={() => {
-                        client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
-                    }}>⇱ Documentation</Link>
-                    <Link sx={{ fontWeight: 'bold', }} href="https://github.com/docker/labs-ai-tools-for-devs" target="_blank" rel="noopener noreferrer" onClick={() => {
-                        client.host.openExternal('https://github.com/docker/labs-ai-tools-for-devs');
-                    }}>⇱ GitHub</Link>
-                    <IconButton sx={{ ml: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={showSettings}>
-                        <Badge {...settingsBadgeProps}>
-                            <Settings sx={{ fontSize: '1.5em' }} />
-                        </Badge>
+            {!hasMCPConfigured && <Alert action={<Button variant='outlined' color='secondary' onClick={showSettings}>Configure</Button>} severity="error" sx={{ fontWeight: 'bold' }}>MCP Clients are not configured. Please configure MCP Clients to use the MCP Catalog.</Alert>}
+            <Box sx={{ position: 'sticky', top: 0, zIndex: 1000, backgroundColor: 'background.default' }}>
+                <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ width: '90vw', maxWidth: '1000px' }}>
+                    <Tooltip title="These are all of the tiles you have available across the catalog.">
+                        <Tab sx={{ fontSize: '1.5em' }} label="Browse" />
+                    </Tooltip>
+                    <Tooltip title="These are tiles which you have allowed MCP clients to use.">
+                        <Tab sx={{ fontSize: '1.5em' }} label="Your Catalog" />
+                    </Tooltip>
+                    <Tooltip title="These are environment variables and secrets which you have set for your MCP clients.">
+                        <Tab sx={{ fontSize: '1.5em' }} label="Environment" />
+                    </Tooltip>
+                    <Tooltip title="These are environment variables and secrets which you have set for your MCP clients.">
+                        <Tab sx={{ fontSize: '1.5em' }} label="Clients" />
+                    </Tooltip>
+                </Tabs>
+                {tab < 2 && <Stack direction="row" spacing={1} alignItems='center' sx={{ mt: 1, py: 1 }}>
+                    <FormGroup>
+                        <Stack direction="row" spacing={1} alignItems='center' justifyContent="space-evenly">
+                            <TextField label="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+                        </Stack>
+                        {/* Select dropdown icon */}
+                    </FormGroup>
+                    <IconButton
+                        id="demo-customized-button"
+                        aria-controls={openMenus['demo-customized-menu'] ? 'demo-customized-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={openMenus['demo-customized-menu'] ? 'true' : undefined}
+                        onClick={(e) => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: e.currentTarget, open: !openMenus['demo-customized-menu'].open } })}
+                    >
+                        <SwapVert />
                     </IconButton>
-                </Stack>
-            </FormGroup>
-
+                    <Menu
+                        id="demo-customized-menu"
+                        MenuListProps={{
+                            'aria-labelledby': 'demo-customized-button',
+                        }}
+                        anchorEl={openMenus['demo-customized-menu'].anchorEl || undefined}
+                        open={openMenus['demo-customized-menu'].open}
+                        onClose={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })}
+                    >
+                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            ️‍🔥 Hot & New
+                        </MenuItem>
+                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            Most Downloads
+                        </MenuItem>
+                        <Divider sx={{ my: 0.5 }} />
+                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            Name (A-Z)
+                        </MenuItem>
+                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            Name (Z-A)
+                        </MenuItem>
+                    </Menu>
+                </Stack>}
+            </Box>
             <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
                 {tab === 0 && (
                     <ToolCatalog
@@ -174,6 +215,15 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         secrets={secrets}
                         ddVersion={ddVersion}
                         config={config}
+                    />
+                )}
+                {tab === 3 && (
+                    <YourClients
+                        mcpClientStates={mcpClientStates}
+                        onUpdate={updateMCPClientStates}
+                        setButtonsLoading={setButtonsLoading}
+                        buttonsLoading={buttonsLoading}
+                        client={client}
                     />
                 )}
             </Suspense>
