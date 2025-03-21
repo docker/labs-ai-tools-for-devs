@@ -5,6 +5,7 @@ tools:
     container:
       image: mcp/gdrive:latest
       background: true
+      workdir: /app
       volumes:
         - "mcp-gdrive:/gdrive-server"
       ports:
