@@ -12,8 +12,8 @@ RUN npm run build
 
 FROM scratch
 ARG TARGETARCH
-LABEL org.opencontainers.image.title="Labs: AI Tools for Devs" \
-    org.opencontainers.image.description="MCP Tool Catalog" \
+LABEL org.opencontainers.image.title="AI Tool Catalog" \
+    org.opencontainers.image.description="AI Tool Catalog" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-ext-screenshot.png"}, {"alt":"Screenshot of MCP Client configuration", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/docs/assets/img/dd-extension-screenshot-2.png"}]' \

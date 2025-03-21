@@ -19,7 +19,7 @@
     (async/go-loop [state {}]
       (let [{:keys [f] :as new-val} (async/<! in)
             v (by-fn new-val)]
-        (when (not (= (get state f) v))
+        (when (not (= (get state f :blank) v))
           (async/>! out new-val))
         (recur (assoc state f v))))
     out))
@@ -46,7 +46,7 @@
       (logger/error t "unable to parse " f))))
 
 (defn content [{:keys [f]}]
-  (slurp (fs/file (prompts.core/get-prompts-dir) f)))
+  (try (slurp (fs/file (prompts.core/get-prompts-dir) f)) (catch Throwable _ :empty)))
 
 (defn init-dynamic-prompt-watcher [opts registry-updated markdown-tool-updated]
   (let [change-events-channel (async/chan)

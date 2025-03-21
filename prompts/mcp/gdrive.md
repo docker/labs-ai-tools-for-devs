@@ -1,7 +1,7 @@
 ---
 tools:
   - name: gdrive_auth
-    description: Authorize this server use your Google Drive.
+    description: Authorize this server to use your Google Drive.
     container:
       image: mcp/gdrive:latest
       background: true
@@ -16,7 +16,7 @@ tools:
         gdrive.gcp-oauth.keys.json: GDRIVE
 mcp:
   - container:
-      image: mcp/gdrive:latest
+      image: vonwig/gdrive:latest
       workdir: /app
       volumes:
         - "mcp-gdrive:/gdrive-server"
