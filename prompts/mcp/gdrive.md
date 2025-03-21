@@ -14,6 +14,8 @@ tools:
         GDRIVE_OAUTH_PATH: /secret/gdrive.gcp-oauth.keys.json
       secrets:
         gdrive.gcp-oauth.keys.json: GDRIVE
+      command:
+        - auth
 mcp:
   - container:
       image: vonwig/gdrive:latest
