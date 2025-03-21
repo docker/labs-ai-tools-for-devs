@@ -22,14 +22,26 @@ namespace Secrets {
 
     export async function getSecrets(client: v1.DockerDesktopClient): Promise<Secret[]> {
         const response = await client.extension.host?.cli.exec('host-binary', ['list']);
+        if (!response) {
+            client.desktopUI.toast.error('Failed to get secrets. Could not get response from host-binary.')
+        }
+        if (response?.stderr) {
+            client.desktopUI.toast.error('Failed to get secrets: ' + JSON.stringify(response))
+        }
         return JSON.parse(response?.stdout || '[]');
     }
 
 
     export async function addSecret(client: v1.DockerDesktopClient, secret: Secret): Promise<void> {
         try {
-            const response = await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', secret.value]);
+            const response = await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', `'${secret.value}'`]);
             client.desktopUI.toast.success('Secret set successfully')
+            if (!response) {
+                client.desktopUI.toast.error('Failed to set secret. Could not get response from host-binary.')
+            }
+            if (response?.stderr) {
+                client.desktopUI.toast.error('Failed to set secret: ' + JSON.stringify(response))
+            }
         } catch (error) {
             if ((error as any).stderr) {
                 client.desktopUI.toast.error('Failed to set secret: ' + JSON.stringify(error))
