@@ -24,13 +24,16 @@ class CursorDesktopClient implements MCPClient {
     readFile = async (client: v1.DockerDesktopClient) => {
         const platform = client.host.platform as keyof typeof this.expectedConfigPath
         const configPath = this.expectedConfigPath[platform].replace('$USER', await getUser(client))
+        console.log('reading cursor config from', configPath)
         try {
-            const result = await client.docker.cli.exec('run', ['alpine:latest', 'cat', configPath])
+            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source=${configPath},target=/cursor_config/mcp.json`, 'alpine:latest', 'cat', '/cursor_config/mcp.json'])
+            console.log('cursor config', result)
             return {
                 content: result.stdout,
                 path: configPath
             }
         } catch (e) {
+            console.log('error', e)
             return {
                 content: null,
                 path: configPath

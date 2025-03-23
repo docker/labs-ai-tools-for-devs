@@ -53,7 +53,7 @@ type Container = {
     Mounts: []
 }
 
-const Settings = ({ settings, setSettings }: { onUpdate: () => Promise<void>, settings: { showModal: boolean, pollIntervalSeconds: number }, setSettings: (settings: any) => void, mcpClientStates: { [name: string]: MCPClientState } }) => {
+const Settings = ({ settings, setSettings }: { settings: { showModal: boolean, pollIntervalSeconds: number }, setSettings: (settings: any) => void }) => {
 
     const [navTab, setNavTab] = useState<'catalogs' | 'registries' | 'extension-settings' | 'developer-settings'>('catalogs');
     const updateAndSaveSettings = (settings: any) => {
@@ -62,7 +62,7 @@ const Settings = ({ settings, setSettings }: { onUpdate: () => Promise<void>, se
     }
 
     // Get MCP client context
-    const { buttonsLoading, setButtonsLoading } = useMCPClientContext();
+    const { buttonsLoading, setButtonsLoading, } = useMCPClientContext();
 
     const listItemButtonSx = {
         height: '48px',

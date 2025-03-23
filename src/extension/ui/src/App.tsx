@@ -12,8 +12,6 @@ import { Settings as SettingsIcon } from '@mui/icons-material';
 
 const Settings = React.lazy(() => import('./components/Settings'));
 
-
-
 // Create lazy-loaded logo components
 const LazyDarkLogo = React.lazy(() => import('./components/DarkLogo'));
 const LazyLightLogo = React.lazy(() => import('./components/LightLogo'));
@@ -42,7 +40,6 @@ const DEFAULT_SETTINGS = {
 export function App() {
   const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
   const [configuringItem, setConfiguringItem] = useState<CatalogItemWithName | null>(null);
-  const theme = useTheme();
   // Wrap the entire application with our providers
   return (
     <CatalogProvider client={client}>
@@ -67,8 +64,6 @@ interface AppContentProps {
 
 function AppContent({ settings, setSettings, configuringItem, setConfiguringItem }: AppContentProps) {
   const { imagesLoadingResults, loadImagesIfNeeded, secrets, catalogItems, registryItems, } = useCatalogContext();
-  const theme = useTheme();
-  const isDarkMode = theme.palette.mode === 'dark';
   if (!imagesLoadingResults || imagesLoadingResults.stderr) {
     return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       {!imagesLoadingResults && <CircularProgress sx={{ marginBottom: 2 }} />}
