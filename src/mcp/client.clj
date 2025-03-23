@@ -123,7 +123,8 @@
           (let [{:keys [initialized response]}
                 (async/alt!
                   (request {:method "initialize" :params {:protocolVersion "2024-11-05"
-                                                          :capabilities {:tools {}}
+                                                          :capabilities {:tools {}
+                                                                         :resources {}}
                                                           :clientInfo {:name "docker"
                                                                        :version "0.1.0"}}}) ([v _] {:initialized true
                                                                                                     :response v})
@@ -324,7 +325,9 @@
   (-get-resources {:image "vonwig/gdrive:latest"
                    :workdir "/app"
                    :volumes ["mcp-gdrive:/gdrive-server"]
-                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}})
+                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
+                                 "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
+                   :secrets {:google.gcp-oauth.keys.json "GDRIVE"}})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"

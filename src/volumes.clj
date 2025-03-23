@@ -16,7 +16,7 @@
       (f thread-id)
       (finally
         (when (not (true? save-thread-volume))
-          (docker/delete-thread-volume {:Name thread-id}))))))
+          (try (docker/delete-thread-volume {:Name thread-id}) (catch Throwable t (logger/error t "error deleting thread volume"))))))))
 
 (comment
   ;; mcp resources should e structured like this

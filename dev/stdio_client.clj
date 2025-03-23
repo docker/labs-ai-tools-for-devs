@@ -57,7 +57,7 @@
         :method "tools/call" 
         :params 
         {:name "search"
-         :arguments {:query "hello"}} 
+         :arguments {:query "mcp"}} 
         :id "4"})
 
 (async/thread

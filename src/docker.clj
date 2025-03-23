@@ -9,6 +9,7 @@
    jsonrpc
    [jsonrpc.logger :as logger]
    logging
+   repl
    schema
    shutdown)
   (:import
@@ -339,8 +340,7 @@
   (injected-entrypoint {:a "A"} ["BLAH=whatever"] "my command")
   (injected-entrypoint nil nil "my command")
   (injected-entrypoint {:a "A"} nil "my command")
-  (injected-entrypoint nil nil nil)
-  )
+  (injected-entrypoint nil nil nil))
 
 (defn inject-secret-transform [container-definition]
   (check-then-pull container-definition)
@@ -350,18 +350,18 @@
           (-> (images {"reference" [(:image container-definition)]})
               first))
          :Config)
-        real-entrypoint (string/join " " (concat 
-                                           (or (:entrypoint container-definition) Entrypoint) 
-                                           (or (:command container-definition) Cmd)))]
+        real-entrypoint (string/join " " (concat
+                                          (or (:entrypoint container-definition) Entrypoint)
+                                          (or (:command container-definition) Cmd)))]
     (-> container-definition
-        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint 
-                                             (:secrets container-definition) 
-                                             (concat
-                                               Env
-                                               (->> (:environment container-definition)
-                                                    (map (fn [[k v]] (format "%s=%s" k v)))
-                                                    (into []))) 
-                                             real-entrypoint)])
+        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint
+                                            (:secrets container-definition)
+                                            (concat
+                                             Env
+                                             (->> (:environment container-definition)
+                                                  (map (fn [[k v]] (format "%s=%s" k v)))
+                                                  (into [])))
+                                            real-entrypoint)])
         (dissoc :command))))
 
 (defn run-streaming-function-with-no-stdin
@@ -604,6 +604,46 @@
     (start x)
     (assoc x :socket (write-stdin (:Id x) (:content m)))))
 
+(defn function-call-with-attached-socket
+  "create and start a container with an attached socket
+   this does not wait for the container to finish
+    returns a map with an 
+      :output-channel for stdout/stderr/:stopped/:timeout/:closed messages
+      :write function to write to the stdin of the container"
+  [container]
+  (check-then-pull container)
+  (let [x (docker/create (assoc container
+                                :opts {:StdinOnce true
+                                       :OpenStdin true
+                                       :AttachStding true}))
+        socket-channel (attach-socket (:Id x))
+        c (async/chan)
+        output-channel (async/chan)]
+    (start x)
+    (async/thread (read-loop socket-channel c))
+    (async/go
+      (docker/wait x)
+      (async/>! c :stopped)
+      (delete x))
+    (async/go-loop
+     [block (async/<! c)]
+      (logger/info "socket read loop " block)
+      (cond
+        (#{:stopped :timeout} block)
+        (do
+          (logger/info "socket read loop " block)
+          (async/put! output-channel block))
+        (nil? block)
+        (async/put! output-channel :closed)
+        :else
+        (do
+          (async/put! output-channel block)
+          (recur (async/<! c)))))
+    (assoc
+     x
+     :output-channel output-channel
+     :write (fn [s] (write-to-stdin socket-channel s)))))
+
 (defn finish-call
   "This is a blocking call that waits for the container to finish and then returns the output and exit code."
   [{:keys [timeout] :or {timeout 10000} :as x}]
@@ -638,6 +678,24 @@
         (delete x)
         {}))))
 
+(defn run-in-background-with-one-message [m]
+  (let [{:keys [output-channel]} (function-call-with-attached-socket m)]
+    (async/go-loop
+     []
+      (let [m (async/<! output-channel)]
+        (cond
+          (#{:timeout} m)
+          {:done :timeout :timeout "timeout waiting for message"}
+          (#{:stopped :closed} m)
+          {:done :exited :pty-output "tool stopped before responding on stdout" :exit-code 1}
+          (and (map? m) (contains? m :stdout))
+          {:pty-output (:stdout m)
+           :done :running}
+          :else
+          (do
+            (logger/info "background stderr " m)
+            (recur)))))))
+
 (defn run-with-stdin-content
   "run container with stdin read from file or from string
    this is several engine calls
@@ -665,8 +723,23 @@
     (run-with-stdin-content m)
     (true? (:background m))
     (run-background-function m)
+    (true? (:background-callback m))
+    (async/<!! (run-in-background-with-one-message m))
     :else
     (run-function m)))
+
+(comment
+  (repl/setup-stdout-logger)
+  (run-container
+   {:image "vonwig/gdrive:latest"
+    :background-callback true
+    :workdir "/app"
+    :ports ["3000:3000"]
+    :volumes ["mcp-gdrive:/gdrive-server"]
+    :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
+                  "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
+    :secrets {:google.gcp-oauth.keys.json "GDRIVE"}
+    :command ["auth"]}))
 
 (defn get-login-info-from-desktop-backend
   "returns token or nil if not logged in or backend.sock is not available"

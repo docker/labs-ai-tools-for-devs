@@ -4,7 +4,7 @@ tools:
     description: Authorize this server to use your Google Drive.
     container:
       image: vonwig/gdrive:latest
-      background: true
+      background-callback: true
       workdir: /app
       volumes:
         - "mcp-gdrive:/gdrive-server"
@@ -78,6 +78,7 @@ OAuth application.  The steps to create a new OAuth client are below.
 * Choose Application type: "Desktop app"
     * Name: "MCP GDrive Server Desktop Client"
     * Click "Create"
+* Add one Authorized redirect URI which should be `http://localhost:3000/oauth2callback`
 * In the popup:
     * Click "Download JSON"
     * Save the file
