@@ -1,6 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { SUPPORTED_MCP_CLIENTS } from "./mcp-clients";
-import { MCPClient } from "./mcp-clients";
+import { MCPClient } from "./mcp-clients/MCPTypes";
 
 export type MCPClientState = {
     client: MCPClient;
@@ -25,9 +25,6 @@ export const getMCPClientStates = async (ddClient: v1.DockerDesktopClient) => {
         }
         else {
             mcpClientStates[mcpClient.name] = { exists: true, configured: mcpClient.validateConfig(content), path: path, client: mcpClient };
-        }
-        if (mcpClient.name === 'Cursor') {
-            mcpClientStates[mcpClient.name].preventAutoConnectMessage = 'Connecting Cursor automatically is not yet supported. Please configure manually in Cursor Settings.';
         }
     }
     return mcpClientStates;

@@ -129,9 +129,7 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                         <Stack direction="column" justifyContent="center" spacing={1}>
                             <Stack direction="row" alignItems="center" spacing={1}>
                                 <Link href={mcpClientState.client.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.client.url)}>{mcpClientState.client.url}</Link>
-
                             </Stack>
-
                             <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
                             <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1, fontSize: '12px' }}>
                                 {mcpClientState.client.expectedConfigPath[client.host.platform as 'win32' | 'darwin' | 'linux']}

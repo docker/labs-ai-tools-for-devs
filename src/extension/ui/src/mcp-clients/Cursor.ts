@@ -1,24 +1,8 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { getUser } from "../FileWatcher";
-import { MCPClient } from ".";
+import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 import { DOCKER_MCP_COMMAND } from "../Constants";
-type CursorMCPConfig = {
-    mcpServers: {
-        identifier: string; // Random UUID
-        name: string; // MCP_DOCKER
-        command: string; // DOCKER_MCP_CONFIG.command + DOCKER_MCP_CONFIG.args.join(' ')
-        type: 'stdio' | 'sse';
-    }[]
-}
-
-const CURSOR_MCP_CONFIG: CursorMCPConfig['mcpServers'][number] = {
-    command: DOCKER_MCP_COMMAND,
-    name: 'MCP_DOCKER',
-    identifier: 'mcp_docker-' + new Date().getTime(),
-    type: 'stdio'
-}
-
-const configPathPlaceholder = 'Configuration must be done manually in Cursor Settings.'
+import { mergeDeep } from "../MergeDeep";
 
 class CursorDesktopClient implements MCPClient {
     name = 'Cursor'
@@ -33,66 +17,59 @@ class CursorDesktopClient implements MCPClient {
         '</pre>'
     ]
     expectedConfigPath = {
-        darwin: configPathPlaceholder,
-        linux: configPathPlaceholder,
-        win32: configPathPlaceholder
+        darwin: '$HOME/.cursor/mcp.json',
+        linux: '$HOME/.cursor/mcp.json',
+        win32: '$USERPROFILE\\.cursor\\mcp.json'
     }
     readFile = async (client: v1.DockerDesktopClient) => {
-        const platform = client.host.platform
-        let cursorDirectory = ''
-        switch (platform) {
-            case 'darwin':
-                cursorDirectory = '/Users/$USER/Library/Application Support/Cursor/'
-                break;
-            case 'linux':
-                cursorDirectory = '/home/$USER/.config/cursor/'
-                break;
-            case 'win32':
-                cursorDirectory = '%APPDATA%\\Cursor\\'
-                break;
-            default:
-                throw new Error('Unsupported platform: ' + platform)
-        }
-        const sqlFilePath = platform === 'win32' ? cursorDirectory + 'User\\globalStorage\\state.vscdb' : cursorDirectory + 'User/globalStorage/state.vscdb'
-        // File is at: ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
-        // Which is a sqlite db as you know, then you need SELECT value from ItemTable where key='src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser
-        // Which gives you a JSON payload containing the key mcpServers: [] 
-        const SQL_IMG = 'keinos/sqlite3:latest'
-        const SQL_CMD = ['sqlite3', '"/state.vscdb"', '"SELECT value from ItemTable where key=\'src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser\'"']
+        const platform = client.host.platform as keyof typeof this.expectedConfigPath
+        const configPath = this.expectedConfigPath[platform].replace('$USER', await getUser(client))
         try {
-            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${sqlFilePath}",target=/state.vscdb`, SQL_IMG, ...SQL_CMD])
-            return { content: result.stdout || undefined, path: sqlFilePath };
+            const result = await client.docker.cli.exec('run', ['alpine:latest', 'cat', configPath])
+            return {
+                content: result.stdout,
+                path: configPath
+            }
         } catch (e) {
-            console.error(e)
-            return { content: null, path: sqlFilePath };
+            return {
+                content: null,
+                path: configPath
+            }
         }
     }
     connect = async (client: v1.DockerDesktopClient) => {
         const config = await this.readFile(client)
-        if (!config.content) {
-            client.desktopUI.toast.error('No config found')
-            return
-        }
-        const cursorConfig = JSON.parse(config.content) as CursorMCPConfig
-        const mcpServer = cursorConfig.mcpServers.find(server => server.name === 'MCP_DOCKER')
-        if (mcpServer) {
-            client.desktopUI.toast.warning('You already have MCP Docker configured. If you are seeing this, something went wrong.')
-            return
-        }
-        cursorConfig.mcpServers.push(CURSOR_MCP_CONFIG)
-        const cursorConfigBlob = new Blob([JSON.stringify(cursorConfig)], { type: 'application/json' })
-        const SQL_IMG = 'keinos/sqlite3:latest'
-        const SQL_CMD = ['sqlite3', '"/state.vscdb"', `"UPDATE ItemTable SET value='${cursorConfigBlob}' where key='src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser'"`]
+        let cursorConfig = null
         try {
-            await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${config.path}",target=/state.vscdb`, SQL_IMG, ...SQL_CMD])
-            client.desktopUI.toast.success('Docker MCP Server connected to Cursor')
+            cursorConfig = JSON.parse(config.content || '{}') as typeof SAMPLE_MCP_CONFIG
+            if (cursorConfig.mcpServers?.MCP_DOCKER) {
+                client.desktopUI.toast.error('Docker MCP Server already connected to Cursor')
+                return
+            }
+        } catch (e) {
+            client.desktopUI.toast.error('Failed to connect. Invalid Cursor config found at ' + config.path)
+            return
+        }
+        const payload = mergeDeep(cursorConfig, SAMPLE_MCP_CONFIG)
+        try {
+            await client.docker.cli.exec('run',
+                [
+                    '--rm',
+                    '--mount',
+                    `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
+                    '--workdir',
+                    '/cursor_config', 'vonwig/function_write_files:latest',
+                    `'${JSON.stringify({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] })}'`
+                ]
+            )
         } catch (e) {
             if ((e as any).stderr) {
-                client.desktopUI.toast.error('Error updating Cursor config: ' + (e as any).stderr)
+                client.desktopUI.toast.error((e as any).stderr)
             } else {
-                client.desktopUI.toast.error('Error updating Cursor config: ' + (e as any))
+                client.desktopUI.toast.error((e as Error).message)
             }
         }
+        client.desktopUI.toast.success('Docker MCP Server connected to Cursor')
     }
     disconnect = async (client: v1.DockerDesktopClient) => {
         const config = await this.readFile(client)
@@ -100,20 +77,44 @@ class CursorDesktopClient implements MCPClient {
             client.desktopUI.toast.error('No config found')
             return
         }
-        const cursorConfig = JSON.parse(config.content) as CursorMCPConfig
-        cursorConfig.mcpServers = cursorConfig.mcpServers.filter(server => server.name !== 'MCP_DOCKER')
-        const SQL_IMG = 'keinos/sqlite3:latest'
-        const SQL_CMD = ['sqlite3', "/state.vscdb", `"UPDATE ItemTable SET value='${JSON.stringify(cursorConfig)}' where key='src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser'"`]
+        let cursorConfig = null
         try {
-            await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${config.path}",target=/state.vscdb`, SQL_IMG, ...SQL_CMD])
-            client.desktopUI.toast.success('Docker MCP Server disconnected from Cursor')
+            cursorConfig = JSON.parse(config.content) as typeof SAMPLE_MCP_CONFIG
+            if (!cursorConfig.mcpServers?.MCP_DOCKER) {
+                client.desktopUI.toast.error('Docker MCP Server not connected to Cursor')
+                return
+            }
         } catch (e) {
-            client.desktopUI.toast.error((e as any))
+            client.desktopUI.toast.error('Failed to disconnect. Invalid Cursor config found at ' + config.path)
+            return
+        }
+        const payload = {
+            ...cursorConfig,
+            mcpServers: Object.fromEntries(Object.entries(cursorConfig.mcpServers).filter(([key]) => key !== 'MCP_DOCKER'))
+        }
+        try {
+            await client.docker.cli.exec('run',
+                [
+                    '--rm',
+                    '--mount',
+                    `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
+                    '--workdir',
+                    '/cursor_config', 'vonwig/function_write_files:latest',
+                    `'${JSON.stringify({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] })}'`
+                ]
+            )
+        } catch (e) {
+            if ((e as any).stderr) {
+                client.desktopUI.toast.error((e as any).stderr)
+            } else {
+                client.desktopUI.toast.error((e as Error).message)
+            }
         }
     }
     validateConfig = (content: string) => {
-        const config = JSON.parse(content) as CursorMCPConfig
-        return config.mcpServers.some(server => server.name === 'MCP_DOCKER')
+        console.log('validating cursor config', content)
+        const config = JSON.parse(content || '{}') as typeof SAMPLE_MCP_CONFIG
+        return !!config.mcpServers?.MCP_DOCKER
     }
 }
 

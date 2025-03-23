@@ -1,16 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { getUser } from "../FileWatcher";
-import { MCPClient } from ".";
-import { DOCKER_MCP_COMMAND } from "../Constants";
-
-const SAMPLE_MCP_CONFIG = {
-    mcpServers: {
-        MCP_DOCKER: {
-            "command": DOCKER_MCP_COMMAND.split(' ')[0],
-            "args": DOCKER_MCP_COMMAND.split(' ').slice(1),
-        }
-    }
-}
+import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class ClaudeDesktopClient implements MCPClient {
     name = 'Claude Desktop'
@@ -122,8 +112,8 @@ class ClaudeDesktopClient implements MCPClient {
         }
     }
     validateConfig = (content: string) => {
-        const config = JSON.parse(content)
-        return Object.keys(config.mcpServers).some(key => key.includes('MCP_DOCKER'))
+        const config = JSON.parse(content || '{}')
+        return !!config.mcpServers?.MCP_DOCKER
     }
 }
 
