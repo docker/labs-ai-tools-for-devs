@@ -135,16 +135,16 @@
                 (async/<! (f server response)))
               (do
                 (logger/error (format
-                                "mcp server channel did not initialize for %s"
-                                (:image container-definition)))
-                [])))
+                               "mcp server channel did not initialize for %s"
+                               (:image container-definition)))
+                {:error :did-not-initialize})))
           (finally
             (when (not (true? stateful))
               (remove))))))
     (catch Throwable t
       (logger/error "error " t)
       (let [c (async/promise-chan)]
-        (async/>!! c [])
+        (async/>!! c {:error :exception :ex t})
         c))))
 
 (defn- send-call-tool-message [params {:keys [request dead-channel]} _]
@@ -166,6 +166,15 @@
            (map #(assoc % :container (assoc container-definition :type :mcp)))
            (into [])))))
 
+(defn- send-list-resources-message [{:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/list" :params {}}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      (logger/info "resources: " (-> response :result :resources))
+      response)))
+
 (defn call-tool
   "call tool in server container - might call running server if server is stateful
     returns exit-code, done, and a response map with either result or error"
@@ -174,7 +183,24 @@
     (docker/inject-secret-transform container)
     (partial send-call-tool-message params)))
 
-(defn -get-tools 
+(defn -get-resources
+  "list resources"
+  [container-definition]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     send-list-resources-message)))
+
+(defn -get-tools
   "get tool definitions from container - this container can always be shutdown"
   [container-definition]
   (async/<!!
@@ -191,6 +217,7 @@
          docker/inject-secret-transform)
      (partial send-list-tools-message container-definition))))
 
+;; maintain a mcp-meadata-cache-file
 (defn mcp-metadata-cache-file [] (fs/file (get-prompts-dir) "mcp-metadata-cache.edn"))
 (def mcp-metadata-cache (atom {}))
 (def cache-channel (async/chan))
@@ -211,6 +238,7 @@
      (mcp-metadata-cache-file)
      (pr-str updated-cache))
     (recur)))
+;; ------------------------------
 
 (defn inspect-image [container-definition]
   (:Id
@@ -223,12 +251,16 @@
   (assoc container-definition :digest (inspect-image container-definition)))
 
 (def cached-mcp-get-tools
-  (memoize (fn [container-definition]
-             (if-let [m (get @mcp-metadata-cache container-definition)]
-               m
-               (let [m (-get-tools container-definition)]
-                 (async/>!! cache-channel [container-definition m])
-                 m)))))
+  (fn [container-definition]
+    (if-let [m (get @mcp-metadata-cache container-definition)]
+      m
+      (let [m (-get-tools container-definition)]
+        (if (and
+             (not (and (map? m) (contains? m :error)))
+             (seq m))
+          (async/>!! cache-channel [container-definition m])
+          (logger/warn "failed to get tools for " (:image container-definition)))
+        m))))
 
 (defn get-tools [container-definition]
   (cached-mcp-get-tools
@@ -284,11 +316,15 @@
                               :local-get-tools -get-tools})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
                               :local-get-tools -get-tools})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/gdrive:latest"
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
                                                  :workdir "/app"
                                                  :volumes ["mcp-gdrive:/gdrive-server"]
                                                  :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
                               :local-get-tools -get-tools})
+  (-get-resources {:image "vonwig/gdrive:latest"
+                   :workdir "/app"
+                   :volumes ["mcp-gdrive:/gdrive-server"]
+                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
