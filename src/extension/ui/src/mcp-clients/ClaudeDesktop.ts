@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getUser } from "../FileWatcher";
+import { getUser, escapeJSONForPlatformShell } from "../FileWatcher";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class ClaudeDesktopClient implements MCPClient {
@@ -78,7 +78,15 @@ class ClaudeDesktopClient implements MCPClient {
             // No config or malformed config found, overwrite it
         }
         try {
-            await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload) }] })}'`])
+            await client.docker.cli.exec('run',
+                [
+                    '--rm',
+                    '--mount',
+                    `type=bind,source="${path}",target=/claude_desktop_config`,
+                    '--workdir',
+                    '/claude_desktop_config',
+                    'vonwig/function_write_files:latest',
+                    escapeJSONForPlatformShell({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload) }] }, client.host.platform)])
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
         }
@@ -106,7 +114,23 @@ class ClaudeDesktopClient implements MCPClient {
             const previousConfig = JSON.parse((await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])).stdout || '{}')
             const newConfig = { ...previousConfig }
             delete newConfig.mcpServers.MCP_DOCKER
-            await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'vonwig/function_write_files:latest', `'${JSON.stringify({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(newConfig) }] })}'`])
+            await client.docker.cli.exec('run', [
+                '--rm',
+                '--mount',
+                `type=bind,source="${path}",target=/claude_desktop_config`,
+                '--workdir',
+                '/claude_desktop_config',
+                'vonwig/function_write_files:latest',
+                escapeJSONForPlatformShell(
+                    {
+                        files:
+                            [{
+                                path: 'claude_desktop_config.json',
+                                content: JSON.stringify(newConfig)
+                            }]
+                    },
+                    client.host.platform)
+            ])
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
         }

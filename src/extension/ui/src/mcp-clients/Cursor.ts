@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getUser } from "../FileWatcher";
+import { escapeJSONForPlatformShell, getUser } from "../FileWatcher";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 import { DOCKER_MCP_COMMAND } from "../Constants";
 import { mergeDeep } from "../MergeDeep";
@@ -59,7 +59,7 @@ class CursorDesktopClient implements MCPClient {
                     `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
                     '--workdir',
                     '/cursor_config', 'vonwig/function_write_files:latest',
-                    `'${JSON.stringify({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] })}'`
+                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] }, client.host.platform)
                 ]
             )
         } catch (e) {
@@ -100,7 +100,7 @@ class CursorDesktopClient implements MCPClient {
                     `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
                     '--workdir',
                     '/cursor_config', 'vonwig/function_write_files:latest',
-                    `'${JSON.stringify({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] })}'`
+                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] }, client.host.platform)
                 ]
             )
         } catch (e) {
