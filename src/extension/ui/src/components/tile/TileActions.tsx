@@ -1,4 +1,4 @@
-import { Alert, Badge, Box, CircularProgress, IconButton, Stack, Switch, Tooltip, useTheme } from "@mui/material";
+import { Alert, Badge, Box, Chip, CircularProgress, IconButton, Stack, Switch, Tooltip, useTheme } from "@mui/material";
 import { Article, AttachFile, Build, Settings } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import Secrets from "../../Secrets";
@@ -44,12 +44,12 @@ export interface TileActionsProps {
 
 const TileConfigBadge = ({ children, unAssignedConfig, unAssignedSecrets }: { children: React.ReactNode, unAssignedConfig: { name: string, assigned: boolean }[], unAssignedSecrets: { name: string, assigned: boolean }[] }) => {
     if (unAssignedConfig.length > 0) {
-        return <Badge badgeContent={unAssignedConfig.length} color="secondary">
+        return <Badge badgeContent={unAssignedConfig.length} color="warning">
             {children}
         </Badge>
     }
     if (unAssignedSecrets.length > 0) {
-        return <Badge badgeContent={unAssignedSecrets.length} color="secondary">
+        return <Badge badgeContent={unAssignedSecrets.length} color="warning">
             {children}
         </Badge>
     }
@@ -91,9 +91,7 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
                 <Tooltip title={hasAllSecrets ? "Missing configuration. Click to set." : hasDDVersionWithSecretSupport ? "Missing secrets. Click to set." : getUnsupportedSecretMessage(ddVersion)}>
                     <IconButton onClick={() => setShowConfigModal(true)}>
                         <TileConfigBadge unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets}>
-
                             <Settings sx={{ color: 'text.secondary' }} />
-
                         </TileConfigBadge>
                     </IconButton>
                 </Tooltip>
@@ -125,7 +123,6 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
             </Tooltip>
         </Stack>
     }
-
     return (
         <>
             {/* Use the new ConfigurationModal component */}
@@ -138,23 +135,9 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, padding: 1, boxSizing: 'border-box' }}>
-                        <Tooltip title="Prompts">
-                            <Badge badgeContent={item.prompts || "0"} color="primary">
-                                <Article sx={{ fontSize: iconSize, color: 'secondary.main' }} />
-                            </Badge>
-                        </Tooltip>
-                        <Tooltip title="Resources">
-                            <Badge badgeContent={item.resources?.length || "0"} color="secondary">
-                                <AttachFile sx={{ fontSize: iconSize, color: 'secondary.main' }} />
-                            </Badge>
-                        </Tooltip>
-                        <Tooltip title="Tools">
-                            <Badge badgeContent={item.tools?.length || "0"} color="success">
-                                <Build sx={{ fontSize: iconSize, color: 'secondary.main' }} />
-                            </Badge>
-                        </Tooltip>
-                    </Box>
+                    {!!item.tools?.length && <Chip label={`${item.tools.length} tool` + (item.tools.length > 1 ? 's' : '')} color="primary" />}
+                    {!item.tools?.length && !!item.prompts && <Chip label={`${item.prompts} prompt(s)`} color="secondary" />}
+                    {!item.tools?.length && !item.prompts && item.resources?.length && <Chip label={`${item.resources.length} resource(s)`} color="success" />}
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
                     {getActionButton()}

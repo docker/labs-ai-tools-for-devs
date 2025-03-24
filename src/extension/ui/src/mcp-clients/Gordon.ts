@@ -1,7 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { MCPClient } from ".";
-import { DOCKER_MCP_COMMAND, DOCKER_MCP_CONTAINER_ARGS, DOCKER_MCP_IMAGE } from "../Constants";
+import { DOCKER_MCP_CONTAINER_ARGS, DOCKER_MCP_IMAGE } from "../Constants";
 import { stringify } from "yaml";
+import { MCPClient } from "./MCPTypes";
 
 
 const DOCKER_MCP_CONFIG_YAML = stringify({
@@ -46,8 +46,6 @@ class GordonMCPClient implements MCPClient {
     validateConfig = (content: string) => {
         return true;
     }
-
-
 }
 
 export default new GordonMCPClient();

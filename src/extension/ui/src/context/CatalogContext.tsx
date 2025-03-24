@@ -93,7 +93,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             const catalog = await response.text();
             const items = parse(catalog)['registry'] as { [key: string]: any };
             const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            setCatalogItems(itemsWithName);
+            setCatalogItems(itemsWithName.reverse());
             localStorage.setItem('catalog', JSON.stringify(itemsWithName));
             if (showNotification) {
                 client.desktopUI.toast.success('Catalog updated successfully.');

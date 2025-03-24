@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react';
-import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box, Select, MenuItem, Menu, Divider } from '@mui/material';
+import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, BadgeProps, Link, TextField, Tabs, Tab, Tooltip, CircularProgress, Box, Select, MenuItem, Menu, Divider, Icon } from '@mui/material';
 import { CatalogItemWithName } from './tile/Tile';
-import { Archive, ArrowDropDown, Edit, FileCopy, FolderOpenRounded, MoreHoriz, Search, Settings, Sort, SwapVert } from '@mui/icons-material';
+import { Archive, ArrowDropDown, Edit, FileCopy, FolderOpenRounded, MoreHoriz, Search, Settings, Sort, SortByAlpha, SwapVert } from '@mui/icons-material';
 import { useCatalogContext } from '../context/CatalogContext';
 import { useMCPClientContext } from '../context/MCPClientContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
@@ -163,11 +163,14 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         open={openMenus['demo-customized-menu'].open}
                         onClose={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })}
                     >
-                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
-                            ️‍🔥 Hot & New
+                        <MenuItem sx={{ fontWeight: 'bold' }} onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            ⏰ Most Recent
                         </MenuItem>
                         <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
-                            Most Downloads
+                            ️‍🔥 Trending
+                        </MenuItem>
+                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                            ⬇️ Most Downloads
                         </MenuItem>
                         <Divider sx={{ my: 0.5 }} />
                         <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>

@@ -1,4 +1,4 @@
-import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Stack, Typography, Link, AlertTitle, Divider } from "@mui/material";
+import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Stack, Typography, Link, AlertTitle, Divider, AccordionSummary, Accordion, AccordionDetails } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Alert } from "@mui/material";
 import { Box } from "@mui/material";
@@ -6,6 +6,9 @@ import { DOCKER_MCP_COMMAND } from "../../Constants";
 import { ContentCopy, LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
 import { MCPClientState } from "../../MCPClients";
 import { v1 } from "@docker/extension-api-client-types";
+import ClaudeIcon from '../../claude-ai-icon.svg'
+import GordonIcon from '../../gordon-icon.png'
+import CursorIcon from '../../cursor.svg'
 
 type MCPClientSettingsProps = {
     mcpClientStates: { [name: string]: MCPClientState };
@@ -15,69 +18,34 @@ type MCPClientSettingsProps = {
     client: v1.DockerDesktopClient;
 }
 
+const connectionButtonSX = {
+    maxHeight: '4em',
+    minWidth: '11em',
+}
+
+const iconMap = {
+    'Claude Desktop': ClaudeIcon,
+    'Gordon': GordonIcon,
+    'Cursor': CursorIcon,
+}
+
 const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, buttonsLoading, client }: MCPClientSettingsProps) =>
     <Box sx={{ width: '100%' }}>
         <Typography variant="h6">MCP Clients</Typography>
-        <List sx={{ p: 0 }}>
+        <Stack direction="column" spacing={1} sx={{ p: 0 }}>
             {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
-                <ListItem key={name}>
-                    <ListItemText
-                        disableTypography
-                        primary={
+                <Stack key={name} direction="row" spacing={1} sx={{ marginTop: 2 }}>
+                    <Accordion key={name} sx={{ width: '100%', marginRight: 1 }}>
+                        <AccordionSummary sx={{ width: '100%' }}>
                             <Stack direction="row" alignItems="center" spacing={1}>
+                                {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
                                 <Typography variant="h4">{name}</Typography>
                                 {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
                                 {mcpClientState.exists && mcpClientState.client.name !== 'Gordon' && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
                                 {mcpClientState.exists && mcpClientState.client.name === 'Gordon' && <Chip label='Automatic Connection Not Supported' color='warning' />}
-                                <Tooltip title={mcpClientState.preventAutoConnectMessage}>
-                                    <span style={{ marginLeft: 'auto' }}>
-                                        {mcpClientState.exists && mcpClientState.configured &&
-                                            <Button onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.client.disconnect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="warning" variant="outlined" size="small">
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <Typography>Disconnect</Typography>
-                                                    <LinkOff />
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                        {mcpClientState.exists && !mcpClientState.configured &&
-                                            <Button onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.client.connect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="primary" size="small">
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <Typography>Connect</Typography>
-                                                    <LinkRounded />
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                        {!mcpClientState.exists &&
-                                            <Button color="error" variant="outlined" size="small" onClick={async () => {
-                                                setButtonsLoading({ ...buttonsLoading, [name]: true });
-                                                await mcpClientState.client.connect(client)
-                                                await onUpdate();
-                                                setButtonsLoading({ ...buttonsLoading, [name]: false });
-                                            }}>
-                                                <Stack direction="row" alignItems="center" spacing={1}>
-                                                    <SaveOutlined />
-                                                    <Typography>Write Config</Typography>
-                                                    {buttonsLoading[name] && <CircularProgress size={16} />}
-                                                </Stack>
-                                            </Button>
-                                        }
-                                    </span>
-                                </Tooltip>
                             </Stack>
-                        }
-                        secondary={
+                        </AccordionSummary>
+                        <AccordionDetails>
                             <div>
                                 <Stack direction="column" justifyContent="center" spacing={1}>
                                     <Stack direction="row" alignItems="center" spacing={1}>
@@ -98,11 +66,66 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                                     ))}
                                 </List>
                             </div>
-                        }
-                    />
-                </ListItem>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Tooltip sx={{ alignSelf: 'baseline' }} title={mcpClientState.preventAutoConnectMessage}>
+                        <Stack direction="row" alignItems="space-between" spacing={1} sx={{ marginLeft: 'auto' }}>
+                            {mcpClientState.exists && mcpClientState.configured &&
+                                <Button
+                                    sx={connectionButtonSX}
+                                    onClick={async () => {
+                                        setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                        await mcpClientState.client.disconnect(client)
+                                        await onUpdate();
+                                        setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                    }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="warning" variant="outlined" size="small">
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                        <Typography>Disconnect</Typography>
+                                        <LinkOff />
+                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                    </Stack>
+                                </Button>
+                            }
+                            {mcpClientState.exists && !mcpClientState.configured &&
+                                <Button
+                                    sx={connectionButtonSX}
+                                    onClick={async () => {
+                                        setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                        await mcpClientState.client.connect(client)
+                                        await onUpdate();
+                                        setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                    }} disabled={buttonsLoading[name] || Boolean(mcpClientState.preventAutoConnectMessage)} color="primary" size="small">
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                        <Typography>Connect</Typography>
+                                        <LinkRounded />
+                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                    </Stack>
+                                </Button>
+                            }
+                            {!mcpClientState.exists &&
+                                <Button
+                                    sx={connectionButtonSX}
+                                    color="error"
+                                    variant="outlined"
+                                    size="small"
+                                    onClick={async () => {
+                                        setButtonsLoading({ ...buttonsLoading, [name]: true });
+                                        await mcpClientState.client.connect(client)
+                                        await onUpdate();
+                                        setButtonsLoading({ ...buttonsLoading, [name]: false });
+                                    }}>
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                        <SaveOutlined />
+                                        <Typography>Write Config</Typography>
+                                        {buttonsLoading[name] && <CircularProgress size={16} />}
+                                    </Stack>
+                                </Button>
+                            }
+                        </Stack>
+                    </Tooltip>
+                </Stack>
             ))}
-        </List>
+        </Stack>
         <Divider />
         <Alert severity="info">
             <AlertTitle>Other MCP Clients</AlertTitle>
