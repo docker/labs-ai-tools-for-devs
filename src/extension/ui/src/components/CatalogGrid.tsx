@@ -166,12 +166,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         <MenuItem sx={{ fontWeight: 'bold' }} onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
                             ⏰ Most Recent
                         </MenuItem>
-                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                        {/* <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
                             ️‍🔥 Trending
                         </MenuItem>
                         <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
                             ⬇️ Most Downloads
-                        </MenuItem>
+                        </MenuItem> */}
                         <Divider sx={{ my: 0.5 }} />
                         <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
                             Name (A-Z)
