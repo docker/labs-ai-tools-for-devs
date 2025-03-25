@@ -10,8 +10,6 @@ mcp:
         JIRA_USERNAME: "{{atlassian.jira.username}}"
       secrets:
         atlassian.jira.token: JIRA_PERSONAL_TOKEN
-        atlassian.jira.url: JIRA_URL
-        atlassian.jira.username: JIRA_USERNAME
 ---
 
 # Configuration
