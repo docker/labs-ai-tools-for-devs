@@ -78,7 +78,7 @@
   {:protocol-version "2024-11-05"
    :capabilities {:prompts {:listChanged true}
                   :tools {:listChanged true}
-                  :resources {}}
+                  :resources {:listChanged true}}
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
@@ -157,13 +157,13 @@
   (let [nextCursor (or cursor (str (java.util.UUID/randomUUID)))
         resource-factory (->> (:mcp.prompts/registry @db*)
                               (vals)
-                              (mapcat :mcp/resources))
-        _ (logger/info "resource-factory" resource-factory)
+                              (map :mcp/resources)
+                              (filter seq)
+                              (into []))
         mcp-resources (->> (mcp.client/resource-cursor nextCursor resource-factory)
                            (async/take 100)
                            (async/into [])
                            (async/<!!))
-        _ (logger/info "mcp-resources" mcp-resources)
         resources
         (merge
          {:resources (concat
@@ -185,7 +185,9 @@
                                                    (:uri params)
                                                    (->> (:mcp.prompts/registry @db*)
                                                         (vals)
-                                                        (mapcat :mcp/resources))))]
+                                                        (map :mcp/resources)
+                                                        (filter seq)
+                                                        (into []))))]
                 (->> results-collection
                      (mapcat :contents))))})
 

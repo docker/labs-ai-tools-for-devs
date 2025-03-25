@@ -11,6 +11,7 @@
    [git]
    [git.registry]
    [jsonrpc]
+   [jsonrpc.logger :as logger]
    logging
    [markdown :as markdown-parser]
    [mcp.client :as client]
@@ -223,15 +224,16 @@
          (assoc :mcp/resources
                 ;; using only the first mcp container definition
                 (merge {}
-                       (when-let [container (-> metadata :mcp :container first)]
+                       (when-let [container (-> metadata :mcp first :container)]
                          (let [container-definition (assoc container
                                                            :parameter-values
                                                            ((fnil medley.core/deep-merge {})
                                                             (-> metadata :parameter-values)
                                                             config))]
                            ;; TODO skip mcps that do not supoort resources
-                           {:list (client/list-function-factory container-definition)
-                            :get (client/get-function-factory container-definition)}))))))))
+                           (when (= (:image container) "vonwig/gdrive:latest")
+                             {:list (client/list-function-factory container-definition)
+                              :get (client/get-function-factory container-definition)})))))))))
 
 (comment
   (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))

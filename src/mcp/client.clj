@@ -182,7 +182,6 @@
                      (request {:method "resources/list" :params params}) ([v _] v)
                      dead-channel ([v _] v)
                      (async/timeout 15000) :timeout)]
-      (logger/info "resources: " (-> response :result :resources))
       response)))
 
 (defn call-tool
@@ -347,19 +346,6 @@
             (logger/info (format "loop again for cursor %s" (:nextCursor response)))
             (recur))
           :done)))))
-
-(comment
-  (repl/setup-stdout-logger)
-  (async/<!!
-    (async/into [] (resource-cursor
-                     "cursor"
-                     [{:list (list-function-factory
-                               {:image "vonwig/gdrive:latest"
-                                :workdir "/app"
-                                :volumes ["mcp-gdrive:/gdrive-server"]
-                                :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
-                                              "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
-                                :secrets {:google.gcp-oauth.keys.json "GDRIVE"}})}]))))
 
 (defn get-resource
   "  params
