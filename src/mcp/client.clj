@@ -123,7 +123,8 @@
           (let [{:keys [initialized response]}
                 (async/alt!
                   (request {:method "initialize" :params {:protocolVersion "2024-11-05"
-                                                          :capabilities {:tools {}}
+                                                          :capabilities {:tools {}
+                                                                         :resources {}}
                                                           :clientInfo {:name "docker"
                                                                        :version "0.1.0"}}}) ([v _] {:initialized true
                                                                                                     :response v})
@@ -135,16 +136,16 @@
                 (async/<! (f server response)))
               (do
                 (logger/error (format
-                                "mcp server channel did not initialize for %s"
-                                (:image container-definition)))
-                [])))
+                               "mcp server channel did not initialize for %s"
+                               (:image container-definition)))
+                {:error :did-not-initialize})))
           (finally
             (when (not (true? stateful))
               (remove))))))
     (catch Throwable t
       (logger/error "error " t)
       (let [c (async/promise-chan)]
-        (async/>!! c [])
+        (async/>!! c {:error :exception :ex t})
         c))))
 
 (defn- send-call-tool-message [params {:keys [request dead-channel]} _]
@@ -166,6 +167,23 @@
            (map #(assoc % :container (assoc container-definition :type :mcp)))
            (into [])))))
 
+(defn- send-get-resource-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/read" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      (logger/info "resource: " (-> response :result :contents))
+      response)))
+
+(defn- send-list-resources-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/list" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      response)))
+
 (defn call-tool
   "call tool in server container - might call running server if server is stateful
     returns exit-code, done, and a response map with either result or error"
@@ -174,7 +192,41 @@
     (docker/inject-secret-transform container)
     (partial send-call-tool-message params)))
 
-(defn -get-tools 
+(defn -get-resources
+  "list resources"
+  [container-definition params]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     (partial send-list-resources-message params))))
+
+(defn -get-resource
+  "list resources"
+  [container-definition params]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     (partial send-get-resource-message params))))
+
+(defn -get-tools
   "get tool definitions from container - this container can always be shutdown"
   [container-definition]
   (async/<!!
@@ -191,6 +243,7 @@
          docker/inject-secret-transform)
      (partial send-list-tools-message container-definition))))
 
+;; maintain a mcp-meadata-cache-file
 (defn mcp-metadata-cache-file [] (fs/file (get-prompts-dir) "mcp-metadata-cache.edn"))
 (def mcp-metadata-cache (atom {}))
 (def cache-channel (async/chan))
@@ -211,6 +264,7 @@
      (mcp-metadata-cache-file)
      (pr-str updated-cache))
     (recur)))
+;; ------------------------------
 
 (defn inspect-image [container-definition]
   (:Id
@@ -223,12 +277,16 @@
   (assoc container-definition :digest (inspect-image container-definition)))
 
 (def cached-mcp-get-tools
-  (memoize (fn [container-definition]
-             (if-let [m (get @mcp-metadata-cache container-definition)]
-               m
-               (let [m (-get-tools container-definition)]
-                 (async/>!! cache-channel [container-definition m])
-                 m)))))
+  (fn [container-definition]
+    (if-let [m (get @mcp-metadata-cache container-definition)]
+      m
+      (let [m (-get-tools container-definition)]
+        (if (and
+             (not (and (map? m) (contains? m :error)))
+             (seq m))
+          (async/>!! cache-channel [container-definition m])
+          (logger/warn "failed to get tools for " (:image container-definition)))
+        m))))
 
 (defn get-tools [container-definition]
   (cached-mcp-get-tools
@@ -249,6 +307,81 @@
                              (assoc :parameters (:inputSchema tool))
                              (dissoc :inputSchema))}))
        (into [])))
+
+(def cursors (atom {}))
+
+(defn resource-cursor
+  " return channel to output resources from MCP servers"
+  [cursor resource-factory]
+  (if-let [c (get @cursors cursor)]
+    c
+    (let [c (async/chan 1)]
+      (async/go
+        (let [container-processors
+              (->> resource-factory
+                   (filter :list)
+                   (map (fn [{:keys [list]}] (list c cursor 100)))
+                   (async/merge)
+                   (async/into []))]
+          ;; TODO timeout
+          (async/<! container-processors)
+          (swap! cursors dissoc cursor)
+          (async/close! c)))
+      c)))
+
+;; prototypical list function
+(defn list-function-factory
+  "list-functions take an output channel as a parameter and return a status channel
+    the status channel will emit :done when the MCP is finished emitting resources"
+  [container-definition]
+  (fn list-function [c cursor size]
+    ;; TODO cache the container?
+    (async/go-loop []
+      (let [response (-get-resources container-definition {})
+            coll (-> response :result :resources)]
+        (when (seq coll)
+          (async/<! (async/onto-chan! c (into [] coll) false)))
+        (if (:nextCursor response)
+          (do
+            (logger/info (format "loop again for cursor %s" (:nextCursor response)))
+            (recur))
+          :done)))))
+
+(defn get-resource
+  "  params
+       resource-factory - coll of mcp servers that can provide resources
+     return a channel with an array of matching resource results"
+  [uri resource-factory]
+  (->>
+   resource-factory
+   (filter :get)
+   (map (fn [{:keys [get]}] (get uri)))
+   (async/merge)
+   (async/into [])))
+
+;; prototypical get function
+(defn get-function-factory
+  "get-functions return a channel to emit matching resources. The channel might just close if nothing is found."
+  [container-definition]
+  (fn get-function [uri]
+    (let [c (async/chan)]
+      ; TODO skip this if this container-definition doesn't support this uri
+      (let [response (-get-resource container-definition {:uri uri})]
+        (when (:error response)
+          (logger/error (format "%s error getting resource %s" container-definition response)))
+        (when (:result response)
+          (logger/info (format "%s got resource %s" (:image container-definition) (:result response)))
+          (async/put! c (:result response))))
+      (async/close! c)
+      c)))
+
+(comment
+  (async/<!!
+   (get-resource
+    "hello"
+    [{}
+     {:get (get-function-factory nil)}
+     {}])))
 
 (comment
   (repl/setup-stdout-logger)
@@ -284,11 +417,22 @@
                               :local-get-tools -get-tools})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
                               :local-get-tools -get-tools})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/gdrive:latest"
+  (docker/inject-secret-transform {:image "vonwig/gdrive:latest"
+                                   :workdir "/app"
+                                   :volumes ["mcp-gdrive:/gdrive-server"]
+                                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
                                                  :workdir "/app"
                                                  :volumes ["mcp-gdrive:/gdrive-server"]
                                                  :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
                               :local-get-tools -get-tools})
+  (-get-resources {:image "vonwig/gdrive:latest"
+                   :workdir "/app"
+                   :volumes ["mcp-gdrive:/gdrive-server"]
+                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
+                                 "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
+                   :secrets {:google.gcp-oauth.keys.json "GDRIVE"}}
+                  {})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"

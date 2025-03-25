@@ -78,7 +78,7 @@
   {:protocol-version "2024-11-05"
    :capabilities {:prompts {:listChanged true}
                   :tools {:listChanged true}
-                  :resources {}}
+                  :resources {:listChanged true}}
    :server-info {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
@@ -151,13 +151,28 @@
 ;; MCP resources
 ;; -----------------
 
-(defmethod lsp.server/receive-request "resources/list" [_ {:keys [db*]} _]
-  (logger/info "resources/list")
-  (let [resources
-        {:resources (or (->> (:mcp.prompts/resources @db*)
-                             (vals)
-                             (map #(select-keys % [:uri :name :description :mimeType])))
-                        [])}]
+(defmethod lsp.server/receive-request "resources/list" [_ {:keys [db*]} {:keys [cursor] :as params}]
+  (logger/info "resources/list " params)
+  ;; add nextCursor to result if there are more resources
+  (let [nextCursor (or cursor (str (java.util.UUID/randomUUID)))
+        resource-factory (->> (:mcp.prompts/registry @db*)
+                              (vals)
+                              (map :mcp/resources)
+                              (filter seq)
+                              (into []))
+        mcp-resources (->> (mcp.client/resource-cursor nextCursor resource-factory)
+                           (async/take 100)
+                           (async/into [])
+                           (async/<!!))
+        resources
+        (merge
+         {:resources (concat
+                      (->> (:mcp.prompts/resources @db*)
+                           (vals)
+                           (map #(select-keys % [:uri :name :description :mimeType])))
+                      mcp-resources)}
+         (when (= 100 (count mcp-resources))
+           {:nextCursor nextCursor}))]
     resources))
 
 (defmethod lsp.server/receive-request "resources/read" [_ {:keys [db*]} params]
@@ -165,7 +180,16 @@
   {:contents (concat
               []
               (when-let [m (get-in @db* [:mcp.prompts/resources (:uri params)])]
-                [(select-keys m [:uri :mimeType :text :blob])]))})
+                [(select-keys m [:uri :mimeType :text :blob])])
+              (let [results-collection (async/<!! (mcp.client/get-resource
+                                                   (:uri params)
+                                                   (->> (:mcp.prompts/registry @db*)
+                                                        (vals)
+                                                        (map :mcp/resources)
+                                                        (filter seq)
+                                                        (into []))))]
+                (->> results-collection
+                     (mapcat :contents))))})
 
 (defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
   (logger/info "resources/templates/list")
@@ -327,10 +351,10 @@
      ;; initialize prompts
      (initialize-prompts opts)
      ;; watch dynamic prompts in background
-     (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher 
-       opts
-       jsonrpc.prompt-change-events/registry-updated
-       jsonrpc.prompt-change-events/markdown-tool-updated)
+     (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
+      opts
+      jsonrpc.prompt-change-events/registry-updated
+      jsonrpc.prompt-change-events/markdown-tool-updated)
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
      ;; this won't do anything if nrepl is not present

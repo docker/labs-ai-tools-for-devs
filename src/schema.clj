@@ -122,8 +122,17 @@
 ;; this is the data that can be extracted from a prompts file, whether it's yaml or markdown
 (s/def ::prompt-function fn?)
 (s/def :mcp/prompt-registry (s/map-of string? (s/keys :req-un [::description ::prompt-function])))
+(s/def :mcp/resources (s/map-of keyword? any?))
+;; a prompts file is always constructed from a markdown file
+;; two flavors
+;;   1. just simple container tools, declarative resources, and prompt sections
+;;   2. actual mcp servers that we interrogate and track
+;; the :prompt-registry is initialized at get-prompts time and is currently static
+;; the :resource-registry is always dynamic so it's really just channels to interrogate the
+;; underlying mcp container - some servers don't even have a resource capability
 (s/def ::prompts-file (s/keys :req-un [::messages ::functions ::metadata]
-                              :req [:mcp/prompt-registry]))
+                              :req [:mcp/prompt-registry]
+                              :opt [:mcp/resources]))
 
 (s/def ::mimeType string?)
 (s/def ::uri string?)
