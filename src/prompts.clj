@@ -173,7 +173,8 @@
        
      returns a :schema/prompts-file"
   [{:keys [parameters prompts user platform host-dir prompt-content config] :as opts}]
-  (let [{:keys [metadata] :as prompt-data}
+  (let [;; parse markdown content
+        {:keys [metadata] :as prompt-data}
         (cond
           ;; prompt content is already in opts
           prompt-content
@@ -183,10 +184,13 @@
           :else
           (markdown-parser/memoized-parse-prompts (slurp prompts)))
 
+        ;; merge parameters with extractor context
         m (merge
            (run-extractors (:extractors metadata) opts)
            parameters
            (-> metadata :parameter-values))
+
+        ;; create a prompt renderer
         renderer (if (= "django" (:prompt-format metadata))
                    (fn [arguments message]
                      (selmer-render (merge (facts m user platform host-dir) arguments) message))
@@ -214,7 +218,20 @@
          (assoc :functions (concat
                             (->> (or (:tools metadata) (:functions metadata))
                                  (mapcat function-definition))
-                            (client/get-mcp-tools-from-prompt (update metadata :parameter-values (fnil medley.core/deep-merge {}) config))))))))
+                            (client/get-mcp-tools-from-prompt
+                             (update metadata :parameter-values (fnil medley.core/deep-merge {}) config))))
+         (assoc :mcp/resources
+                ;; using only the first mcp container definition
+                (merge {}
+                       (when-let [container (-> metadata :mcp :container first)]
+                         (let [container-definition (assoc container
+                                                           :parameter-values
+                                                           ((fnil medley.core/deep-merge {})
+                                                            (-> metadata :parameter-values)
+                                                            config))]
+                           ;; TODO skip mcps that do not supoort resources
+                           {:list (client/list-function-factory container-definition)
+                            :get (client/get-function-factory container-definition)}))))))))
 
 (comment
   (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))

@@ -6,14 +6,15 @@
    [flatland.ordered.map :refer [ordered-map]]
    git
    [markdown :as markdown-parser]
+   [mcp.client :as client]
    [medley.core :as medley]
    prompts
    repl))
 
 (defn mcp-metadata-cache [f]
   (edn/read-string
-    {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
-    (slurp f)))
+   {:readers {'ordered/map (fn [pairs] (into (ordered-map pairs)))}}
+   (slurp f)))
 
 (comment
   (mcp-metadata-cache "test/resources/mcp-metadata-cache.edn"))
@@ -66,10 +67,28 @@
          :registry
          vals
          (map :ref)
-         (map git/prompt-file)))
+         (map #(conj [%] (git/prompt-file %)))
+         (into {})))
 
   ;; parse all of the current git prompts
-  (map f->prompt local-prompt-files)
+  (with-redefs [#'client/get-mcp-tools-from-prompt (constantly [])]
+    (def all-prompt-files (map (fn [[k v]] [k (f->prompt v)]) local-prompt-files)))
 
-  ;;
+  (def all-images
+    (->>
+      (concat
+        (->> (into {} all-prompt-files)
+             (vals)
+             (mapcat (comp :mcp :metadata))
+             (map (comp :image :container))
+             (into #{}))
+        (->> (into {} all-prompt-files)
+             (vals)
+             (mapcat :functions)
+             (map (comp :image :container :function))
+             (into #{})))
+      (into #{})
+      (sort)))
+
+;;
   (markdown-parser/parse-markdown (slurp "prompts/examples/sequentialthinking.md")))

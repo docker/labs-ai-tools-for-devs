@@ -359,7 +359,7 @@
                                             (concat
                                              Env
                                              (->> (:environment container-definition)
-                                                  (map (fn [[k v]] (format "%s=%s" k v)))
+                                                  (map (fn [[k v]] (format "%s=%s" (if (keyword? k) (name k) k) v)))
                                                   (into [])))
                                             real-entrypoint)])
         (dissoc :command))))
@@ -624,10 +624,10 @@
     (async/go
       (docker/wait x)
       (async/>! c :stopped)
-      (delete x))
+      #_(delete x))
     (async/go-loop
      [block (async/<! c)]
-      (logger/info "socket read loop " block)
+      (logger/info "background socket read loop " block)
       (cond
         (#{:stopped :timeout} block)
         (do

@@ -264,7 +264,7 @@ registry:
     description: |
       UNDER CONSTRUCTION (support long running browser cache)
       Browser automation and web scraping using Puppeteer.
-    ref: https://img.icons8.com/officel/80/under-construction.png
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
     icon: https://img.icons8.com/officel/80/under-construction.png
     tools: []
     prompts: 0

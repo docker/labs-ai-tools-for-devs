@@ -167,10 +167,19 @@
            (map #(assoc % :container (assoc container-definition :type :mcp)))
            (into [])))))
 
-(defn- send-list-resources-message [{:keys [request dead-channel]} _]
+(defn- send-get-resource-message [params {:keys [request dead-channel]} _]
   (async/go
     (let [response (async/alt!
-                     (request {:method "resources/list" :params {}}) ([v _] v)
+                     (request {:method "resources/read" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      (logger/info "resource: " (-> response :result :contents))
+      response)))
+
+(defn- send-list-resources-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/list" :params params}) ([v _] v)
                      dead-channel ([v _] v)
                      (async/timeout 15000) :timeout)]
       (logger/info "resources: " (-> response :result :resources))
@@ -186,7 +195,7 @@
 
 (defn -get-resources
   "list resources"
-  [container-definition]
+  [container-definition params]
   (async/<!!
    (with-running-mcp
      (-> container-definition
@@ -199,7 +208,24 @@
                     (:parameter-values c)))))
          ;; inject secrets from container definition
          docker/inject-secret-transform)
-     send-list-resources-message)))
+     (partial send-list-resources-message params))))
+
+(defn -get-resource
+  "list resources"
+  [container-definition params]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     (partial send-get-resource-message params))))
 
 (defn -get-tools
   "get tool definitions from container - this container can always be shutdown"
@@ -283,6 +309,94 @@
                              (dissoc :inputSchema))}))
        (into [])))
 
+(def cursors (atom {}))
+
+(defn resource-cursor
+  " return channel to output resources from MCP servers"
+  [cursor resource-factory]
+  (if-let [c (get @cursors cursor)]
+    c
+    (let [c (async/chan 1)]
+      (async/go
+        (let [container-processors
+              (->> resource-factory
+                   (filter :list)
+                   (map (fn [{:keys [list]}] (list c cursor 100)))
+                   (async/merge)
+                   (async/into []))]
+          ;; TODO timeout
+          (async/<! container-processors)
+          (swap! cursors dissoc cursor)
+          (async/close! c)))
+      c)))
+
+;; prototypical list function
+(defn list-function-factory
+  "list-functions take an output channel as a parameter and return a status channel
+    the status channel will emit :done when the MCP is finished emitting resources"
+  [container-definition]
+  (fn list-function [c cursor size]
+    ;; TODO cache the container?
+    (async/go-loop []
+      (let [response (-get-resources container-definition {})
+            coll (-> response :result :resources)]
+        (when (seq coll)
+          (async/<! (async/onto-chan! c (into [] coll) false)))
+        (if (:nextCursor response)
+          (do
+            (logger/info (format "loop again for cursor %s" (:nextCursor response)))
+            (recur))
+          :done)))))
+
+(comment
+  (repl/setup-stdout-logger)
+  (async/<!!
+    (async/into [] (resource-cursor
+                     "cursor"
+                     [{:list (list-function-factory
+                               {:image "vonwig/gdrive:latest"
+                                :workdir "/app"
+                                :volumes ["mcp-gdrive:/gdrive-server"]
+                                :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
+                                              "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
+                                :secrets {:google.gcp-oauth.keys.json "GDRIVE"}})}]))))
+
+(defn get-resource
+  "  params
+       resource-factory - coll of mcp servers that can provide resources
+     return a channel with an array of matching resource results"
+  [uri resource-factory]
+  (->>
+   resource-factory
+   (filter :get)
+   (map (fn [{:keys [get]}] (get uri)))
+   (async/merge)
+   (async/into [])))
+
+;; prototypical get function
+(defn get-function-factory
+  "get-functions return a channel to emit matching resources. The channel might just close if nothing is found."
+  [container-definition]
+  (fn get-function [uri]
+    (let [c (async/chan)]
+      ; TODO skip this if this container-definition doesn't support this uri
+      (let [response (-get-resource container-definition {:uri uri})]
+        (when (:error response)
+          (logger/error (format "%s error getting resource %s" container-definition response)))
+        (when (:result response)
+          (logger/info (format "%s got resource %s" (:image container-definition) (:result response)))
+          (async/put! c (:result response))))
+      (async/close! c)
+      c)))
+
+(comment
+  (async/<!!
+   (get-resource
+    "hello"
+    [{}
+     {:get (get-function-factory nil)}
+     {}])))
+
 (comment
   (repl/setup-stdout-logger)
   (docker/inject-secret-transform {:image "mcp/stripe:latest"
@@ -317,6 +431,10 @@
                               :local-get-tools -get-tools})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
                               :local-get-tools -get-tools})
+  (docker/inject-secret-transform {:image "vonwig/gdrive:latest"
+                                   :workdir "/app"
+                                   :volumes ["mcp-gdrive:/gdrive-server"]
+                                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
                                                  :workdir "/app"
                                                  :volumes ["mcp-gdrive:/gdrive-server"]
@@ -327,7 +445,8 @@
                    :volumes ["mcp-gdrive:/gdrive-server"]
                    :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
                                  "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
-                   :secrets {:google.gcp-oauth.keys.json "GDRIVE"}})
+                   :secrets {:google.gcp-oauth.keys.json "GDRIVE"}}
+                  {})
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
