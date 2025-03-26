@@ -21,14 +21,6 @@ registry:
     - {name: curl}
     prompts: 1
     resources: {}
-  hello world:
-    description: Great for testing! This prompt file simply contains a prompt to echo a greeting using a container, and the tool to do so.
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/hello_world.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
-    tools:
-    - {name: hello-docker}
-    prompts: 1
-    resources: {}
   ffmpeg:
     description: Use ffmpeg to process video files. This prompt file contains the ffmpeg tool, and a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
@@ -40,14 +32,6 @@ registry:
     - {name: ffmpeg}
     prompts: 1
     resources: {}
-  explain dockerfiles:
-    description: Provide a detailed description, analysis, or annotation of a given Dockerfile. This prompt file contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to run the tool to explain the Dockerfile.
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/explain_dockerfile.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
-    tools:
-    - {name: cat_file}
-    prompts: 1
-    resources: {}
   qr code:
     description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
@@ -55,22 +39,6 @@ registry:
     tools:
     - {name: qrencode}
     prompts: 0
-    resources: {}
-  speculative_execution:
-    description: "Use lorax from Claude. Lorax is a speculative execution tool that can be used  to make edits and run tools in an isolated sandbox. \n"
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/lorax/speculative.md
-    icon: https://vonwig.github.io/prompts.docs/img/speculative_hu15687469033092380316.webp
-    tools:
-    - {name: sandbox-source}
-    - {name: sandbox-clone}
-    - {name: sandbox-snapshot}
-    - {name: sandbox-restore}
-    - {name: sandbox-exec}
-    - {name: sandbox-delete-file}
-    - {name: sandbox-rm}
-    - {name: sandbox-diff}
-    - {name: sandbox-apply}
-    prompts: 1
     resources: {}
   memory:
     description: Give your MCP client a memory system! This prompt file contains a tool to create entities, relations, and observations in a knowledge graph. It also contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
