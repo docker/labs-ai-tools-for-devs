@@ -21,7 +21,7 @@ class CursorDesktopClient implements MCPClient {
         linux: '$HOME/.cursor/mcp.json',
         win32: '$USERPROFILE\\.cursor\\mcp.json'
     }
-    readFile = async (client: v1.DockerDesktopClient) => {
+    readConfig = async (client: v1.DockerDesktopClient) => {
         const platform = client.host.platform as keyof typeof this.expectedConfigPath
         const configPath = this.expectedConfigPath[platform].replace('$USER', await getUser(client))
         try {
@@ -38,7 +38,7 @@ class CursorDesktopClient implements MCPClient {
         }
     }
     connect = async (client: v1.DockerDesktopClient) => {
-        const config = await this.readFile(client)
+        const config = await this.readConfig(client)
         let cursorConfig = null
         try {
             cursorConfig = JSON.parse(config.content || '{}') as typeof SAMPLE_MCP_CONFIG
@@ -69,10 +69,9 @@ class CursorDesktopClient implements MCPClient {
                 client.desktopUI.toast.error((e as Error).message)
             }
         }
-        client.desktopUI.toast.success('Docker MCP Server connected to Cursor')
     }
     disconnect = async (client: v1.DockerDesktopClient) => {
-        const config = await this.readFile(client)
+        const config = await this.readConfig(client)
         if (!config.content) {
             client.desktopUI.toast.error('No config found')
             return

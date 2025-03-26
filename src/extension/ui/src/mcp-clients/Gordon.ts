@@ -13,7 +13,13 @@ const DOCKER_MCP_CONFIG_YAML = stringify({
     }
 })
 
-const gordonConfigPathPlaceholder = 'gordon-mcp.yml in the directory you want to connect to'
+type GordonConfig = {
+    version: string;
+    features: {
+        name: string;
+        enabled: boolean;
+    }[];
+}
 
 class GordonMCPClient implements MCPClient {
     name = 'Gordon';
@@ -26,25 +32,48 @@ class GordonMCPClient implements MCPClient {
         DOCKER_MCP_CONFIG_YAML +
         '</pre>'
     ]
-    expectedConfigPath = {
-        darwin: gordonConfigPathPlaceholder,
-        linux: gordonConfigPathPlaceholder,
-        win32: gordonConfigPathPlaceholder
-    }
-    readFile = async (client: v1.DockerDesktopClient) => {
+    readConfig = async (client: v1.DockerDesktopClient) => {
+        const result = await client.docker.cli.exec('ai', ['config', 'get'])
         return {
-            path: this.expectedConfigPath[client.host.platform as 'darwin' | 'linux' | 'win32'],
-            content: null
+            path: 'Docker Desktop AI config',
+            content: result.stdout
         }
     }
     connect = async (client: v1.DockerDesktopClient) => {
-        return Promise.resolve();
+        try {
+            await client.docker.cli.exec('ai', ['config', 'set-feature', '"MCP Catalog"', 'true'])
+        } catch (e) {
+            if ((e as any).stderr) {
+                client.desktopUI.toast.error((e as any).stderr)
+            } else {
+                client.desktopUI.toast.error((e as Error).message)
+            }
+        }
     }
     disconnect = async (client: v1.DockerDesktopClient) => {
-        return Promise.resolve();
+        try {
+            await client.docker.cli.exec('ai', ['config', 'set-feature', '"MCP Catalog"', 'false'])
+        } catch (e) {
+            if ((e as any).stderr) {
+                client.desktopUI.toast.error((e as any).stderr)
+            } else {
+                client.desktopUI.toast.error((e as Error).message)
+            }
+        }
     }
     validateConfig = (content: string) => {
-        return true;
+        try {
+            const config = JSON.parse(content) as GordonConfig
+            return config.features.some(f => f.name === 'MCP Catalog' && f.enabled)
+        } catch (e) {
+            if (e instanceof Error) {
+                console.error(e.message)
+            }
+            else {
+                console.error(JSON.stringify(e))
+            }
+            return false
+        }
     }
 }
 
