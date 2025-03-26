@@ -20,7 +20,7 @@ class ClaudeDesktopClient implements MCPClient {
         linux: '/home/$USER/.config/claude/claude_desktop_config.json',
         win32: '%APPDATA%\\Claude\\claude_desktop_config.json'
     }
-    readFile = async (client: v1.DockerDesktopClient) => {
+    readConfig = async (client: v1.DockerDesktopClient) => {
         const platform = client.host.platform
         let path = ''
         switch (platform) {

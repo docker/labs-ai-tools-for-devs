@@ -41,8 +41,7 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                                 {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
                                 <Typography variant="h4">{name}</Typography>
                                 {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
-                                {mcpClientState.exists && mcpClientState.client.name !== 'Gordon' && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
-                                {mcpClientState.exists && mcpClientState.client.name === 'Gordon' && <Chip label='Automatic Connection Not Supported' color='warning' />}
+                                {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
                             </Stack>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -54,7 +53,7 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
 
                                     <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
                                     <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1, fontSize: '12px' }}>
-                                        {mcpClientState.client.expectedConfigPath[client.host.platform as 'win32' | 'darwin' | 'linux']}
+                                        {mcpClientState.client.expectedConfigPath?.[client.host.platform as 'win32' | 'darwin' | 'linux'] || 'N/A'}
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold' }}>Manually Configure:</Typography>
                                 </Stack>

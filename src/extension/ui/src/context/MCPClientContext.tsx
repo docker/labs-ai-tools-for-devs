@@ -5,7 +5,7 @@ import { POLL_INTERVAL } from '../Constants';
 
 interface MCPClientContextType {
     // State
-    mcpClientStates: { [name: string]: MCPClientState };
+    mcpClientStates: { [name: string]: MCPClientState } | undefined;
     buttonsLoading: { [name: string]: boolean };
 
     // Actions
@@ -30,22 +30,28 @@ interface MCPClientProviderProps {
 
 export function MCPClientProvider({ children, client }: MCPClientProviderProps) {
     // State
-    const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState }>({});
+    const [mcpClientStates, setMcpClientStates] = useState<{ [name: string]: MCPClientState } | undefined>(undefined);
     const [buttonsLoading, setButtonsLoading] = useState<{ [name: string]: boolean }>({});
 
     // Update MCP client states
     const updateMCPClientStates = async () => {
-        const oldStates = mcpClientStates;
+        const hasExistingState = mcpClientStates !== undefined;
         const states = await getMCPClientStates(client)
         setMcpClientStates(states);
-        // Whenever a client connection changes, show toast to user
-        const connectedClient = Object.values(states).find(state => state.exists && state.configured);
-        const disconnectedClient = Object.values(oldStates).find(state => state.exists && !state.configured && states[state.client.name].configured);
-        if (connectedClient && connectedClient.client.name !== 'Gordon') {
-            client.desktopUI.toast.success('MCP Client Connected: ' + connectedClient.client.name + '. Restart it to load the Catalog.');
+        if (!hasExistingState) {
+            return
         }
-        if (disconnectedClient && disconnectedClient.client.name !== 'Gordon') {
-            client.desktopUI.toast.error('MCP Client Disconnected: ' + disconnectedClient.client.name + '. Restart it to remove the Catalog.');
+        const oldStates = { ...mcpClientStates };
+
+        console.log('oldStates', oldStates, 'states', states)
+        // Whenever a client connection changes, show toast to user
+        const newlyConnectedClient = Object.values(states).find(state => state.exists && state.configured && !oldStates[state.client.name].configured);
+        const newlyDisconnectedClient = Object.values(states).find(state => state.exists && !state.configured && oldStates[state.client.name].configured);
+        if (newlyConnectedClient) {
+            client.desktopUI.toast.success('Client Connected: ' + newlyConnectedClient.client.name + '. Restart it to load the Catalog.');
+        }
+        if (newlyDisconnectedClient) {
+            client.desktopUI.toast.error('Client Disconnected: ' + newlyDisconnectedClient.client.name + '. Restart it to remove the Catalog.');
         }
     }
 

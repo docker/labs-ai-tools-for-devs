@@ -3,11 +3,11 @@ import { v1 } from "@docker/extension-api-client-types";
 export type MCPClient = {
     name: string;
     url: string;
-    readFile: (client: v1.DockerDesktopClient) => Promise<{ content: string | null | undefined, path: string }>;
-    connect: (client: v1.DockerDesktopClient) => Promise<void>;
-    disconnect: (client: v1.DockerDesktopClient) => Promise<void>;
-    validateConfig: (content: string) => boolean;
-    expectedConfigPath: { [key in 'win32' | 'darwin' | 'linux']: string };
+    readConfig: (client: v1.DockerDesktopClient) => Promise<{ content: string | null | undefined, path: string }>; // Reads the config content from the MCP client
+    connect: (client: v1.DockerDesktopClient) => Promise<void>; // Connects catalog to the MCP client
+    disconnect: (client: v1.DockerDesktopClient) => Promise<void>; // Disconnects catalog from the MCP client
+    validateConfig: (content: string) => boolean; // Parses the config content and returns true if it is valid and connected
+    expectedConfigPath?: { [key in 'win32' | 'darwin' | 'linux']: string }; // Path to the config file, if applicable
     manualConfigSteps: string[];
 }
 
