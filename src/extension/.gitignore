@@ -2,3 +2,4 @@ node_modules
 ui/build
 *.vsix
 binary/build
+data/

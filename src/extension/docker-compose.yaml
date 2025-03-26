@@ -1,4 +1,8 @@
 services:
+  dait:
+    image: ${DESKTOP_PLUGIN_IMAGE}
+    volumes:
+      - "data:/data"
   mcp_docker:
     image: mcp/docker:0.0.9
     ports:
@@ -14,3 +18,5 @@ services:
 volumes:
   docker-prompts:
     name: docker-prompts
+  data:
+    name: data

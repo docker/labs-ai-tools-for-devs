@@ -1,16 +1,26 @@
-FROM --platform=$BUILDPLATFORM node:21.6-alpine3.18 AS client-builder
+# syntax=docker/dockerfile:1.4
+FROM golang:1.24-alpine AS builder
+ENV CGO_ENABLED=0
+WORKDIR /backend
+COPY backend/go.* .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
+COPY backend/. .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go build -trimpath -ldflags="-s -w" -o bin/service
+
+FROM --platform=$BUILDPLATFORM node:23-alpine3.20 AS client-builder
 WORKDIR /ui
-# cache packages in layer
-COPY ui/package.json /ui/package.json
-COPY ui/package-lock.json /ui/package-lock.json
+COPY ui/package.json ui/package-lock.json ./
 RUN --mount=type=cache,target=/usr/src/app/.npm \
     npm set cache /usr/src/app/.npm && \
     npm ci
-# install
-COPY ui /ui
+COPY ui/. .
 RUN npm run build
 
-FROM scratch
+FROM alpine:3.20
 ARG TARGETARCH
 LABEL org.opencontainers.image.title="AI Tool Catalog" \
     org.opencontainers.image.description="AI Tool Catalog" \
@@ -24,6 +34,7 @@ LABEL org.opencontainers.image.title="AI Tool Catalog" \
     com.docker.extension.categories="utility-tools" \
     com.docker.extension.changelog="Added MCP catalog"
 
+COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
 COPY docker.svg /docker.svg
@@ -31,5 +42,6 @@ COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary
 COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
 COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
 COPY --from=client-builder /ui/build ui
+COPY data /data
 
-CMD sleep 600
+CMD ["/service", "-socket", "/run/guest-services/backend.sock"]
