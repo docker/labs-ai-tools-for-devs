@@ -6,7 +6,7 @@ import { Close } from '@mui/icons-material';
 import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
 import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
-import { MCPClientProvider } from './context/MCPClientContext';
+import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
 import { Settings as SettingsIcon } from '@mui/icons-material';
 
@@ -63,35 +63,51 @@ interface AppContentProps {
 }
 
 function AppContent({ settings, setSettings, configuringItem, setConfiguringItem }: AppContentProps) {
-  const { imagesLoadingResults, loadImagesIfNeeded, secrets, catalogItems, registryItems, } = useCatalogContext();
-  if (!imagesLoadingResults || imagesLoadingResults.stderr) {
-    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      {!imagesLoadingResults && <CircularProgress sx={{ marginBottom: 2 }} />}
-      {!imagesLoadingResults && <Typography>Loading images...</Typography>}
-      {imagesLoadingResults && <Alert sx={{ fontSize: '1.5em' }} action={<Button variant='outlined' color='secondary' onClick={() => loadImagesIfNeeded()}>Retry</Button>} title="Error loading images" severity="error">{imagesLoadingResults.stderr}</Alert>}
-      <Typography>{imagesLoadingResults?.stdout}</Typography>
-    </Paper>
+  const {
+    imagesLoadingResults,
+    loadImagesIfNeeded,
+    catalogItems,
+    secretsLoading,
+    catalogLoading,
+    registryLoading,
+    imagesIsFetching
+  } = useCatalogContext();
+
+  const { isFetching: mcpFetching } = useMCPClientContext();
+
+  // Instead of showing full-page loading states for each resource, let's implement a more unified approach
+  // Only show full-page loading during initial load, not during background refetching
+  const isInitialLoading = !catalogItems;
+
+  // Critical error check - only for images as they're required for the app to function
+  if (imagesLoadingResults?.stderr) {
+    return (
+      <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <Alert
+          sx={{ fontSize: '1.5em' }}
+          action={
+            <Button variant='outlined' color='secondary' onClick={() => loadImagesIfNeeded()}>
+              Retry
+            </Button>
+          }
+          title="Error loading images"
+          severity="error"
+        >
+          {imagesLoadingResults.stderr}
+        </Alert>
+        <Typography>{imagesLoadingResults?.stdout}</Typography>
+      </Paper>
+    );
   }
 
-  if (!secrets) {
-    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <CircularProgress />
-      <Typography>Loading secrets...</Typography>
-    </Paper>
-  }
-
-  if (!catalogItems) {
-    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <CircularProgress />
-      <Typography>Loading catalog...</Typography>
-    </Paper>
-  }
-
-  if (!registryItems) {
-    return <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <CircularProgress />
-      <Typography>Loading registry...</Typography>
-    </Paper>
+  // Show one unified loading screen during initial load
+  if (isInitialLoading) {
+    return (
+      <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress sx={{ marginBottom: 2 }} />
+        <Typography>Loading application...</Typography>
+      </Paper>
+    );
   }
 
   return (
@@ -119,7 +135,6 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
         </Dialog>
       )}
 
-      {/* Replace the old PromptConfig dialog with our new ConfigurationModal */}
       {configuringItem && (
         <ConfigurationModal
           open={configuringItem !== null}
@@ -127,6 +142,27 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
           catalogItem={configuringItem}
           client={client}
         />
+      )}
+
+      {/* Show a small loading indicator in the corner during background refetching */}
+      {(imagesIsFetching || secretsLoading || catalogLoading || registryLoading || mcpFetching) && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            right: 16,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'background.paper',
+            borderRadius: 2,
+            padding: 1,
+            boxShadow: 3
+          }}
+        >
+          <CircularProgress size={20} sx={{ mr: 1 }} />
+          <Typography variant="caption">Refreshing data...</Typography>
+        </Box>
       )}
 
       <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>

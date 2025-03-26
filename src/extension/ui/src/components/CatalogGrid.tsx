@@ -49,12 +49,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         mcpClientStates,
         buttonsLoading,
         setButtonsLoading,
-        updateMCPClientStates
+        updateMCPClientStates,
+        isFetching: mcpFetching
     } = useMCPClientContext();
 
-    if (!registryItems) {
-        return <CircularProgress />
-    }
 
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
@@ -83,6 +81,11 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         loadDDVersion();
     }, []);
 
+
+    if (!registryItems) {
+        return <CircularProgress />
+    }
+
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
         catalogItems.some((c) => c.name === i)
     )
@@ -106,7 +109,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         return <CircularProgress />
     }
 
-    const hasMCPConfigured = Object.values(mcpClientStates).some(state => state.exists && state.configured);
+    const hasMCPConfigured = mcpFetching || Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
 
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
@@ -133,7 +136,13 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            {!hasMCPConfigured && <Alert action={<Button variant='outlined' color='secondary' onClick={showSettings}>Configure</Button>} severity="error" sx={{ fontWeight: 'bold' }}>MCP Clients are not configured. Please configure MCP Clients to use the MCP Catalog.</Alert>}
+            {!hasMCPConfigured &&
+                <Alert
+                    severity="error"
+                    sx={{ fontSize: '1.2em', width: '90vw', maxWidth: '1000px', mt: 2 }}>
+                    No configured clients detected. Please configure at least one client in the <strong>Clients</strong> tab.
+                </Alert>
+            }
             <Box sx={{ position: 'sticky', top: 0, zIndex: 1000, backgroundColor: 'background.default' }}>
                 <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={{ width: '90vw', maxWidth: '1000px' }}>
                     <Tooltip title="These are all of the tiles you have available across the catalog.">
@@ -146,7 +155,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         <Tab sx={{ fontSize: '1.5em' }} label="Environment" />
                     </Tooltip>
                     <Tooltip title="These are clients which you have configured to use your tools.">
-                        <Tab sx={{ fontSize: '1.5em' }} label="Clients" />
+                        <Tab sx={{ ...{ fontSize: '1.5em' }, ...(!hasMCPConfigured ? { color: 'docker.amber.400' } : {}) }} label="Clients" />
                     </Tooltip>
                 </Tabs>
                 {tab < 2 && <Stack direction="row" spacing={1} alignItems='center' sx={{ mt: 1, py: 1 }}>
@@ -242,7 +251,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 )}
                 {tab === 3 && (
                     <YourClients
-                        mcpClientStates={mcpClientStates}
+                        mcpClientStates={mcpClientStates || {}}
                         onUpdate={updateMCPClientStates}
                         setButtonsLoading={setButtonsLoading}
                         buttonsLoading={buttonsLoading}
