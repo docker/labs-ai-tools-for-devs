@@ -63,6 +63,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [openMenus, setOpenMenus] = useState<{ [key: string]: { anchorEl: HTMLElement | null, open: boolean } }>({
         'demo-customized-menu': { anchorEl: null, open: false }
     });
+    const [sort, setSort] = useState<'name-asc' | 'name-desc' | 'date-asc' | 'date-desc'>('date-desc');
 
     const loadDDVersion = async () => {
         try {
@@ -85,6 +86,16 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
         catalogItems.some((c) => c.name === i)
     )
+
+    const sortedCatalogItems = sort !== 'date-desc' ? [...catalogItems].sort((a, b) => {
+        if (sort === 'name-asc') {
+            return a.name.localeCompare(b.name);
+        }
+        if (sort === 'name-desc') {
+            return b.name.localeCompare(a.name);
+        }
+        return 0;
+    }) : catalogItems;
 
     if (!ddVersion) {
         return <CircularProgress />
@@ -163,7 +174,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         open={openMenus['demo-customized-menu'].open}
                         onClose={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })}
                     >
-                        <MenuItem sx={{ fontWeight: 'bold' }} onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                        <MenuItem sx={{ fontWeight: sort === 'date-desc' ? 'bold' : 'normal' }} onClick={() => {
+                            setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
+                            setSort('date-desc')
+                        }} disableRipple>
                             ⏰ Most Recent
                         </MenuItem>
                         {/* <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
@@ -173,10 +187,16 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             ⬇️ Most Downloads
                         </MenuItem> */}
                         <Divider sx={{ my: 0.5 }} />
-                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                        <MenuItem sx={{ fontWeight: sort === 'name-asc' ? 'bold' : 'normal' }} onClick={() => {
+                            setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
+                            setSort('name-asc')
+                        }} disableRipple>
                             Name (A-Z)
                         </MenuItem>
-                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
+                        <MenuItem sx={{ fontWeight: sort === 'name-desc' ? 'bold' : 'normal' }} onClick={() => {
+                            setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
+                            setSort('name-desc')
+                        }} disableRipple>
                             Name (Z-A)
                         </MenuItem>
                     </Menu>
@@ -188,7 +208,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         registryItems={registryItems}
                         config={config}
                         search={search}
-                        catalogItems={catalogItems}
+                        catalogItems={sortedCatalogItems}
                         client={client}
                         ddVersion={ddVersion}
                         canRegister={canRegister}
@@ -204,7 +224,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         registryItems={registryItems}
                         config={config}
                         search={search}
-                        catalogItems={catalogItems}
+                        catalogItems={sortedCatalogItems}
                         unregister={unregisterCatalogItem}
                         onSecretChange={tryLoadSecrets}
                         secrets={secrets}
