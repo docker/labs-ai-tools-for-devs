@@ -332,7 +332,7 @@
    (concat (->> (:register opts)
                 (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
-           (when (fs/exists? (fs/file registry))
+           (when (fs/exists? registry)
              (db/registry-refs registry)))))
 
 (defn server-context

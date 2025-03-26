@@ -5,4 +5,3 @@ mcp:
       environment:
         IDE_PORT: "{{jetbrains.server.port}}"
         LOG_ENABLED: "true"   
----

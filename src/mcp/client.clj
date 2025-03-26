@@ -426,6 +426,9 @@
                                                  :volumes ["mcp-gdrive:/gdrive-server"]
                                                  :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
                               :local-get-tools -get-tools})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/jetbrains:latest"
+                                                 :environment {"IDE_PORT" "8090"}}}]
+                              :local-get-tools -get-tools})
   (-get-resources {:image "vonwig/gdrive:latest"
                    :workdir "/app"
                    :volumes ["mcp-gdrive:/gdrive-server"]

@@ -6,7 +6,8 @@
    docker
    [hasch.core :as hasch]
    jsonrpc
-   [jsonrpc.logger :as logger]))
+   [jsonrpc.logger :as logger]
+   prompts.core))
 
 (set! *warn-on-reflection* true)
 
@@ -43,15 +44,6 @@
   "returns #uuid"
   [m]
   (str (hasch/uuid5 (hasch/edn-hash (select-keys m [:owner :repo :ref])))))
-
-;(def prompts-cache (fs/file "/Users/slim/docker/labs-make-runbook/prompts-cache"))
-(defn prompts-cache []
-  (let [default-dir (fs/file (System/getenv "HOME") ".prompts-cache")]
-    (or
-     (dir/get-dir "/prompts" default-dir)
-     (do
-       (fs/create-dirs default-dir)
-       default-dir))))
 
 (comment
   "alpine/git uses a VOLUME /git declaration
@@ -107,7 +99,7 @@
   (clone {:dir "/Users/slim/crap" :owner "docker" :repo "labs-make-runbook" :ref "main" :ref-hash "crap"}))
 
 (defn cache-dir [{:keys [ref-hash]}]
-  (fs/file (prompts-cache) ref-hash))
+  (fs/file (prompts.core/prompts-cache) ref-hash))
 
 (defn collect-unique-cache-dirs [coll]
   (->> coll
@@ -167,7 +159,7 @@
   (prompt-file "github:docker/labs-make-runbook?path=prompts/docker/prompt.md"))
 
 (comment
-  (fs/create-dir (prompts-cache))
+  (fs/create-dir (prompts.core/prompts-cache))
   (def x "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
   (def git-ref (parse-github-ref x))
   (prompt-file "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
