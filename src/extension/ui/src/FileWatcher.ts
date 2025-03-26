@@ -4,8 +4,7 @@
  */
 import { v1 } from "@docker/extension-api-client-types"
 import { ExecResult } from "@docker/extension-api-client-types/dist/v0"
-
-const allWatches: { [key: string]: any } = {}
+import { Serializable } from "child_process"
 
 export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: string[], ignoreError = false) => {
     const showError = ignoreError ? () => { } : client.desktopUI.toast.error
@@ -42,63 +41,12 @@ export const writeFileToPromptsVolume = async (client: v1.DockerDesktopClient, c
     return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${content}'`])
 }
 
-export const writeFilesToHost = async (client: v1.DockerDesktopClient, files: { path: string, content: string }[], hostPaths: { source: string, target: string }[], workdir: string) => {
-    const bindArgs = hostPaths.map(path => `--mount type=bind,source="${path.source}",target="${path.target}"`)
-    const args = ['--rm', ...bindArgs, '--workdir', workdir, 'vonwig/function_write_files:latest', `'${JSON.stringify({ files })}'`]
-    return tryRunImageSync(client, args)
-}
-
-export const watchFile = async (client: v1.DockerDesktopClient, path: string, stream: { onOutput: (data: { stdout?: string; stderr?: string }) => void, onError: (error: string) => void, onClose: (exitCode: number) => void }, host = false) => {
-    let user: string | undefined
-    if (host) {
-        user = await getUser(client)
+export const escapeJSONForPlatformShell = (json: Serializable, platform: string) => {
+    const jsonString = JSON.stringify(json)
+    if (platform === 'win32') {
+        // Use triple quotes to escape quotes
+        return `"${jsonString.replace(/"/g, '\\"')}"`
     }
-    return new Promise((resolve, reject) => {
-        let args = ['--rm', 'vonwig/inotifywait:latest', '-e', 'modify', '-e', 'create', '-e', 'delete', '-q', '-m']
-        if (host) {
-            const replacedPath = path.replace(`$USER`, user!)
-            args = ['--mount', `type=bind,source=${replacedPath},target=/config.json`, ...args, '/config.json']
-        }
-        else {
-            args = ['-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', ...args, path]
-        }
-        console.log('starting watch', path)
-        if (path in allWatches) {
-            console.log('stopping duplicate watch', path)
-            allWatches[path].close()
-            delete allWatches[path]
-        }
-        allWatches[path] = client.docker.cli.exec('run', args, {
-            stream: {
-                onOutput: (data) => {
-                    stream.onOutput(data)
-                },
-                onError: (error) => {
-                    stream.onError(error)
-                    console.log('error', error)
-                },
-                onClose: (exitCode: number) => {
-                    stream.onClose(exitCode)
-                    console.log('close', exitCode)
-                }
-            }
-        })
-        console.log('allWatches', allWatches)
-    })
-
+    return `'${jsonString}'`
 }
 
-export const stopWatch = (path: string) => {
-    if (allWatches[path]) {
-        console.log('stopping watch', path)
-        allWatches[path].close()
-        delete allWatches[path]
-    }
-}
-
-export const stopAllWatches = () => {
-    Object.keys(allWatches).forEach(path => {
-        console.log('stopping watch', path)
-        stopWatch(path)
-    })
-}

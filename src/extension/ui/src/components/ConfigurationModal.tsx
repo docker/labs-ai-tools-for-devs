@@ -6,7 +6,7 @@ import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
 import { getStoredConfig, syncRegistryWithConfig } from "../Registry";
 import { stringify } from "yaml";
-import { tryRunImageSync } from "../FileWatcher";
+import { escapeJSONForPlatformShell, tryRunImageSync } from "../FileWatcher";
 import { useCatalogContext } from "../context/CatalogContext";
 import { DeepObject, mergeDeep } from "../MergeDeep";
 import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react";
@@ -190,13 +190,13 @@ const ConfigurationModal = ({
             console.log('currentStoredConfig', currentStoredConfig);
             currentStoredConfig[catalogItem.name] = newConfig;
             console.log('newConfig', newConfig);
-            const payload = JSON.stringify({
+            const payload = escapeJSONForPlatformShell({
                 files: [{
                     path: 'config.yaml',
                     content: stringify(currentStoredConfig)
                 }]
-            });
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
+            }, client.host.platform);
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
             console.log('Config saved successfully, syncing');
             await syncRegistryWithConfig(client, registryItems, currentStoredConfig);
             await startPull();

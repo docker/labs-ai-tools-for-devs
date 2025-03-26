@@ -5,7 +5,7 @@ import { getRegistry, getStoredConfig, syncConfigWithRegistry, syncRegistryWithC
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
-import { tryRunImageSync } from '../FileWatcher';
+import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
 import { ParsedParameters } from '../components/ConfigurationModal';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
@@ -81,7 +81,11 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             const response = await Secrets.getSecrets(client);
             setSecrets(response || []);
         } catch (error) {
-            client.desktopUI.toast.error('Failed to get secrets: ' + error);
+            if (error instanceof Error) {
+                client.desktopUI.toast.error('Failed to get secrets: ' + error.message);
+            } else {
+                client.desktopUI.toast.error('Failed to get secrets: ' + JSON.stringify(error));
+            }
         }
     };
 
@@ -93,7 +97,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             const catalog = await response.text();
             const items = parse(catalog)['registry'] as { [key: string]: any };
             const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
-            setCatalogItems(itemsWithName);
+            setCatalogItems(itemsWithName.reverse());
             localStorage.setItem('catalog', JSON.stringify(itemsWithName));
             if (showNotification) {
                 client.desktopUI.toast.success('Catalog updated successfully.');
@@ -133,13 +137,13 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 newRegistry[item.name] = { ref: item.ref, config: config?.[item.name] || {} };
             }
 
-            const payload = JSON.stringify({
+            const payload = escapeJSONForPlatformShell({
                 files: [{
                     path: 'registry.yaml',
                     content: stringify({ registry: newRegistry })
                 }]
-            });
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
+            }, client.host.platform);
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
             if (showNotification) {
                 client.desktopUI.toast.success('Prompt registered successfully. Reload your MCP clients to apply.');
             }
@@ -157,13 +161,13 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         try {
             const currentRegistry = await getRegistry(client);
             delete currentRegistry[item.name];
-            const payload = JSON.stringify({
+            const payload = escapeJSONForPlatformShell({
                 files: [{
                     path: 'registry.yaml',
                     content: stringify({ registry: currentRegistry })
                 }]
-            });
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${payload}'`]);
+            }, client.host.platform);
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
             client.desktopUI.toast.success('Prompt unregistered successfully. Reload your MCP clients to apply.');
             await tryLoadRegistry();
             // Logic for showing reload modal would go here
