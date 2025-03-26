@@ -39,11 +39,13 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         const states = await getMCPClientStates(client)
         setMcpClientStates(states);
         // Whenever a client connection changes, show toast to user
-        if (Object.values(oldStates).some(state => state.exists && !state.configured && states[state.client.name].configured)) {
-            client.desktopUI.toast.success('MCP Client Connected. Restart it to load the Catalog.');
+        const connectedClient = Object.values(states).find(state => state.exists && state.configured);
+        const disconnectedClient = Object.values(oldStates).find(state => state.exists && !state.configured && states[state.client.name].configured);
+        if (connectedClient && connectedClient.client.name !== 'Gordon') {
+            client.desktopUI.toast.success('MCP Client Connected: ' + connectedClient.client.name + '. Restart it to load the Catalog.');
         }
-        if (Object.values(oldStates).some(state => state.exists && state.configured && !states[state.client.name].configured)) {
-            client.desktopUI.toast.error('MCP Client Disconnected. Restart it to remove the Catalog.');
+        if (disconnectedClient && disconnectedClient.client.name !== 'Gordon') {
+            client.desktopUI.toast.error('MCP Client Disconnected: ' + disconnectedClient.client.name + '. Restart it to remove the Catalog.');
         }
     }
 

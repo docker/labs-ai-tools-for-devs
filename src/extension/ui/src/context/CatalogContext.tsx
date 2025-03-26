@@ -81,7 +81,11 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             const response = await Secrets.getSecrets(client);
             setSecrets(response || []);
         } catch (error) {
-            client.desktopUI.toast.error('Failed to get secrets: ' + error);
+            if (error instanceof Error) {
+                client.desktopUI.toast.error('Failed to get secrets: ' + error.message);
+            } else {
+                client.desktopUI.toast.error('Failed to get secrets: ' + JSON.stringify(error));
+            }
         }
     };
 
