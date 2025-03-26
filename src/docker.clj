@@ -624,7 +624,7 @@
     (async/go
       (docker/wait x)
       (async/>! c :stopped)
-      #_(delete x))
+      (delete x))
     (async/go-loop
      [block (async/<! c)]
       (logger/info "background socket read loop " block)
