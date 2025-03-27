@@ -26,7 +26,9 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
+
       <DockerMuiV6ThemeProvider>
+        <CssBaseline />
         <App />
       </DockerMuiV6ThemeProvider>
       {localStorage.getItem('ENABLE_REACT_QUERY_DEVTOOLS') && <ReactQueryDevtools initialIsOpen={false} />}

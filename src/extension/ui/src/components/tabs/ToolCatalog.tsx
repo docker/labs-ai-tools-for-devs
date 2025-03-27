@@ -37,9 +37,6 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                         <Tile
-                            openUrl={() => {
-                                client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL(true));
-                            }}
                             item={catalogItem}
                             registered={registryItems[catalogItem.name]?.ref !== undefined}
                             onSecretChange={onSecretChange}
