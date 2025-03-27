@@ -1,4 +1,4 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import Secrets from "../../Secrets";
@@ -22,7 +22,6 @@ export interface CatalogItemWithName extends CatalogItem {
 }
 
 export interface TileProps {
-    openUrl: () => void;
     item: CatalogItemWithName;
     registered: boolean;
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
@@ -30,7 +29,7 @@ export interface TileProps {
     ActionsSlot: ReactNode
 }
 
-const Tile = ({ openUrl, item, registered, onSecretChange, secrets, ActionsSlot }: TileProps) => {
+const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TileProps) => {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -55,51 +54,55 @@ const Tile = ({ openUrl, item, registered, onSecretChange, secrets, ActionsSlot 
                 </DialogTitle>
                 <DialogContent>
                     <Stack direction="column" spacing={2}>
-                        {assignedSecrets?.map(secret => (
-                            <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
-                                <TextField placeholder={assignedSecrets.find(s => s.name === secret.name)?.assigned ? '********' : 'Enter secret value'} type="password" key={secret.name} label={secret.name} value={changedSecrets[secret.name] || ''} onChange={(event) => setChangedSecrets({ ...changedSecrets, [secret.name]: event.target.value })} />
-                                {assignedSecrets.find(s => s.name === secret.name)?.assigned && changedSecrets[secret.name] && <IconButton onClick={() => setChangedSecrets({ ...changedSecrets, [secret.name]: undefined })}>
-                                    <LockReset />
-                                </IconButton>}
-                                {changedSecrets[secret.name] && <IconButton onClick={() => {
-                                    setSecretLoading(true)
-                                    onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
-                                        setSecretLoading(false)
-                                        const newChangedSecrets = { ...changedSecrets }
-                                        delete newChangedSecrets[secret.name]
-                                        setChangedSecrets(newChangedSecrets)
-                                    })
-                                }}>
-                                    {secretLoading ? <CircularProgress size={20} /> : <Save />}
-                                </IconButton>}
-                            </Stack>
-                        ))}
+                        {assignedSecrets?.map(secret => {
+                            const isAssigned = assignedSecrets.find(s => s.name === secret.name)
+                            return (
+                                <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
+                                    <Typography variant="body2">{secret.name} {isAssigned?.assigned ? 'assigned' : 'not assigned'}</Typography>
+                                    <TextField placeholder={isAssigned?.assigned ? '********' : 'Enter secret value'} type="password" key={secret.name} label={secret.name} value={changedSecrets[secret.name] || ''} onChange={(event) => setChangedSecrets({ ...changedSecrets, [secret.name]: event.target.value })} />
+                                    {isAssigned?.assigned && changedSecrets[secret.name] && <IconButton onClick={() => setChangedSecrets({ ...changedSecrets, [secret.name]: undefined })}>
+                                        <LockReset />
+                                    </IconButton>}
+                                    {changedSecrets[secret.name] && <IconButton onClick={() => {
+                                        setSecretLoading(true)
+                                        onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
+                                            setSecretLoading(false)
+                                            const newChangedSecrets = { ...changedSecrets }
+                                            delete newChangedSecrets[secret.name]
+                                            setChangedSecrets(newChangedSecrets)
+                                        })
+                                    }}>
+                                        {secretLoading ? <CircularProgress size={20} /> : <Save />}
+                                    </IconButton>}
+                                </Stack>
+                            )
+                        })}
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Card sx={(theme) => ({ height: 150, borderColor: registered ? theme.palette.docker.grey[600] : theme.palette.docker.grey[300], borderWidth: registered ? 1 : 0.5 })} variant="outlined" >
+            <Card sx={(theme) => ({ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid' })} >
                 <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
-                    <CardContent sx={{ p: 2, paddingBottom: 1, '&:hover .hover-underline': { textDecoration: 'underline' } }}>
-                        <Stack onClick={openUrl} direction="row" spacing={1} justifyContent="space-between" sx={{ cursor: 'pointer' }}>
-                            <Stack direction="column" spacing={1} >
-                                <Typography className="hover-underline" gutterBottom component="div" sx={{ fontWeight: 'bold', textTransform: 'capitalize', fontSize: '1.2em' }}>
-                                    {item.name.replace('_', ' ')}
+                    <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
+                        <Stack direction="column" spacing={0}>
+                            <Stack direction="row" spacing={0} justifyContent="space-between">
+                                <CardMedia
+                                    component="img"
+                                    sx={{ width: '3em', height: '3em', padding: 1, background: 'white', borderRadius: 1, boxSizing: 'border-box', mt: -1, ml: -1 }}
+                                    alt={`Icon for ${item.name}`}
+                                    image={item.icon}
+                                />
+                                <Typography gutterBottom component="div" sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>
+                                    {item.name}
                                 </Typography>
-                                <Tooltip title={item.description}>
-                                    <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                        {item.description?.slice(0, 70)}...
-                                    </Typography>
-                                </Tooltip>
                             </Stack>
-                            <CardMedia
-                                component="img"
-                                sx={{ width: 50, height: 50, padding: 1, background: 'white', borderRadius: 1, boxSizing: 'border-box', mt: -1 }}
-                                alt={`Icon for ${item.name}`}
-                                image={item.icon}
-                            />
+                            <Tooltip title={item.description}>
+                                <Typography variant="caption" sx={{ color: 'text.secondary', pt: 1 }}>
+                                    {item.description?.slice(0, 70)}...
+                                </Typography>
+                            </Tooltip>
                         </Stack>
                     </CardContent>
-                    <CardActions sx={{ padding: 1, paddingTop: 0 }}>
+                    <CardActions sx={{ px: 1.5, height: 30 }}>
                         {ActionsSlot}
                     </CardActions>
                 </Stack >
