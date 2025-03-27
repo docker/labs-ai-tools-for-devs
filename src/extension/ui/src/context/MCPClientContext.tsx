@@ -61,10 +61,18 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
                 );
 
                 if (newlyConnectedClient) {
-                    client.desktopUI.toast.success('Client Connected: ' + newlyConnectedClient.client.name + '. Restart it to load the Catalog.');
+                    if (newlyConnectedClient.client.name === 'Gordon') {
+                        client.desktopUI.toast.success('Gordon is connected to the Catalog.');
+                    } else {
+                        client.desktopUI.toast.success('Client Connected: ' + newlyConnectedClient.client.name + '. Restart it to load the Catalog.');
+                    }
                 }
                 if (newlyDisconnectedClient) {
-                    client.desktopUI.toast.error('Client Disconnected: ' + newlyDisconnectedClient.client.name + '. Restart it to remove the Catalog.');
+                    if (newlyDisconnectedClient.client.name === 'Gordon') {
+                        client.desktopUI.toast.error('Gordon is disconnected from the Catalog.');
+                    } else {
+                        client.desktopUI.toast.error('Client Disconnected: ' + newlyDisconnectedClient.client.name + '. Restart it to remove the Catalog.');
+                    }
                 }
             }
 
