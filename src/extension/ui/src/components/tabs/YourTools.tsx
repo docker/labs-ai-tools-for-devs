@@ -51,7 +51,6 @@ const YourTools: React.FC<YourToolsProps> = ({
                 return (
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                         <Tile
-                            openUrl={() => { }}
                             item={catalogItem}
                             registered={true}
                             onSecretChange={async () => { }}
