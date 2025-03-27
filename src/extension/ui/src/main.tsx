@@ -26,7 +26,6 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <CssBaseline />
       <DockerMuiV6ThemeProvider>
         <App />
       </DockerMuiV6ThemeProvider>
