@@ -1,4 +1,4 @@
-package models
+package utils
 
 import (
 	"testing"
@@ -49,7 +49,7 @@ func TestParseURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := parseURL(tt.input)
+			result := ParseURL(tt.input)
 			if result != tt.expected {
 				t.Errorf("parseURL(%q) = %q, want %q", tt.input, result, tt.expected)
 			}

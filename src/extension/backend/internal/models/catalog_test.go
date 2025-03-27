@@ -11,7 +11,7 @@ func TestParseMCPServerFile(t *testing.T) {
 	os.Setenv("GO_TEST", "1")
 
 	// Create a temporary directory for testing
-	tmpDir, err := os.MkdirTemp("../data", "mcp-test")
+	tmpDir, err := os.MkdirTemp("../../../data", "mcp-test")
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
@@ -24,7 +24,7 @@ func TestParseMCPServerFile(t *testing.T) {
 	}
 
 	// Run the test
-	server, err := ParseMCPServerFile("../data/mcp-server.md")
+	server, err := ParseMCPServerFile("../../../data/mcp-server.md")
 	if err != nil {
 		t.Fatalf("Failed to parse MCP server file: %v", err)
 	}
@@ -49,6 +49,9 @@ func TestParseMCPServerFile(t *testing.T) {
 	}
 	if firstTool.Description != "Execute a SELECT query on the SQLite database" {
 		t.Errorf("Expected first tool description to be 'Execute a SELECT query on the SQLite database', got '%s'", firstTool.Description)
+	}
+	if firstTool.Container.Image != "vonwig/sqlite:latest" {
+		t.Errorf("Expected first tool container image to be 'vonwig/sqlite:latest', got '%s'", firstTool.Container.Image)
 	}
 
 	// Test resources

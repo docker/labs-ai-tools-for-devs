@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/docker/dait/internal/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -55,25 +56,25 @@ type MCPClientState struct {
 }
 
 type MCPServer struct {
-	Name      string
-	Model     string
-	Tools     []Tool
-	Resources []Resource
-	Config    []MCPConfig
-	Arguments []Argument
-	Prompts   int
-	Secrets   []string
-	Examples  []string
-	Container Container
+	Name      string      `yaml:"name"`
+	Model     string      `yaml:"model"`
+	Tools     []Tool      `yaml:"tools,omitempty"`
+	Resources []Resource  `yaml:"resources,omitempty"`
+	Config    []MCPConfig `yaml:"config,omitempty"`
+	Arguments []Argument  `yaml:"arguments,omitempty"`
+	Prompts   int         `yaml:"prompts"`
+	Secrets   []string    `yaml:"secrets,omitempty"`
+	Examples  []string    `yaml:"examples,omitempty"`
+	Container Container   `yaml:"container,omitempty"`
 }
 
 type Container struct {
-	Image       string
-	Workdir     string
-	Environment map[string]string
-	Secrets     map[string]string
-	Command     []string `yaml:"command"`
-	Volumes     []string `yaml:"volumes"`
+	Image       string            `yaml:"image"`
+	Command     []string          `yaml:"command,omitempty"`
+	Volumes     []string          `yaml:"volumes,omitempty"`
+	Workdir     string            `yaml:"workdir,omitempty"`
+	Environment map[string]string `yaml:"environment,omitempty"`
+	Secrets     map[string]string `yaml:"secrets,omitempty"`
 }
 
 type MCPConfig struct {
@@ -88,24 +89,29 @@ type Parameter struct {
 }
 
 type Tool struct {
-	Name        string
-	Description string
-	Parameters  ParameterSpec
-	Container   Container
+	Name        string     `yaml:"name"`
+	Description string     `yaml:"description"`
+	Parameters  Parameters `yaml:"parameters,omitempty"`
+	Container   Container  `yaml:"container,omitempty"`
 }
 
-type ParameterSpec struct {
-	Type       string
-	Properties map[string]Parameter
+type Parameters struct {
+	Type       string              `yaml:"type"`
+	Properties map[string]Property `yaml:"properties,omitempty"`
+}
+
+type Property struct {
+	Type        string `yaml:"type"`
+	Description string `yaml:"description"`
 }
 
 type Resource struct {
-	Name        string
-	Description string
-	URI         string `yaml:"uri"`
-	MimeType    string `yaml:"mimeType"`
-	Matches     string
-	Default     ResourceDefault
+	Name        string          `yaml:"name"`
+	Description string          `yaml:"description"`
+	URI         string          `yaml:"uri"`
+	MimeType    string          `yaml:"mimeType"`
+	Matches     string          `yaml:"matches"`
+	Default     ResourceDefault `yaml:"default,omitempty"`
 }
 
 type ResourceDefault struct {
@@ -122,66 +128,9 @@ type Registry struct {
 	Registry map[string]Tile
 }
 
-// url is of the shape:
-// github:docker/labs-ai-tools-for-devs?path=prompts/mcp/mcp-notion-server.md
-// or with branch:
-// github:docker/labs-ai-tools-for-devs?path=prompts/mcp/mcp-notion-server.md&branch=develop
-// we need to parse this into
-// https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/mcp/mcp-notion-server.md
-// or
-// https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/develop/prompts/mcp/mcp-notion-server.md
-func parseURL(url string) string {
-	// Check if the URL starts with "github:"
-	if !strings.HasPrefix(url, "github:") {
-		// Return the URL as is if it's not a GitHub URL
-		return url
-	}
-
-	// Remove the "github:" prefix
-	githubPath := strings.TrimPrefix(url, "github:")
-
-	// Split by "?" to separate the repo path and query parameters
-	parts := strings.Split(githubPath, "?")
-	if len(parts) != 2 {
-		logger.Error("Invalid GitHub URL format: " + url)
-		return ""
-	}
-
-	// Extract the repo path (e.g., "docker/labs-ai-tools-for-devs")
-	repoPath := parts[0]
-
-	// Parse query parameters
-	queryParams := parts[1]
-	queryParts := strings.Split(queryParams, "&")
-
-	// Initialize variables for path and branch
-	var filePath string
-	branch := "main" // Default branch
-
-	// Extract path and branch from query parameters
-	for _, param := range queryParts {
-		if strings.HasPrefix(param, "path=") {
-			filePath = strings.TrimPrefix(param, "path=")
-		} else if strings.HasPrefix(param, "branch=") {
-			branch = strings.TrimPrefix(param, "branch=")
-		}
-	}
-
-	// Validate that we have a file path
-	if filePath == "" {
-		logger.Error("Missing path parameter in GitHub URL: " + url)
-		return ""
-	}
-
-	// Construct the raw GitHub URL
-	rawURL := "https://raw.githubusercontent.com/" + repoPath + "/refs/heads/" + branch + "/" + filePath
-
-	return rawURL
-}
-
 func (tile *Tile) fetchMCPServer(url, dataPath string) error {
 	logger.Info("Fetching MCP server for " + tile.Name + " from " + url)
-	url = parseURL(url)
+	url = utils.ParseURL(url)
 	logger.Info("Fetching MCP server for " + tile.Name + " from " + url)
 	if url == "" {
 		return nil
@@ -244,6 +193,14 @@ func (tile *Tile) downloadIcons(dataPath string) error {
 
 func (tile *Tile) ToJSON() string {
 	json, err := json.Marshal(tile)
+	if err != nil {
+		return ""
+	}
+	return string(json)
+}
+
+func (server *MCPServer) ToJSON() string {
+	json, err := json.Marshal(server)
 	if err != nil {
 		return ""
 	}
