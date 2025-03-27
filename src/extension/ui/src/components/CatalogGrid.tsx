@@ -50,7 +50,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         buttonsLoading,
         setButtonsLoading,
         updateMCPClientStates,
-        isFetching: mcpFetching
+        isLoading: mcpLoading
     } = useMCPClientContext();
 
 
@@ -109,7 +109,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         return <CircularProgress />
     }
 
-    const hasMCPConfigured = mcpFetching || Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
+    const hasMCPConfigured = mcpLoading || Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
 
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
