@@ -8,6 +8,7 @@ import { trackEvent } from "../../Usage";
 import ConfigurationModal from "../ConfigurationModal";
 import { v1 } from "@docker/extension-api-client-types";
 import { createDockerDesktopClient } from "@docker/extension-api-client";
+import { useCatalogContext } from "../../context/CatalogContext";
 
 const iconSize = 16;
 
@@ -61,13 +62,25 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
     }
+
+    const { registryLoading } = useCatalogContext()
+
     const [isRegistering, setIsRegistering] = useState(false)
+    const [localRegistered, setLocalRegistered] = useState(registered)
     const [showConfigModal, setShowConfigModal] = useState(false)
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
 
     useEffect(() => {
+        setLocalRegistered(registered)
+    }, [registered])
+
+    useEffect(() => {
         loadAssignedSecrets()
     }, [secrets])
+
+    if (registryLoading) {
+        return <CircularProgress size={20} />
+    }
 
     const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
 
@@ -80,11 +93,6 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
     const hasAllConfig = unAssignedConfig.length === 0
 
     const getActionButton = () => {
-        if (isRegistering) {
-            return <Tooltip title="Waiting for Docker Desktop to be ready...">
-                <CircularProgress size={20} />
-            </Tooltip>
-        }
 
         if (!hasAllSecrets || !hasAllConfig) {
             return <Stack direction="row" spacing={0} alignItems="center">
@@ -110,16 +118,28 @@ const TileActions = ({ item, registered, register, unregister, onSecretChange, s
                     <Settings />
                 </IconButton>
             </Tooltip>}
-            <Tooltip title={registered ? "Unregistering this tile will hide it from MCP clients." : "Registering this tile will expose it to MCP clients."}>
-                <Switch checked={registered} onChange={async (event, checked) => {
-                    setIsRegistering(true)
-                    if (checked) {
-                        await register(item)
-                    } else {
-                        await unregister(item)
-                    }
-                    setIsRegistering(false)
-                }} />
+            <Tooltip title={localRegistered ? "Unregistering this tile will hide it from MCP clients." : "Registering this tile will expose it to MCP clients."}>
+                <Switch
+                    checked={localRegistered}
+                    disabled={isRegistering}
+                    onChange={async (event, checked) => {
+                        setIsRegistering(true)
+                        setLocalRegistered(checked)
+
+                        try {
+                            if (checked) {
+                                await register(item)
+                            } else {
+                                await unregister(item)
+                            }
+                        } catch (error) {
+                            // If operation fails, revert the local state
+                            setLocalRegistered(!checked)
+                        } finally {
+                            setIsRegistering(false)
+                        }
+                    }}
+                />
             </Tooltip>
         </Stack>
     }

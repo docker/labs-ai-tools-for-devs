@@ -9,6 +9,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import ClaudeIcon from '../../claude-ai-icon.svg'
 import GordonIcon from '../../gordon-icon.png'
 import CursorIcon from '../../cursor.svg'
+import ChatGPTIcon from '../../chatgpt.svg'
 
 type MCPClientSettingsProps = {
     mcpClientStates: { [name: string]: MCPClientState };
@@ -124,6 +125,30 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                     </Tooltip>
                 </Stack>
             ))}
+            <Stack direction="row" spacing={1} sx={{ marginTop: 2 }}>
+                <Accordion disabled sx={{ width: '100%', marginRight: 1 }}>
+                    <AccordionSummary sx={{ width: '100%' }}>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <img src={ChatGPTIcon} alt="ChatGPT Desktop" style={{ width: '2em', height: '2em' }} />
+                            <Typography variant="h4">ChatGPT Desktop</Typography>
+                            {<Chip label='Coming Soon' color='info' />}
+                        </Stack>
+                    </AccordionSummary>
+                </Accordion>
+                <Tooltip sx={{ alignSelf: 'baseline' }} title={<Stack direction="column" spacing={1}>
+                    <Typography>OpenAI has announced that MCP support is coming to ChatGPT Desktop. Please check back soon for updates.</Typography>
+                </Stack>}>
+                    <Stack direction="row" alignItems="space-between" spacing={1} sx={{ marginLeft: 'auto' }}>
+                        <Button
+                            sx={connectionButtonSX}
+                            disabled color="warning" variant="outlined" size="small">
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography>Coming Soon</Typography>
+                            </Stack>
+                        </Button>
+                    </Stack>
+                </Tooltip>
+            </Stack>
         </Stack>
         <Divider />
         <Alert severity="info">
