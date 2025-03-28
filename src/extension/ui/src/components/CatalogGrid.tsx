@@ -109,7 +109,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         return <CircularProgress />
     }
 
-    const hasMCPConfigured = mcpLoading || Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
+    const noConfiguredClients = !mcpLoading && !Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
 
     return (
         <Stack spacing={2} justifyContent='center' alignItems='center'>
@@ -136,7 +136,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             }}>registry.yaml</Button>} severity="info">
                 <Typography sx={{ width: '100%' }}>You have some prompts registered which are not available in the catalog.</Typography>
             </Alert>}
-            {!hasMCPConfigured &&
+            {noConfiguredClients &&
                 <Alert
                     severity="error"
                     sx={{ fontSize: '1.2em', width: '90vw', maxWidth: '1000px', mt: 2 }}>
@@ -155,7 +155,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         <Tab sx={{ fontSize: '1.5em' }} label="Environment" />
                     </Tooltip>
                     <Tooltip title="These are clients which you have configured to use your tools.">
-                        <Tab sx={{ ...{ fontSize: '1.5em' }, ...(!hasMCPConfigured ? { color: 'docker.amber.400' } : {}) }} label="Clients" />
+                        <Tab sx={{ ...{ fontSize: '1.5em' }, ...(noConfiguredClients ? { color: 'docker.amber.400' } : {}) }} label="Clients" />
                     </Tooltip>
                 </Tabs>
                 {tab < 2 && <Stack direction="row" spacing={1} alignItems='center' sx={{ mt: 1, py: 1 }}>

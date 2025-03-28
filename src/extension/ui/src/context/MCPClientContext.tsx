@@ -82,7 +82,6 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         initialData: undefined,
         // Add eager loading settings
         staleTime: 30000, // Data remains fresh for 30 seconds
-        placeholderData: {},
         gcTime: 300000 // Cache data for 5 minutes even if unused
     });
 
