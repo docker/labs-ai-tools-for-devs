@@ -53,7 +53,7 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                                     </Stack>
 
                                     <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
-                                    <Typography component="pre" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'grey.200', padding: 1, borderRadius: 1, fontSize: '12px' }}>
+                                    <Typography component="pre" sx={{ color: 'text.primary', fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'background.default', padding: 1, borderRadius: 1, fontSize: '12px' }}>
                                         {mcpClientState.client.expectedConfigPath?.[client.host.platform as 'win32' | 'darwin' | 'linux'] || 'N/A'}
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold' }}>Manually Configure:</Typography>
