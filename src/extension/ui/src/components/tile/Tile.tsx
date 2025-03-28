@@ -80,14 +80,14 @@ const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TilePr
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Card sx={(theme) => ({ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid' })} >
+            <Card sx={{ height: 130, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid' }} >
                 <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
                     <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
                         <Stack direction="column" spacing={0}>
                             <Stack direction="row" spacing={0} justifyContent="space-between">
                                 <CardMedia
                                     component="img"
-                                    sx={{ width: '3em', height: '3em', padding: 1, background: 'white', borderRadius: 1, boxSizing: 'border-box', mt: -1, ml: -1 }}
+                                    sx={{ width: '30px', height: '30px', padding: '2px', background: 'white', borderRadius: 1, boxSizing: 'border-box', mt: '-1px', ml: '-1px' }}
                                     alt={`Icon for ${item.name}`}
                                     image={item.icon}
                                 />
@@ -102,7 +102,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TilePr
                             </Tooltip>
                         </Stack>
                     </CardContent>
-                    <CardActions sx={{ px: 1.5, height: 30 }}>
+                    <CardActions sx={{ px: 1, height: 30 }}>
                         {ActionsSlot}
                     </CardActions>
                 </Stack >

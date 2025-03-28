@@ -158,7 +158,7 @@ const MCPClientSettings = ({ mcpClientStates, onUpdate, setButtonsLoading, butto
                 <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
                     <ContentCopy />
                 </IconButton>
-                <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto' })}>
+                <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', color: 'text.primary' })}>
                     {DOCKER_MCP_COMMAND}
                 </Typography>
             </Stack>

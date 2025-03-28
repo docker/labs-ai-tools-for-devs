@@ -44,8 +44,8 @@ const YourTools: React.FC<YourToolsProps> = ({
                 const unassignedSecrets = catalogItem?.secrets?.filter((s: any) => !secrets.find((s: any) => s.name === s)) || [];
                 if (!catalogItem) return <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                     <Alert severity="error">
-                        <AlertTitle>Catalog item not found</AlertTitle>
-                        You have registered a tile named <strong>{name}</strong> but it is not in the catalog.If this is not intentional, the catalog may have changed since.
+                        <AlertTitle><strong>{name}</strong> not in catalog</AlertTitle>
+                        You have registered a tile named <strong>{name}</strong> but it is not in the catalog. If this is not intentional, the catalog may have changed since.
                     </Alert>
                 </Grid2>;
                 return (
