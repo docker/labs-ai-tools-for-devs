@@ -1,5 +1,5 @@
 registry:
-  SQLite:
+  mcp-sqlite:
     description: The MCP SQLite promptfile contributes all of the tools necessary to work with SQLite and SQLite databases. The file also includes a prompt to seed the database with initial data which helps to demonstrate what you can do with an SQLite MCP Server.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
@@ -12,7 +12,7 @@ registry:
     - {name: append-insight}
     prompts: 1
     resources: {}
-  Curl:
+  curl:
     description: This prompt file contains the standard curl tool. In addition to the tool itself, you get a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
@@ -21,7 +21,7 @@ registry:
     - {name: curl}
     prompts: 1
     resources: {}
-  FFMpeg:
+  ffmpeg:
     description: Use ffmpeg to process video files. This prompt file contains the ffmpeg tool, and a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
@@ -32,7 +32,7 @@ registry:
     - {name: ffmpeg}
     prompts: 1
     resources: {}
-  QREncode:
+  qr code:
     description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
@@ -40,7 +40,7 @@ registry:
     - {name: qrencode}
     prompts: 0
     resources: {}
-  Memory:
+  memory:
     description: Give your MCP client a memory system! This prompt file contains a tool to create entities, relations, and observations in a knowledge graph. It also contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
@@ -56,7 +56,7 @@ registry:
     - {name: open_nodes}
     prompts: 0
     resources: {}
-  Chrome:
+  chrome:
     description: Drive a headless Chrome browser to interact with web pages
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
@@ -67,7 +67,7 @@ registry:
     - {name: start-chrome}
     prompts: 1
     resources: {}
-  Sequential Thinking:
+  sequentialthinking:
     description: A tool for dynamic and reflective problem-solving through a structured thinking process
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
     icon: https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/2454513/2454513-1570719639731-bfdf3620a4e0d.jpg
@@ -75,7 +75,7 @@ registry:
     - {name: sequentialthinking}
     prompts: 0
     resources: {}
-  Stripe:
+  stripe:
     description: Interact with Stripe services over the Stripe API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
@@ -98,7 +98,7 @@ registry:
     - {name: search_documentation}
     prompts: 0
     resources: {}
-  Brave Search:
+  brave:
     description: Web and local search using Brave's Search API
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/brave.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
@@ -109,7 +109,7 @@ registry:
     - {name: brave_local_search}
     prompts: 0
     resources: {}
-  Slack:
+  slack:
     description: Interact with Slack Workspaces over the Slack API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
@@ -127,7 +127,7 @@ registry:
     - {name: slack_get_user_profile}
     prompts: 0
     resources: {}
-  Redis:
+  redis:
     description: Access to Redis database operations.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
@@ -137,7 +137,7 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  GitHub:
+  github:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
@@ -163,7 +163,7 @@ registry:
     - {name: get_issue}
     prompts: 0
     resources: {}
-  Google Maps:
+  google-maps:
     description: Tools for interacting with the Google Maps API.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/google-maps.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
@@ -179,7 +179,7 @@ registry:
     - {name: maps_directions}
     prompts: 0
     resources: {}
-  Google Drive:
+  gdrive:
     description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
@@ -189,7 +189,7 @@ registry:
     - {name: gdrive_auth}
     prompts: 0
     resources: {}
-  Time:
+  time:
     description: Tools for interacting with time.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
     icon: https://img.icons8.com/ios/50/time_2.png
@@ -198,14 +198,14 @@ registry:
     - {name: convert_time}
     prompts: 0
     resources: {}
-  Fetch:
+  fetch:
     description: Fetches a URL from the internet and extracts its contents as markdown
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
     icon: https://img.icons8.com/ios/50/fetch-rewards.png
     tools: []
     prompts: 0
     resources: {}
-  Git:
+  git:
     description: A Model Context Protocol server for Git repository interaction and automation
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
@@ -213,14 +213,14 @@ registry:
     - {name: git}
     prompts: 1
     resources: {}
-  Kubernetes:
+  kubernetes:
     description: Connect to a Kubernetes cluster and manage it
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/kubernetes.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
     tools: []
     prompts: 0
     resources: {}
-  Docker:
+  docker:
     description: Use the Docker CLI
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/docker.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
@@ -228,7 +228,7 @@ registry:
     - {name: docker}
     prompts: 0
     resources: {}
-  Puppeteer:
+  puppeteer:
     description: |
       UNDER CONSTRUCTION (support long running browser cache)
       Browser automation and web scraping using Puppeteer.
@@ -237,7 +237,7 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  Filesystem:
+  filesystem:
     description: |
       Local filesystem access with configurable allowed paths
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
@@ -252,7 +252,7 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  Web Research:
+  webresearch:
     description: |
       UNDER CONSTRUCTION (declarative state caching in volumes) A Model Context Protocol (MCP) server for web research, enabling real-time information retrieval and webpage content extraction for Claude.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/webresearch.md
@@ -260,7 +260,7 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  YouTube Transcript:
+  youtube_transcript:
     description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/youtube_transcript.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
@@ -268,7 +268,7 @@ registry:
     - {name: get_transcript}
     prompts: 0
     resources: {}
-  PostgreSQL (Read Only):
+  postgres readonly:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgres.md
     icon: https://img.icons8.com/ios/50/postgreesql.png
@@ -277,7 +277,7 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  PostgreSQL:
+  postgres:
     description: "Provides PostgreSQL database management capabilities. \nThis server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.\n"
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
     icon: https://img.icons8.com/ios/50/postgreesql.png
@@ -306,7 +306,7 @@ registry:
     - {name: set_trigger_state}
     prompts: 0
     resources: {}
-  Perplexity:
+  perplexity-ask:
     description: |
       integrates the Sonar API to provide Claude with unparalleled real-time, web-wide research.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/perplexity.md
@@ -328,7 +328,7 @@ registry:
     - {name: read-file}
     prompts: 0
     resources: {}
-  Notion:
+  mcp-notion-server:
     description: |
       Interact with Notion workspaces.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/mcp-notion-server.md
@@ -355,12 +355,12 @@ registry:
     - {name: notion_search}
     prompts: 0
     resources: {}
-  OpenAPI Schema:
+  openapi-schema:
     description: |
       Exposes OpenAPI schema information to Large Language Models (LLMs) like Claude. This server allows an LLM to explore and understand OpenAPI specifications through a set of specialized tools.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/openapi-schema.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-  Atlassian:
+  atlassian:
     description: |
       Tools for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/atlassian.md
