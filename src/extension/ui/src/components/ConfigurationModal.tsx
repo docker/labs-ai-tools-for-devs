@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "./tile/Tile";
 import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
-import { getStoredConfig, syncRegistryWithConfig } from "../Registry";
-import { stringify } from "yaml";
-import { escapeJSONForPlatformShell, tryRunImageSync } from "../FileWatcher";
-import { useCatalogContext } from "../context/CatalogContext";
-import { DeepObject, mergeDeep } from "../MergeDeep";
 import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react";
+import { useCatalogContext } from "../context/CatalogContext";
+import { useConfigContext } from "../context/ConfigContext";
+import { DeepObject, mergeDeep } from "../MergeDeep";
 
 // Styles for the tab panel
 interface TabPanelProps {
@@ -142,7 +140,8 @@ const ConfigurationModal = ({
     catalogItem,
     client,
 }: ConfigurationModalProps) => {
-    const { config, startPull, registryItems, tryUpdateSecrets, secrets } = useCatalogContext();
+    const { startPull, registryItems, tryUpdateSecrets, secrets } = useCatalogContext();
+    const { config, configLoading, saveConfig } = useConfigContext();
     const theme = useTheme();
 
     // State for tabs
@@ -154,7 +153,6 @@ const ConfigurationModal = ({
     const [secretLoading, setSecretLoading] = useState(false);
 
     // State for config
-    const [configLoading, setConfigLoading] = useState(true);
     const [loadedConfig, setLoadedConfig] = useState<{ [key: string]: any }>({});
 
     // Load assigned secrets
@@ -171,7 +169,6 @@ const ConfigurationModal = ({
         } catch (error) {
             console.error(error);
         }
-        setConfigLoading(false);
     }, [catalogItem, config]);
 
     // Handle tab change
@@ -181,33 +178,14 @@ const ConfigurationModal = ({
 
     // Save config to YAML
     const saveConfigToYaml = async (newConfig: { [key: string]: any }) => {
-        if (!registryItems || !config) {
+        if (!registryItems) {
             return;
         }
         try {
-            setConfigLoading(true);
-            const currentStoredConfig = config;
-            console.log('currentStoredConfig', currentStoredConfig);
-            currentStoredConfig[catalogItem.name] = newConfig;
-            console.log('newConfig', newConfig);
-            const payload = escapeJSONForPlatformShell({
-                files: [{
-                    path: 'config.yaml',
-                    content: stringify(currentStoredConfig)
-                }]
-            }, client.host.platform);
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
-            console.log('Config saved successfully, syncing');
-            await syncRegistryWithConfig(client, registryItems, currentStoredConfig);
+            await saveConfig(catalogItem.name, newConfig);
             await startPull();
-            console.log('Syncing complete');
-            client.desktopUI.toast.success('Config saved successfully.');
-            setTimeout(() => {
-                setConfigLoading(false);
-            }, 500);
         } catch (error) {
             client.desktopUI.toast.error('Failed to update config: ' + error);
-            setConfigLoading(false);
         }
     };
 
