@@ -388,3 +388,17 @@ registry:
                 type: string
               username:
                 type: string
+  jetbrains:
+    description: |
+      The server proxies requests from client to JetBrains IDE.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/jetbrains.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/jetbrains.svg
+    config:
+      - name: jetbrains
+        description: The MCP server needs to know about the local JetBrains IDE Config
+        parameters:
+          server:
+            type: object
+            properties:
+              port:
+                type: integer
