@@ -332,8 +332,8 @@
    (concat (->> (:register opts)
                 (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
-           (when (fs/exists? registry)
-             (db/registry-refs registry)))))
+         (when (fs/exists? (registry))
+           (db/registry-refs (registry))))))
 
 (defn server-context
   "create chan server options for any io chan server that we build"

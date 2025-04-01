@@ -11,7 +11,7 @@
   "read the from the prompt registry in the current engine volume"
   []
   (try
-    (edn/read-string (slurp prompts.core/registry-file))
+    (edn/read-string (slurp (prompts.core/registry-file)))
     (catch java.io.FileNotFoundException _
       {:prompts []})
     (catch Throwable t
@@ -21,5 +21,5 @@
 (defn update-registry
   "update the prompt registry in the current engine volume"
   [f]
-  (spit prompts.core/registry-file (pr-str (f (read-registry)))))
+  (spit (prompts.core/registry-file) (pr-str (f (read-registry)))))
 

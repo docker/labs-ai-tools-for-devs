@@ -18,8 +18,8 @@
 
 ;; old registry.edn for backward compatibility
 ;; DEPRECATED
-(def registry-file (fs/file (get-prompts-dir) "registry.edn"))
+(defn registry-file [] (fs/file (get-prompts-dir) "registry.edn"))
 
 ;; current registry.yaml
-(def registry (fs/file (get-prompts-dir) "registry.yaml"))
+(defn registry [] (fs/file (get-prompts-dir) "registry.yaml"))
 
