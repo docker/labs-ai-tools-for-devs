@@ -1,5 +1,5 @@
 ---
-mcphttps://github.com/Flux159/mcp-server-kubernetes:
+mcp:
   - container:
       image: flux159/mcp-server-kubernetes:latest
       workdir: /usr/local/app
