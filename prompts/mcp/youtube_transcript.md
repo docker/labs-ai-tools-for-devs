@@ -1,6 +1,6 @@
 ---
 mcp:
   - container:
-      image: vonwig/youtube-transcript
+      image: vonwig/youtube-transcript:latest
       workdir: /app
 ---
