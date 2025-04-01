@@ -4,5 +4,5 @@ mcp:
       image: mcp/postgresql:latest
       workdir: /app
     source:
-      url: https://github.com/slimslenderslacks/postgresql-mcp-server/tree/main
+      url: https://github.com/slimslenderslacks/postgresql-mcp-server/tree/slim/docker
 ---
