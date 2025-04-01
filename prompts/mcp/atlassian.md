@@ -10,6 +10,8 @@ mcp:
         JIRA_USERNAME: "{{atlassian.jira.username}}"
       secrets:
         atlassian.jira.token: JIRA_PERSONAL_TOKEN
+    source:
+      url: https://github.com/sooperset/mcp-atlassian
 ---
 
 # Configuration

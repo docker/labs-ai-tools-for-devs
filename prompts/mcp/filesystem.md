@@ -7,6 +7,8 @@ mcp:
         - "{{filesystem.paths|volume|into}}"
       command:
         - "{{filesystem.paths|into}}"
+    source:
+      url: https://github.com/modelcontextprotocol/servers
 parameter-values:
   filesystem:
     paths:

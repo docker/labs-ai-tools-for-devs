@@ -11,5 +11,7 @@ mcp:
         - $REDIS_HOST
         - "--redis-port"
         - $REDIS_PORT
+    source:
+      url: https://github.com/smithery-ai/redis-mcp/tree/smithery/config-wxbv
 ---
 

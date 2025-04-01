@@ -7,4 +7,6 @@ mcp:
         postgres.url: POSTGRES_URL
       command:
         - $POSTGRES_URL
+    source:
+      url: https://github.com/modelcontextprotocol/servers/tree/main
 ---

@@ -17,6 +17,8 @@ tools:
         google.gcp-oauth.keys.json: GDRIVE
       command:
         - auth
+    source:
+      url: https://github.com/docker/mcp-servers/tree/slim/gdrive
 mcp:
   - container:
       image: vonwig/gdrive:latest
@@ -28,6 +30,8 @@ mcp:
         GDRIVE_OAUTH_PATH: /secret/google.gcp-oauth.keys.json
       secrets:
         google.gcp-oauth.keys.json: GDRIVE
+    source:
+      url: https://github.com/docker/mcp-servers/tree/slim/gdrive
 ---
 
 # Configuration

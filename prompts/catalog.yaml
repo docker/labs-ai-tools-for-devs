@@ -252,14 +252,6 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-  webresearch:
-    description: |
-      UNDER CONSTRUCTION (declarative state caching in volumes) A Model Context Protocol (MCP) server for web research, enabling real-time information retrieval and webpage content extraction for Claude.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/webresearch.md
-    icon: https://img.icons8.com/officel/80/under-construction.png
-    tools: []
-    prompts: 0
-    resources: {}
   youtube_transcript:
     description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/youtube_transcript.md
