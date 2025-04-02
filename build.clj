@@ -5,7 +5,7 @@
 (def jar-content (str build-folder "/classes"))
 
 (def basis (b/create-basis {:project "deps.edn"
-                            :aliases [:native]}))
+                            :aliases [:main]}))
 (def app-name "chat-sdlc")
 (def uber-file-name (format "%s/%s-standalone.jar" build-folder app-name)) ; path for result uber file
 

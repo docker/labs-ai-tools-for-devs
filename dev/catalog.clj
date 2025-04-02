@@ -63,6 +63,7 @@
   (generate-updated-catalog)
   ;; parse catalog
   (def catalog (yaml/parse-string (slurp "prompts/catalog.yaml")))
+  (count (:registry catalog))
   (string/join "," (->> (:registry catalog) keys (map name)))
 
   ;; raw github urls to
