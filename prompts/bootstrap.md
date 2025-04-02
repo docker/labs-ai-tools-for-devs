@@ -20,8 +20,8 @@ tools:
       command:
         - -c
         - "echo \"{{content|safe}}\" > /prompts/{{name}}.md"
-  - name: write_files
-  - name: read-file
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/bash_alpine
 ```
 
 # Sample Test prompt to create a new tool definition

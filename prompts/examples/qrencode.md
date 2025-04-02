@@ -14,6 +14,8 @@ tools:
       image: vonwig/qrencode:latest
       command:
         - "{{raw|safe}}"
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/hub/qrencode
 ---
 
 # Background

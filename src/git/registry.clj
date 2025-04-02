@@ -1,4 +1,6 @@
 (ns git.registry 
+  "Deprecated: git.registry is a registry.edn in the prompts volume
+     This is only used by the old vsocde extension register/unregister commands"
   (:require
    [clojure.edn :as edn]
    [dir]

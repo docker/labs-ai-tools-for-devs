@@ -1,4 +1,7 @@
 (ns registry
+  "Deprecated: reads tool definitions out of extractor.edn or registry.edn in the container image
+     this is still used by the prompts namespace but our catalog doesn't use this anymore.
+     only the vscode extension prompts definitons can still use this"
   (:require [clojure.edn :as edn]
             [clojure.pprint :refer [pprint]]
             [babashka.fs :as fs]
