@@ -131,29 +131,32 @@
         m))
     m))
 
+(defn ref-map->prompt-file [{:keys [ref path] :as git-ref-map}]
+  (try
+    (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
+          dir (cache-dir {:ref-hash ref-hash})
+          m (if (fs/exists? dir)
+              (or (check-for-divergent (pull (assoc git-ref-map :dir dir))) (reset-hard (assoc git-ref-map :dir dir)))
+              (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
+      (when (not (= 0 (:exit-code m)))
+        (logger/error (format "git error (%d): %s" (:exit-code m) (:pty-output m)))
+        (jsonrpc/notify :error {:content (str m)}))
+      (if path
+        (let [cached-path (fs/file dir path)]
+          (if (fs/exists? cached-path)
+            cached-path
+            (throw (ex-info "repo exists but path does not" {:ref ref}))))
+        dir))
+    (catch Throwable t
+      (logger/error t)
+      "")))
+
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
    throws if the path in the repo does not exist or if the clone fails"
   [ref]
-  (try
-    (when-let [{:keys [ref path] :as git-ref-map} (parse-github-ref ref)]
-      (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
-            dir (cache-dir {:ref-hash ref-hash})
-            m (if (fs/exists? dir)
-                (or (check-for-divergent (pull (assoc git-ref-map :dir dir))) (reset-hard (assoc git-ref-map :dir dir)))
-                (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
-        (when (not (= 0 (:exit-code m)))
-          (logger/error (format "git error (%d): %s" (:exit-code m) (:pty-output m)))
-          (jsonrpc/notify :error {:content (str m)}))
-        (if path
-          (let [cached-path (fs/file dir path)]
-            (if (fs/exists? cached-path)
-              cached-path
-              (throw (ex-info "repo exists but path does not" {:ref ref}))))
-          dir)))
-    (catch Throwable t
-      (logger/error t)
-      "")))
+  (when-let [git-ref-map (parse-github-ref ref)]
+    (ref-map->prompt-file git-ref-map)))
 
 (comment
   (prompt-file "github:docker/labs-make-runbook?path=prompts/docker/prompt.md"))

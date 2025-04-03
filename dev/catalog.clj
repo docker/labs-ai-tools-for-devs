@@ -66,37 +66,20 @@
   (count (:registry catalog))
   (string/join "," (->> (:registry catalog) keys (map name)))
 
-  ;; raw github urls to
+  ;; raw github urls to for the slim/cleanup branch
   (def prompt-refs
     (->> catalog
          :registry
          vals
          (map :ref)
          (map #(git/parse-github-ref %))
-         (map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
-
-  (sort prompt-refs)
-  (->> prompt-refs (interpose "\n") (apply str) (println))
-
-  (def prompt-refs
-    (->> catalog
-         :registry
-         vals
-         (map :ref)
-         (map #(git/parse-github-ref %))
-         (map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
-
- (->> prompt-refs (interpose "\n") (apply str) (println)) 
+         (map #(assoc % :ref "slim/cleanup"))
+         #_(map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
 
   ;; current git ref files
   (def local-prompt-files
-    (->> catalog
-         :registry
-         vals
-         (map :ref)
-         (map #(conj [%] (git/prompt-file %)))
-         (into {})))
-  
+    (->> prompt-refs
+         (map git/ref-map->prompt-file)))
 
 ;; parse all of the current git prompts
   (with-redefs [client/get-mcp-tools-from-prompt (constantly [])]
