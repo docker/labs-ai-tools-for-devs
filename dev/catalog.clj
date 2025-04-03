@@ -75,6 +75,7 @@
          (map #(git/parse-github-ref %))
          (map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
 
+  (sort prompt-refs)
   (->> prompt-refs (interpose "\n") (apply str) (println))
 
   (def prompt-refs
