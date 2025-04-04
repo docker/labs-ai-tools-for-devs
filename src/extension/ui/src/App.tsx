@@ -6,6 +6,7 @@ import { Close } from '@mui/icons-material';
 import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
 import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
+import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
 import { Settings as SettingsIcon } from '@mui/icons-material';
@@ -42,16 +43,18 @@ export function App() {
   const [configuringItem, setConfiguringItem] = useState<CatalogItemWithName | null>(null);
   // Wrap the entire application with our providers
   return (
-    <CatalogProvider client={client}>
-      <MCPClientProvider client={client}>
-        <AppContent
-          settings={settings}
-          setSettings={setSettings}
-          configuringItem={configuringItem}
-          setConfiguringItem={setConfiguringItem}
-        />
-      </MCPClientProvider>
-    </CatalogProvider>
+    <ConfigProvider client={client}>
+      <CatalogProvider client={client}>
+        <MCPClientProvider client={client}>
+          <AppContent
+            settings={settings}
+            setSettings={setSettings}
+            configuringItem={configuringItem}
+            setConfiguringItem={setConfiguringItem}
+          />
+        </MCPClientProvider>
+      </CatalogProvider>
+    </ConfigProvider>
   );
 }
 
