@@ -1,10 +1,10 @@
 ---
 mcp:
   - container:
-      image: mcp/brave-search:latest
+      image: mcp/everart:latest
       workdir: /app
       secrets:
-        brave.api_key: BRAVE_API_KEY
+        everart.api_key: EVERART_API_KEY
     source:
       url: https://github.com/modelcontextprotocol/servers/tree/main
 ---

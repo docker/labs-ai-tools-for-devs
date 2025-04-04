@@ -102,6 +102,8 @@ tools:
         - "mcp-sequentialthinking:/sequentialthinking"
       command:
         - "{{raw|safe}}"
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/sequentialthinking
 ---
 
 # background

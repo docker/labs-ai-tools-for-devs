@@ -82,13 +82,17 @@
         :exception (str ex)})
       m)))
 
-(defn- metadata-file [prompts-file]
-  (if (fs/directory? prompts-file) (io/file prompts-file "README.md") prompts-file))
-
 (def hub-images
   #{"curl" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
 
-(defn function-definition [m]
+(defn function-definition 
+  "params
+     m
+       - special names that are hub-images are turned into definitions
+       - otherwise the definition is merged with whatever we find in registry.edn 
+         based on either name or image keys
+   returns a function definition"
+  [m]
   (if-let [tool (hub-images (:name m))]
             ;; these come from our own public hub images
     [{:type "function"

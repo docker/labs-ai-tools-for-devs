@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.9"
+VERSION="0.0.10"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
@@ -35,6 +35,10 @@ docker run --rm -t --init -v docker-prompts:/prompts alpine:latest tail -f /prom
 ```
 
 ```sh
+# logs to ./log/docker-mcp-server.out
+# uses $HOME/.prompts-cache
+# repl will be written to log
+
 clj -M:main-repl serve --mcp --port 8811
 ```
 

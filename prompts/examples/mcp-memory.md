@@ -7,6 +7,8 @@ defs:
       image: vonwig/memory:latest 
       volumes:
         - "mcp-memory:/memory"
+    source: &memory-source
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/memory
 tools:
   - name: "create_entities"
     description: "Create multiple new entities in the knowledge graph"
@@ -31,6 +33,7 @@ tools:
       command:
         - create-entities
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "create_relations"
     description: "Create multiple new relations between entities in the knowledge graph. Relations should be in active voice"
     parameters:
@@ -51,6 +54,7 @@ tools:
       command:
         - create-relations
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "add_observations"
     description: "Add new observations to existing entities in the knowledge graph"
     parameters:
@@ -74,6 +78,7 @@ tools:
       command:
         - add-observations
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "delete_entities"
     description: "Delete multiple entities and their associated relations from the knowledge graph"
     parameters:
@@ -90,6 +95,7 @@ tools:
       command:
         - delete-entities
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "delete_observations"
     description: "Delete specific observations from entities in the knowledge graph"
     parameters:
@@ -112,6 +118,7 @@ tools:
       command:
         - delete-observations
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "delete_relations"
     description: "Delete multiple relations from the knowledge graph"
     parameters:
@@ -133,6 +140,7 @@ tools:
       command:
         - delete-relations
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "read_graph"
     description: "Read the entire knowledge graph"
     parameters:
@@ -143,6 +151,7 @@ tools:
       command:
         - read-graph
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "search_nodes"
     description: "Search for nodes in the knowledge graph based on a query"
     parameters:
@@ -157,6 +166,7 @@ tools:
       command:
         - search-nodes
         - "{{raw|safe}}"
+    source: *memory-source
   - name: "open_nodes"
     description: "Open specific nodes in the knowledge graph by their names"
     parameters:
@@ -173,5 +183,6 @@ tools:
       command:
         - open-nodes
         - "{{raw|safe}}"
+    source: *memory-source
 ---
 

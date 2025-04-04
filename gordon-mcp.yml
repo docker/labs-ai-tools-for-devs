@@ -1,6 +1,0 @@
-services:
-  MCP_DOCKER:
-    image: alpine/socat
-    command:
-      - STDIO
-      - TCP:host.docker.internal:8811

@@ -69,6 +69,7 @@
              (when (-> definition :container :environment)
                {:environment (->> (seq (-> definition :container :environment))
                                   (map (fn [[k v]] [k (first (interpolate arg-context v))]))
+                                  (filter (fn [[_ v :as l]] (when (not (or (nil? v) (= "" v))) l)))
                                   (into {}))})
               ;; workdirs in a container definition will always override ones
               ;; set in the metadata

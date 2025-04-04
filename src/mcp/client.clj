@@ -36,7 +36,6 @@
                                        :OpenStdin true
                                        :AttachStdin true}))
         response-promises (atom {})]
-    (docker/start x)
     ;; process the output stream channin the background
     ;; should only end once the stream closes
     ;; TODO - docker/stream will block a go channel
@@ -44,6 +43,7 @@
           c (async/chan)
           dead-channel (async/chan)]
 
+      (docker/start x)
       ;; process the output-stream of the container
       (async/thread
         (docker/read-loop socket-channel c))
@@ -426,6 +426,10 @@
                                                  :volumes ["mcp-gdrive:/gdrive-server"]
                                                  :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
                               :local-get-tools -get-tools})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/jetbrains:latest"
+                                                 :environment {"IDE_PORT" "8090"}}}]
+                              :local-get-tools -get-tools})
+
   (-get-resources {:image "vonwig/gdrive:latest"
                    :workdir "/app"
                    :volumes ["mcp-gdrive:/gdrive-server"]
@@ -433,6 +437,74 @@
                                  "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
                    :secrets {:google.gcp-oauth.keys.json "GDRIVE"}}
                   {})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
+                                                 :workdir "/app"
+                                                 :volumes ["mcp-gdrive:/gdrive-server"]
+                                                 :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
+                              :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/mcp-discord:latest"
+             :workdir "/app"}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/discordmcp:latest"
+             :workdir "/app"
+             :secrets {:discord.token "DISCORD_TOKEN"}}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/everart:latest"
+             :workdir "/app"
+             :secrets {:everart.api_key "EVERART_API_KEY" }}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/gitlab:latest"
+             :workdir "/app"
+             :secrets {:gitlab.personal_access_token "GITLAB_PERSONAL_ACCESS_TOKEN"}
+             :environment {"GILAB_API_URL" "https://gitlab.com"}}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/sentry:latest"
+             :workdir "/app"
+             :secrets {:sentry.auth_token "SENTRY_AUTH_TOKEN"}
+             :command ["--auth-token" "$SENTRY_AUTH_TOKEN"] }}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/resend:latest"
+             :workdir "/app"
+             :secrets {:resend.api_key "RESEND_API_KEY"}}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/obsidian:latest"
+             :workdir "/app"
+             :secrets {:obsidian.api_key "OBSIDIAN_API_KEY"}
+             :environment {"GILAB_API_URL" "https://gitlab.com"}}}]
+     :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+    {:mcp [{:container
+            {:image "mcp/aws-kb-retrieval-server:latest"
+             :workdir "/app"
+             :secrets {
+                       :aws.access_key_id "AWS_ACCESS_KEY_ID"
+                       :aws.secret_access_key "AWS_SECRET_ACCESS_KEY"
+                       :aws.region "REGION"
+                       }}}]
+     :local-get-tools -get-tools})
+  
   (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
                                                          :workdir "/app"}))
   (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"

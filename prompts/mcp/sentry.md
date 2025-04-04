@@ -1,12 +1,13 @@
 ---
 mcp:
   - container:
-      image: mcp/postgres:latest
+      image: mcp/sentry:latest
       workdir: /app
       secrets:
-        postgres.url: POSTGRES_URL
+        sentry.auth_token: SENTRY_AUTH_TOKEN
       command:
-        - $POSTGRES_URL
+        - "--auth-token"
+        - $SENTRY_AUTH_TOKEN
     source:
       url: https://github.com/modelcontextprotocol/servers/tree/main
 ---

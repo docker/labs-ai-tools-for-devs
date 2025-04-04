@@ -17,6 +17,8 @@ tools:
         - "{{query|safe}}"
       volumes: &mounts
         - "mcp-test:/mcp"
+    source: &sqlite-source
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/sqlite
   - name: write-query
     description: Execute an INSERT, UPDATE, or DELETE query on the SQLite database
     parameters:
@@ -26,6 +28,7 @@ tools:
           type: string
           description: SQL query to execute
     container: *sqlite-container
+    source: *sqlite-source
   - name: create-table
     description: Create a new table in the SQLite database
     parameters:
@@ -35,6 +38,7 @@ tools:
           type: string
           description: CREATE TABLE SQL statement
     container: *sqlite-container
+    source: *sqlite-source
   - name: list-tables
     description: List all tables in the SQLite database
     container:
@@ -57,6 +61,7 @@ tools:
         - *db
         - "PRAGMA table_info({{table_name}})"
       volumes: *mounts
+    source: *sqlite-source
   - name: append-insight
     description: Add a business insight to the memo
     parameters:
@@ -71,6 +76,7 @@ tools:
         - "-c"
         - "echo '{{insight|safe}}' >> /thread/insights.txt"
       volumes: *mounts
+    source: *sqlite-source
 resources:
   - name: Business Insights Memo
     description: A living document of discovered business insights

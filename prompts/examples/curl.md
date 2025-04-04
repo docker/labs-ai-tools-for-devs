@@ -3,6 +3,19 @@ name: curl
 model: claude-3-5-sonnet-20241022
 tools:
   - name: curl
+    description: Run a curl command.
+    parameters:
+      type: object
+      properties:
+        args:
+          type: string
+          description: The arguments to pass to curl
+    container:
+      image: vonwig/curl:latest
+      command:
+        - "{{raw|safe}}"
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/hub/curl
 arguments:
   - name: user
     description: the GitHub username to fetch gists for

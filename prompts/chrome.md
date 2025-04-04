@@ -42,6 +42,8 @@ tools:
       image: vonwig/curl:latest
       command:
         - "{{raw|safe}}"
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/hub/curl
   - name: start-chrome
     description: Starts the chrome browser in case it is not already running.
     parameters:

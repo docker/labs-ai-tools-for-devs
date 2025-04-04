@@ -6,7 +6,8 @@
    docker
    [hasch.core :as hasch]
    jsonrpc
-   [jsonrpc.logger :as logger]))
+   [jsonrpc.logger :as logger]
+   prompts.core))
 
 (set! *warn-on-reflection* true)
 
@@ -43,15 +44,6 @@
   "returns #uuid"
   [m]
   (str (hasch/uuid5 (hasch/edn-hash (select-keys m [:owner :repo :ref])))))
-
-;(def prompts-cache (fs/file "/Users/slim/docker/labs-make-runbook/prompts-cache"))
-(defn prompts-cache []
-  (let [default-dir (fs/file (System/getenv "HOME") ".prompts-cache")]
-    (or
-     (dir/get-dir "/prompts" default-dir)
-     (do
-       (fs/create-dirs default-dir)
-       default-dir))))
 
 (comment
   "alpine/git uses a VOLUME /git declaration
@@ -107,7 +99,7 @@
   (clone {:dir "/Users/slim/crap" :owner "docker" :repo "labs-make-runbook" :ref "main" :ref-hash "crap"}))
 
 (defn cache-dir [{:keys [ref-hash]}]
-  (fs/file (prompts-cache) ref-hash))
+  (fs/file (prompts.core/prompts-cache) ref-hash))
 
 (defn collect-unique-cache-dirs [coll]
   (->> coll
@@ -139,35 +131,38 @@
         m))
     m))
 
+(defn ref-map->prompt-file [{:keys [ref path] :as git-ref-map}]
+  (try
+    (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
+          dir (cache-dir {:ref-hash ref-hash})
+          m (if (fs/exists? dir)
+              (or (check-for-divergent (pull (assoc git-ref-map :dir dir))) (reset-hard (assoc git-ref-map :dir dir)))
+              (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
+      (when (not (= 0 (:exit-code m)))
+        (logger/error (format "git error (%d): %s" (:exit-code m) (:pty-output m)))
+        (jsonrpc/notify :error {:content (str m)}))
+      (if path
+        (let [cached-path (fs/file dir path)]
+          (if (fs/exists? cached-path)
+            cached-path
+            (throw (ex-info "repo exists but path does not" {:ref ref}))))
+        dir))
+    (catch Throwable t
+      (logger/error t)
+      "")))
+
 (defn prompt-file
   "returns the path or nil if the github ref does not resolve
    throws if the path in the repo does not exist or if the clone fails"
   [ref]
-  (try
-    (when-let [{:keys [ref path] :as git-ref-map} (parse-github-ref ref)]
-      (let [ref-hash (hashch (select-keys git-ref-map [:owner :repo :ref]))
-            dir (cache-dir {:ref-hash ref-hash})
-            m (if (fs/exists? dir)
-                (or (check-for-divergent (pull (assoc git-ref-map :dir dir))) (reset-hard (assoc git-ref-map :dir dir)))
-                (clone (merge git-ref-map {:dir (fs/parent dir) :ref-hash ref-hash})))]
-        (when (not (= 0 (:exit-code m)))
-          (logger/error (format "git error (%d): %s" (:exit-code m) (:pty-output m)))
-          (jsonrpc/notify :error {:content (str m)}))
-        (if path
-          (let [cached-path (fs/file dir path)]
-            (if (fs/exists? cached-path)
-              cached-path
-              (throw (ex-info "repo exists but path does not" {:ref ref}))))
-          dir)))
-    (catch Throwable t
-      (logger/error t)
-      "")))
+  (when-let [git-ref-map (parse-github-ref ref)]
+    (ref-map->prompt-file git-ref-map)))
 
 (comment
   (prompt-file "github:docker/labs-make-runbook?path=prompts/docker/prompt.md"))
 
 (comment
-  (fs/create-dir (prompts-cache))
+  (fs/create-dir (prompts.core/prompts-cache))
   (def x "github:docker/labs-make-runbook?ref=main&path=prompts/docker")
   (def git-ref (parse-github-ref x))
   (prompt-file "github:docker/labs-make-runbook?ref=main&path=prompts/docker")

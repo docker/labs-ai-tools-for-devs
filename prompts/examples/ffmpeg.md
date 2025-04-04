@@ -2,6 +2,19 @@
 name: "ffmpeg - convert to gif"
 tools:
   - name: imagemagick
+    description: Run a imagemagick command
+    parameters:
+      type: object
+      properties:
+        args:
+          type: string
+          description: The arguments to pass to imagemagick
+    container:
+      image: vonwig/imagemagick:latest
+      command:
+        - "{{raw|safe}}"
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/imagemagick
   - name: file-exists
     description: check if a file exists
     parameters:

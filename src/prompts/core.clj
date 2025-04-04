@@ -1,11 +1,25 @@
 (ns prompts.core 
   (:require
-   [babashka.fs :as fs]))
+   [babashka.fs :as fs]
+   dir))
+
+(set! *warn-on-reflection* true)
+
+(defn prompts-cache []
+  (let [default-dir (fs/file (System/getenv "HOME") ".prompts-cache")]
+    (or
+     (dir/get-dir "/prompts" default-dir)
+     (do
+       (fs/create-dirs default-dir)
+       default-dir))))
 
 (defn get-prompts-dir []
-  (if (fs/exists? (fs/file "/prompts"))
-    "/prompts"
-    (format "%s/prompts" (System/getenv "HOME"))))
+  (prompts-cache))
 
-(def registry (format "%s/registry.yaml" (get-prompts-dir)))
+;; old registry.edn for backward compatibility
+;; DEPRECATED
+(defn registry-file [] (fs/file (get-prompts-dir) "registry.edn"))
+
+;; current registry.yaml
+(defn registry [] (fs/file (get-prompts-dir) "registry.yaml"))
 

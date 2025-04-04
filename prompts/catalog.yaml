@@ -249,14 +249,8 @@ registry:
         paths:
           type: array
           items: {type: string}
-    tools: []
-    prompts: 0
-    resources: {}
-  webresearch:
-    description: |
-      UNDER CONSTRUCTION (declarative state caching in volumes) A Model Context Protocol (MCP) server for web research, enabling real-time information retrieval and webpage content extraction for Claude.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/webresearch.md
-    icon: https://img.icons8.com/officel/80/under-construction.png
+      required:
+        - paths
     tools: []
     prompts: 0
     resources: {}
@@ -388,6 +382,11 @@ registry:
                 type: string
               username:
                 type: string
+        anyOf:
+          - required:
+              - confluence
+          - required:
+              - jira
   jetbrains:
     description: |
       The server proxies requests from client to JetBrains IDE.
@@ -402,3 +401,63 @@ registry:
             properties:
               port:
                 type: integer
+        required:
+          - server
+  aws-kb-retrieval-server:
+    description: |
+      An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/aws-kb-retrieval-server.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
+  everart:
+    description: |
+      Image generation server using EverArt's API.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/everart.md
+    icon: https://10web.io/wp-content/uploads/2024/07/EverArt.png
+  sentry:
+    description: |
+      A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/sentry.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sentry.svg
+  gitlab:
+    description: |
+      MCP Server for the GitLab API, enabling project management, file operations, and more.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gitlab.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/gitlab.svg
+    config:
+      - name: gitlab
+        decription: Configure the local or Cloud GitLab instance
+        parameters:
+          url:
+            type: string
+            description: api url - optional for self-hosted instances
+  obsidian:
+    description: |
+      MCP server to interact with Obsidian via the Local REST API community plugin.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/obsidian.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
+  mcp-discord:
+    description: |
+      A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/barryyip0625-mcp-discord.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+  discordmcp:
+    description: |
+      A Model Context Protocol (MCP) server that enables LLMs to interact with Discord channels, allowing them to send and read messages through Discord's API. Using this server, LLMs like Claude can directly interact with Discord channels while maintaining user control and security.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+  resend:
+    description: |
+      Sends emails using Resend's API. Why? Now you can let Cursor or Claude Desktop compose emails for you and send it right away without having to copy and paste the email content.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/resend.md
+    icon: https://img.icons8.com/ios/50/new-post--v1.png
+    config:
+      - name: resend
+        description: Configure sender and reply email addresses
+        parameters:
+          sender:
+            type: string
+            description: sender email address
+          reply_to:
+            type: string
+            description: comma separated list of reply to email addresses
+
