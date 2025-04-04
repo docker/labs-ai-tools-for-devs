@@ -1,11 +1,11 @@
 ---
 mcp:
   - container:
-      image: mcp/discord:latest
+      image: mcp/mcp-discord:latest
       workdir: /app
       secrets:
         discord.token: DISCORD_TOKEN
     source:
-      url: https://github.com/barryyip0625/mcp-discord
+      url: https://github.com/slimslenderslacks/mcp-discord/tree/slim/docker
 ---
 

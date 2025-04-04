@@ -435,10 +435,15 @@ registry:
       MCP server to interact with Obsidian via the Local REST API community plugin.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/obsidian.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
-  discord:
+  mcp-discord:
     description: |
       A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/discord.md
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/barryyip0625-mcp-discord.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+  discordmcp:
+    description: |
+      A Model Context Protocol (MCP) server that enables LLMs to interact with Discord channels, allowing them to send and read messages through Discord's API. Using this server, LLMs like Claude can directly interact with Discord channels while maintaining user control and security.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
   resend:
     description: |
