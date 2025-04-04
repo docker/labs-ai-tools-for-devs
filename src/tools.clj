@@ -1,15 +1,14 @@
 (ns tools
   (:require
-   [cheshire.core :as json]
-   [clojure.core.async :as async]
-   [clojure.pprint :as pp]
-   docker
-   git
-   interpolate
-   jsonrpc
-   [jsonrpc.logger :as logger]
-   [mcp.client :as client]
-   trace))
+    [cheshire.core :as json]
+    [clojure.core.async :as async]
+    [clojure.pprint :as pp]
+    [docker]
+    [interpolate]
+    [jsonrpc]
+    [jsonrpc.logger :as logger]
+    [mcp.client :as client]
+    [trace]))
 
 (set! *warn-on-reflection* true)
 

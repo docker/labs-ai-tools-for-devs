@@ -140,23 +140,3 @@
    (vals)
    (map (fn [m] (assoc m :type :dynamic)))))
 
-(comment
-  (repl/setup-stdout-logger)
-  (println @db*)
-  (-> @db* :mcp.prompts/registry (get "github-issues"))
-  (update-prompt {} "github-issues" (slurp "prompts/examples/github_issues.md"))
-  ; in /$HOME/registry.yaml
-  (git/collect-unique-cache-dirs
-   (git-cache-refs
-    (registry-refs prompts.core/registry)))
-
-  ; prompts will come from prompts-cache
-  ;   /prompts or $HOME/.prompts-cache
-  (git/hashch {:owner "docker" :repo "labs-ai-tools-for-devs" :ref "slim/config"})
-  (add-refs (registry-refs prompts.core/registry))
-  (-> @db*
-      :mcp.prompts/registry
-      vals
-      pprint)
-  (parameter-values "read_file"))
-

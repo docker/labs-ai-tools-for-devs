@@ -1,37 +1,34 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
-   [babashka.fs :as fs]
-   [cheshire.core :as json]
-   [clojure.core :as c]
-   [clojure.core.async :as async]
-   [clojure.pprint :as pprint]
-   [clojure.string :as string]
-   docker
-   git
-   graph
-   jsonrpc
-   [jsonrpc.db :as db]
-   [jsonrpc.extras]
-   [jsonrpc.logger :as logger]
-   [jsonrpc.producer :as producer]
-   jsonrpc.prompt-change-events
-   [jsonrpc.socket-server :as socket-server]
-   jsonrpc.state
-   [lsp4clj.coercer :as coercer]
-   [lsp4clj.io-chan :as io-chan]
-   [lsp4clj.io-server :refer [stdio-server]]
-   [lsp4clj.server :as lsp.server]
-   [mcp.client :as client]
-   [medley.core :as medley]
-   nrepl
-   [promesa.core :as p]
-   [prompts.core :refer [get-prompts-dir registry]]
-   shutdown
-   state
-   tools
-   user-loop
-   volumes)
+    [babashka.fs :as fs]
+    [cheshire.core :as json]
+    [clojure.core :as c]
+    [clojure.core.async :as async]
+    [clojure.pprint :as pprint]
+    [clojure.string :as string]
+    [docker]
+    [git]
+    [jsonrpc.db :as db]
+    [jsonrpc.extras]
+    [jsonrpc.logger :as logger]
+    [jsonrpc.producer :as producer]
+    [jsonrpc.prompt-change-events]
+    [jsonrpc.socket-server :as socket-server]
+    [jsonrpc.state]
+    [lsp4clj.coercer :as coercer]
+    [lsp4clj.io-chan :as io-chan]
+    [lsp4clj.io-server :refer [stdio-server]]
+    [lsp4clj.server :as lsp.server]
+    [mcp.client :as client]
+    [medley.core :as medley]
+    [nrepl]
+    [promesa.core :as p]
+    [prompts.core :refer [get-prompts-dir registry]]
+    [shutdown]
+    [state]
+    [tools]
+    [volumes])
   (:gen-class))
 
 (set! *warn-on-reflection* true)

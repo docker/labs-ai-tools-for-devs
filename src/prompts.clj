@@ -2,27 +2,20 @@
   "functions to take prompt markdown definitions
    and turn them into schema/prompts-file maps"
   (:require
-   [babashka.fs :as fs]
-   [cheshire.core :as json]
-   [clojure.java.io :as io]
-   [clojure.string :as string]
-   creds
-   [docker]
-   [git]
-   [git.registry]
-   [jsonrpc]
-   [jsonrpc.logger :as logger]
-   logging
-   [markdown :as markdown-parser]
-   [mcp.client :as client]
-   [medley.core :as medley]
-   [openai]
-   [pogonos.core :as stache]
-   [pogonos.partials :as partials]
-   [registry]
-   repl
-   schema
-   [selmer.parser :as selmer]))
+    [babashka.fs :as fs]
+    [cheshire.core :as json]
+    [clojure.string :as string]
+    [docker]
+    [jsonrpc]
+    [logging]
+    [markdown :as markdown-parser]
+    [mcp.client :as client]
+    [medley.core :as medley]
+    [pogonos.core :as stache]
+    [pogonos.partials :as partials]
+    [registry]
+    [schema]
+    [selmer.parser :as selmer]))
 
 (set! *warn-on-reflection* true)
 
@@ -43,9 +36,6 @@
                     (map name)
                     (string/join ", "))}
    project-facts))
-
-(defn- name-matches [re]
-  (fn [p] (re-matches re (fs/file-name p))))
 
 (defn fact-reducer
   "reduces into m using a container function
@@ -158,11 +148,6 @@
                         (format
                          "At the very end of the response, add this sentence: \"ℹ️ You can also ask: '%s'\", in the language used by the user, with the question in italic." (first args))))
 
-(comment
-  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]}))
-
-(def prompt-file-pattern #".*_(.*)_.*.md")
-
 (defn ->message [{:keys [content] :as m}] (assoc m :content {:text content :type "text"}))
 
 (defn get-prompts
@@ -238,23 +223,4 @@
                            (when (= (:image container) "vonwig/gdrive:latest")
                              {:list (client/list-function-factory container-definition)
                               :get (client/get-function-factory container-definition)})))))))))
-
-(comment
-  (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))
-  (get-prompts {:prompts (fs/file "./prompts/mcp/stripe.md")}))
-
-(comment
-  (repl/setup-stdout-logger)
-  (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
-  (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
-  (get-prompts {:prompts (fs/file "./README.md")})
-  (get-prompts {:prompts (fs/file "./prompts/mcp/postgres.md")})
-  (get-prompts {:prompts (fs/file "./prompts/mcp/postgresql.md")})
-  (=
-   ((:prompt-function (get-prompts {:prompts (fs/file "./prompts/examples/qrencode.md")})) {:content "mycontent"})
-   [{:role "user",
-     :content
-     {:text
-      "\nGenerate a QR code for the content 'mycontent'.\nSave the generated image to `/thread/resources/qrcode.png`.\nIf the command fails, read the man page and try again.\nIf successful, output the path to the generated image in markdown syntax.",
-      :type "text"}}]))
 

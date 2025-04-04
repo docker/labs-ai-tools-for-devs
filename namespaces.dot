@@ -1,0 +1,46 @@
+digraph G {
+    // Graph settings
+    rankdir=LR;  // Left to right layout
+    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial"];
+    edge [fontname="Arial", fontsize=10];
+    
+    // Main node
+    "jsonrpc.server" [fillcolor=lightgreen];
+    
+    // Connected nodes
+    "jsonrpc.db";
+    "tools";
+    "volumes";
+    "mcp.client";
+    "git";
+    "docker";
+    "interpolate";
+    "prompts";
+    "markdown";
+    
+    // Connections from jsonrpc.server to other nodes
+    "jsonrpc.server" -> "jsonrpc.db";
+    "jsonrpc.server" -> "tools";
+    "jsonrpc.server" -> "volumes";
+    "jsonrpc.server" -> "mcp.client";
+    "jsonrpc.server" -> "git";
+    "jsonrpc.server" -> "docker";
+
+    // tools 
+    "tools" -> "mcp.client";
+    "tools" -> "interpolate";
+    "tools" -> "docker";
+    "tools" -> "git";
+    
+    // Additional connections from mcp.client
+    "mcp.client" -> "docker";
+    "mcp.client" -> "interpolate";
+    
+    // Additional connections from jsonrpc.db
+    "jsonrpc.db" -> "git";
+    "jsonrpc.db" -> "prompts";
+    
+    // Additional connections from prompts
+    "prompts" -> "mcp.client";
+    "prompts" -> "markdown";
+}
