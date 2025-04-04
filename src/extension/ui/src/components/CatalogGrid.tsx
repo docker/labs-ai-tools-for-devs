@@ -249,10 +249,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 )}
                 {tab === 3 && (
                     <YourClients
-                        mcpClientStates={mcpClientStates || {}}
-                        onUpdate={updateMCPClientStates}
-                        setButtonsLoading={setButtonsLoading}
-                        buttonsLoading={buttonsLoading}
                         client={client}
                     />
                 )}
