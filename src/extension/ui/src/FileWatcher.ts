@@ -38,7 +38,11 @@ export const readFileInPromptsVolume = async (client: v1.DockerDesktopClient, pa
 
 export const writeFileToPromptsVolume = async (client: v1.DockerDesktopClient, content: string) => {
     // Workaround for inability to use shell operators w/ DD extension API, use write_files image
-    return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', `'${content}'`])
+    // On Windows, we need to escape the JSON string differently
+    const escapedContent = client.host.platform === 'win32' 
+        ? content.replace(/"/g, '\\"')  // Escape double quotes for Windows
+        : content;
+    return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', escapedContent])
 }
 
 export const escapeJSONForPlatformShell = (json: Serializable, platform: string) => {
