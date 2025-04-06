@@ -183,6 +183,14 @@
                      (async/timeout 15000) :timeout)]
       response)))
 
+(defn- send-list-resource-templates-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/templates/list" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      response)))
+
 (defn call-tool
   "call tool in server container - might call running server if server is stateful
     returns exit-code, done, and a response map with either result or error"
@@ -224,6 +232,23 @@
          ;; inject secrets from container definition
          docker/inject-secret-transform)
      (partial send-get-resource-message params))))
+
+(defn -get-resource-templates
+  "list resources"
+  [container-definition params]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     (partial send-list-resource-templates-message params))))
 
 (defn -get-tools
   "get tool definitions from container - this container can always be shutdown"
@@ -310,7 +335,8 @@
 (def cursors (atom {}))
 
 (defn resource-cursor
-  " return channel to output resources from MCP servers"
+  "list resources across all mcp servers
+    return channel to output resources from MCP servers"
   [cursor resource-factory]
   (if-let [c (get @cursors cursor)]
     c
@@ -330,12 +356,14 @@
 
 ;; prototypical list function
 (defn list-function-factory
-  "list-functions take an output channel as a parameter and return a status channel
+  "construct a function that lists resources for one container MCP
+    the output function takes an output channel as a parameter and return a status channel
     the status channel will emit :done when the MCP is finished emitting resources"
   [container-definition]
   (fn list-function [c cursor size]
     ;; TODO cache the container?
     (async/go-loop []
+      ;; TODO - add cursor and size to the request
       (let [response (-get-resources container-definition {})
             coll (-> response :result :resources)]
         (when (seq coll)
@@ -346,8 +374,48 @@
             (recur))
           :done)))))
 
+(defn resource-templates-cursor
+  "  return channel to output resource templates from MCP severs"
+  [cursor resource-factory]
+  (if-let [c (get @cursors cursor)]
+    c
+    (let [c (async/chan 1)]
+      (async/go
+        (let [container-processors
+              (->> resource-factory
+                   (filter :list-resource-templates)
+                   (map (fn [{:keys [list-resource-templates]}] 
+                          (list-resource-templates c cursor 100)))
+                   (async/merge)
+                   (async/into []))]
+          ;; TODO timeout
+          (async/<! container-processors)
+          (swap! cursors dissoc cursor)
+          (async/close! c)))
+      c)))
+
+(defn resource-templates-function-factory 
+  "construct a function that gets resource templates from a container MCP
+     return a channel to emit resource templates."
+  [container-definition]
+  (fn list-resource-templates [c cursor size]
+    ;; TODO cache the container?
+    (async/go-loop []
+      ;; TODO - add cursor and size to the request
+      (let [response (-get-resource-templates container-definition {})
+            coll (-> response :result :resourceTemplates)]
+        (when (seq coll)
+          (async/<! (async/onto-chan! c (into [] coll) false)))
+        (if (:nextCursor response)
+          (do
+            (logger/info (format "loop again for cursor %s" (:nextCursor response)))
+            (recur))
+          :done)))))
+
 (defn get-resource
-  "  params
+  "Search all mcp servers for a uri
+     params
+       uri - uri to search for
        resource-factory - coll of mcp servers that can provide resources
      return a channel with an array of matching resource results"
   [uri resource-factory]
@@ -358,11 +426,11 @@
    (async/merge)
    (async/into [])))
 
-;; prototypical get function
 (defn get-function-factory
-  "get-functions return a channel to emit matching resources. The channel might just close if nothing is found."
+  "construct a function that gets a resource from a container MCP
+     return a channel to emit matching resources. The channel might just close if nothing is found."
   [container-definition]
-  (fn get-function [uri]
+  (fn get [uri]
     (let [c (async/chan)]
       ; TODO skip this if this container-definition doesn't support this uri
       (let [response (-get-resource container-definition {:uri uri})]

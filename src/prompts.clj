@@ -225,8 +225,10 @@
                                                          (-> metadata :parameter-values)
                                                          config))]
                         ;; TODO skip mcps that do not supoort resources
-                        (when (= (:image container) "vonwig/gdrive:latest")
+                        (when (#{"vonwig/gdrive:latest"
+                                 "mcp/github-mcp-server:latest"} (:image container))
                           {:list (client/list-function-factory container-definition)
+                           :list-resource-templates (client/resource-templates-function-factory container-definition) 
                            :get (client/get-function-factory container-definition)})))))))
 
 (defn get-prompts [{:keys [config] :as opts}]

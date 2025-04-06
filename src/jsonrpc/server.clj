@@ -1,34 +1,34 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
-    [babashka.fs :as fs]
-    [cheshire.core :as json]
-    [clojure.core :as c]
-    [clojure.core.async :as async]
-    [clojure.pprint :as pprint]
-    [clojure.string :as string]
-    [docker]
-    [git]
-    [jsonrpc.db :as db]
-    [jsonrpc.extras]
-    [jsonrpc.logger :as logger]
-    [jsonrpc.producer :as producer]
-    [jsonrpc.prompt-change-events]
-    [jsonrpc.socket-server :as socket-server]
-    [jsonrpc.state]
-    [lsp4clj.coercer :as coercer]
-    [lsp4clj.io-chan :as io-chan]
-    [lsp4clj.io-server :refer [stdio-server]]
-    [lsp4clj.server :as lsp.server]
-    [mcp.client :as client]
-    [medley.core :as medley]
-    [nrepl]
-    [promesa.core :as p]
-    [prompts.core :refer [get-prompts-dir registry]]
-    [shutdown]
-    [state]
-    [tools]
-    [volumes])
+   [babashka.fs :as fs]
+   [cheshire.core :as json]
+   [clojure.core :as c]
+   [clojure.core.async :as async]
+   [clojure.pprint :as pprint]
+   [clojure.string :as string]
+   [docker]
+   [git]
+   [jsonrpc.db :as db]
+   [jsonrpc.extras]
+   [jsonrpc.logger :as logger]
+   [jsonrpc.producer :as producer]
+   [jsonrpc.prompt-change-events]
+   [jsonrpc.socket-server :as socket-server]
+   [jsonrpc.state]
+   [lsp4clj.coercer :as coercer]
+   [lsp4clj.io-chan :as io-chan]
+   [lsp4clj.io-server :refer [stdio-server]]
+   [lsp4clj.server :as lsp.server]
+   [mcp.client :as client]
+   [medley.core :as medley]
+   [nrepl]
+   [promesa.core :as p]
+   [prompts.core :refer [get-prompts-dir registry]]
+   [shutdown]
+   [state]
+   [tools]
+   [volumes])
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -188,13 +188,22 @@
                 (->> results-collection
                      (mapcat :contents))))})
 
-(defmethod lsp.server/receive-request "resources/templates/list" [_ _ _]
-  (logger/info "resources/templates/list")
-  {:resource-templates
-   ;; uriTemplate, name, description, mimeType
-   ;; uriTemplates have parameters like {path}
-   ;;   example: "file:///{path}
-   []})
+(defmethod lsp.server/receive-request "resources/templates/list" [_ {:keys [db*]} {:keys [cursor] :as params}]
+  (logger/info "resources/templates/list" params)
+  (let [nextCursor (or cursor (str (java.util.UUID/randomUUID)))
+        resource-factory (->> (:mcp.prompts/registry @db*)
+                              (vals)
+                              (map :mcp/resources)
+                              (filter seq)
+                              (into []))
+        resource-templates (->> (mcp.client/resource-templates-cursor nextCursor resource-factory)
+                                (async/take 100)
+                                (async/into [])
+                                (async/<!!))]
+    (merge
+      {:resourceTemplates resource-templates}
+      (when (= 100 (count resource-templates))
+        {:nextCursor nextCursor}))))
 
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ params]
   (logger/info "resources/subscribe" params)
@@ -329,8 +338,8 @@
    (concat (->> (:register opts)
                 (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
-         (when (fs/exists? (registry))
-           (db/registry-refs (registry))))))
+           (when (fs/exists? (registry))
+             (db/registry-refs (registry))))))
 
 (defn server-context
   "create chan server options for any io chan server that we build"
