@@ -375,7 +375,8 @@
           :done)))))
 
 (defn resource-templates-cursor
-  "  return channel to output resource templates from MCP severs"
+  "get resource templates from all mcp servers
+    return channel to output resource templates from MCP severs"
   [cursor resource-factory]
   (if-let [c (get @cursors cursor)]
     c

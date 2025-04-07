@@ -75,6 +75,10 @@
    "chrome prompt"))
 
 (comment
+  (prompts/get-prompts {:prompts "prompts/examples/curl.md"})
+  (prompts/get-prompts {:prompts "prompts/mcp/github-official.md"}))
+
+(comment
   (let [content (str (slurp "prompts/chrome.md") "\n# END\n\n")
         ast (markdown-parser/parse-markdown content)]
     (markdown-parser/extract-prompts-with-descriptions content {:name "test"} ast)))
