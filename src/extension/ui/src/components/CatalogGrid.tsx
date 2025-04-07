@@ -4,6 +4,7 @@ import { CatalogItemWithName } from './tile/Tile';
 import { Archive, ArrowDropDown, Edit, FileCopy, FolderOpenRounded, MoreHoriz, Search, Settings, Sort, SortByAlpha, SwapVert } from '@mui/icons-material';
 import { useCatalogContext } from '../context/CatalogContext';
 import { useMCPClientContext } from '../context/MCPClientContext';
+import { useConfigContext } from '../context/ConfigContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import YourClients from './tabs/YourClients';
@@ -38,7 +39,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         catalogItems,
         registryItems,
         canRegister,
-        config,
         registerCatalogItem,
         unregisterCatalogItem,
         tryLoadSecrets,
@@ -53,6 +53,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         isLoading: mcpLoading
     } = useMCPClientContext();
 
+    const {
+        config
+    } = useConfigContext();
 
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
@@ -101,11 +104,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }) : catalogItems;
 
     if (!ddVersion) {
-        return <CircularProgress />
-    }
-
-
-    if (!config) {
         return <CircularProgress />
     }
 
@@ -215,7 +213,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 {tab === 0 && (
                     <ToolCatalog
                         registryItems={registryItems}
-                        config={config}
                         search={search}
                         catalogItems={sortedCatalogItems}
                         client={client}
@@ -226,12 +223,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         onSecretChange={tryLoadSecrets}
                         secrets={secrets}
                         setConfiguringItem={setConfiguringItem}
+                        config={config || {}}
                     />
                 )}
                 {tab === 1 && (
                     <YourTools
                         registryItems={registryItems}
-                        config={config}
                         search={search}
                         catalogItems={sortedCatalogItems}
                         unregister={unregisterCatalogItem}
@@ -240,21 +237,18 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         setConfiguringItem={setConfiguringItem}
                         canRegister={canRegister}
                         ddVersion={ddVersion}
+                        config={config || {}}
                     />
                 )}
                 {tab === 2 && ddVersion && (
                     <YourEnvironment
                         secrets={secrets}
                         ddVersion={ddVersion}
-                        config={config}
+                        config={config || {}}
                     />
                 )}
                 {tab === 3 && (
                     <YourClients
-                        mcpClientStates={mcpClientStates || {}}
-                        onUpdate={updateMCPClientStates}
-                        setButtonsLoading={setButtonsLoading}
-                        buttonsLoading={buttonsLoading}
                         client={client}
                     />
                 )}

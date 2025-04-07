@@ -15,6 +15,8 @@ interface MCPClientContextType {
     // Actions
     updateMCPClientStates: () => Promise<void>;
     setButtonsLoading: (buttonsLoading: { [name: string]: boolean }) => void;
+    disconnectClient: (clientName: string) => Promise<void>;
+    connectClient: (clientName: string) => Promise<void>;
 }
 
 const MCPClientContext = createContext<MCPClientContextType | undefined>(undefined);
@@ -90,6 +92,90 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         await refetch();
     }
 
+    // Disconnect client mutation
+    const disconnectMutation = useMutation({
+        mutationFn: async (clientName: string) => {
+            const clientState = mcpClientStates?.[clientName];
+            if (!clientState) throw new Error(`Client ${clientName} not found`);
+
+            // Perform the actual disconnect
+            await clientState.client.disconnect(client);
+        },
+        onMutate: async (clientName) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: ['mcpClientStates'] });
+
+            // Snapshot the previous value
+            const previousStates = queryClient.getQueryData(['mcpClientStates']);
+
+            // Optimistically update to the new value
+            if (mcpClientStates) {
+                const updatedStates = {
+                    ...mcpClientStates,
+                    [clientName]: {
+                        ...mcpClientStates[clientName],
+                        configured: false
+                    }
+                };
+
+                queryClient.setQueryData(['mcpClientStates'], updatedStates);
+            }
+
+            return { previousStates };
+        },
+        onSettled: () => {
+            // Refetch after disconnect to ensure we have the latest state
+            queryClient.invalidateQueries({ queryKey: ['mcpClientStates'] });
+        }
+    });
+
+    // Connect client mutation
+    const connectMutation = useMutation({
+        mutationFn: async (clientName: string) => {
+            const clientState = mcpClientStates?.[clientName];
+            if (!clientState) throw new Error(`Client ${clientName} not found`);
+
+            // Perform the actual connect
+            await clientState.client.connect(client);
+        },
+        onMutate: async (clientName) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: ['mcpClientStates'] });
+
+            // Snapshot the previous value
+            const previousStates = queryClient.getQueryData(['mcpClientStates']);
+
+            // Optimistically update to the new value
+            if (mcpClientStates) {
+                const updatedStates = {
+                    ...mcpClientStates,
+                    [clientName]: {
+                        ...mcpClientStates[clientName],
+                        configured: true,
+                        exists: true
+                    }
+                };
+
+                queryClient.setQueryData(['mcpClientStates'], updatedStates);
+            }
+
+            return { previousStates };
+        },
+        onSettled: () => {
+            // Refetch after connect to ensure we have the latest state
+            queryClient.invalidateQueries({ queryKey: ['mcpClientStates'] });
+        }
+    });
+
+    // Expose mutation methods
+    const disconnectClient = async (clientName: string) => {
+        await disconnectMutation.mutateAsync(clientName);
+    };
+
+    const connectClient = async (clientName: string) => {
+        await connectMutation.mutateAsync(clientName);
+    };
+
     const value = {
         mcpClientStates,
         buttonsLoading,
@@ -97,7 +183,9 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         isError,
         isFetching,
         updateMCPClientStates,
-        setButtonsLoading
+        setButtonsLoading,
+        disconnectClient,
+        connectClient
     };
 
     return <MCPClientContext.Provider value={value}>{children}</MCPClientContext.Provider>;

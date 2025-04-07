@@ -1,19 +1,18 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../components/tile/Tile';
-import { getRegistry, getStoredConfig, syncConfigWithRegistry, syncRegistryWithConfig } from '../Registry';
+import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
 import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
-import { ParsedParameters } from '../components/ConfigurationModal';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useConfigContext } from './ConfigContext';
 
 // Storage keys for each query type
 const STORAGE_KEYS = {
-    config: 'docker-catalog-config',
     secrets: 'docker-catalog-secrets',
     catalog: 'docker-catalog-catalog',
     registry: 'docker-catalog-registry',
@@ -21,14 +20,12 @@ const STORAGE_KEYS = {
 };
 
 interface CatalogContextType {
-    // State
-    config: { [key: string]: { [key: string]: ParsedParameters } } | undefined;
+    // State        
     secrets: Secrets.Secret[];
     catalogItems: CatalogItemWithName[];
     registryItems: { [key: string]: { ref: string; config: any } } | undefined;
     canRegister: boolean;
     imagesLoadingResults: ExecResult | null;
-    configLoading: boolean;
     secretsLoading: boolean;
     catalogLoading: boolean;
     registryLoading: boolean;
@@ -36,7 +33,6 @@ interface CatalogContextType {
     imagesIsFetching: boolean;
 
     // Actions
-    tryLoadConfig: () => Promise<void>;
     tryLoadSecrets: () => Promise<void>;
     tryLoadCatalog: (showNotification?: boolean) => Promise<void>;
     tryLoadRegistry: () => Promise<void>;
@@ -67,46 +63,8 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     const [canRegister, setCanRegister] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
-    // Load config with React Query
-    const {
-        data: config = undefined,
-        refetch: refetchConfig,
-        isLoading: configLoading
-    } = useQuery({
-        queryKey: ['config'],
-        queryFn: async () => {
-            try {
-                const response = await getStoredConfig(client);
-                return response || {};
-            } catch (error) {
-                client.desktopUI.toast.error('Failed to get stored config: ' + error);
-                throw error;
-            }
-        },
-        refetchInterval: POLL_INTERVAL,
-        staleTime: 30000, // Data remains fresh for 30 seconds
-        gcTime: 300000
-    });
-
-    // Persist config to localStorage
-    useEffect(() => {
-        if (config) {
-            localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
-        }
-    }, [config]);
-
-    // Load initial config from localStorage
-    useEffect(() => {
-        const cachedConfig = localStorage.getItem(STORAGE_KEYS.config);
-        if (cachedConfig && queryClient && !config) {
-            try {
-                const parsedConfig = JSON.parse(cachedConfig);
-                queryClient.setQueryData(['config'], parsedConfig);
-            } catch (e) {
-                console.error('Failed to parse cached config:', e);
-            }
-        }
-    }, [queryClient, config]);
+    // Get config context
+    const { config, tryLoadConfig, syncConfigWithRegistry: syncConfigWithRegistryFromContext } = useConfigContext();
 
     // Load secrets with React Query
     const {
@@ -403,18 +361,17 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     // Sync registry and config when both are available
     useEffect(() => {
         if (registryItems && config) {
-            const syncAll = async () => {
-                await syncConfigWithRegistry(client, registryItems, config);
-                await syncRegistryWithConfig(client, registryItems, config);
-            };
-            syncAll();
-        }
-    }, [registryItems, config]);
+            // Create a ref to check if we actually need to sync
+            const needsSync = Object.keys(registryItems).some(key => {
+                return registryItems[key].config &&
+                    (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
+            });
 
-    // Wrapper functions to match the original API
-    const tryLoadConfig = async () => {
-        await refetchConfig();
-    };
+            if (needsSync) {
+                syncConfigWithRegistryFromContext(registryItems);
+            }
+        }
+    }, [registryItems, config, syncConfigWithRegistryFromContext]);
 
     const tryLoadSecrets = async () => {
         await refetchSecrets();
@@ -463,19 +420,16 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     };
 
     const value = {
-        config,
         secrets,
         catalogItems,
         registryItems,
         canRegister,
         imagesLoadingResults,
-        configLoading,
         secretsLoading,
         catalogLoading,
         registryLoading,
         imagesLoading,
         imagesIsFetching,
-        tryLoadConfig,
         tryLoadSecrets,
         tryLoadCatalog,
         tryLoadRegistry,
