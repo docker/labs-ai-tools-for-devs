@@ -26,6 +26,9 @@ digraph G {
     "jsonrpc.server" -> "git";
     "jsonrpc.server" -> "docker";
 
+    "git" -> "docker";
+    "markdown" -> "docker";
+
     // tools 
     "tools" -> "mcp.client";
     "tools" -> "interpolate";
