@@ -57,7 +57,6 @@
           ;; read-loop has stopped or timed out
           (#{:stopped :timeout} block)
           (do
-            (logger/info "socket read loop " block)
             (async/put! dead-channel block)
             block)
 
@@ -184,6 +183,14 @@
                      (async/timeout 15000) :timeout)]
       response)))
 
+(defn- send-list-resource-templates-message [params {:keys [request dead-channel]} _]
+  (async/go
+    (let [response (async/alt!
+                     (request {:method "resources/templates/list" :params params}) ([v _] v)
+                     dead-channel ([v _] v)
+                     (async/timeout 15000) :timeout)]
+      response)))
+
 (defn call-tool
   "call tool in server container - might call running server if server is stateful
     returns exit-code, done, and a response map with either result or error"
@@ -225,6 +232,23 @@
          ;; inject secrets from container definition
          docker/inject-secret-transform)
      (partial send-get-resource-message params))))
+
+(defn -get-resource-templates
+  "list resources"
+  [container-definition params]
+  (async/<!!
+   (with-running-mcp
+     (-> container-definition
+         ;; interpolate parameters 
+         ;;   - this looks like an extra step because it's not running from the tools module
+         ((fn [c] (interpolate/container-definition
+                   {:container (dissoc c :parameter-values)}
+                   {}
+                   (json/generate-string
+                    (:parameter-values c)))))
+         ;; inject secrets from container definition
+         docker/inject-secret-transform)
+     (partial send-list-resource-templates-message params))))
 
 (defn -get-tools
   "get tool definitions from container - this container can always be shutdown"
@@ -311,7 +335,8 @@
 (def cursors (atom {}))
 
 (defn resource-cursor
-  " return channel to output resources from MCP servers"
+  "list resources across all mcp servers
+    return channel to output resources from MCP servers"
   [cursor resource-factory]
   (if-let [c (get @cursors cursor)]
     c
@@ -331,12 +356,14 @@
 
 ;; prototypical list function
 (defn list-function-factory
-  "list-functions take an output channel as a parameter and return a status channel
+  "construct a function that lists resources for one container MCP
+    the output function takes an output channel as a parameter and return a status channel
     the status channel will emit :done when the MCP is finished emitting resources"
   [container-definition]
   (fn list-function [c cursor size]
     ;; TODO cache the container?
     (async/go-loop []
+      ;; TODO - add cursor and size to the request
       (let [response (-get-resources container-definition {})
             coll (-> response :result :resources)]
         (when (seq coll)
@@ -347,8 +374,49 @@
             (recur))
           :done)))))
 
+(defn resource-templates-cursor
+  "get resource templates from all mcp servers
+    return channel to output resource templates from MCP severs"
+  [cursor resource-factory]
+  (if-let [c (get @cursors cursor)]
+    c
+    (let [c (async/chan 1)]
+      (async/go
+        (let [container-processors
+              (->> resource-factory
+                   (filter :list-resource-templates)
+                   (map (fn [{:keys [list-resource-templates]}] 
+                          (list-resource-templates c cursor 100)))
+                   (async/merge)
+                   (async/into []))]
+          ;; TODO timeout
+          (async/<! container-processors)
+          (swap! cursors dissoc cursor)
+          (async/close! c)))
+      c)))
+
+(defn resource-templates-function-factory 
+  "construct a function that gets resource templates from a container MCP
+     return a channel to emit resource templates."
+  [container-definition]
+  (fn list-resource-templates [c cursor size]
+    ;; TODO cache the container?
+    (async/go-loop []
+      ;; TODO - add cursor and size to the request
+      (let [response (-get-resource-templates container-definition {})
+            coll (-> response :result :resourceTemplates)]
+        (when (seq coll)
+          (async/<! (async/onto-chan! c (into [] coll) false)))
+        (if (:nextCursor response)
+          (do
+            (logger/info (format "loop again for cursor %s" (:nextCursor response)))
+            (recur))
+          :done)))))
+
 (defn get-resource
-  "  params
+  "Search all mcp servers for a uri
+     params
+       uri - uri to search for
        resource-factory - coll of mcp servers that can provide resources
      return a channel with an array of matching resource results"
   [uri resource-factory]
@@ -359,11 +427,11 @@
    (async/merge)
    (async/into [])))
 
-;; prototypical get function
 (defn get-function-factory
-  "get-functions return a channel to emit matching resources. The channel might just close if nothing is found."
+  "construct a function that gets a resource from a container MCP
+     return a channel to emit matching resources. The channel might just close if nothing is found."
   [container-definition]
-  (fn get-function [uri]
+  (fn get [uri]
     (let [c (async/chan)]
       ; TODO skip this if this container-definition doesn't support this uri
       (let [response (-get-resource container-definition {:uri uri})]
@@ -375,163 +443,3 @@
       (async/close! c)
       c)))
 
-(comment
-  (async/<!!
-   (get-resource
-    "hello"
-    [{}
-     {:get (get-function-factory nil)}
-     {}])))
-
-(comment
-  (repl/setup-stdout-logger)
-  (docker/inject-secret-transform {:image "mcp/stripe:latest"
-                                   :secrets {:stripe.api_key "API_KEY"}
-                                   :command ["--tools=all"
-                                             "--api-key=$API_KEY"]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/stripe:latest"
-                                                 :secrets {:stripe.api_key "API_KEY"}
-                                                 :command ["--tools=all"
-                                                           "--api-key=$API_KEY"]}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/brave-search:latest"
-                                                 :workdir "/app"
-                                                 :secrets {:brave.api_key "BRAVE_API_KEY"}}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/slack:latest"
-                                                 :workdir "/app"
-                                                 :secrets {:slack.bot_token "SLACK_BOT_TOKEN"
-                                                           :slack.team_id "SLACK_TEAM_ID"}}}]
-                              :local-get-tools -get-tools})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/redis:latest"
-                                                 :workdir "/app"}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/fetch:latest"
-                                                 :workdir "/app"}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/time:latest"
-                                                 :workdir "/app"}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/youtube-transcript:latest"
-                                                 :workdir "/app"}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/notion-server:latest"
-                                                 :workdir "/app"
-                                                 :secrets {:notion.api_token "NOTION_API_TOKEN"}}}]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/puppeteer:latest"
-                                                 :environment {"DOCKER_CONTAINER" "true"}}}]
-                              :local-get-tools -get-tools})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/openapi-schema:latest"}}]
-                              :local-get-tools -get-tools})
-  (docker/inject-secret-transform {:image "vonwig/gdrive:latest"
-                                   :workdir "/app"
-                                   :volumes ["mcp-gdrive:/gdrive-server"]
-                                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
-                                                 :workdir "/app"
-                                                 :volumes ["mcp-gdrive:/gdrive-server"]
-                                                 :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
-                              :local-get-tools -get-tools})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/jetbrains:latest"
-                                                 :environment {"IDE_PORT" "8090"}}}]
-                              :local-get-tools -get-tools})
-
-  (-get-resources {:image "vonwig/gdrive:latest"
-                   :workdir "/app"
-                   :volumes ["mcp-gdrive:/gdrive-server"]
-                   :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
-                                 "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
-                   :secrets {:google.gcp-oauth.keys.json "GDRIVE"}}
-                  {})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/gdrive:latest"
-                                                 :workdir "/app"
-                                                 :volumes ["mcp-gdrive:/gdrive-server"]
-                                                 :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"}}}]
-                              :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/mcp-discord:latest"
-             :workdir "/app"}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/discordmcp:latest"
-             :workdir "/app"
-             :secrets {:discord.token "DISCORD_TOKEN"}}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/everart:latest"
-             :workdir "/app"
-             :secrets {:everart.api_key "EVERART_API_KEY" }}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/gitlab:latest"
-             :workdir "/app"
-             :secrets {:gitlab.personal_access_token "GITLAB_PERSONAL_ACCESS_TOKEN"}
-             :environment {"GILAB_API_URL" "https://gitlab.com"}}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/sentry:latest"
-             :workdir "/app"
-             :secrets {:sentry.auth_token "SENTRY_AUTH_TOKEN"}
-             :command ["--auth-token" "$SENTRY_AUTH_TOKEN"] }}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/resend:latest"
-             :workdir "/app"
-             :secrets {:resend.api_key "RESEND_API_KEY"}}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/obsidian:latest"
-             :workdir "/app"
-             :secrets {:obsidian.api_key "OBSIDIAN_API_KEY"}
-             :environment {"GILAB_API_URL" "https://gitlab.com"}}}]
-     :local-get-tools -get-tools})
-
-  (get-mcp-tools-from-prompt
-    {:mcp [{:container
-            {:image "mcp/aws-kb-retrieval-server:latest"
-             :workdir "/app"
-             :secrets {
-                       :aws.access_key_id "AWS_ACCESS_KEY_ID"
-                       :aws.secret_access_key "AWS_SECRET_ACCESS_KEY"
-                       :aws.region "REGION"
-                       }}}]
-     :local-get-tools -get-tools})
-  
-  (docker/run-container (docker/inject-secret-transform {:image "mcp/time:latest"
-                                                         :workdir "/app"}))
-  (docker/run-container (docker/inject-secret-transform {:image "mcp/stripe:latest"
-                                                         :workdir "/app"
-                                                         :secrets {:stripe.api_key "API_KEY"}
-                                                         :entrypoint ["cat" "/secret/stripe.api_key"]
-                                                         :command []})))
-
-(comment
-  (def x "HTTP/1.1 101 UPGRADED\nConnection: Upgrade\nContent-Type: application/vnd.docker.multiplexed-stream\nUpgrade: tcp\n\n")
-  (count x))
-
-(comment
-  (docker/run-container
-   {:image "vonwig/stripe:latest"
-    :secrets {:stripe.api_key "API_KEY"}
-    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
-  (docker/run-container
-   {:image "vonwig/stripe:latest"
-    :secrets {:stripe.api_key "API_KEY"}
-    :entrypoint ["/bin/sh" "-c" "cat /secret/stripe.api_key"]})
-  (async/<!!
-   (call-tool
-    {:image "vonwig/stripe:latest"
-     :entrypoint ["node" "/app/dist/index.js"]
-     :secrets {"stripe.api_key" "API_KEY"}
-     :command ["--tools=all"
-               "--api-key=$API_KEY"]}
-    {:name "create_customer"
-     :arguments {:name "Jim Clark"}})))

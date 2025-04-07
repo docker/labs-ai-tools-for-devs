@@ -7,12 +7,12 @@
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [flatland.ordered.map :refer [ordered-map]]
-   git
+   [git]
    [markdown :as markdown-parser]
    [mcp.client :as client]
    [medley.core :as medley]
-   prompts
-   repl))
+   [prompts]
+   [repl]))
 
 (defn mcp-metadata-cache [f]
   (edn/read-string
@@ -29,7 +29,7 @@
       (println t))))
 
 (defn f->prompt [f]
-  (try (prompts/get-prompts {:prompts f}) (catch Throwable t (println t) {})))
+  (try (prompts/read-prompts {:prompts f}) (catch Throwable t (println t) {})))
 
 (defn tile-metadata [m]
   {:tools (->> (:functions m)
@@ -57,6 +57,18 @@
                   (map #(into [] %))
                   (into {}))})))))
 
+(defn secrets [prompt]
+  (cond
+    (-> prompt :metadata :mcp)
+    (->> (-> prompt :metadata :mcp)
+         (map (fn [m] m))
+         (into []))
+    (-> prompt :functions)
+    (->> (-> prompt :functions)
+         (map (fn [m] (select-keys (:function m) [:container :secrets :source])))
+         (into []))
+    :else []))
+
 (comment
   ;; setup stdout logger
   (repl/setup-stdout-logger)
@@ -66,33 +78,54 @@
   (count (:registry catalog))
   (string/join "," (->> (:registry catalog) keys (map name)))
 
-  ;; raw github urls to for the slim/cleanup branch
+  (def prompt-ref-strings
+    (->> catalog
+         :registry
+         vals
+         (map :ref)))
+
+  ;; raw github urls (map to other branches if checking a merge)
   (def prompt-refs
     (->> catalog
          :registry
          vals
          (map :ref)
-         (map #(git/parse-github-ref %))
-         (map #(assoc % :ref "slim/cleanup"))
+         (map (fn [ref-string] (assoc (git/parse-github-ref ref-string) :ref-string ref-string)))
+         #_(map #(assoc % :ref "slim/cleanup"))
          #_(map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
 
   ;; current git ref files
   (def local-prompt-files
     (->> prompt-refs
-         (map git/ref-map->prompt-file)))
+         (map (fn [k] {:ref k
+                       :file (git/ref-map->prompt-file k)}))))
 
-;; parse all of the current git prompts
-  (with-redefs [client/get-mcp-tools-from-prompt (constantly [])]
-    (def all-prompt-files (map (fn [[k v]] [k (f->prompt v)]) local-prompt-files)))
+  ;; parse all of the current git prompts
+  (def local-prompt-files-parsed
+    (map (fn [m] (-> m (assoc :prompt (f->prompt (:file m))))) local-prompt-files))
 
-  (pprint (->> all-prompt-files
-               (map (fn [[k v]] [k (dissoc v :mcp/resources)]))
-               (into {})))
-  (spit "crap.json" (json/generate-string
-                     (->> all-prompt-files
-                          (map (fn [[k v]] [k (dissoc v :mcp/resources :mcp/prompt-registry)]))
-                          (into {}))
-                     {:pretty true}))
+  ;; make sure prompts are present - should be empty
+  (->> local-prompt-files-parsed
+       (filter (complement #(seq (:prompt %)))))
+
+  ;; extract secrets, source and container image info
+  (def container-summary
+    (->> local-prompt-files-parsed
+         (map (fn [m] [(-> m :ref :ref-string) (secrets (:prompt m))]))
+         (into {})))
+
+  ;; secret summary
+  (->> container-summary
+       vals
+       (mapcat #(->> % (map (comp :secrets :container))))
+       (filter seq))
+
+  ;; summary
+  (->> container-summary
+       (mapcat (fn [[k v]] (->> v (map (fn [m]
+                                         {:image (-> m :container :image)
+                                          :source (-> m :source :url)
+                                          :ref k}))))))
 
   (def all-images
     (->>

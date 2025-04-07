@@ -62,17 +62,21 @@
 (s/def :container/network_mode (s/or :standard #{"host" "none" "bridge"}
                                      :container (fn [s] (re-find #"container:.*" s))
                                      :custom string?))
+(s/def :container/secrets (s/map-of keyword? string?))
 (s/def :container/environment (s/map-of keyword? string?))
+(s/def :container/background-callback boolean?)
 (s/def :tool/container (s/keys :req-un [:container/image]
                                :opt-un [::host-dir
                                         ::thread-id
                                         ::user
                                         ::jwt
-                                        :container/environment
+                                        :container/background-callback
                                         :container/background
+                                        :container/environment
                                         :container/stdin
                                         :container/command
                                         :container/volumes
+                                        :container/secrets
                                         :container/entrypoint
                                         :container/workdir
                                         :container/ports  ; port mappings (incompatible with network_mode of host)

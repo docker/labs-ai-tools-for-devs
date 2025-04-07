@@ -47,6 +47,7 @@ tools:
         - *db
         - "SELECT name from sqlite_master WHERE type='table'"
       volumes: *mounts
+    source: *sqlite-source
   - name: describe-table
     description: Get the schema information for a specific table
     parameters:

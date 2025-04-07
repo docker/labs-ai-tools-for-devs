@@ -30,6 +30,8 @@ tools:
         - "-n1"
         - "-H=Host: localhost:9222"
         - '{{endpoint|safe}}'
+    source:
+      url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/hub
   - name: curl
     description: Run a curl command to get the websocket url and make sure that Chrome's websocket server is running. ALWAYS USE THIS TOOL FIRST. MAKE SURE TO USE THE CORRECT HOST HEADER AND ENDPOINT.
     parameters:

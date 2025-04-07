@@ -4,24 +4,17 @@
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
-   [clojure.java.io :as io]
    [clojure.string :as string]
-   creds
    [docker]
-   [git]
-   [git.registry]
    [jsonrpc]
-   [jsonrpc.logger :as logger]
-   logging
+   [logging]
    [markdown :as markdown-parser]
    [mcp.client :as client]
    [medley.core :as medley]
-   [openai]
    [pogonos.core :as stache]
    [pogonos.partials :as partials]
    [registry]
-   repl
-   schema
+   [schema]
    [selmer.parser :as selmer]))
 
 (set! *warn-on-reflection* true)
@@ -43,9 +36,6 @@
                     (map name)
                     (string/join ", "))}
    project-facts))
-
-(defn- name-matches [re]
-  (fn [p] (re-matches re (fs/file-name p))))
 
 (defn fact-reducer
   "reduces into m using a container function
@@ -85,7 +75,7 @@
 (def hub-images
   #{"curl" "toilet" "figlet" "gh" "typos" "fzf" "jq" "fmpeg" "pylint" "imagemagick" "graphviz"})
 
-(defn function-definition 
+(defn function-definition
   "params
      m
        - special names that are hub-images are turned into definitions
@@ -158,14 +148,9 @@
                         (format
                          "At the very end of the response, add this sentence: \"ℹ️ You can also ask: '%s'\", in the language used by the user, with the question in italic." (first args))))
 
-(comment
-  (stache/render-string "yo {{a.0.content}}" {:a [{:content "blah"}]}))
-
-(def prompt-file-pattern #".*_(.*)_.*.md")
-
 (defn ->message [{:keys [content] :as m}] (assoc m :content {:text content :type "text"}))
 
-(defn get-prompts
+(defn read-prompts
   "run extractors and then render prompt templates (possibly)
      parameters
        mandatory
@@ -201,60 +186,54 @@
                      (selmer-render (merge (facts m user platform host-dir) arguments) message))
                    (fn [arguments message]
                      (moustache-render prompts (merge (facts m user platform host-dir) arguments) message)))]
-    ((schema/validate :schema/prompts-file)
-     (-> prompt-data
-         (assoc :mcp/prompt-registry
-                (->> (:messages prompt-data)
-                     (map (fn [{:keys [name] :as v}]
-                            [name (assoc
-                                   (select-keys v [:description])
-                                   :prompt-function
-                                   (fn [arguments]
-                                     [((comp ->message (partial renderer arguments))
-                                       (select-keys v [:role :content]))]))]))
-                     (into {})))
-         (update :messages (fn [messages]
-                             (->> messages
-                                  (map (partial renderer {}))
-                                  (map #(dissoc % :title)))))
-         (update :metadata (fn [m] (-> m
-                                       (dissoc :functions :tools :extractors)
-                                       (update :parameter-values (fnil medley.core/deep-merge {}) config))))
-         (assoc :functions (concat
-                            (->> (or (:tools metadata) (:functions metadata))
-                                 (mapcat function-definition))
-                            (client/get-mcp-tools-from-prompt
-                             (update metadata :parameter-values (fnil medley.core/deep-merge {}) config))))
-         (assoc :mcp/resources
-                ;; using only the first mcp container definition
-                (merge {}
-                       (when-let [container (-> metadata :mcp first :container)]
-                         (let [container-definition (assoc container
-                                                           :parameter-values
-                                                           ((fnil medley.core/deep-merge {})
-                                                            (-> metadata :parameter-values)
-                                                            config))]
-                           ;; TODO skip mcps that do not supoort resources
-                           (when (= (:image container) "vonwig/gdrive:latest")
-                             {:list (client/list-function-factory container-definition)
-                              :get (client/get-function-factory container-definition)})))))))))
 
-(comment
-  (markdown-parser/parse-prompts (slurp "prompts/mcp/stripe.md"))
-  (get-prompts {:prompts (fs/file "./prompts/mcp/stripe.md")}))
+    (-> prompt-data
+        (assoc :mcp/prompt-registry
+               (->> (:messages prompt-data)
+                    (map (fn [{:keys [name] :as v}]
+                           [name (assoc
+                                  (select-keys v [:description])
+                                  :prompt-function
+                                  (fn [arguments]
+                                    [((comp ->message (partial renderer arguments))
+                                      (select-keys v [:role :content]))]))]))
+                    (into {})))
+        (update :messages (fn [messages]
+                            (->> messages
+                                 (map (partial renderer {}))
+                                 (map #(dissoc % :title)))))
+        (update :metadata (fn [m] (-> m
+                                      (dissoc :functions :tools :extractors)
+                                      (update :parameter-values (fnil medley.core/deep-merge {}) config))))
+        (assoc :functions (concat
+                           (->> (or (:tools metadata) (:functions metadata))
+                                (mapcat function-definition)))))))
 
-(comment
-  (repl/setup-stdout-logger)
-  (get-prompts {:prompts (fs/file "./prompts/examples/curl.md")})
-  (get-prompts {:prompts (fs/file "./prompts/examples/generate-dockerfile.md")})
-  (get-prompts {:prompts (fs/file "./README.md")})
-  (get-prompts {:prompts (fs/file "./prompts/mcp/postgres.md")})
-  (get-prompts {:prompts (fs/file "./prompts/mcp/postgresql.md")})
-  (=
-   ((:prompt-function (get-prompts {:prompts (fs/file "./prompts/examples/qrencode.md")})) {:content "mycontent"})
-   [{:role "user",
-     :content
-     {:text
-      "\nGenerate a QR code for the content 'mycontent'.\nSave the generated image to `/thread/resources/qrcode.png`.\nIf the command fails, read the man page and try again.\nIf successful, output the path to the generated image in markdown syntax.",
-      :type "text"}}]))
+(defn add-mcp-functions [config {:keys [metadata] :as m}]
+  (-> m
+      (update :functions
+              (fnil concat [])
+              (client/get-mcp-tools-from-prompt
+               (update metadata :parameter-values (fnil medley.core/deep-merge {}) config)))
+      (assoc :mcp/resources
+             ;; using only the first mcp container definition
+             (merge {}
+                    (when-let [container (-> metadata :mcp first :container)]
+                      (let [container-definition (assoc container
+                                                        :parameter-values
+                                                        ((fnil medley.core/deep-merge {})
+                                                         (-> metadata :parameter-values)
+                                                         config))]
+                        ;; TODO skip mcps that do not supoort resources
+                        (when (#{"vonwig/gdrive:latest"
+                                 "mcp/github-mcp-server:latest"} (:image container))
+                          {:list (client/list-function-factory container-definition)
+                           :list-resource-templates (client/resource-templates-function-factory container-definition) 
+                           :get (client/get-function-factory container-definition)})))))))
+
+(defn get-prompts [{:keys [config] :as opts}]
+  (->> opts
+       (read-prompts)
+       (add-mcp-functions config)
+       ((schema/validate :schema/prompts-file))))
 

@@ -478,4 +478,11 @@ registry:
             description: comma separated list of reply to email addresses
     secrets:
       - {name: resend.api_key}
+  GitHub MCP Server:
+    description: |
+      Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github-official.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    secrets:
+    - {name: github.personal_access_token}
 

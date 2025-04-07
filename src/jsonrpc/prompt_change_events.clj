@@ -33,7 +33,7 @@
 
 (defn registry-updated []
   (try
-    (db/add-refs (db/registry-refs registry))
+    (db/add-refs (db/registry-refs (registry)))
     (publish-change-event)
     (catch Throwable t
       (logger/error t "unable to parse registry.yaml"))))

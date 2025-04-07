@@ -1,4 +1,18 @@
 (ns docker
+  "run-container runs containers with a few flavors
+     - run with stdin content
+     - run a container but don't wait for it to stop
+     - run in the background but wait for one message on stdout and then stop
+     - simply run function without stdin
+  
+   attach-socket - to running container
+   write-stdin - 
+   read-loop - input: attached socket output: channel messages
+   write-to-stdin -input: attached socket, string
+   inject-secret-transform - transform container entrypoint for secrets
+   
+   run-streaming-function-with-no-stdin - runs continuously
+     and read stdout to a callback (used in watcher)"
   (:require
    [babashka.curl :as curl]
    [babashka.fs :as fs]
@@ -128,10 +142,6 @@
    (for [s coll :let [{:keys [container host]} (parse-port s)]]
      [(format "%s/%s" (:port container) (:protocol container)) [{:HostPort (:port host)}]])
    (into {})))
-
-(comment
-  (port-bindings ["9222:9222"])
-  (exposed-ports ["9222:9222"]))
 
 ;; check for 201
 ;; entrypoint is an array of strings
@@ -290,10 +300,6 @@
       image
       (str image ":latest"))))
 
-(comment
-  (add-latest "vonwig/go-linguist")
-  (add-latest "blah/what:tag"))
-
 (defn -pull [m]
   (pull (merge m
                {:image (add-latest (:image m))}
@@ -335,12 +341,6 @@
             [env]))
         [s])
        (string/join " ; ")))
-
-(comment
-  (injected-entrypoint {:a "A"} ["BLAH=whatever"] "my command")
-  (injected-entrypoint nil nil "my command")
-  (injected-entrypoint {:a "A"} nil "my command")
-  (injected-entrypoint nil nil nil))
 
 (defn inject-secret-transform [container-definition]
   (check-then-pull container-definition)
@@ -627,12 +627,9 @@
       (delete x))
     (async/go-loop
      [block (async/<! c)]
-      (logger/info "background socket read loop " block)
       (cond
         (#{:stopped :timeout} block)
-        (do
-          (logger/info "socket read loop " block)
-          (async/put! output-channel block))
+        (async/put! output-channel block) 
         (nil? block)
         (async/put! output-channel :closed)
         :else
@@ -645,7 +642,10 @@
      :write (fn [s] (write-to-stdin socket-channel s)))))
 
 (defn finish-call
-  "This is a blocking call that waits for the container to finish and then returns the output and exit code."
+  "Waits (blocking) for call to container to finish, retrieves stdout logs
+    params 
+      running container
+    returns ::container-response"
   [{:keys [timeout] :or {timeout 10000} :as x}]
   ;; close stdin socket
   (.close ^SocketChannel (:socket x))
@@ -708,7 +708,9 @@
      - deletes the container"
   [m]
   (let [x (docker/function-call-with-stdin
-           (assoc m :content (or (-> m :stdin :content) (slurp (-> m :stdin :file)))))]
+           (assoc m :content (or 
+                             (-> m :stdin :content) 
+                             (slurp (-> m :stdin :file)))))]
     (async/<!! (async/thread
                  (Thread/sleep 10)
                  (docker/finish-call x)))))
@@ -717,7 +719,7 @@
   " params ::container-definition
      returns ::container-response"
   [m]
-  ;; (schema/validate :schema/container-definition)
+  ;; (schema/validate :schema/tool-container)
   (cond
     (-> m :stdin)
     (run-with-stdin-content m)
@@ -727,19 +729,6 @@
     (async/<!! (run-in-background-with-one-message m))
     :else
     (run-function m)))
-
-(comment
-  (repl/setup-stdout-logger)
-  (run-container
-   {:image "vonwig/gdrive:latest"
-    :background-callback true
-    :workdir "/app"
-    :ports ["3000:3000"]
-    :volumes ["mcp-gdrive:/gdrive-server"]
-    :environment {"GDRIVE_CREDENTIALS_PATH" "/gdrive-server/credentials.json"
-                  "GDRIVE_OAUTH_PATH" "/secret/google.gcp-oauth.keys.json"}
-    :secrets {:google.gcp-oauth.keys.json "GDRIVE"}
-    :command ["auth"]}))
 
 (defn get-login-info-from-desktop-backend
   "returns token or nil if not logged in or backend.sock is not available"
