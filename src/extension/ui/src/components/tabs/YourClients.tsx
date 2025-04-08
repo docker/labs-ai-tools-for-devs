@@ -1,4 +1,4 @@
-import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Stack, Typography, Link, AlertTitle, Divider, AccordionSummary, Accordion, AccordionDetails } from "@mui/material";
+import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Typography, Link, AlertTitle, Divider, AccordionSummary, Accordion, AccordionDetails, Stack } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Alert } from "@mui/material";
 import { Box } from "@mui/material";
@@ -42,17 +42,22 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
 
     return (
         <Box sx={{ width: '90vw', maxWidth: '1000px' }}>
-            <Typography variant="h6">MCP Clients</Typography>
+            <Typography>Connect to runtimes for your tools</Typography>
             <Stack direction="column" spacing={1} sx={{ p: 0 }}>
                 {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
                     <Stack key={name} direction="row" spacing={1} sx={{ marginTop: 2 }}>
                         <Accordion key={name} sx={{ width: '100%', marginRight: 1 }}>
-                            <AccordionSummary sx={{ width: '100%' }}>
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                    {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
-                                    <Typography variant="h4">{name}</Typography>
-                                    {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
-                                    {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                            <AccordionSummary sx={{ width: '100%', fontSize: '1.5em', display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between' }}>
+                                {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
+                                <Stack direction="column" sx={{ marginLeft: 2 }}>
+                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                        <Typography variant="h4">{name}</Typography>
+                                        {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
+                                        {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                        <Typography variant="caption">Connect MCP to {name}</Typography>
+                                    </Stack>
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -172,11 +177,11 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                     </Tooltip>
                 </Stack>
             </Stack>
-            <Divider />
-            <Alert severity="info">
-                <AlertTitle>Other MCP Clients</AlertTitle>
+            <Divider sx={{ my: 4 }}>or</Divider>
+            <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="h4">Other MCP Clients</Typography>
                 You can connect other MCP clients to the same server by specifying the following command:
-                <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1}>
                     <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
                         <ContentCopy />
                     </IconButton>
@@ -184,7 +189,7 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                         {DOCKER_MCP_COMMAND}
                     </Typography>
                 </Stack>
-            </Alert>
+            </Stack>
         </Box>
     );
 };

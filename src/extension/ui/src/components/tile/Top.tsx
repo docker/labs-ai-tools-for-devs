@@ -40,13 +40,13 @@ export default function Top({ item, unAssignedConfig, onToggleRegister, unAssign
         </Stack>
     }
     return (
-        <Stack direction="row" spacing={0} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', mb: 1 }}>
+        <Stack direction="row" spacing={0} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', mb: 1.5 }}>
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                 <CardMedia
                     component="img"
                     image={item.icon}
                     alt={item.name}
-                    sx={{ width: 30, height: 30, borderRadius: 1, background: 'white', padding: '2px', justifySelf: 'flex-start' }}
+                    sx={{ width: 25, height: 25, borderRadius: 1, background: 'white', padding: '2px', justifySelf: 'flex-start' }}
                 />
                 <Typography sx={{ justifySelf: 'flex-start', fontWeight: 'bold' }}>{item.name}</Typography>
             </Stack>

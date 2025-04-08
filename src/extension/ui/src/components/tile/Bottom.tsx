@@ -20,7 +20,7 @@ const Bottom = ({ item, needsConfiguration }: BottomProps) => {
             {!item.tools?.length && !!item.prompts && <Chip label={`${item.prompts} prompt` + (item.prompts !== 1 ? 's' : '')} color="secondary" />}
             {!item.tools?.length && !item.prompts && item.resources?.length && <Chip label={`${item.resources.length} resource(s)`} color="success" />}
             {needsConfiguration && <Box sx={{ color: 'text.warning', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <WarningAmberOutlined /> Needs Configuration
+                <WarningAmberOutlined sx={{ fontSize: '1.2em' }} /> Needs Configuration
             </Box>}
         </Stack>
 
