@@ -320,6 +320,7 @@
 
 (defn check-then-pull [container-definition]
   (when (not (has-image? (:image container-definition)))
+    (logger/info "pulling image " (:image container-definition))
     (-pull container-definition)))
 
 (defn injected-entrypoint [secrets environment s]
