@@ -1,33 +1,9 @@
 import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
-import Secrets from "../../Secrets";
-import { Config } from "../ConfigurationModal";
+import { useEffect, useState } from "react";
+import { TileProps } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
-
-
-export interface CatalogItem {
-    description?: string;
-    icon?: string;
-    secrets?: { name: string }[];
-    ref: string;
-    prompts: number;
-    resources: object[];
-    tools: object[];
-    config?: Config;
-}
-
-export interface CatalogItemWithName extends CatalogItem {
-    name: string;
-}
-
-export interface TileProps {
-    item: CatalogItemWithName;
-    registered: boolean;
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
-    secrets: Secrets.Secret[];
-    ActionsSlot: ReactNode
-}
+import Secrets from "../../Secrets";
 
 const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TileProps) => {
     const loadAssignedSecrets = () => {

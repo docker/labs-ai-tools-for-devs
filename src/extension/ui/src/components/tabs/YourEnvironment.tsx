@@ -1,10 +1,10 @@
 import React from 'react';
 import { Alert, Box, Card, CardContent, CardHeader, Grid2, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
-import Secrets from '../../Secrets';
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from '../../Constants';
+import { Secret } from '../../types/secrets';
 
 interface YourEnvironmentProps {
-    secrets: Secrets.Secret[];
+    secrets: Secret[];
     ddVersion: { version: string, build: number };
     config: { [key: string]: { [key: string]: any } };
 }

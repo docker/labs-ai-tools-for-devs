@@ -3,45 +3,19 @@ import { Article, AttachFile, Build, Settings } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import Secrets from "../../Secrets";
 import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from "../../Constants";
-import { Config } from "../ConfigurationModal";
+import { Config } from "../../types/config";
 import { trackEvent } from "../../Usage";
 import ConfigurationModal from "../ConfigurationModal";
 import { v1 } from "@docker/extension-api-client-types";
 import { createDockerDesktopClient } from "@docker/extension-api-client";
 import { useCatalogContext } from "../../context/CatalogContext";
+import { CatalogItem, CatalogItemWithName, TileActionsProps } from "../../types/catalog";
+import { Secret } from "../../types/secrets";
 
 const iconSize = 16;
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
-
-export interface CatalogItem {
-    description?: string;
-    icon?: string;
-    secrets?: { name: string }[];
-    ref: string;
-    prompts: number;
-    resources: object[];
-    tools: object[];
-    config?: Config;
-}
-
-export interface CatalogItemWithName extends CatalogItem {
-    name: string;
-}
-
-export interface TileActionsProps {
-    setConfiguringItem: (item: CatalogItemWithName) => void;
-    item: CatalogItemWithName; // Associated CatalogItemWithName
-    canRegister: boolean;
-    registered: boolean;
-    register: (item: CatalogItemWithName) => Promise<void>;
-    unregister: (item: CatalogItemWithName) => Promise<void>;
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
-    secrets: Secrets.Secret[];
-    ddVersion: { version: string, build: number };
-    unAssignedConfig: { name: string, assigned: boolean }[];
-}
 
 const TileConfigBadge = ({ children, unAssignedConfig, unAssignedSecrets }: { children: React.ReactNode, unAssignedConfig: { name: string, assigned: boolean }[], unAssignedSecrets: { name: string, assigned: boolean }[] }) => {
     if (unAssignedConfig.length > 0) {

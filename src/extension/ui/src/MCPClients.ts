@@ -1,6 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { SUPPORTED_MCP_CLIENTS } from "./mcp-clients";
-import { MCPClient } from "./mcp-clients/MCPTypes";
+import { MCPClient } from "./types/mcp";
 
 export type MCPClientState = {
     client: MCPClient;

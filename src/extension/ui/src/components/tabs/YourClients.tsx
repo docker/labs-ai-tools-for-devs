@@ -41,7 +41,7 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '90vw', maxWidth: '1000px' }}>
             <Typography variant="h6">MCP Clients</Typography>
             <Stack direction="column" spacing={1} sx={{ p: 0 }}>
                 {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
@@ -61,7 +61,6 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                                         <Stack direction="row" alignItems="center" spacing={1}>
                                             <Link href={mcpClientState.client.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.client.url)}>{mcpClientState.client.url}</Link>
                                         </Stack>
-
                                         <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
                                         <Typography component="pre" sx={{ color: 'text.primary', fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'background.default', padding: 1, borderRadius: 1, fontSize: '12px' }}>
                                             {mcpClientState.client.expectedConfigPath?.[client.host.platform as 'win32' | 'darwin' | 'linux'] || 'N/A'}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Alert, AlertTitle, Grid2 } from '@mui/material';
-import Tile, { CatalogItemWithName } from '../tile/Tile';
-import Secrets from '../../Secrets';
+import Tile from '../tile/Index';
 import { MCP_POLICY_NAME } from '../../Constants';
-import TileActions from '../tile/TileActions';
+import TileActions from '../tile/Bottom';
 import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-
+import { CatalogItemWithName } from '../../types/catalog';
+import { Secret } from '../../types/secrets';
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 
@@ -17,7 +17,7 @@ interface YourToolsProps {
     canRegister: boolean;
     unregister: (item: CatalogItemWithName) => Promise<void>;
     setConfiguringItem: (item: CatalogItemWithName) => void;
-    secrets: Secrets.Secret[];
+    secrets: Secret[];
     catalogItems: CatalogItemWithName[];
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
     ddVersion: { version: string, build: number };

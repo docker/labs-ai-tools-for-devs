@@ -4,7 +4,7 @@ import { getStoredConfig, syncRegistryWithConfig } from '../Registry';
 import { POLL_INTERVAL } from '../Constants';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
-import { ParsedParameters } from '../components/ConfigurationModal';
+import { ParsedParameters } from '../types/config';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 interface ConfigContextType {
