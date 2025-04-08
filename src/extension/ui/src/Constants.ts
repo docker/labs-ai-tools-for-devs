@@ -9,3 +9,4 @@ export const getUnsupportedSecretMessage = (ddVersion: { version: string, build:
 export const DOCKER_MCP_IMAGE = 'alpine/socat'
 export const DOCKER_MCP_CONTAINER_ARGS = 'STDIO TCP:host.docker.internal:8811'
 export const DOCKER_MCP_COMMAND = `docker run -i --rm ${DOCKER_MCP_IMAGE} ${DOCKER_MCP_CONTAINER_ARGS}`
+export const TILE_DESCRIPTION_MAX_LENGTH = 80;

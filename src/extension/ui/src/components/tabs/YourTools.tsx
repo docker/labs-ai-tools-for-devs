@@ -53,20 +53,10 @@ const YourTools: React.FC<YourToolsProps> = ({
                         <Tile
                             item={catalogItem}
                             registered={true}
-                            onSecretChange={async () => { }}
+                            onSecretChange={onSecretChange}
                             secrets={secrets}
-                            ActionsSlot={<TileActions
-                                setConfiguringItem={setConfiguringItem}
-                                item={catalogItem}
-                                ddVersion={ddVersion}
-                                registered={true}
-                                register={() => Promise.resolve()}
-                                unregister={unregister}
-                                onSecretChange={onSecretChange}
-                                secrets={secrets}
-                                canRegister={canRegister}
-                                unAssignedConfig={[]}
-                            />}
+                            client={client}
+                            unAssignedConfig={unassignedConfig}
                         />
                     </Grid2>
                 );

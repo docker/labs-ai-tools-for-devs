@@ -3,9 +3,9 @@ import { Card, CardContent, Grid2, IconButton } from '@mui/material';
 import Tile from '../tile/Index';
 import AddIcon from '@mui/icons-material/Add';
 import { v1 } from "@docker/extension-api-client-types";
-import TileActions from '../tile/Bottom';
 import { CatalogItemWithName } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
+import { useCatalogContext } from '../../context/CatalogContext';
 
 interface ToolCatalogProps {
     search: string;
@@ -23,7 +23,7 @@ interface ToolCatalogProps {
     showMine: boolean;
 }
 
-const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, search, catalogItems, client, ddVersion, canRegister, register, unregister, onSecretChange, secrets, registryItems, showMine }) => {
+const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems, client, onSecretChange, secrets, registryItems, showMine }) => {
 
     const filteredCatalogItems = catalogItems.filter(item => {
         const isRegistered = registryItems[item.name]?.ref !== undefined;
@@ -44,18 +44,8 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, setConfiguringItem, s
                             registered={registryItems[catalogItem.name]?.ref !== undefined}
                             onSecretChange={onSecretChange}
                             secrets={secrets}
-                            ActionsSlot={<TileActions
-                                canRegister={canRegister}
-                                unAssignedConfig={unAssignedConfig}
-                                setConfiguringItem={setConfiguringItem}
-                                item={catalogItem}
-                                ddVersion={ddVersion}
-                                registered={registryItems[catalogItem.name]?.ref !== undefined}
-                                register={register}
-                                unregister={unregister}
-                                onSecretChange={onSecretChange}
-                                secrets={secrets}
-                            />}
+                            unAssignedConfig={unAssignedConfig}
+                            client={client}
                         />
                     </Grid2>
                 )

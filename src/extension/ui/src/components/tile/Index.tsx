@@ -1,11 +1,28 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
-import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
-import { useEffect, useState } from "react";
-import { TileProps } from "../../types/catalog";
+import { CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
+import { ReactNode, useEffect, useState } from "react";
+import { CatalogItemWithName } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
 import Secrets from "../../Secrets";
+import ConfigurationModal from "../ConfigurationModal";
+import { useCatalogContext } from "../../context/CatalogContext";
+import Top from "./Top";
+import Center from "./Center";
+import Bottom from "./Bottom";
+import { Secret } from "../../types";
+import { v1 } from "@docker/extension-api-client-types";
 
-const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TileProps) => {
+
+type TileProps = {
+    item: CatalogItemWithName;
+    registered: boolean;
+    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
+    secrets: Secret[];
+    client: v1.DockerDesktopClient;
+    unAssignedConfig: { name: string; assigned: boolean }[];
+}
+
+const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedConfig }: TileProps) => {
     const loadAssignedSecrets = () => {
         const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
         setAssignedSecrets(assignedSecrets)
@@ -15,6 +32,21 @@ const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TilePr
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
     const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
     const [secretLoading, setSecretLoading] = useState(false)
+
+    const { registryLoading } = useCatalogContext()
+    const { registerCatalogItem, unregisterCatalogItem } = useCatalogContext();
+    const [showConfigModal, setShowConfigModal] = useState(false)
+
+    useEffect(() => {
+        loadAssignedSecrets()
+    }, [secrets])
+
+    if (registryLoading) {
+        return <CircularProgress size={20} />
+    }
+
+    const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
+
 
     useEffect(() => {
         loadAssignedSecrets()
@@ -56,32 +88,31 @@ const Tile = ({ item, registered, onSecretChange, secrets, ActionsSlot }: TilePr
                     </Stack>
                 </DialogContent>
             </Dialog>
-            <Card sx={{ height: 130, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid' }} >
-                <Stack direction="column" height="100%" sx={{ justifyContent: 'space-between' }}>
-                    <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
-                        <Stack direction="column" spacing={0}>
-                            <Stack direction="row" spacing={0} justifyContent="space-between">
-                                <CardMedia
-                                    component="img"
-                                    sx={{ width: '30px', height: '30px', padding: '2px', background: 'white', borderRadius: 1, boxSizing: 'border-box', mt: '-1px', ml: '-1px' }}
-                                    alt={`Icon for ${item.name}`}
-                                    image={item.icon}
-                                />
-                                <Typography gutterBottom component="div" sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>
-                                    {item.name}
-                                </Typography>
-                            </Stack>
-                            <Tooltip title={item.description}>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', pt: 1 }}>
-                                    {item.description?.slice(0, 70)}...
-                                </Typography>
-                            </Tooltip>
-                        </Stack>
-                    </CardContent>
-                    <CardActions sx={{ px: 1, height: 30 }}>
-                        {ActionsSlot}
-                    </CardActions>
-                </Stack >
+            <ConfigurationModal
+                open={showConfigModal}
+                onClose={() => setShowConfigModal(false)}
+                catalogItem={item}
+                client={client}
+            />
+            <Card onClick={(e) => {
+                if ((e.target as HTMLElement).tagName !== 'INPUT') {
+                    setShowConfigModal(true)
+                }
+            }} sx={{ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid', p: 0, cursor: 'pointer', transition: 'background-color 0.3s ease', '&:hover': { backgroundColor: 'action.hover' } }} >
+                <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
+                    <Stack direction="column" spacing={0}>
+                        <Top onToggleRegister={(checked) => {
+                            if (checked) {
+                                registerCatalogItem(item)
+                            } else {
+                                unregisterCatalogItem(item)
+                            }
+                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={registered} />
+                        <Center item={item} />
+                        <Divider />
+                        <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length || unAssignedConfig.length)} />
+                    </Stack>
+                </CardContent>
             </Card >
         </>
     )
