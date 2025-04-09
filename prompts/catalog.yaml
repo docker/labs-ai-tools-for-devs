@@ -515,7 +515,7 @@ registry:
       - {name: armor-crypto.api_key}
     config:
       - name: armor-crypto
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           api_url:
             type: string
@@ -535,7 +535,7 @@ registry:
     - {name: search_docs}
     config:
       - name: atlas-docs
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           api_url:
             type: string
@@ -561,7 +561,7 @@ registry:
       - {name: audiense-insights.twitter_bearer_token}
     config:
       - name: audiense-insights
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           client_id:
             type: string
@@ -606,7 +606,7 @@ registry:
       - {name: bitrefill.api_secret}
     config:
       - name: bitrefill
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           api_id:
             type: string
@@ -669,7 +669,7 @@ registry:
       - {name: dart.token}
     config:
       - name: dart
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           host:
             type: string
@@ -698,7 +698,7 @@ registry:
       - {name: descope.management_key}
     config:
       - name: descope
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           project_id:
             type: string
@@ -726,7 +726,7 @@ registry:
       - {name: devhub-cms.api_secret}
     config:
       - name: devhub-cms
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           url:
             type: string
@@ -773,7 +773,7 @@ registry:
       - {name: firecrawl.api_key}
     config:
       - name: firecrawl
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           url:
             type: string
@@ -833,7 +833,7 @@ registry:
       - {name: glif.api_token}
     config:
       - name: glif
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           ids:
             type: string
@@ -872,7 +872,7 @@ registry:
       - {name: hyperbrowser.api_key}
     config:
       - name: hyperbrowser
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           use_resources:
             type: string
@@ -895,7 +895,7 @@ registry:
       - {name: hyperspell.token}
     config:
       - name: hyperspell
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           use_resources:
             type: string
@@ -931,7 +931,7 @@ registry:
       - {name: iaptic.api_key}
     config:
       - name: iaptic
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           app_name:
             type: string
@@ -950,7 +950,7 @@ registry:
       - {name: kagisearch.api_key}
     config:
       - name: kagisearch
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           engine:
             type: string
@@ -979,7 +979,7 @@ registry:
     - {name: send-sft-nft-meta-tokens}
     config:
       - name: multiversx-mx
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           network:
             type: string
@@ -1093,7 +1093,7 @@ registry:
       - {name: opik.api_key}
     config:
       - name: opik
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           api_base_url:
             type: string
@@ -1128,7 +1128,7 @@ registry:
       - {name: oxylabs.password}
     config:
       - name: oxylabs
-        descrition: The MCP server needs to be configured
+        description: The MCP server needs to be configured
         parameters:
           username:
             type: string
