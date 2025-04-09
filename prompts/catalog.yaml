@@ -511,6 +511,16 @@ registry:
     - {name: transfer_tokens}
     - {name: unarchive_wallet_group}
     - {name: unarchive_wallets}
+    secrets:
+      - {name: armor-crypto.api_key}
+    config:
+      - name: armor-crypto
+        descrition: The MCP server needs to be configured
+        parameters:
+          api_url:
+            type: string
+        required:
+          - api_url
     prompts: 0
     resources: {}
   atlas-docs:
@@ -523,6 +533,14 @@ registry:
     - {name: get_docs_page}
     - {name: list_docs}
     - {name: search_docs}
+    config:
+      - name: atlas-docs
+        descrition: The MCP server needs to be configured
+        parameters:
+          api_url:
+            type: string
+        required:
+          - api_url
     prompts: 0
     resources: {}
   audiense-insights:
@@ -538,6 +556,17 @@ registry:
     - {name: get-report-info}
     - {name: get-reports}
     - {name: report-summary}
+    secrets:
+      - {name: audiense-insights.client_secret}
+      - {name: audiense-insights.twitter_bearer_token}
+    config:
+      - name: audiense-insights
+        descrition: The MCP server needs to be configured
+        parameters:
+          client_id:
+            type: string
+        required:
+          - client_id
     prompts: 0
     resources: {}
   basic-memory:
@@ -573,6 +602,16 @@ registry:
     - {name: ping}
     - {name: search}
     - {name: unseal_order}
+    secrets:
+      - {name: bitrefill.api_secret}
+    config:
+      - name: bitrefill
+        descrition: The MCP server needs to be configured
+        parameters:
+          api_id:
+            type: string
+        required:
+          - api_id
     prompts: 0
     resources: {}
   chroma:
@@ -592,6 +631,8 @@ registry:
     - {name: chroma_peek_collection}
     - {name: chroma_query_documents}
     - {name: chroma_update_documents}
+    secrets:
+      - {name: chroma.api_key}
     prompts: 0
     resources: {}
   cyreslab-ai-shodan:
@@ -604,6 +645,8 @@ registry:
     - {name: scan_network_range}
     - {name: search_iot_devices}
     - {name: search_shodan}
+    secrets:
+      - {name: cyreslab-ai-shodan.api_key}
     prompts: 0
     resources: {}
   dart:
@@ -622,6 +665,16 @@ registry:
     - {name: list_tasks}
     - {name: update_doc}
     - {name: update_task}
+    secrets:
+      - {name: dart.token}
+    config:
+      - name: dart
+        descrition: The MCP server needs to be configured
+        parameters:
+          host:
+            type: string
+        required:
+          - host
     prompts: 0
     resources: {}
   databutton:
@@ -641,6 +694,16 @@ registry:
     - {name: invite-user}
     - {name: search-audits}
     - {name: search-users}
+    secrets:
+      - {name: descope.management_key}
+    config:
+      - name: descope
+        descrition: The MCP server needs to be configured
+        parameters:
+          project_id:
+            type: string
+        required:
+          - project_id
     prompts: 0
     resources: {}
   devhub-cms:
@@ -658,6 +721,17 @@ registry:
     - {name: update_blog_post}
     - {name: update_hours}
     - {name: upload_image}
+    secrets:
+      - {name: devhub-cms.api_key}
+      - {name: devhub-cms.api_secret}
+    config:
+      - name: devhub-cms
+        descrition: The MCP server needs to be configured
+        parameters:
+          url:
+            type: string
+        required:
+          - url
     prompts: 0
     resources: {}
   e2b:
@@ -666,6 +740,8 @@ registry:
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
     - {name: run_code}
+    secrets:
+      - {name: e2b.api_key}
     prompts: 0
     resources: {}
   exa:
@@ -674,6 +750,8 @@ registry:
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
     - {name: web_search}
+    secrets:
+      - {name: exa.api_key}
     prompts: 0
     resources: {}
   firecrawl:
@@ -691,6 +769,34 @@ registry:
     - {name: firecrawl_map}
     - {name: firecrawl_scrape}
     - {name: firecrawl_search}
+    secrets:
+      - {name: firecrawl.api_key}
+    config:
+      - name: firecrawl
+        descrition: The MCP server needs to be configured
+        parameters:
+          url:
+            type: string
+          retry_max:
+            type: string
+          retry_delay:
+            type: string
+          retry_max_delay:
+            type: string
+          retry_backoff_factor:
+            type: string
+          credit_warning_threshold:
+            type: string
+          credit_critical_threshold:
+            type: string
+        required:
+          - url
+          - retry_max
+          - retry_delay
+          - retry_max_delay
+          - retry_backoff_factor
+          - credit_warning_threshold
+          - credit_critical_threshold
     prompts: 0
     resources: {}
   github-chat:
@@ -700,6 +806,8 @@ registry:
     tools:
     - {name: index_repository}
     - {name: query_repository}
+    secrets:
+      - {name: github-chat.api_key}
     prompts: 0
     resources: {}
   glif:
@@ -721,6 +829,19 @@ registry:
     - {name: save_glif_as_tool}
     - {name: search_glifs}
     - {name: show_bot_info}
+    secrets:
+      - {name: glif.api_token}
+    config:
+      - name: glif
+        descrition: The MCP server needs to be configured
+        parameters:
+          ids:
+            type: string
+          ignored_saved:
+            type: string
+        required:
+          - ids
+          - ignored_saved
     prompts: 0
     resources: {}
   handwriting-ocr:
@@ -731,6 +852,8 @@ registry:
     - {name: check_status}
     - {name: get_text}
     - {name: upload_document}
+    secrets:
+      - {name: handwriting-ocr.api_token}
     prompts: 0
     resources: {}
   hyperbrowser:
@@ -745,6 +868,19 @@ registry:
     - {name: openai_computer_use_agent}
     - {name: scrape_webpage}
     - {name: search_with_bing}
+    secrets:
+      - {name: hyperbrowser.api_key}
+    config:
+      - name: hyperbrowser
+        descrition: The MCP server needs to be configured
+        parameters:
+          use_resources:
+            type: string
+          collection:
+            type: string
+        required:
+          - use_resources
+          - collection
     prompts: 0
     resources: {}
   hyperspell:
@@ -755,6 +891,19 @@ registry:
     - {name: Add File}
     - {name: Add Memory}
     - {name: Search Hyperspell}
+    secrets:
+      - {name: hyperspell.token}
+    config:
+      - name: hyperspell
+        descrition: The MCP server needs to be configured
+        parameters:
+          use_resources:
+            type: string
+          collection:
+            type: string
+        required:
+          - use_resources
+          - collection
     prompts: 0
     resources: {}
   iaptic:
@@ -778,6 +927,16 @@ registry:
     - {name: stripe_prices}
     - {name: transaction_get}
     - {name: transaction_list}
+    secrets:
+      - {name: iaptic.api_key}
+    config:
+      - name: iaptic
+        descrition: The MCP server needs to be configured
+        parameters:
+          app_name:
+            type: string
+        required:
+          - app_name
     prompts: 0
     resources: {}
   kagisearch:
@@ -787,6 +946,16 @@ registry:
     tools:
     - {name: kagi_search_fetch}
     - {name: kagi_summarizer}
+    secrets:
+      - {name: kagisearch.api_key}
+    config:
+      - name: kagisearch
+        descrition: The MCP server needs to be configured
+        parameters:
+          engine:
+            type: string
+        required:
+          - engine
     prompts: 0
     resources: {}
   multiversx-mx:
@@ -808,6 +977,17 @@ registry:
     - {name: send-egld-to-multiple-receivers}
     - {name: send-fungible-tokens}
     - {name: send-sft-nft-meta-tokens}
+    config:
+      - name: multiversx-mx
+        descrition: The MCP server needs to be configured
+        parameters:
+          network:
+            type: string
+          wallet:
+            type: string
+        required:
+          - network
+          - wallet
     prompts: 0
     resources: {}
   neon:
@@ -831,6 +1011,8 @@ registry:
     - {name: provision_neon_auth}
     - {name: run_sql}
     - {name: run_sql_transaction}
+    secrets:
+      - {name: neon.api_key}
     prompts: 0
     resources: {}
   neondatabase-labs:
@@ -854,6 +1036,8 @@ registry:
     - {name: provision_neon_auth}
     - {name: run_sql}
     - {name: run_sql_transaction}
+    secrets:
+      - {name: neondatabase-labs.api_key}
     prompts: 0
     resources: {}
   octomind:
@@ -877,6 +1061,8 @@ registry:
     - {name: search}
     - {name: updateEnvironment}
     - {name: updateTestTarget}
+    secrets:
+      - {name: octomind.api_key}
     prompts: 0
     resources: {}
   opik:
@@ -903,6 +1089,19 @@ registry:
     - {name: list-traces}
     - {name: update-project}
     - {name: update-prompt}
+    secrets:
+      - {name: opik.api_key}
+    config:
+      - name: opik
+        descrition: The MCP server needs to be configured
+        parameters:
+          api_base_url:
+            type: string
+          workspace_name:
+            type: string
+        required:
+          - api_base_url
+          - workspace_name
     prompts: 0
     resources: {}
   osp_marketing_tools:
@@ -925,6 +1124,16 @@ registry:
     tools:
     - {name: oxylabs_scraper}
     - {name: oxylabs_web_unblocker}
+    secrets:
+      - {name: oxylabs.password}
+    config:
+      - name: oxylabs
+        descrition: The MCP server needs to be configured
+        parameters:
+          username:
+            type: string
+        required:
+          - username
     prompts: 0
     resources: {}
   scrapegraph:
@@ -935,6 +1144,8 @@ registry:
     - {name: markdownify}
     - {name: searchscraper}
     - {name: smartscraper}
+    secrets:
+      - {name: scrapegraph.api_key}
     prompts: 0
     resources: {}
   scrapezy:
@@ -943,6 +1154,8 @@ registry:
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
     - {name: extract-structured-data}
+    secrets:
+      - {name: scrapezy.auth_token}
     prompts: 0
     resources: {}
   shopify:
@@ -961,6 +1174,8 @@ registry:
     tools:
     - {name: tavily-extract}
     - {name: tavily-search}
+    secrets:
+      - {name: tavily.api_token}
     prompts: 0
     resources: {}
   tembo:
@@ -978,6 +1193,8 @@ registry:
     - {name: get_instance_schema}
     - {name: patch_instance}
     - {name: restore_instance}
+    secrets:
+      - {name: tembo.api_token}
     prompts: 0
     resources: {}
   triplewhale:
@@ -986,6 +1203,8 @@ registry:
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
     - {name: moby}
+    secrets:
+      - {name: triplewhale.api_key}
     prompts: 0
     resources: {}
   tweetbinder:
@@ -1000,6 +1219,8 @@ registry:
     - {name: get-report-stats}
     - {name: get-report-status}
     - {name: list-reports}
+    secrets:
+      - {name: tweetbinder.api_token}
     prompts: 0
     resources: {}
   veyrax:
@@ -1010,5 +1231,7 @@ registry:
     - {name: get_flow}
     - {name: get_tools}
     - {name: tool_call}
+    secrets:
+      - {name: veyrax.api_key}
     prompts: 0
     resources: {}
