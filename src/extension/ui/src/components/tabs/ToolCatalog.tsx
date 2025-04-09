@@ -6,6 +6,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
 import { useCatalogContext } from '../../context/CatalogContext';
+import { CATALOG_LAYOUT_SX } from '../../Constants';
 
 interface ToolCatalogProps {
     search: string;
@@ -33,7 +34,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems,
     });
 
     return (
-        <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
+        <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
             {filteredCatalogItems.map((catalogItem) => {
                 const expectedKeys = catalogItem.config?.map((c: any) => c.name) || [];
                 const unAssignedConfig = expectedKeys?.filter((c: any) => config[catalogItem.name]?.[c] === undefined);

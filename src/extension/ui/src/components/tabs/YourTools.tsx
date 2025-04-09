@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, AlertTitle, Grid2 } from '@mui/material';
 import Tile from '../tile/Index';
-import { MCP_POLICY_NAME } from '../../Constants';
+import { CATALOG_LAYOUT_SX, MCP_POLICY_NAME } from '../../Constants';
 import TileActions from '../tile/Bottom';
 import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
@@ -36,7 +36,7 @@ const YourTools: React.FC<YourToolsProps> = ({
     config
 }) => {
     return (
-        <Grid2 container spacing={1} width='90vw' maxWidth={1000}>
+        <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
             {Object.entries(registryItems).map(([name, item]) => {
                 if (!name.toLowerCase().includes(search.toLowerCase())) return null;
                 const catalogItem = catalogItems.find(c => c.name === name);

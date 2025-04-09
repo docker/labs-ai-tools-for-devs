@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Box, Card, CardContent, CardHeader, Grid2, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
-import { DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from '../../Constants';
+import { CATALOG_LAYOUT_SX, DD_BUILD_WITH_SECRET_SUPPORT, getUnsupportedSecretMessage } from '../../Constants';
 import { Secret } from '../../types/secrets';
 
 interface YourEnvironmentProps {
@@ -24,7 +24,7 @@ const YourEnvironment: React.FC<YourEnvironmentProps> = ({ secrets, ddVersion, c
                 <Typography variant="h3">
                     The following secrets are available to use in your prompts:
                 </Typography>
-                <Alert title="Docker Secret Management" severity="info" sx={{ width: '90vw', maxWidth: 1000, p: 1 }}>
+                <Alert title="Docker Secret Management" severity="info" sx={{ ...CATALOG_LAYOUT_SX, p: 1 }}>
                     Docker Secret Management is a new feature in Docker Desktop that allows you to securely inject secrets into your containers. Only the tools which need to access the secrets will be able to access them.
                 </Alert>
             </Stack>

@@ -1,16 +1,14 @@
-import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Typography, Link, AlertTitle, Divider, AccordionSummary, Accordion, AccordionDetails, Stack } from "@mui/material";
-import { IconButton } from "@mui/material";
-import { Alert } from "@mui/material";
+import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Typography, Link, Divider, AccordionSummary, Accordion, AccordionDetails, Stack } from "@mui/material";
 import { Box } from "@mui/material";
-import { DOCKER_MCP_COMMAND } from "../../Constants";
-import { ContentCopy, LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
-import { MCPClientState } from "../../MCPClients";
+import { DOCKER_MCP_COMMAND, CATALOG_LAYOUT_SX } from "../../Constants";
+import { LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
 import { v1 } from "@docker/extension-api-client-types";
-import ClaudeIcon from '../../claude-ai-icon.svg'
-import GordonIcon from '../../gordon-icon.png'
-import CursorIcon from '../../cursor.svg'
-import ChatGPTIcon from '../../chatgpt.svg'
+import ClaudeIcon from '../../assets/claude-ai-icon.svg'
+import GordonIcon from '../../assets/gordon-icon.png'
+import CursorIcon from '../../assets/cursor.svg'
+import ChatGPTIcon from '../../assets/chatgpt.svg'
 import { useMCPClientContext } from "../../context/MCPClientContext";
+import { useState } from "react";
 
 type MCPClientSettingsProps = {
     client: v1.DockerDesktopClient;
@@ -40,8 +38,10 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
         return <CircularProgress />;
     }
 
+    const [copyButtonText, setCopyButtonText] = useState('Copy');
+
     return (
-        <Box sx={{ width: '90vw', maxWidth: '1000px' }}>
+        <Box sx={CATALOG_LAYOUT_SX}>
             <Typography>Connect to runtimes for your tools</Typography>
             <Stack direction="column" spacing={1} sx={{ p: 0 }}>
                 {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
@@ -182,11 +182,16 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                 <Typography variant="h4">Other MCP Clients</Typography>
                 You can connect other MCP clients to the same server by specifying the following command:
                 <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1}>
-                    <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
-                        <ContentCopy />
-                    </IconButton>
+
                     <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', color: 'text.primary' })}>
                         {DOCKER_MCP_COMMAND}
+                        <Button color={copyButtonText === 'Copied!' ? 'success' : 'primary'} sx={{ py: '2px', px: '12px', fontSize: '1em', ml: 1 }} onClick={() => {
+                            navigator.clipboard.writeText(DOCKER_MCP_COMMAND);
+                            setCopyButtonText('Copied!');
+                            setTimeout(() => setCopyButtonText('Copy'), 2000);
+                        }}>
+                            {copyButtonText}
+                        </Button>
                     </Typography>
                 </Stack>
             </Stack>
