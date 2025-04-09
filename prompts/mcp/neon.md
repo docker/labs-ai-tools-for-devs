@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/neon
+      image: mcp/neon:latest
       secrets:
         neon.api_key: NEON_API_KEY
   - source:

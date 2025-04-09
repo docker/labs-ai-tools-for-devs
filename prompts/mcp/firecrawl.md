@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/firecrawl
+      image: mcp/firecrawl:latest
       secrets:
         firecrawl.api_key: FIRECRAWL_API_KEY
       environment:

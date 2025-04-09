@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/veyrax
+      image: mcp/veyrax:latest
       secrets:
         veyrax.api_key: VEYRAX_API_KEY
   - source:

@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/kagisearch
+      image: mcp/kagisearch:latest
       secrets:
         kagi.api_key: KAGI_API_KEY
       environment:

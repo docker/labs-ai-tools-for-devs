@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/glif
+      image: mcp/glif:latest
       secrets:
         glif.api_token: GLIF_API_TOKEN
       environment:

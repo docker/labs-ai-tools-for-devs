@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/neondatabase-labs
+      image: mcp/neondatabase-labs:latest
       secrets:
         neon.api_key: NEON_API_KEY
   - source:

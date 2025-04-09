@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/e2b
+      image: mcp/e2b:latest
       secrets:
         e2b.api_key: E2B_API_KEY
   - source:

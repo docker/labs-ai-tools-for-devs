@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/oxylabs
+      image: mcp/oxylabs:latest
       secrets:
         oxylabs.password: OXYLABS_PASSWORD
       environment:

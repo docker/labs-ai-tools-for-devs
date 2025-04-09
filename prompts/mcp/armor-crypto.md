@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/armor-crypto
+      image: mcp/armor-crypto:latest
       workdir: /app
       secrets:
         armor.api_key: ARMOR_API_KEY

@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/exa
+      image: mcp/exa:latest
       secrets:
         exa.api_key: EXA_API_KEY
   - source:

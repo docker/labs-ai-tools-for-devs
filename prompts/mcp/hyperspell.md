@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/hyperspell
+      image: mcp/hyperspell:latest
       secrets:
         hyperspell.token: HYPERSPELL_TOKEN
       environment:

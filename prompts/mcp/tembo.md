@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/tembo
+      image: mcp/tembo:latest
       secrets:
         tembo.api_token: TEMBO_API_KEY
   - source:

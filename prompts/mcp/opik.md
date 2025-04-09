@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/opik
+      image: mcp/opik:latest
       secrets:
         opik.api_key: OPIK_API_KEY
       environment:

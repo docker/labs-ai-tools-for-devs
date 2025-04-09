@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/atlas-docs
+      image: mcp/atlas-docs:latest
       environment:
         ATLAS_API_URL: "{{atlas.api_url|safe}}"
   - source:

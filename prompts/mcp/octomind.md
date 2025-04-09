@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/octomind
+      image: mcp/octomind:latest
       secrets:
         octomind.api_key: APIKEY
   - source:

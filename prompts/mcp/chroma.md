@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/chroma
+      image: mcp/chroma:latest
       secrets:
         chroma.api_key: CHROMA_API_KEY
   - source:

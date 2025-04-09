@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/hyperbrowser
+      image: mcp/hyperbrowser:latest
       secrets:
         hyperbrowser.api_key: HYPERBROWSER_API_KEY
       environment:

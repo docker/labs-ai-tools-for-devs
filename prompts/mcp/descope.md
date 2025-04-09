@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/descope
+      image: mcp/descope:latest
       secrets:
         descope.management_key: DESCOPE_MANAGEMENT_KEY
       environment:

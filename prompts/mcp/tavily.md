@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/tavily
+      image: mcp/tavily:latest
       secrets:
         tavily.api_token: TAVILY_API_KEY
   - source:

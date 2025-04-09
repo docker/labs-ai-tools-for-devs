@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/triplewhale
+      image: mcp/triplewhale:latest
       secrets:
         triplewhale.api_key: TRIPLEWHALE_API_KEY
   - source:

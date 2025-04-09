@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/audiense-insights
+      image: mcp/audiense-insights:latest
       secrets:
         audiense.client_secret: AUDIENSE_CLIENT_SECRET
         audiense.twitter_bearer_token: TWITTER_BEARER_TOKEN

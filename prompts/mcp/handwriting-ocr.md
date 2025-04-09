@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/handwriting-ocr
+      image: mcp/handwriting-ocr:latest
       secrets:
         handwriting-ocr.api_token: API_TOKEN
   - source:

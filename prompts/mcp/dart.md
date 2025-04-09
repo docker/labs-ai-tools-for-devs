@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/dart
+      image: mcp/dart:latest
       secrets:
         dart.token: DART_TOKEN
       environment:

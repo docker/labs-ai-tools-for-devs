@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/iaptic
+      image: mcp/iaptic:latest
       secrets:
         iaptic.api_key: IAPTIC_API_KEY
       environment:

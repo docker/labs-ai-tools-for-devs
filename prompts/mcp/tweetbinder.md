@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/tweetbinder
+      image: mcp/tweetbinder:latest
       secrets:
         tweetbinder.api_token: TWEETBINDER_API_TOKEN
   - source:

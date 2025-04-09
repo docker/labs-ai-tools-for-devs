@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/multiversx-mx
+      image: mcp/multiversx-mx:latest
       environment:
         MVX_NETWORK: "{{mvx.network}}"
         MVX_WALLET: "{{mvx.wallet}}"

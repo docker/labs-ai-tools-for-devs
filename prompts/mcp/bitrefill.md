@@ -1,7 +1,7 @@
 ---
 mcp:
   - container:
-      image: mcp/bitrefill
+      image: mcp/bitrefill:latest
       secrets:
         bitrefill.api_secret: BITREFILL_API_SECRET
       environment:
