@@ -1,6 +1,6 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
+import { Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
 import { CatalogItemWithName } from './types/catalog';
 import { Close } from '@mui/icons-material';
 import { CatalogGrid } from './components/CatalogGrid';
@@ -9,7 +9,6 @@ import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
 import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
-import { Settings as SettingsIcon } from '@mui/icons-material';
 
 const Settings = React.lazy(() => import('./components/Settings'));
 

@@ -1,6 +1,6 @@
 import { CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { Card, CardContent } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
 import Secrets from "../../Secrets";
@@ -46,7 +46,6 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
     }
 
     const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
-
 
     useEffect(() => {
         loadAssignedSecrets()
@@ -98,7 +97,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {
                     setShowConfigModal(true)
                 }
-            }} sx={{ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid', p: 0, cursor: 'pointer', transition: 'background-color 0.3s ease', '&:hover': { backgroundColor: 'action.hover' } }} >
+            }} sx={{ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid', p: 0, cursor: 'pointer', transition: 'background-color 0.1s ease', '&:hover': { backgroundColor: 'action.hover' } }} >
                 <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
                     <Stack direction="column" spacing={0}>
                         <Top onToggleRegister={(checked) => {
