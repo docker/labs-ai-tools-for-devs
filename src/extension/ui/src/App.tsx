@@ -10,8 +10,6 @@ import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
 
-const Settings = React.lazy(() => import('./components/Settings'));
-
 export const client = createDockerDesktopClient();
 
 const DEFAULT_SETTINGS = {
@@ -51,13 +49,7 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
     imagesLoadingResults,
     loadImagesIfNeeded,
     catalogItems,
-    secretsLoading,
-    catalogLoading,
-    registryLoading,
-    imagesIsFetching
   } = useCatalogContext();
-
-  const { isFetching: mcpFetching } = useMCPClientContext();
 
   // Instead of showing full-page loading states for each resource, let's implement a more unified approach
   // Only show full-page loading during initial load, not during background refetching
@@ -93,32 +85,8 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
       </Paper>
     );
   }
-  const isDataFetching = imagesIsFetching || secretsLoading || catalogLoading || registryLoading || mcpFetching;
   return (
     <>
-      {settings.showModal && (
-        <Dialog open={settings.showModal} fullWidth maxWidth="xl">
-          <DialogTitle>
-            Settings
-            <IconButton
-              aria-label="close"
-              onClick={() => setSettings({ ...settings, showModal: false })}
-              sx={{ position: 'absolute', right: 8, top: 8 }}
-            >
-              <Close />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
-              <Settings
-                settings={settings}
-                setSettings={setSettings}
-              />
-            </Suspense>
-          </DialogContent>
-        </Dialog>
-      )}
-
       {configuringItem && (
         <ConfigurationModal
           open={configuringItem !== null}
