@@ -1,6 +1,6 @@
 # IMAGE?=docker/labs-ai-tools-for-devs
 IMAGE?=docker/labs-ai-tools-for-devs
-TAG?=0.2.34
+TAG?=0.2.35
 
 BUILDER=buildx-multi-arch
 
@@ -18,10 +18,10 @@ build-extension: cross ## Build service image to be deployed as a desktop extens
 	docker buildx build --load --tag=$(IMAGE):$(TAG) .
 	
 install-extension: build-extension ## Install the extension
-	docker extension install $(IMAGE):$(TAG)
+	echo y | docker extension install $(IMAGE):$(TAG)
 
 update-extension: build-extension ## Update the extension
-	docker extension update $(IMAGE):$(TAG)
+	echo y | docker extension update $(IMAGE):$(TAG)
 
 prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
