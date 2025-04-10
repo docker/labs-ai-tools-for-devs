@@ -26,7 +26,6 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-
       <DockerMuiV6ThemeProvider>
         <CssBaseline />
         <App />
@@ -35,3 +34,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </QueryClientProvider>
   </React.StrictMode >
 );
+
+// styling body with `overflow:scroll` prevents layout shift when catalog overflow changes
+document.body.style.overflow = 'scroll';

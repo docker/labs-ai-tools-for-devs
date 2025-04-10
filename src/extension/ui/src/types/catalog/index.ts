@@ -11,7 +11,7 @@ export interface CatalogItem {
     ref: string;
     prompts: number;
     resources: object[];
-    tools: object[];
+    tools: { name: string }[];
     config?: any; // Configuration type
 }
 

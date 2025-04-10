@@ -1,15 +1,17 @@
-import { Badge, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
-import { LockReset, Save } from "@mui/icons-material";
+import { Badge, Box, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import { Close, LockReset, Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { CatalogItemWithName } from "../types/catalog";
-import Secrets from "../Secrets";
+import { CatalogItemWithName } from "../../types/catalog";
+import Secrets from "../../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
 import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react";
-import { useCatalogContext } from "../context/CatalogContext";
-import { useConfigContext } from "../context/ConfigContext";
-import { mergeDeep } from "../MergeDeep";
-import { DeepObject } from "../types/utils";
-import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameter, ParsedParameterArray, ParsedParameterObject, ParsedParameters, Config } from "../types/config";
+import { useCatalogContext } from "../../context/CatalogContext";
+import { useConfigContext } from "../../context/ConfigContext";
+import { mergeDeep } from "../../MergeDeep";
+import { DeepObject } from "../../types/utils";
+import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameter, ParsedParameterArray, ParsedParameterObject, ParsedParameters, Config } from "../../types/config";
+import { Ref } from "../../Refs";
+import { CATALOG_LAYOUT_SX } from "../../Constants";
 
 // Styles for the tab panel
 interface TabPanelProps {
@@ -102,6 +104,8 @@ interface ConfigurationModalProps {
     onClose: () => void;
     catalogItem: CatalogItemWithName;
     client: v1.DockerDesktopClient;
+    onToggleRegister: (checked: boolean) => void;
+    registered: boolean;
 }
 
 const ConfigurationModal = ({
@@ -109,6 +113,8 @@ const ConfigurationModal = ({
     onClose,
     catalogItem,
     client,
+    onToggleRegister,
+    registered,
 }: ConfigurationModalProps) => {
     const { startPull, registryItems, tryUpdateSecrets, secrets } = useCatalogContext();
     const { config, configLoading, saveConfig } = useConfigContext();
@@ -175,29 +181,68 @@ const ConfigurationModal = ({
     }
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-            <DialogTitle>
-                <Typography variant="h6">
-                    Configuring {catalogItem.name}
+        <Modal
+            open={open}
+            onClose={onClose}
+            aria-labelledby="configuration-modal-title"
+        >
+            <Paper sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                maxHeight: '90vh',
+                overflow: 'auto',
+                p: 4,
+                outline: 'none'
+            }}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <img src={catalogItem.icon} alt={catalogItem.name} style={{ width: 30, height: 30, marginRight: 8 }} />
+                    <Typography variant="h6" id="configuration-modal-title">
+                        {catalogItem.name}
+                    </Typography>
+                    <IconButton sx={{ position: 'absolute', right: 18 }} onClick={onClose}>
+                        <Close />
+                    </IconButton>
+                </Stack>
+                <Typography sx={{ mt: 2 }} color="text.secondary">
+                    {catalogItem.description}
                 </Typography>
-            </DialogTitle>
-            <DialogContent>
+                <FormControlLabel control={<Switch checked={registered} onChange={(e) => onToggleRegister(e.target.checked)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
+                <Divider sx={{ mt: 2 }} />
+                <Typography variant="caption" sx={{ mt: 2, color: 'text.secondary' }}>
+                    Repository: <Link href={Ref.fromRef(catalogItem.ref).toURL()} target="_blank">{Ref.fromRef(catalogItem.ref).toURL()}⤴</Link>
+                </Typography>
                 {(configLoading || secretLoading) ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
                         <CircularProgress />
                     </Box>
                 ) : (
                     <>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
                             <Tabs value={tabValue} onChange={handleTabChange}>
-                                {hasSecrets && <Tab label="Secrets" />}
-                                {hasConfig && <Tab label="Configuration" />}
+                                <Tab label="Tools" />
+                                <Tab disabled={!hasSecrets && !hasConfig} label="Config & Secrets" />
+                                <Tab disabled={!hasConfig} label="Examples" />
                             </Tabs>
                         </Box>
 
+                        <TabPanel value={tabValue} index={0}>
+                            {!catalogItem?.tools?.length && (
+                                <Typography>
+                                    No tools available for this item.
+                                </Typography>
+                            )}
+                            <Stack sx={{ fontSize: '1.5em' }} direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
+                                {(catalogItem.tools || []).map((tool) => (
+                                    <Chip label={tool.name} />
+                                ))}
+                            </Stack>
+                        </TabPanel>
+
                         {/* Secrets Tab */}
                         {hasSecrets && (
-                            <TabPanel value={tabValue} index={0}>
+                            <TabPanel value={tabValue} index={1}>
                                 <Stack direction="column" spacing={2}>
                                     {assignedSecrets?.map(secret => (
                                         <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
@@ -260,8 +305,8 @@ const ConfigurationModal = ({
                         )}
                     </>
                 )}
-            </DialogContent>
-        </Dialog>
+            </Paper>
+        </Modal>
     );
 };
 

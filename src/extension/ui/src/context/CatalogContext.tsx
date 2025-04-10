@@ -300,7 +300,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         },
         onSuccess: ({ showNotification }) => {
             if (showNotification) {
-                client.desktopUI.toast.success('Prompt registered successfully. Reload your MCP clients to apply.');
+                client.desktopUI.toast.success('Tile enabled. You may need to reload your MCP clients to apply.');
             }
             // We still refetch to ensure consistency with the server
             refetchRegistry();
@@ -351,7 +351,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             }
         },
         onSuccess: () => {
-            client.desktopUI.toast.success('Prompt unregistered successfully. Reload your MCP clients to apply.');
+            client.desktopUI.toast.success('Tile turned off. You may need to reload your MCP clients to apply.');
             // Refetch to ensure consistency
             refetchRegistry();
             // Logic for showing reload modal would go here

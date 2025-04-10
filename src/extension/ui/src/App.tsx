@@ -8,7 +8,7 @@ import { POLL_INTERVAL } from './Constants';
 import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
 import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
-import ConfigurationModal from './components/ConfigurationModal';
+import ConfigurationModal from './components/tile/Modal';
 
 export const client = createDockerDesktopClient();
 
@@ -87,15 +87,6 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
   }
   return (
     <>
-      {configuringItem && (
-        <ConfigurationModal
-          open={configuringItem !== null}
-          onClose={() => setConfiguringItem(null)}
-          catalogItem={configuringItem}
-          client={client}
-        />
-      )}
-
       <CatalogGrid
         setConfiguringItem={setConfiguringItem}
         showSettings={() => setSettings({ ...settings, showModal: true })}
