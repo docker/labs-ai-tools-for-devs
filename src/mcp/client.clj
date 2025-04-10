@@ -19,8 +19,14 @@
 
 (defn- mcp-stdio-stateless-server
   "create a running container with an attached socket-client 
-   and a running Thread that is reading messages from the socket (both stdout and stderr)
-     - there is also one go process blocked waiting for the container to exit
+   and two running Threads 
+     - one that is reading messages from the socket (both stdout and stderr)
+     - one that is waiting for the engine to indicate that the container has stopped
+   plus a go loop
+     - watches socket read-loop channel for jsonrpc messages
+     - implements timeouts of 15s for at least something to happen on the channel
+     - if the read-loop channel closes, we will write send a close message explicitly
+     - request jsonrpc messages create promises that can only resolve with matching responses
   
    returns 
      a map with the container info plus request and notification functions 
@@ -35,75 +41,80 @@
                                 :opts {:StdinOnce true
                                        :OpenStdin true
                                        :AttachStdin true}))
-        response-promises (atom {})]
-    ;; process the output stream channin the background
+        response-promises (atom {})
+        socket-channel (docker/attach-socket (:Id x))
+        c (async/chan)
+        dead-channel (async/chan)]
+
+    (docker/start x)
+
+    ;; process the output-stream of the container
     ;; should only end once the stream closes
     ;; TODO - docker/stream will block a go channel
-    (let [socket-channel (docker/attach-socket (:Id x))
-          c (async/chan)
-          dead-channel (async/chan)]
+    (async/thread
+      (docker/read-loop socket-channel c))
+    (async/go
+      (docker/wait x)
+      (async/>! c :stopped))
+    (async/go-loop [block (async/alt!
+                            c ([v _] v)
+                            (async/timeout 15000) :timeout)]
+      (cond
+                        ;; read-loop has stopped or timed out
+        (#{:stopped :timeout} block)
+        (do
+          (logger/info "stopped/timeout")
+          (async/put! dead-channel block)
+          block)
 
-      (docker/start x)
-      ;; process the output-stream of the container
-      (async/thread
-        (docker/read-loop socket-channel c))
-      (async/go
-        (docker/wait x)
-        (async/>! c :stopped))
-      (async/go-loop [block (async/alt!
-                              c ([v _] v)
-                              (async/timeout 15000) :timeout)]
-        (cond
-          ;; read-loop has stopped or timed out
-          (#{:stopped :timeout} block)
-          (do
-            (async/put! dead-channel block)
-            block)
+                        ;; real stdout message
+        (and block (:stdout block))
+        (let [message (try (json/parse-string (:stdout block) keyword) (catch Throwable _))]
+          (if-let [p (get @response-promises (:id message))]
+            (do
+              (logger/info (:stdout block))
+              (async/put! p message))
+            (logger/debug "no promise found: " block))
+          (recur (async/alt!
+                   c ([v _] v)
+                   (async/timeout 15000) :timeout)))
 
-          ;; real stdout message
-          (and block (:stdout block))
-          (let [message (try (json/parse-string (:stdout block) keyword) (catch Throwable _))]
-            (if-let [p (get @response-promises (:id message))]
-              (async/put! p message)
-              (logger/debug "no promise found: " block))
-            (recur (async/alt!
-                     c ([v _] v)
-                     (async/timeout 15000) :timeout)))
+                        ;; channel is closed
+        (nil? block)
+        (do
+          (logger/info "nil block - closing")
+          (async/put! dead-channel :closed))
 
-        ;; channel is closed
-          (nil? block)
-          (async/put! dead-channel :closed)
+                        ;; non-stdout message - show to user
+        :else
+        (do
+          (logger/info "socket read loop " (:stderr block))
+          (recur (async/alt!
+                   c ([v _] v)
+                   (async/timeout 15000) :timeout)))))
 
-          ;; non-stdout message - show to user
-          :else
-          (do
-            (logger/info "socket read loop " (:stderr block))
-            (recur (async/alt!
-                     c ([v _] v)
-                     (async/timeout 15000) :timeout)))))
-
-      ;; add a function to send a jsonrpc request
-      (assoc x
-             :request
-             (fn [message]
-               (let [id (swap! counter inc)
-                     c (async/promise-chan)]
-                 (swap! response-promises assoc id c)
-                 (try
-                   (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n\n"))
-                   (catch Throwable t
-                     (println "error closing " t)))
-                 c))
-             :notification
-             (fn [message]
+       ;; add a function to send a jsonrpc request
+    (assoc x
+           :request
+           (fn [message]
+             (let [id (swap! counter inc)
+                   c (async/promise-chan)]
+               (swap! response-promises assoc id c)
                (try
-                 (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
+                 (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :id id :jsonrpc "2.0")) "\n\n"))
                  (catch Throwable t
-                   (println "error closing " t))))
-             :dead-channel dead-channel
-             :remove (fn []
-                       (docker/kill-container x)
-                       (docker/delete x))))))
+                   (logger/error (format "error writing to container stdin: %s" t))))
+               c))
+           :notification
+           (fn [message]
+             (try
+               (docker/write-to-stdin socket-channel (str (json/generate-string (assoc message :jsonrpc "2.0")) "\n\n"))
+               (catch Throwable t
+                 (logger/error (format "error writing to container stdin: %s" t)))))
+           :dead-channel dead-channel
+           :remove (fn []
+                     (docker/kill-container x)
+                     (docker/delete x)))))
 
 (defn with-running-mcp
   "send a message to an mcp server and then shuts it down
@@ -121,12 +132,13 @@
         (try
           (let [{:keys [initialized response]}
                 (async/alt!
-                  (request {:method "initialize" :params {:protocolVersion "2024-11-05"
-                                                          :capabilities {:tools {}
-                                                                         :resources {}}
-                                                          :clientInfo {:name "docker"
-                                                                       :version "0.1.0"}}}) ([v _] {:initialized true
-                                                                                                    :response v})
+                  (request {:method "initialize"
+                            :params {:protocolVersion "2024-11-05"
+                                     :capabilities {:tools {}
+                                                    :resources {}}
+                                     :clientInfo {:name "docker"
+                                                  :version "0.1.0"}}}) ([v _] {:initialized true
+                                                                               :response v})
                   dead-channel ([v _] v)
                   (async/timeout 15000) :timeout)]
             (if (true? initialized)
@@ -385,7 +397,7 @@
         (let [container-processors
               (->> resource-factory
                    (filter :list-resource-templates)
-                   (map (fn [{:keys [list-resource-templates]}] 
+                   (map (fn [{:keys [list-resource-templates]}]
                           (list-resource-templates c cursor 100)))
                    (async/merge)
                    (async/into []))]
@@ -395,7 +407,7 @@
           (async/close! c)))
       c)))
 
-(defn resource-templates-function-factory 
+(defn resource-templates-function-factory
   "construct a function that gets resource templates from a container MCP
      return a channel to emit resource templates."
   [container-definition]
