@@ -143,8 +143,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         <Tab label={<Badge variant='dot' invisible={!noConfiguredClients} badgeContent={"TEST"} color="error">
                             Clients
                         </Badge>} />
-
-                        <Tab label="Settings" />
                     </Tabs>
                     {
                         tab === 0 && <Stack direction="row" spacing={1} alignItems='center' sx={{ mt: 1, py: 1, ...CATALOG_LAYOUT_SX }}>

@@ -128,26 +128,6 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
         />
       )}
 
-      {/* Show a small loading indicator in the top right during background refetching */}
-      {isDataFetching && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 16,
-            right: 16,
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: 'background.paper',
-            borderRadius: 2,
-            padding: 1,
-            boxShadow: 3
-          }}
-        >
-          <CircularProgress size={20} />
-          <Typography sx={{ ml: 1 }} variant="caption">Syncing...</Typography>
-        </Box>
-      )}
       <CatalogGrid
         setConfiguringItem={setConfiguringItem}
         showSettings={() => setSettings({ ...settings, showModal: true })}
