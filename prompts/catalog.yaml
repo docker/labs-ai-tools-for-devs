@@ -485,4 +485,753 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
     secrets:
     - {name: github.personal_access_token}
-
+  armor-crypto:
+    description: "The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: add_wallets_to_group}
+    - {name: archive_wallet_group}
+    - {name: archive_wallets}
+    - {name: cancel_dca_order}
+    - {name: conversion_api}
+    - {name: create_dca_order}
+    - {name: create_groups}
+    - {name: create_wallet}
+    - {name: get_all_wallets}
+    - {name: get_armor_mcp_version}
+    - {name: get_token_details}
+    - {name: get_wallet_token_balance}
+    - {name: list_dca_orders}
+    - {name: list_groups}
+    - {name: list_single_group}
+    - {name: remove_wallets_from_group}
+    - {name: swap_quote}
+    - {name: swap_transaction}
+    - {name: transfer_tokens}
+    - {name: unarchive_wallet_group}
+    - {name: unarchive_wallets}
+    secrets:
+      - {name: armor-crypto.api_key}
+    config:
+      - name: armor-crypto
+        description: The MCP server needs to be configured
+        parameters:
+          api_url:
+            type: string
+        required:
+          - api_url
+    prompts: 0
+    resources: {}
+  atlas-docs:
+    description: "Provide LLMs hosted, clean markdown documentation of libraries and frameworks"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlas-docs.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: get_docs_full}
+    - {name: get_docs_index}
+    - {name: get_docs_page}
+    - {name: list_docs}
+    - {name: search_docs}
+    config:
+      - name: atlas-docs
+        description: The MCP server needs to be configured
+        parameters:
+          api_url:
+            type: string
+        required:
+          - api_url
+    prompts: 0
+    resources: {}
+  audiense-insights:
+    description: "Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/audiense-insights.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: compare-audience-influencers}
+    - {name: get-audience-content}
+    - {name: get-audience-insights}
+    - {name: get-baselines}
+    - {name: get-categories}
+    - {name: get-report-info}
+    - {name: get-reports}
+    - {name: report-summary}
+    secrets:
+      - {name: audiense-insights.client_secret}
+      - {name: audiense-insights.twitter_bearer_token}
+    config:
+      - name: audiense-insights
+        description: The MCP server needs to be configured
+        parameters:
+          client_id:
+            type: string
+        required:
+          - client_id
+    prompts: 0
+    resources: {}
+  basic-memory:
+    description: "Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: build_context}
+    - {name: canvas}
+    - {name: delete_note}
+    - {name: project_info}
+    - {name: read_content}
+    - {name: read_note}
+    - {name: recent_activity}
+    - {name: search_notes}
+    - {name: write_note}
+    prompts: 0
+    resources: {}
+  bitrefill:
+    description: "A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/bitrefill.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: categories}
+    - {name: create_invoice}
+    - {name: detail}
+    - {name: get_account_balance}
+    - {name: get_invoice}
+    - {name: get_invoices}
+    - {name: get_order}
+    - {name: get_orders}
+    - {name: pay_invoice}
+    - {name: ping}
+    - {name: search}
+    - {name: unseal_order}
+    secrets:
+      - {name: bitrefill.api_secret}
+    config:
+      - name: bitrefill
+        description: The MCP server needs to be configured
+        parameters:
+          api_id:
+            type: string
+        required:
+          - api_id
+    prompts: 0
+    resources: {}
+  chroma:
+    description: "A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/chroma.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: chroma_add_documents}
+    - {name: chroma_create_collection}
+    - {name: chroma_delete_collection}
+    - {name: chroma_delete_documents}
+    - {name: chroma_get_collection_count}
+    - {name: chroma_get_collection_info}
+    - {name: chroma_get_documents}
+    - {name: chroma_list_collections}
+    - {name: chroma_modify_collection}
+    - {name: chroma_peek_collection}
+    - {name: chroma_query_documents}
+    - {name: chroma_update_documents}
+    secrets:
+      - {name: chroma.api_key}
+    prompts: 0
+    resources: {}
+  cyreslab-ai-shodan:
+    description: "A Model Context Protocol server that provides access to Shodan API functionality"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/cyreslab-ai-shodan.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: get_host_info}
+    - {name: get_ssl_info}
+    - {name: scan_network_range}
+    - {name: search_iot_devices}
+    - {name: search_shodan}
+    secrets:
+      - {name: cyreslab-ai-shodan.api_key}
+    prompts: 0
+    resources: {}
+  dart:
+    description: "Dart AI Model Context Protocol (MCP) server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dart.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create_doc}
+    - {name: create_task}
+    - {name: delete_doc}
+    - {name: delete_task}
+    - {name: get_config}
+    - {name: get_doc}
+    - {name: get_task}
+    - {name: list_docs}
+    - {name: list_tasks}
+    - {name: update_doc}
+    - {name: update_task}
+    secrets:
+      - {name: dart.token}
+    config:
+      - name: dart
+        description: The MCP server needs to be configured
+        parameters:
+          host:
+            type: string
+        required:
+          - host
+    prompts: 0
+    resources: {}
+  databutton:
+    description: "Databutton MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/databutton.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: submit_app_requirements}
+    prompts: 0
+    resources: {}
+  descope:
+    description: "The Descope Model Context Protocol (MCP) server provides an interface to interact with Descope's Management APIs, enabling the search and retrieval of project-related information."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/descope.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-user}
+    - {name: invite-user}
+    - {name: search-audits}
+    - {name: search-users}
+    secrets:
+      - {name: descope.management_key}
+    config:
+      - name: descope
+        description: The MCP server needs to be configured
+        parameters:
+          project_id:
+            type: string
+        required:
+          - project_id
+    prompts: 0
+    resources: {}
+  devhub-cms:
+    description: "DevHub CMS LLM integration through the Model Context Protocol"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/devhub-cms.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create_blog_post}
+    - {name: get_blog_post}
+    - {name: get_businesses}
+    - {name: get_hours_of_operation}
+    - {name: get_locations}
+    - {name: get_nearest_location}
+    - {name: site_from_url}
+    - {name: update_blog_post}
+    - {name: update_hours}
+    - {name: upload_image}
+    secrets:
+      - {name: devhub-cms.api_key}
+      - {name: devhub-cms.api_secret}
+    config:
+      - name: devhub-cms
+        description: The MCP server needs to be configured
+        parameters:
+          url:
+            type: string
+        required:
+          - url
+    prompts: 0
+    resources: {}
+  e2b:
+    description: "Giving Claude ability to run code with E2B via MCP (Model Context Protocol)"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/e2b.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: run_code}
+    secrets:
+      - {name: e2b.api_key}
+    prompts: 0
+    resources: {}
+  exa:
+    description: "Claude can perform Web Search | Exa with MCP (Model Context Protocol)"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: web_search}
+    secrets:
+      - {name: exa.api_key}
+    prompts: 0
+    resources: {}
+  firecrawl:
+    description: "Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/firecrawl.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: firecrawl_batch_scrape}
+    - {name: firecrawl_check_batch_status}
+    - {name: firecrawl_check_crawl_status}
+    - {name: firecrawl_crawl}
+    - {name: firecrawl_deep_research}
+    - {name: firecrawl_extract}
+    - {name: firecrawl_generate_llmstxt}
+    - {name: firecrawl_map}
+    - {name: firecrawl_scrape}
+    - {name: firecrawl_search}
+    secrets:
+      - {name: firecrawl.api_key}
+    config:
+      - name: firecrawl
+        description: The MCP server needs to be configured
+        parameters:
+          url:
+            type: string
+          retry_max:
+            type: string
+          retry_delay:
+            type: string
+          retry_max_delay:
+            type: string
+          retry_backoff_factor:
+            type: string
+          credit_warning_threshold:
+            type: string
+          credit_critical_threshold:
+            type: string
+        required:
+          - url
+          - retry_max
+          - retry_delay
+          - retry_max_delay
+          - retry_backoff_factor
+          - credit_warning_threshold
+          - credit_critical_threshold
+    prompts: 0
+    resources: {}
+  github-chat:
+    description: "A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-chat.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: index_repository}
+    - {name: query_repository}
+    secrets:
+      - {name: github-chat.api_key}
+    prompts: 0
+    resources: {}
+  glif:
+    description: "Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: glif_info}
+    - {name: list_bots}
+    - {name: list_featured_glifs}
+    - {name: list_saved_glif_tools}
+    - {name: load_bot}
+    - {name: my_glif_user_info}
+    - {name: my_glifs}
+    - {name: remove_all_glif_tools}
+    - {name: remove_glif_tool}
+    - {name: run_glif}
+    - {name: save_bot_skills_as_tools}
+    - {name: save_glif_as_tool}
+    - {name: search_glifs}
+    - {name: show_bot_info}
+    secrets:
+      - {name: glif.api_token}
+    config:
+      - name: glif
+        description: The MCP server needs to be configured
+        parameters:
+          ids:
+            type: string
+          ignored_saved:
+            type: string
+        required:
+          - ids
+          - ignored_saved
+    prompts: 0
+    resources: {}
+  handwriting-ocr:
+    description: "Model Context Protocol (MCP) Server for Handwriting OCR"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/handwriting-ocr.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: check_status}
+    - {name: get_text}
+    - {name: upload_document}
+    secrets:
+      - {name: handwriting-ocr.api_token}
+    prompts: 0
+    resources: {}
+  hyperbrowser:
+    description: "A MCP server implementation for hyperbrowser"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperbrowser.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: browser_use_agent}
+    - {name: claude_computer_use_agent}
+    - {name: crawl_webpages}
+    - {name: extract_structured_data}
+    - {name: openai_computer_use_agent}
+    - {name: scrape_webpage}
+    - {name: search_with_bing}
+    secrets:
+      - {name: hyperbrowser.api_key}
+    config:
+      - name: hyperbrowser
+        description: The MCP server needs to be configured
+        parameters:
+          use_resources:
+            type: string
+          collection:
+            type: string
+        required:
+          - use_resources
+          - collection
+    prompts: 0
+    resources: {}
+  hyperspell:
+    description: "Hyperspell MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperspell.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: Add File}
+    - {name: Add Memory}
+    - {name: Search Hyperspell}
+    secrets:
+      - {name: hyperspell.token}
+    config:
+      - name: hyperspell
+        description: The MCP server needs to be configured
+        parameters:
+          use_resources:
+            type: string
+          collection:
+            type: string
+        required:
+          - use_resources
+          - collection
+    prompts: 0
+    resources: {}
+  iaptic:
+    description: "Model Context Protocol server for interacting with iaptic"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: customer_add_purchase}
+    - {name: customer_get}
+    - {name: customer_list}
+    - {name: customer_subscription}
+    - {name: customer_transactions}
+    - {name: event_list}
+    - {name: iaptic_current_app}
+    - {name: iaptic_reset_app}
+    - {name: iaptic_switch_app}
+    - {name: purchase_get}
+    - {name: purchase_list}
+    - {name: stats_app}
+    - {name: stats_get}
+    - {name: stripe_prices}
+    - {name: transaction_get}
+    - {name: transaction_list}
+    secrets:
+      - {name: iaptic.api_key}
+    config:
+      - name: iaptic
+        description: The MCP server needs to be configured
+        parameters:
+          app_name:
+            type: string
+        required:
+          - app_name
+    prompts: 0
+    resources: {}
+  kagisearch:
+    description: "A Model Context Protocol (MCP) server for Kagi search & other tools."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kagisearch.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: kagi_search_fetch}
+    - {name: kagi_summarizer}
+    secrets:
+      - {name: kagisearch.api_key}
+    config:
+      - name: kagisearch
+        description: The MCP server needs to be configured
+        parameters:
+          engine:
+            type: string
+        required:
+          - engine
+    prompts: 0
+    resources: {}
+  multiversx-mx:
+    description: "MCP Server for MultiversX"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/multiversx-mx.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-sft-nft-mesdt-tokens}
+    - {name: create-wallet}
+    - {name: get-balance-of-address}
+    - {name: get-network}
+    - {name: get-tokens-of-address}
+    - {name: get-wallet-address}
+    - {name: issue-fungible-token}
+    - {name: issue-meta-esdt-collection}
+    - {name: issue-nft-collection}
+    - {name: issue-semi-fungible-collection}
+    - {name: send-egld}
+    - {name: send-egld-to-multiple-receivers}
+    - {name: send-fungible-tokens}
+    - {name: send-sft-nft-meta-tokens}
+    config:
+      - name: multiversx-mx
+        description: The MCP server needs to be configured
+        parameters:
+          network:
+            type: string
+          wallet:
+            type: string
+        required:
+          - network
+          - wallet
+    prompts: 0
+    resources: {}
+  neon:
+    description: "MCP server for interacting with Neon Management API and databases"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neon.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: __node_version}
+    - {name: complete_database_migration}
+    - {name: create_branch}
+    - {name: create_project}
+    - {name: delete_branch}
+    - {name: delete_project}
+    - {name: describe_branch}
+    - {name: describe_project}
+    - {name: describe_table_schema}
+    - {name: get_connection_string}
+    - {name: get_database_tables}
+    - {name: list_projects}
+    - {name: prepare_database_migration}
+    - {name: provision_neon_auth}
+    - {name: run_sql}
+    - {name: run_sql_transaction}
+    secrets:
+      - {name: neon.api_key}
+    prompts: 0
+    resources: {}
+  neondatabase-labs:
+    description: "MCP server for interacting with Neon Management API and databases"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neondatabase-labs.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: __node_version}
+    - {name: complete_database_migration}
+    - {name: create_branch}
+    - {name: create_project}
+    - {name: delete_branch}
+    - {name: delete_project}
+    - {name: describe_branch}
+    - {name: describe_project}
+    - {name: describe_table_schema}
+    - {name: get_connection_string}
+    - {name: get_database_tables}
+    - {name: list_projects}
+    - {name: prepare_database_migration}
+    - {name: provision_neon_auth}
+    - {name: run_sql}
+    - {name: run_sql_transaction}
+    secrets:
+      - {name: neondatabase-labs.api_key}
+    prompts: 0
+    resources: {}
+  octomind:
+    description: "An MCP server for octomind tools, resources and prompts"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/octomind.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: createEnvironment}
+    - {name: createTestTarget}
+    - {name: deleteEnvironment}
+    - {name: deleteTestTarget}
+    - {name: discovery}
+    - {name: executeTests}
+    - {name: getEnvironments}
+    - {name: getPrivateLocations}
+    - {name: getTestCase}
+    - {name: getTestReport}
+    - {name: getTestReports}
+    - {name: getTestTargets}
+    - {name: getVersion}
+    - {name: search}
+    - {name: updateEnvironment}
+    - {name: updateTestTarget}
+    secrets:
+      - {name: octomind.api_key}
+    prompts: 0
+    resources: {}
+  opik:
+    description: "Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/opik.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-project}
+    - {name: create-prompt}
+    - {name: create-prompt-version}
+    - {name: delete-project}
+    - {name: delete-prompt}
+    - {name: get-metrics}
+    - {name: get-opik-examples}
+    - {name: get-opik-help}
+    - {name: get-opik-tracing-info}
+    - {name: get-project-by-id}
+    - {name: get-prompt-by-id}
+    - {name: get-server-info}
+    - {name: get-trace-by-id}
+    - {name: get-trace-stats}
+    - {name: list-projects}
+    - {name: list-prompts}
+    - {name: list-traces}
+    - {name: update-project}
+    - {name: update-prompt}
+    secrets:
+      - {name: opik.api_key}
+    config:
+      - name: opik
+        description: The MCP server needs to be configured
+        parameters:
+          api_base_url:
+            type: string
+          workspace_name:
+            type: string
+        required:
+          - api_base_url
+          - workspace_name
+    prompts: 0
+    resources: {}
+  osp_marketing_tools:
+    description: "A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/osp_marketing_tools.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: get_editing_codes}
+    - {name: get_meta_guide}
+    - {name: get_on_page_seo_guide}
+    - {name: get_value_map_positioning_guide}
+    - {name: get_writing_guide}
+    - {name: health_check}
+    prompts: 0
+    resources: {}
+  oxylabs:
+    description: "A Model Context Protocol (MCP) server that enables AI assistants like Claude to seamlessly access web data through Oxylabs' powerful web scraping technology."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/oxylabs.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: oxylabs_scraper}
+    - {name: oxylabs_web_unblocker}
+    secrets:
+      - {name: oxylabs.password}
+    config:
+      - name: oxylabs
+        description: The MCP server needs to be configured
+        parameters:
+          username:
+            type: string
+        required:
+          - username
+    prompts: 0
+    resources: {}
+  scrapegraph:
+    description: "ScapeGraph MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapegraph.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: markdownify}
+    - {name: searchscraper}
+    - {name: smartscraper}
+    secrets:
+      - {name: scrapegraph.api_key}
+    prompts: 0
+    resources: {}
+  scrapezy:
+    description: "A Model Context Protocol server for Scrapezy that enables AI models to extract structured data from websites."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapezy.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: extract-structured-data}
+    secrets:
+      - {name: scrapezy.auth_token}
+    prompts: 0
+    resources: {}
+  shopify:
+    description: "Shopify.dev MCP server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/shopify.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: introspect_admin_schema}
+    - {name: search_dev_docs}
+    prompts: 0
+    resources: {}
+  tavily:
+    description: "The Tavily MCP server provides seamless interaction with the tavily-search and tavily-extract tools, real-time web search capabilities through the tavily-search tool and Intelligent data extraction from web pages via the tavily-extract tool."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tavily.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: tavily-extract}
+    - {name: tavily-search}
+    secrets:
+      - {name: tavily.api_token}
+    prompts: 0
+    resources: {}
+  tembo:
+    description: "MCP server for Tembo Cloud's platform API"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tembo.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: ask_tembo}
+    - {name: create_instance}
+    - {name: delete_instance}
+    - {name: get_all_apps}
+    - {name: get_all_instances}
+    - {name: get_app}
+    - {name: get_instance}
+    - {name: get_instance_schema}
+    - {name: patch_instance}
+    - {name: restore_instance}
+    secrets:
+      - {name: tembo.api_token}
+    prompts: 0
+    resources: {}
+  triplewhale:
+    description: "Triplewhale MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/triplewhale.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: moby}
+    secrets:
+      - {name: triplewhale.api_key}
+    prompts: 0
+    resources: {}
+  tweetbinder:
+    description: "TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tweetbinder.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-twitter-count}
+    - {name: create-twitter-report}
+    - {name: get-account-balances}
+    - {name: get-report-content}
+    - {name: get-report-stats}
+    - {name: get-report-status}
+    - {name: list-reports}
+    secrets:
+      - {name: tweetbinder.api_token}
+    prompts: 0
+    resources: {}
+  veyrax:
+    description: "VeyraX MCP is the only connection you need to access all your tools in any MCP-compatible environment."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/veyrax.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: get_flow}
+    - {name: get_tools}
+    - {name: tool_call}
+    secrets:
+      - {name: veyrax.api_key}
+    prompts: 0
+    resources: {}
