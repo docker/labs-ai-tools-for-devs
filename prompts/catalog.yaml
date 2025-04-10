@@ -315,18 +315,6 @@ registry:
     - {name: set_trigger_state}
     prompts: 0
     resources: {}
-  perplexity-ask:
-    description: |
-      integrates the Sonar API to provide Claude with unparalleled real-time, web-wide research.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/perplexity.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    secrets:
-    - {name: perplexity-ask.api_key}
-    tools:
-    - {name: perplexity_ask}
-    prompts: 0
-    resources: {}
   bootstrap:
     description: |
       Bootstrap new tools from your MCP client
@@ -516,24 +504,34 @@ registry:
     - {name: add_wallets_to_group}
     - {name: archive_wallet_group}
     - {name: archive_wallets}
+    - {name: calculator}
     - {name: cancel_dca_order}
+    - {name: cancel_order}
     - {name: conversion_api}
     - {name: create_dca_order}
     - {name: create_groups}
+    - {name: create_order}
     - {name: create_wallet}
+    - {name: get_all_orders}
     - {name: get_all_wallets}
     - {name: get_armor_mcp_version}
+    - {name: get_stake_balances}
     - {name: get_token_details}
+    - {name: get_top_trending_tokens}
     - {name: get_wallet_token_balance}
     - {name: list_dca_orders}
     - {name: list_groups}
     - {name: list_single_group}
     - {name: remove_wallets_from_group}
+    - {name: stake_quote}
+    - {name: stake_transaction}
     - {name: swap_quote}
     - {name: swap_transaction}
     - {name: transfer_tokens}
     - {name: unarchive_wallet_group}
     - {name: unarchive_wallets}
+    - {name: unstake_quote}
+    - {name: unstake_transaction}
     secrets:
       - {name: armor-crypto.api_key}
     config:
@@ -1086,32 +1084,6 @@ registry:
       - {name: neondatabase-labs.api_key}
     prompts: 0
     resources: {}
-  octomind:
-    description: "An MCP server for octomind tools, resources and prompts"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/octomind.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/octomind.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: createEnvironment}
-    - {name: createTestTarget}
-    - {name: deleteEnvironment}
-    - {name: deleteTestTarget}
-    - {name: discovery}
-    - {name: executeTests}
-    - {name: getEnvironments}
-    - {name: getPrivateLocations}
-    - {name: getTestCase}
-    - {name: getTestReport}
-    - {name: getTestReports}
-    - {name: getTestTargets}
-    - {name: getVersion}
-    - {name: search}
-    - {name: updateEnvironment}
-    - {name: updateTestTarget}
-    secrets:
-      - {name: octomind.api_key}
-    prompts: 0
-    resources: {}
   opik:
     description: "Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/opik.md
@@ -1184,6 +1156,19 @@ registry:
             type: string
         required:
           - username
+    prompts: 0
+    resources: {}
+  perplexity-ask:
+    description: "A Model Context Protocol Server connector for Perplexity API, to enable web search without leaving the MCP ecosystem."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/perplexity-ask.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: perplexity_ask}
+    - {name: perplexity_reason}
+    - {name: perplexity_research}
+    secrets:
+      - {name: perplexity-ask.api_key}
     prompts: 0
     resources: {}
   scrapegraph:
@@ -1291,5 +1276,154 @@ registry:
     - {name: tool_call}
     secrets:
       - {name: veyrax.api_key}
+    prompts: 0
+    resources: {}
+  box:
+    description: "An MCP server capable of interacting with the Box API"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: box_ai_extract_data}
+    - {name: box_ask_ai_tool}
+    - {name: box_ask_ai_tool_multi_file}
+    - {name: box_authorize_app_tool}
+    - {name: box_download_file_tool}
+    - {name: box_list_folder_content_by_folder_id}
+    - {name: box_manage_folder_tool}
+    - {name: box_read_tool}
+    - {name: box_search_folder_by_name}
+    - {name: box_search_tool}
+    - {name: box_upload_file_tool}
+    - {name: box_who_am_i}
+    secrets:
+      - {name: box.client_id}
+      - {name: box.client_secret}
+    prompts: 0
+    resources: {}
+  astra-db:
+    description: "An MCP server for Astra DB workloads"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: BulkCreateRecords}
+    - {name: BulkDeleteRecords}
+    - {name: BulkUpdateRecords}
+    - {name: CreateCollection}
+    - {name: CreateRecord}
+    - {name: DeleteCollection}
+    - {name: DeleteRecord}
+    - {name: EstimateDocumentCount}
+    - {name: FindRecord}
+    - {name: GetCollections}
+    - {name: GetRecord}
+    - {name: HelpAddToClient}
+    - {name: ListRecords}
+    - {name: OpenBrowser}
+    - {name: UpdateCollection}
+    - {name: UpdateRecord}
+    secrets:
+      - {name: astra-db.applicatin_token}
+    config:
+      - name: astra-db
+        description: The MCP server needs to be configured
+        parameters:
+          endpoint:
+            type: string
+        required:
+          - endpoint
+    prompts: 0
+    resources: {}
+  redis-cloud:
+    description: "MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis-cloud.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis-cloud.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-essential-subscription}
+    - {name: create-pro-database}
+    - {name: create-pro-subscription}
+    - {name: delete-essential-subscription}
+    - {name: get-current-account}
+    - {name: get-current-payment-methods}
+    - {name: get-database-modules}
+    - {name: get-essential-subscription-by-id}
+    - {name: get-essential-subscriptions}
+    - {name: get-essentials-plans}
+    - {name: get-pro-databases}
+    - {name: get-pro-plans-regions}
+    - {name: get-pro-subscription}
+    - {name: get-pro-subscriptions}
+    - {name: get-task-by-id}
+    - {name: get-tasks}
+    secrets:
+      - {name: redis-cloud.api_key}
+      - {name: redis-cloud.secret_key}
+    prompts: 0
+    resources: {}
+  elasticsearch:
+    description: "Interact with your Elasticsearch indices through natural language conversations."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elasticsearch.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: get_mappings}
+    - {name: get_shards}
+    - {name: list_indices}
+    - {name: search}
+    secrets:
+      - {name: elasticsearch.api_key}
+    config:
+      - name: elasticsearch
+        description: The MCP server needs to be configured
+        parameters:
+          url:
+            type: string
+        required:
+          - url
+    prompts: 0
+    resources: {}
+  heroku:
+    description: "Heroku Platform MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create_addon}
+    - {name: create_app}
+    - {name: deploy_to_heroku}
+    - {name: get_addon_info}
+    - {name: get_app_info}
+    - {name: get_app_logs}
+    - {name: list_addon_plans}
+    - {name: list_addon_services}
+    - {name: list_addons}
+    - {name: list_apps}
+    - {name: list_private_spaces}
+    - {name: list_teams}
+    - {name: maintenance_off}
+    - {name: maintenance_on}
+    - {name: pg_backups}
+    - {name: pg_credentials}
+    - {name: pg_info}
+    - {name: pg_kill}
+    - {name: pg_locks}
+    - {name: pg_maintenance}
+    - {name: pg_outliers}
+    - {name: pg_ps}
+    - {name: pg_psql}
+    - {name: pg_upgrade}
+    - {name: pipelines_create}
+    - {name: pipelines_info}
+    - {name: pipelines_list}
+    - {name: pipelines_promote}
+    - {name: ps_list}
+    - {name: ps_restart}
+    - {name: ps_scale}
+    - {name: rename_app}
+    - {name: transfer_app}
+    secrets:
+      - {name: heroku.api_key}
     prompts: 0
     resources: {}
