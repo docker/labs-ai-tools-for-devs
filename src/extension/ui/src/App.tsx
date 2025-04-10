@@ -1,7 +1,7 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Stack, Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
-import { CatalogItemWithName } from './components/tile/Tile';
+import { Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
+import { CatalogItemWithName } from './types/catalog';
 import { Close } from '@mui/icons-material';
 import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
@@ -9,27 +9,8 @@ import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
 import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
 import ConfigurationModal from './components/ConfigurationModal';
-import { Settings as SettingsIcon } from '@mui/icons-material';
 
 const Settings = React.lazy(() => import('./components/Settings'));
-
-// Create lazy-loaded logo components
-const LazyDarkLogo = React.lazy(() => import('./components/DarkLogo'));
-const LazyLightLogo = React.lazy(() => import('./components/LightLogo'));
-
-// Logo component that uses Suspense for conditional loading
-const Logo = () => {
-  const theme = useTheme();
-  const isDarkMode = theme.palette.mode === 'dark';
-
-  return (
-    <Suspense fallback={<Box sx={{ height: '5em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={24} /></Box>}>
-      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-        {isDarkMode ? <LazyDarkLogo /> : <LazyLightLogo />}
-      </Box>
-    </Suspense>
-  );
-}
 
 export const client = createDockerDesktopClient();
 
@@ -112,7 +93,7 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
       </Paper>
     );
   }
-
+  const isDataFetching = imagesIsFetching || secretsLoading || catalogLoading || registryLoading || mcpFetching;
   return (
     <>
       {settings.showModal && (
@@ -147,39 +128,10 @@ function AppContent({ settings, setSettings, configuringItem, setConfiguringItem
         />
       )}
 
-      {/* Show a small loading indicator in the corner during background refetching */}
-      {(imagesIsFetching || secretsLoading || catalogLoading || registryLoading || mcpFetching) && (
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: 'background.paper',
-            borderRadius: 2,
-            padding: 1,
-            boxShadow: 3
-          }}
-        >
-          <CircularProgress size={20} sx={{ mr: 1 }} />
-          <Typography variant="caption">Refreshing data...</Typography>
-        </Box>
-      )}
-
-      <Stack direction="column" spacing={1} justifyContent='center' alignItems='center'>
-        <Stack direction="row" spacing={1} justifyContent='space-evenly' alignItems='center' sx={{ width: '100%', maxWidth: '1000px' }}>
-          <Logo />
-          <IconButton sx={{ ml: 2, alignSelf: 'flex-end', justifyContent: 'flex-end' }} onClick={() => setSettings({ ...settings, showModal: true })}>
-            <SettingsIcon sx={{ fontSize: '1.5em' }} />
-          </IconButton>
-        </Stack>
-        <CatalogGrid
-          setConfiguringItem={setConfiguringItem}
-          showSettings={() => setSettings({ ...settings, showModal: true })}
-        />
-      </Stack>
+      <CatalogGrid
+        setConfiguringItem={setConfiguringItem}
+        showSettings={() => setSettings({ ...settings, showModal: true })}
+      />
     </>
   );
 }

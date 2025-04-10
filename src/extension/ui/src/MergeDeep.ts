@@ -1,7 +1,4 @@
-/**
- * Type for any object with string keys
- */
-export type DeepObject = { [key: string]: any };
+import { DeepObject } from './types/utils';
 
 /**
  * Simple object check.

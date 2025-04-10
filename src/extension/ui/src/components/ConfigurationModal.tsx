@@ -1,13 +1,15 @@
 import { Badge, Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Stack, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
 import { LockReset, Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { CatalogItemWithName } from "./tile/Tile";
+import { CatalogItemWithName } from "../types/catalog";
 import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
 import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react";
 import { useCatalogContext } from "../context/CatalogContext";
 import { useConfigContext } from "../context/ConfigContext";
-import { DeepObject, mergeDeep } from "../MergeDeep";
+import { mergeDeep } from "../MergeDeep";
+import { DeepObject } from "../types/utils";
+import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameter, ParsedParameterArray, ParsedParameterObject, ParsedParameters, Config } from "../types/config";
 
 // Styles for the tab panel
 interface TabPanelProps {
@@ -37,40 +39,8 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-// Define types (moved from PromptConfig.tsx)
+// Define types reference
 const types = ['string', 'number', 'boolean', 'array', 'object'] as const;
-
-export type Parameter = {
-    type?: typeof types[number];
-    description?: string;
-};
-
-export type ParameterArray = {
-    type: 'array';
-    items: Parameter;
-    description?: string;
-};
-
-export type ParameterObject = {
-    type: 'object';
-    properties: {
-        [key: string]: Parameter;
-    };
-    description?: string;
-};
-
-export type Parameters = Parameter | ParameterArray | ParameterObject;
-
-export type ParsedParameter = any;
-export type ParsedParameterArray = any[];
-export type ParsedParameterObject = Record<string, any>;
-export type ParsedParameters = any;
-
-export type Config = {
-    name: string;
-    description: string;
-    parameters: Parameters
-}[];
 
 // Given a path in parsed JSON, returns the type of the value at that path from the tile's config
 const jsonEditorTypeFilterFunction = ({ path }: NodeData, config: Config[number]['parameters']) => {
@@ -264,7 +234,7 @@ const ConfigurationModal = ({
                         {/* Configuration Tab */}
                         {hasConfig && (
                             <TabPanel value={tabValue} index={hasSecrets ? 1 : 0}>
-                                {catalogItem.config!.map(config => (
+                                {catalogItem.config!.map((config: Config[number]) => (
                                     <JsonEditor
                                         key={config.name}
                                         theme={theme.palette.mode === 'dark' ? githubDarkTheme : githubLightTheme}

@@ -49,6 +49,10 @@ type addOptions struct {
 	Value string
 }
 
+type deleteOptions struct {
+	Name string
+}
+
 func AddSecret(ctx context.Context) *cobra.Command {
 	opts := &addOptions{}
 	cmd := &cobra.Command{
@@ -79,6 +83,19 @@ func ListSecrets(ctx context.Context) *cobra.Command {
 	return cmd
 }
 
+func DeleteSecret(ctx context.Context) *cobra.Command {
+	opts := &deleteOptions{}
+	cmd := &cobra.Command{
+		Use:   "delete",
+		Short: "Delete a secret",
+		Args:  cobra.NoArgs,
+	}
+	flags := cmd.Flags()
+	flags.StringVarP(&opts.Name, "name", "n", "", "Name of the secret")
+	_ = cmd.MarkFlagRequired("name")
+	return cmd
+}
+
 const mcpPolicyName = "MCP"
 
 func runAddSecret(ctx context.Context, opts addOptions) error {
@@ -102,6 +119,14 @@ func runListSecrets(ctx context.Context) error {
 		return err
 	}
 	return json.NewEncoder(os.Stdout).Encode(secrets)
+}
+
+func runDeleteSecret(ctx context.Context, opts deleteOptions) error {
+	c, err := newApiClient()
+	if err != nil {
+		return err
+	}
+	return c.DeleteSecret(ctx, opts.Name)
 }
 
 func assertMcpPolicyExists(ctx context.Context, apiClient client.ApiClient) error {

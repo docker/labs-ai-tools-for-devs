@@ -1,25 +1,10 @@
 // From secrets.yaml
 
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from "./components/tile/Tile";
+import { CatalogItemWithName } from "./types/catalog";
+import { Secret, StoredSecret, Policy } from "./types/secrets";
 
 namespace Secrets {
-    export type Secret = {
-        name: string;
-        value: string;
-        policies: string[];
-    }
-
-    export type StoredSecret = {
-        name: string;
-        policies: string[];
-    }
-
-    export type Policy = {
-        name: string;
-        images: string[];
-    }
-
     export async function getSecrets(client: v1.DockerDesktopClient): Promise<Secret[]> {
         const response = await client.extension.host?.cli.exec('host-binary', ['list']);
         if (!response) {

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from '../components/tile/Tile';
+import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
@@ -10,7 +10,7 @@ import { stringify } from 'yaml';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConfigContext } from './ConfigContext';
-
+import { Secret } from '../types/secrets';
 // Storage keys for each query type
 const STORAGE_KEYS = {
     secrets: 'docker-catalog-secrets',
@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
 
 interface CatalogContextType {
     // State        
-    secrets: Secrets.Secret[];
+    secrets: Secret[];
     catalogItems: CatalogItemWithName[];
     registryItems: { [key: string]: { ref: string; config: any } } | undefined;
     canRegister: boolean;

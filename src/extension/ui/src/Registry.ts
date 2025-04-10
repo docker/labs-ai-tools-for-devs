@@ -1,8 +1,8 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from "yaml";
 import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileWatcher";
-import { ParsedParameters } from "./components/ConfigurationModal";
 import { mergeDeep } from "./MergeDeep";
+import { ParsedParameters } from "./types/config";
 
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const parseRegistry = async () => {

@@ -1,6 +1,7 @@
 /**
  * Anonymous tracking event for registry changes
  */
+import { RegistryChangedRecord, ClaudeConfigChangedRecord } from './types/config';
 
 interface Record {
     event: string;
@@ -9,28 +10,12 @@ interface Record {
     source: string;
 };
 
-export interface RegistryChangedRecord extends Record {
-    event: 'registry-changed';
-    properties: {
-        name: string;
-        ref: string;
-        action: 'remove' | 'add';
-    };
-};
-
-export interface ClaudeConfigChangedRecord extends Record {
-    event: 'claude-config-changed';
-    properties: {
-        action: 'add' | 'remove' | 'write' | 'delete';
-    };
-};
-
 const eventsQueue: Record[] = [];
 
 let processInterval: NodeJS.Timeout;
 
-type Event = (RegistryChangedRecord | ClaudeConfigChangedRecord)['event'];
-type Properties = (RegistryChangedRecord | ClaudeConfigChangedRecord)['properties'];
+type Event = 'registry-changed' | 'claude-config-changed';
+type Properties = RegistryChangedRecord['properties'] | ClaudeConfigChangedRecord['properties'];
 
 export const trackEvent = (event: Event, properties: Properties) => {
     const record: Record = {

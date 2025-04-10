@@ -1,16 +1,14 @@
-import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Stack, Typography, Link, AlertTitle, Divider, AccordionSummary, Accordion, AccordionDetails } from "@mui/material";
-import { IconButton } from "@mui/material";
-import { Alert } from "@mui/material";
+import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Typography, Link, Divider, AccordionSummary, Accordion, AccordionDetails, Stack } from "@mui/material";
 import { Box } from "@mui/material";
-import { DOCKER_MCP_COMMAND } from "../../Constants";
-import { ContentCopy, LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
-import { MCPClientState } from "../../MCPClients";
+import { DOCKER_MCP_COMMAND, CATALOG_LAYOUT_SX } from "../../Constants";
+import { LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
 import { v1 } from "@docker/extension-api-client-types";
-import ClaudeIcon from '../../claude-ai-icon.svg'
-import GordonIcon from '../../gordon-icon.png'
-import CursorIcon from '../../cursor.svg'
-import ChatGPTIcon from '../../chatgpt.svg'
+import ClaudeIcon from '../../assets/claude-ai-icon.svg'
+import GordonIcon from '../../assets/gordon-icon.png'
+import CursorIcon from '../../assets/cursor.svg'
+import ChatGPTIcon from '../../assets/chatgpt.svg'
 import { useMCPClientContext } from "../../context/MCPClientContext";
+import { useState } from "react";
 
 type MCPClientSettingsProps = {
     client: v1.DockerDesktopClient;
@@ -40,19 +38,26 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
         return <CircularProgress />;
     }
 
+    const [copyButtonText, setCopyButtonText] = useState('Copy');
+
     return (
-        <Box sx={{ width: '100%' }}>
-            <Typography variant="h6">MCP Clients</Typography>
+        <Box sx={CATALOG_LAYOUT_SX}>
+            <Typography>Connect to runtimes for your tools</Typography>
             <Stack direction="column" spacing={1} sx={{ p: 0 }}>
                 {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
                     <Stack key={name} direction="row" spacing={1} sx={{ marginTop: 2 }}>
                         <Accordion key={name} sx={{ width: '100%', marginRight: 1 }}>
-                            <AccordionSummary sx={{ width: '100%' }}>
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                    {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
-                                    <Typography variant="h4">{name}</Typography>
-                                    {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
-                                    {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                            <AccordionSummary sx={{ width: '100%', fontSize: '1.5em', display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between' }}>
+                                {iconMap[name as keyof typeof iconMap] && <img src={iconMap[name as keyof typeof iconMap]} alt={name} style={{ width: '2em', height: '2em' }} />}
+                                <Stack direction="column" sx={{ marginLeft: 2 }}>
+                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                        <Typography variant="h4">{name}</Typography>
+                                        {!mcpClientState.exists && <Chip label='No Config Found' color='error' />}
+                                        {mcpClientState.exists && <Chip label={mcpClientState.configured ? 'Connected' : 'Disconnected'} color={mcpClientState.configured ? 'success' : 'error'} />}
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                        <Typography variant="caption">Connect MCP to {name}</Typography>
+                                    </Stack>
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -61,7 +66,6 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                                         <Stack direction="row" alignItems="center" spacing={1}>
                                             <Link href={mcpClientState.client.url} target="_blank" rel="noopener noreferrer" onClick={() => client.host.openExternal(mcpClientState.client.url)}>{mcpClientState.client.url}</Link>
                                         </Stack>
-
                                         <Typography sx={{ fontWeight: 'bold' }}>Expected Config Path:</Typography>
                                         <Typography component="pre" sx={{ color: 'text.primary', fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', maxWidth: '80%', backgroundColor: 'background.default', padding: 1, borderRadius: 1, fontSize: '12px' }}>
                                             {mcpClientState.client.expectedConfigPath?.[client.host.platform as 'win32' | 'darwin' | 'linux'] || 'N/A'}
@@ -173,19 +177,24 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                     </Tooltip>
                 </Stack>
             </Stack>
-            <Divider />
-            <Alert severity="info">
-                <AlertTitle>Other MCP Clients</AlertTitle>
+            <Divider sx={{ my: 4 }}>or</Divider>
+            <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="h4">Other MCP Clients</Typography>
                 You can connect other MCP clients to the same server by specifying the following command:
-                <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1} sx={{ mt: 2 }}>
-                    <IconButton onClick={() => navigator.clipboard.writeText(DOCKER_MCP_COMMAND)}>
-                        <ContentCopy />
-                    </IconButton>
+                <Stack direction="row" alignItems="center" justifyContent="space-evenly" spacing={1}>
+
                     <Typography variant="caption" sx={theme => ({ backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[200], padding: 1, borderRadius: 1, fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'auto', color: 'text.primary' })}>
                         {DOCKER_MCP_COMMAND}
+                        <Button color={copyButtonText === 'Copied!' ? 'success' : 'primary'} sx={{ py: '2px', px: '12px', fontSize: '1em', ml: 1 }} onClick={() => {
+                            navigator.clipboard.writeText(DOCKER_MCP_COMMAND);
+                            setCopyButtonText('Copied!');
+                            setTimeout(() => setCopyButtonText('Copy'), 2000);
+                        }}>
+                            {copyButtonText}
+                        </Button>
                     </Typography>
                 </Stack>
-            </Alert>
+            </Stack>
         </Box>
     );
 };
