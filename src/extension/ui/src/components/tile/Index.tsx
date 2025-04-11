@@ -42,7 +42,10 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
     }, [secrets])
 
     if (registryLoading) {
-        return <CircularProgress size={20} />
+        return <>
+            <CircularProgress size={20} />
+            <Typography>Loading registry...</Typography>
+        </>
     }
 
     const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)

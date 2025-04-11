@@ -35,7 +35,10 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
     } = useMCPClientContext();
 
     if (!mcpClientStates) {
-        return <CircularProgress />;
+        return <>
+            <CircularProgress />
+            <Typography>Loading MCP clients...</Typography>
+        </>
     }
 
     const [copyButtonText, setCopyButtonText] = useState('Copy');

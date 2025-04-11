@@ -177,7 +177,10 @@ const ConfigurationModal = ({
     }, [hasSecrets, hasConfig]);
 
     if (!registryItems) {
-        return <CircularProgress />
+        return <>
+            <CircularProgress />
+            <Typography>Loading registry...</Typography>
+        </>
     }
 
     return (
@@ -215,7 +218,10 @@ const ConfigurationModal = ({
                 </Typography>
                 {(configLoading || secretLoading) ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                        <CircularProgress />
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <CircularProgress />
+                            <Typography>Loading config & secrets...</Typography>
+                        </Stack>
                     </Box>
                 ) : (
                     <>
