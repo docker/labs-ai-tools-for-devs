@@ -2,13 +2,10 @@
 mcp:
   - container:
       image: mcp/stripe:latest
-      workdir: /app
       secrets:
-        stripe.api_key: API_KEY
+        stripe.secret_key: STRIPE_SECRET_KEY
       command:
-        - "--tools=all"
-        - "--api-key=$API_KEY"
-    source:
-      url: https://github.com/slimslenderslacks/agent-toolkit/tree/slim/docker
+        - --tools=all:
+  - source:
+      url: https://github.com/stripe/agent-toolkit
 ---
-
