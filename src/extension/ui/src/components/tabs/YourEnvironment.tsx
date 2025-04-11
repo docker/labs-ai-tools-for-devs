@@ -18,9 +18,7 @@ const YourEnvironment: React.FC<YourEnvironmentProps> = ({ secrets, ddVersion, c
 
     return (
         <Stack direction="column" spacing={2}>
-
             <Stack direction="column" spacing={2}>
-
                 <Typography variant="h3">
                     The following secrets are available to use in your prompts:
                 </Typography>

@@ -103,6 +103,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                         unregisterCatalogItem(item)
                     }
                 }}
+                onSecretChange={onSecretChange}
             />
             <Card onClick={(e) => {
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {

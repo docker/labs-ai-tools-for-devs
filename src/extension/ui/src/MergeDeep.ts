@@ -32,3 +32,14 @@ export function mergeDeep<T extends DeepObject>(target: T, ...sources: DeepObjec
 
     return mergeDeep(target, ...sources);
 }
+
+export function deepFlattenObject(obj: DeepObject, prefix: string = ''): Record<string, any> {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+        if (isObject(value)) {
+            Object.assign(acc, deepFlattenObject(value, `${prefix}${key}.`));
+        } else {
+            acc[`${prefix}${key}`] = value;
+        }
+        return acc;
+    }, {} as Record<string, any>);
+}

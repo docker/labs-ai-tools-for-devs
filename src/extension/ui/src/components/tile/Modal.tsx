@@ -1,17 +1,17 @@
-import { Badge, Box, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
-import { Close, LockReset, Save } from "@mui/icons-material";
+import { Alert, Badge, Box, ButtonGroup, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import { CheckOutlined, Close, CloseOutlined, Delete, DeleteOutline, DeleteOutlined, LockReset, Save, SaveOutlined } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "../../types/catalog";
 import Secrets from "../../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
-import { githubLightTheme, NodeData, githubDarkTheme, JsonEditor } from "json-edit-react";
 import { useCatalogContext } from "../../context/CatalogContext";
 import { useConfigContext } from "../../context/ConfigContext";
-import { mergeDeep } from "../../MergeDeep";
+import { deepFlattenObject } from "../../MergeDeep";
 import { DeepObject } from "../../types/utils";
-import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameter, ParsedParameterArray, ParsedParameterObject, ParsedParameters, Config } from "../../types/config";
+import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameters, Config } from "../../types/config";
 import { Ref } from "../../Refs";
 import { CATALOG_LAYOUT_SX } from "../../Constants";
+import ConfigEditor from "../ConfigEditor";
 
 // Styles for the tab panel
 interface TabPanelProps {
@@ -44,60 +44,6 @@ function TabPanel(props: TabPanelProps) {
 // Define types reference
 const types = ['string', 'number', 'boolean', 'array', 'object'] as const;
 
-// Given a path in parsed JSON, returns the type of the value at that path from the tile's config
-const jsonEditorTypeFilterFunction = ({ path }: NodeData, config: Config[number]['parameters']) => {
-    if (path.length === 0) {
-        return true;
-    }
-    // Converts a path in parsed JSON BACK into config format with properties and items
-    const configKeyFromPath = path.map(p => {
-        if (typeof p === 'string') {
-            return `properties.${p}`;
-        }
-        if (typeof p === 'number') {
-            return `items`;
-        }
-        return p;
-    }).join('.');
-
-    let configValue: any = { properties: config };
-    for (const key of configKeyFromPath.split('.')) {
-        configValue = configValue[key];
-    }
-    return [configValue.type];
-};
-
-// Converts a config parameter object into a parsed JSON object that is easier to edit using the json-edit-react library
-const convertParametersToEditableJSON = (parameters: Config[number]['parameters']): ParsedParameters => {
-    if (parameters.type === 'object') {
-        return Object.fromEntries(Object.entries((parameters as ParameterObject).properties).map(([key, value]) => [key, convertParametersToEditableJSON(value)]));
-    }
-    if (parameters.type === 'array') {
-        return [convertParametersToEditableJSON((parameters as ParameterArray).items)];
-    }
-    if (parameters.type === 'string') {
-        return '';
-    }
-    if (parameters.type === 'number') {
-        return 0;
-    }
-    if (parameters.type === 'boolean') {
-        return false;
-    }
-    if (!parameters.type) {
-        return Object.fromEntries(Object.entries(parameters).map(([key, value]) => [key, convertParametersToEditableJSON(value as Parameters)]));
-    }
-    return '';
-};
-
-// Given a path in parsed JSON, returns false to prevent editing anything but basic types
-const jsonEditorFilterFunction = ({ value }: NodeData) => {
-    if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean' || !value) {
-        return false;
-    }
-    // Return true to prevent editing
-    return true;
-};
 
 interface ConfigurationModalProps {
     open: boolean;
@@ -106,7 +52,11 @@ interface ConfigurationModalProps {
     client: v1.DockerDesktopClient;
     onToggleRegister: (checked: boolean) => void;
     registered: boolean;
+    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
 }
+
+const ASSIGNED_SECRET_PLACEHOLDER = '********';
+const UNASSIGNED_SECRET_PLACEHOLDER = '';
 
 const ConfigurationModal = ({
     open,
@@ -115,9 +65,11 @@ const ConfigurationModal = ({
     client,
     onToggleRegister,
     registered,
+    onSecretChange,
 }: ConfigurationModalProps) => {
     const { startPull, registryItems, tryUpdateSecrets, secrets } = useCatalogContext();
     const { config, configLoading, saveConfig } = useConfigContext();
+    const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
     const theme = useTheme();
 
     // State for tabs
@@ -135,6 +87,10 @@ const ConfigurationModal = ({
     useEffect(() => {
         const loadedSecrets = Secrets.getAssignedSecrets(catalogItem, secrets);
         setAssignedSecrets(loadedSecrets);
+        setLocalSecrets(loadedSecrets.reduce((acc, secret) => {
+            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : UNASSIGNED_SECRET_PLACEHOLDER;
+            return acc;
+        }, {} as { [key: string]: string | undefined }));
     }, [catalogItem, secrets]);
 
     // Load config
@@ -200,7 +156,7 @@ const ConfigurationModal = ({
                 outline: 'none'
             }}>
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <img src={catalogItem.icon} alt={catalogItem.name} style={{ width: 30, height: 30, marginRight: 8 }} />
+                    <img src={catalogItem.icon} alt={catalogItem.name} style={{ width: 40, height: 40, marginRight: 8, backgroundColor: 'white', borderRadius: 4, padding: 4 }} />
                     <Typography variant="h6" id="configuration-modal-title">
                         {catalogItem.name}
                     </Typography>
@@ -241,74 +197,57 @@ const ConfigurationModal = ({
                             )}
                             <Stack sx={{ fontSize: '1.5em' }} direction="row" spacing={2} alignItems="flex-start" flexWrap="wrap">
                                 {(catalogItem.tools || []).map((tool) => (
-                                    <Chip label={tool.name} />
+                                    <Chip label={tool.name} key={tool.name} />
                                 ))}
                             </Stack>
                         </TabPanel>
-
-                        {/* Secrets Tab */}
-                        {hasSecrets && (
-                            <TabPanel value={tabValue} index={1}>
-                                <Stack direction="column" spacing={2}>
-                                    {assignedSecrets?.map(secret => (
-                                        <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
-                                            <TextField
-                                                placeholder={assignedSecrets.find(s => s.name === secret.name)?.assigned ? '********' : 'Enter secret value'}
-                                                type="password"
-                                                key={secret.name}
-                                                label={secret.name}
-                                                value={changedSecrets[secret.name] || ''}
-                                                onChange={(event) => setChangedSecrets({ ...changedSecrets, [secret.name]: event.target.value })}
-                                            />
-                                            {assignedSecrets.find(s => s.name === secret.name)?.assigned && changedSecrets[secret.name] && (
-                                                <IconButton onClick={() => setChangedSecrets({ ...changedSecrets, [secret.name]: undefined })}>
-                                                    <LockReset />
-                                                </IconButton>
-                                            )}
-                                            {changedSecrets[secret.name] && (
-                                                <IconButton onClick={() => {
-                                                    setSecretLoading(true);
-                                                    tryUpdateSecrets({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
-                                                        setSecretLoading(false);
-                                                        setChangedSecrets({ ...changedSecrets, [secret.name]: undefined });
-                                                    });
-                                                }}>
-                                                    {secretLoading ? <CircularProgress size={20} /> : <Save />}
-                                                </IconButton>
-                                            )}
-                                        </Stack>
+                        <TabPanel value={tabValue} index={1}>
+                            <Stack direction="column" spacing={1}>
+                                <Stack direction="column" spacing={1} sx={{ border: '2px solid', borderColor: 'divider', borderRadius: 2, p: 2, mt: 2 }}>
+                                    <Typography variant="h6" sx={{ mb: 1 }}>Config</Typography>
+                                    {!loadedConfig || !Object.keys(loadedConfig).length && <Alert severity="info">This item has no config</Alert>}
+                                    {Object.entries(deepFlattenObject(loadedConfig)).map(([key, value]) => (
+                                        <ConfigEditor key={key} keyName={key} value={value} onEdit={async (value) => {
+                                            await saveConfigToYaml({ ...loadedConfig, [key]: value });
+                                        }} type='string' optional={true} />
                                     ))}
                                 </Stack>
-                            </TabPanel>
-                        )}
-
-                        {/* Configuration Tab */}
-                        {hasConfig && (
-                            <TabPanel value={tabValue} index={hasSecrets ? 1 : 0}>
-                                {catalogItem.config!.map((config: Config[number]) => (
-                                    <JsonEditor
-                                        key={config.name}
-                                        theme={theme.palette.mode === 'dark' ? githubDarkTheme : githubLightTheme}
-                                        onEdit={({ newData }) => {
-                                            // Ensure we're working with objects that can be merged
-                                            const currentConfig = loadedConfig[config.name] || {};
-                                            const updatedData = typeof newData === 'object' ? newData : {};
-                                            const newConfig = mergeDeep(currentConfig, updatedData);
-                                            saveConfigToYaml({ ...loadedConfig, [config.name]: newConfig });
-                                        }}
-                                        rootName={config.name}
-                                        restrictAdd={({ value }) => {
-                                            return !Array.isArray(value);
-                                        }}
-                                        defaultValue={""}
-                                        restrictDelete={true}
-                                        restrictEdit={jsonEditorFilterFunction}
-                                        restrictTypeSelection={(e) => jsonEditorTypeFilterFunction(e, config.parameters)}
-                                        data={{ ...convertParametersToEditableJSON(config.parameters), ...(loadedConfig[config.name] || {}) }}
-                                    />
-                                ))}
-                            </TabPanel>
-                        )}
+                                <Stack direction="column" spacing={2} sx={{ border: '2px solid', borderColor: theme.palette.warning.contrastText, borderRadius: 2, p: 2, mt: 2 }}>
+                                    <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
+                                    {assignedSecrets?.map(secret => {
+                                        const secretEdited = secret.assigned ? localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER : localSecrets[secret.name] !== UNASSIGNED_SECRET_PLACEHOLDER;
+                                        return (
+                                            <Stack direction="row" spacing={2} alignItems="center">
+                                                <TextField key={secret.name} label={secret.name} value={localSecrets[secret.name]} fullWidth onChange={(e) => {
+                                                    setLocalSecrets({ ...localSecrets, [secret.name]: e.target.value });
+                                                }} type='password' />
+                                                {!secretEdited && <IconButton size="small" color="error" onClick={() => {
+                                                    setLocalSecrets({ ...localSecrets, [secret.name]: UNASSIGNED_SECRET_PLACEHOLDER });
+                                                }}>
+                                                    <DeleteOutlined />
+                                                </IconButton>}
+                                                {secretEdited && <ButtonGroup>
+                                                    <IconButton onClick={async () => {
+                                                        await onSecretChange({ name: secret.name, value: localSecrets[secret.name]! });
+                                                    }}>
+                                                        <CheckOutlined sx={{ color: 'success.main' }} />
+                                                    </IconButton>
+                                                    <IconButton onClick={async () => {
+                                                        setLocalSecrets({ ...localSecrets, [secret.name]: secret.assigned ? UNASSIGNED_SECRET_PLACEHOLDER : ASSIGNED_SECRET_PLACEHOLDER });
+                                                    }}>
+                                                        <CloseOutlined sx={{ color: 'error.main' }} />
+                                                    </IconButton>
+                                                </ButtonGroup>}
+                                            </Stack>
+                                        )
+                                    })}
+                                </Stack>
+                            </Stack>
+                        </TabPanel>
+                        <TabPanel value={tabValue} index={2}>
+                            <Typography>Examples</Typography>
+                            WIP
+                        </TabPanel>
                     </>
                 )}
             </Paper>

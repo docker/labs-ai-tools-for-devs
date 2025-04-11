@@ -16,7 +16,6 @@ namespace Secrets {
         return JSON.parse(response?.stdout || '[]');
     }
 
-
     export async function addSecret(client: v1.DockerDesktopClient, secret: Secret): Promise<void> {
         try {
             const response = await client.extension.host?.cli.exec('host-binary', ['--name', secret.name, '--value', `'${secret.value}'`]);
@@ -32,6 +31,25 @@ namespace Secrets {
                 client.desktopUI.toast.error('Failed to set secret: ' + JSON.stringify(error))
             } else {
                 client.desktopUI.toast.error('Failed to set secret: ' + error)
+            }
+        }
+    }
+
+    export async function deleteSecret(client: v1.DockerDesktopClient, name: string): Promise<void> {
+        try {
+            const response = await client.extension.host?.cli.exec('host-binary', ['delete', '--name', name]);
+            client.desktopUI.toast.success('Secret deleted successfully')
+            if (!response) {
+                client.desktopUI.toast.error('Failed to delete secret. Could not get response from host-binary.')
+            }
+            if (response?.stderr) {
+                client.desktopUI.toast.error('Failed to delete secret: ' + JSON.stringify(response))
+            }
+        } catch (error) {
+            if ((error as any).stderr) {
+                client.desktopUI.toast.error('Failed to delete secret: ' + JSON.stringify(error))
+            } else {
+                client.desktopUI.toast.error('Failed to delete secret: ' + error)
             }
         }
     }
