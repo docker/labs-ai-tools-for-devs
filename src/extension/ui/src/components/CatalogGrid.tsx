@@ -11,7 +11,6 @@ import { CatalogItemWithName } from '../types/catalog';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
-const YourTools = React.lazy(() => import('./tabs/YourTools'));
 const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
 
 // Initialize the Docker Desktop client
@@ -85,7 +84,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
 
 
     if (!registryItems) {
-        return <CircularProgress />
+        return <>
+            <CircularProgress />
+            <Typography>Loading registry...</Typography>
+        </>
     }
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
@@ -103,7 +105,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }) : catalogItems;
 
     if (!ddVersion) {
-        return <CircularProgress />
+        return <>
+            <CircularProgress />
+            <Typography>Loading Docker Desktop version...</Typography>
+        </>
     }
 
     const noConfiguredClients = !mcpLoading && !Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
