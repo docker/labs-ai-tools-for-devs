@@ -5,5 +5,5 @@ mcp:
       secrets:
         github-chat.api_key: GITHUB_API_KEY
   - source:
-      url: https://github.com/AsyncFuncAI/github-chat-mcp
+      url: https://github.com/AsyncFuncAI/github-chat-mcp/tree/main
 ---

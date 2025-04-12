@@ -54,7 +54,7 @@ MCP server for interacting with Neon Management API and databases
     4. Verify the changes before applying to main branch
 
     Project ID and database name will be automatically extracted from your request.
-    Default database is neondb if not specified.
+    If the database name is not provided, the default neondb or first available database is used.
   </use_case>
 
   <workflow>
@@ -153,7 +153,7 @@ MCP server for interacting with Neon Management API and databases
 
     Parameters:
     - <project_id>: The Project ID of the Neon project to provision authentication for.
-    - [database]: The database name to setup Neon Auth for. Defaults to 'neondb'.
+    - [database]: The database name to setup Neon Auth for. If not provided, the default neondb or first available database is used.
 
     The tool will:
       1. Establish a connection between your Neon Auth project and Stack Auth
@@ -402,7 +402,7 @@ List all Neon projects in your account.
     4. Verify the changes before applying to main branch
 
     Project ID and database name will be automatically extracted from your request.
-    Default database is neondb if not specified.
+    If the database name is not provided, the default neondb or first available database is used.
   </use_case>
 
   <workflow>
@@ -508,7 +508,7 @@ This tool provisions authentication for a Neon project. It allows developers to 
 
     Parameters:
     - <project_id>: The Project ID of the Neon project to provision authentication for.
-    - [database]: The database name to setup Neon Auth for. Defaults to 'neondb'.
+    - [database]: The database name to setup Neon Auth for. If not provided, the default neondb or first available database is used.
 
     The tool will:
       1. Establish a connection between your Neon Auth project and Stack Auth

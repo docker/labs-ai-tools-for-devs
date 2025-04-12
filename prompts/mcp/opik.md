@@ -8,5 +8,5 @@ mcp:
         OPIK_API_BASE_URL: "{{opik.api_base_url|safe}}"
         OPIK_WORKSPACE_NAME: "{{opik.workspace_name}}"
   - source:
-      url: https://github.com/comet-ml/opik-mcp
+      url: https://github.com/comet-ml/opik-mcp/tree/main
 ---

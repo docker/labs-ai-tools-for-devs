@@ -7,5 +7,5 @@ mcp:
       environment:
         BITREFILL_API_ID: "{{bitrefill.api_id}}"
   - source:
-      url: https://github.com/bitrefill/bitrefill-mcp-server
+      url: https://github.com/bitrefill/bitrefill-mcp-server/tree/master
 ---

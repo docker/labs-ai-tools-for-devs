@@ -239,7 +239,7 @@ Update a prompt
       ],
       "env": {
         "OPIK_API_BASE_URL": "https://www.comet.com/opik/api",
-        "OPIK_WORKSPACE_NAME": "YOUR_FIGMA_API_KEY",
+        "OPIK_WORKSPACE_NAME": "default",
         "OPIK_API_KEY": "your_api_key"
       }
     }

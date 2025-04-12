@@ -8,5 +8,5 @@ mcp:
         USE_RESOURCES: "{{hyperspell.use_resources}}"
         HYPERSPELL_COLLECTION: "{{hyperspell.collection}}"
   - source:
-      url: https://github.com/hyperspell/hyperspell-mcp
+      url: https://github.com/hyperspell/hyperspell-mcp/tree/main
 ---

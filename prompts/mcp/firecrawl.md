@@ -13,5 +13,5 @@ mcp:
         FIRECRAWL_CREDIT_WARNING_THRESHOLD: "{{firecrawl.credit_warning_threshold}}"
         FIRECRAWL_CREDIT_CRITICAL_THRESHOLD: "{{firecrawl.credit_critical_threshold}}"
   - source:
-      url: https://github.com/mendableai/firecrawl-mcp-server
+      url: https://github.com/mendableai/firecrawl-mcp-server/tree/main
 ---

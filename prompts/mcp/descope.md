@@ -7,5 +7,5 @@ mcp:
       environment:
         DESCOPE_PROJECT_ID: "{{descope.project_id}}"
   - source:
-      url: https://github.com/descope-sample-apps/descope-mcp-server
+      url: https://github.com/descope-sample-apps/descope-mcp-server/tree/main
 ---

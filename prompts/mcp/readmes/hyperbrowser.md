@@ -196,16 +196,10 @@ Search the web using Bing. This tool allows you to search the web using bing.com
         "-i",
         "--rm",
         "-e"
-        "USE_RESOURCES"
-        "-e"
-        "HYPERSPELL_COLLECTION"
-        "-e"
         "HYPERBROWSER_API_KEY"
         "mcp/hyperbrowser"
       ],
       "env": {
-        "USE_RESOURCES": "false",
-        "HYPERSPELL_COLLECTION": "",
         "HYPERBROWSER_API_KEY": "<app or user token>"
       }
     }

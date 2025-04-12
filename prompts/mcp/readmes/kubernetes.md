@@ -1,12 +1,12 @@
-# flux159-mcp-server-kubernetes MCP Server
+# kubernetes MCP Server
 
-MCP Server for kubernetes management commands
+Connect to a Kubernetes cluster and manage it
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
 | <!-- --> | <!-- --> |
 |-----------|---------|
-| **Image Source** | Community Image |
+| **Image Source** | Official Image |
 | **Author** | [Flux159](https://github.com/Flux159) |
 | **Repository** | https://github.com/Flux159/mcp-server-kubernetes |
 | **Dockerfile** | https://github.com/Flux159/mcp-server-kubernetes/blob/main/Dockerfile |
@@ -348,13 +348,13 @@ Upgrade a Helm release
 ```json
 {
   "mcpServers": {
-    "flux159-mcp-server-kubernetes": {
+    "kubernetes": {
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "mcpcommunity/flux159-mcp-server-kubernetes"
+        "mcp/kubernetes"
       ]
     }
   }
@@ -366,6 +366,6 @@ Upgrade a Helm release
 ## Rebuild this image
 
 ```console
-docker build -t mcpcommunity/flux159-mcp-server-kubernetes -f Dockerfile https://github.com/Flux159/mcp-server-kubernetes.git
+docker build -t mcp/kubernetes -f Dockerfile https://github.com/Flux159/mcp-server-kubernetes.git
 ```
 

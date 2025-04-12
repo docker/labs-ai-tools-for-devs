@@ -8,5 +8,5 @@ mcp:
       environment:
         DEVHUB_BASE_URL: "{{devhub-cms.url|safe}}"
   - source:
-      url: https://github.com/devhub/devhub-cms-mcp
+      url: https://github.com/devhub/devhub-cms-mcp/tree/main
 ---

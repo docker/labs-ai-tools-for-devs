@@ -1,12 +1,12 @@
-# slimslenderslacks-mcp-discord MCP Server
+# discord MCP Server
 
-Implement Discord MCP server enabling AI assistants to interact with the Discord platform.
+Interact with the Discord platform.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
 | <!-- --> | <!-- --> |
 |-----------|---------|
-| **Image Source** | Community Image |
+| **Image Source** | Official Image |
 | **Author** | [slimslenderslacks](https://github.com/slimslenderslacks) |
 | **Repository** | https://github.com/slimslenderslacks/mcp-discord |
 | **Dockerfile** | https://github.com/slimslenderslacks/mcp-discord/blob/slim/docker/Dockerfile |
@@ -233,7 +233,7 @@ A simple test tool to verify the MCP server is working correctly
 ```json
 {
   "mcpServers": {
-    "slimslenderslacks-mcp-discord": {
+    "discord": {
       "command": "docker",
       "args": [
         "run",
@@ -241,7 +241,7 @@ A simple test tool to verify the MCP server is working correctly
         "--rm",
         "-e"
         "DISCORD_TOKEN"
-        "mcpcommunity/slimslenderslacks-mcp-discord"
+        "mcp/discord"
       ],
       "env": {
         "DISCORD_TOKEN": "YOUR_DISCORD_TOKEN"
@@ -256,6 +256,6 @@ A simple test tool to verify the MCP server is working correctly
 ## Rebuild this image
 
 ```console
-docker build -t mcpcommunity/slimslenderslacks-mcp-discord -f Dockerfile https://github.com/slimslenderslacks/mcp-discord.git#slim/docker
+docker build -t mcp/discord -f Dockerfile https://github.com/slimslenderslacks/mcp-discord.git#slim/docker
 ```
 

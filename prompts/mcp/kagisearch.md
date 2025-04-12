@@ -7,5 +7,5 @@ mcp:
       environment:
         KAGI_SUMMARIZER_ENGINE: "{{kagisearch.engine}}"
   - source:
-      url: https://github.com/kagisearch/kagimcp
+      url: https://github.com/kagisearch/kagimcp/tree/main
 ---

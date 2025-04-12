@@ -7,5 +7,5 @@ mcp:
       environment:
         OXYLABS_USERNAME: "{{oxylabs.username}}"
   - source:
-      url: https://github.com/oxylabs/oxylabs-mcp
+      url: https://github.com/oxylabs/oxylabs-mcp/tree/main
 ---

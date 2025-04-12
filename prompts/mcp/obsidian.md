@@ -2,15 +2,13 @@
 mcp:
   - container:
       image: mcp/obsidian:latest
-      workdir: /app
       secrets:
         obsidian.api_key: OBSIDIAN_API_KEY
-    source:
+  - source:
       url: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
 ---
 
 # Configuration
 
 See the [setup instructions](https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker?tab=readme-ov-file#quickstart) for how to
-add the the REST API plugin to your local Obsidian instance.
-
+add the REST API plugin to your local Obsidian instance.

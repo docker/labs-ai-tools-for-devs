@@ -7,5 +7,5 @@ mcp:
       environment:
         IAPTIC_APP_NAME: "{{iaptic.app_name}}"
   - source:
-      url: https://github.com/iaptic/mcp-server-iaptic
+      url: https://github.com/iaptic/mcp-server-iaptic/tree/main
 ---

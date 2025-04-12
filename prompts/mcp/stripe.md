@@ -7,5 +7,5 @@ mcp:
       command:
         - --tools=all:
   - source:
-      url: https://github.com/stripe/agent-toolkit
+      url: https://github.com/stripe/agent-toolkit/tree/main
 ---

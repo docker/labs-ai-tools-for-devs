@@ -7,5 +7,5 @@ mcp:
       environment:
         ES_URL: "{{elasticsearch.url|safe}}"
   - source:
-      url: https://github.com/elastic/mcp-server-elasticsearch
+      url: https://github.com/elastic/mcp-server-elasticsearch/tree/refs/pull/37/merge
 ---

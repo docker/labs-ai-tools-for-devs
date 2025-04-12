@@ -100,9 +100,9 @@ List docs from Dart with optional filtering parameters. You can filter by folder
 
 | Parameter | Type | Description |
 | - | - | - |
-| `duids` | `string` *optional* | Filter by DUIDs |
+| `duids` | `string` *optional* | Filter by IDs |
 | `folder` | `string` *optional* | Filter by folder title |
-| `folder_duid` | `string` *optional* | Filter by folder DUID |
+| `folder_duid` | `string` *optional* | Filter by folder ID |
 | `in_trash` | `boolean` *optional* | Filter by trash status |
 | `is_draft` | `boolean` *optional* | Filter by draft status |
 | `limit` | `number` *optional* | Number of results per page |
@@ -118,13 +118,13 @@ List tasks from Dart with optional filtering parameters. You can filter by assig
 | Parameter | Type | Description |
 | - | - | - |
 | `assignee` | `string` *optional* | Filter by assignee name or email |
-| `assignee_duid` | `string` *optional* | Filter by assignee DUID |
+| `assignee_duid` | `string` *optional* | Filter by assignee ID |
 | `dartboard` | `string` *optional* | Filter by dartboard title |
-| `dartboard_duid` | `string` *optional* | Filter by dartboard DUID |
+| `dartboard_duid` | `string` *optional* | Filter by dartboard ID |
 | `description` | `string` *optional* | Filter by description content |
 | `due_at_after` | `string` *optional* | Filter by due date after (ISO format) |
 | `due_at_before` | `string` *optional* | Filter by due date before (ISO format) |
-| `duids` | `string` *optional* | Filter by DUIDs |
+| `duids` | `string` *optional* | Filter by IDs |
 | `in_trash` | `boolean` *optional* | Filter by trash status |
 | `is_draft` | `boolean` *optional* | Filter by draft status |
 | `kind` | `string` *optional* | Filter by task kind |
@@ -135,8 +135,8 @@ List tasks from Dart with optional filtering parameters. You can filter by assig
 | `start_at_after` | `string` *optional* | Filter by start date after (ISO format) |
 | `start_at_before` | `string` *optional* | Filter by start date before (ISO format) |
 | `status` | `string` *optional* | Filter by status |
-| `status_duid` | `string` *optional* | Filter by status DUID |
-| `subscriber_duid` | `string` *optional* | Filter by subscriber DUID |
+| `status_duid` | `string` *optional* | Filter by status ID |
+| `subscriber_duid` | `string` *optional* | Filter by subscriber ID |
 | `tag` | `string` *optional* | Filter by tag |
 | `title` | `string` *optional* | Filter by title |
 

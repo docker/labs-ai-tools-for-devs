@@ -1,10 +1,10 @@
 ---
 mcp:
   - container:
-      image: mcp/postgres:latest
+      image: mcp/brave-search:latest
       workdir: /app
-      command:
-        - postgresql://host.docker.internal:5432/mydb:
+      secrets:
+        brave-search.api_key: BRAVE_API_KEY
   - source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

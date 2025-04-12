@@ -1,6 +1,6 @@
 # github MCP Server
 
-Repository management, file operations, and GitHub API integration
+Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
