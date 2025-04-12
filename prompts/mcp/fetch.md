@@ -3,6 +3,6 @@ mcp:
   - container:
       image: mcp/fetch:latest
       workdir: /app
-  - source:
+    source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

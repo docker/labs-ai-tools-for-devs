@@ -6,6 +6,6 @@ mcp:
         stripe.secret_key: STRIPE_SECRET_KEY
       command:
         - --tools=all:
-  - source:
+    source:
       url: https://github.com/stripe/agent-toolkit/tree/main
 ---

@@ -5,6 +5,6 @@ mcp:
       workdir: /app
       command:
         - postgresql://host.docker.internal:5432/mydb:
-  - source:
+    source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

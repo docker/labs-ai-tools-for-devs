@@ -5,6 +5,6 @@ mcp:
       workdir: /app
       secrets:
         brave-search.api_key: BRAVE_API_KEY
-  - source:
+    source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

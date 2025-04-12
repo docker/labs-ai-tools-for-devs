@@ -4,7 +4,7 @@ mcp:
       image: mcp/obsidian:latest
       secrets:
         obsidian.api_key: OBSIDIAN_API_KEY
-  - source:
+    source:
       url: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
 ---
 
