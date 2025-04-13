@@ -6,6 +6,7 @@
    [cheshire.core :as json]
    [clojure.core.async :as async]
    [clojure.edn :as edn]
+   [clojure.string :as string]
    [docker]
    [flatland.ordered.map :refer [ordered-map]]
    interpolate
@@ -43,55 +44,58 @@
                                        :AttachStdin true}))
         response-promises (atom {})
         socket-channel (docker/attach-socket (:Id x))
-        c (async/chan)
+        c (async/chan 10)
         dead-channel (async/chan)]
 
     (docker/start x)
 
     ;; process the output-stream of the container
     ;; should only end once the stream closes
-    ;; TODO - docker/stream will block a go channel
-    (async/thread
-      (docker/read-loop socket-channel c))
-    (async/go
-      (docker/wait x)
-      (async/>! c :stopped))
-    (async/go-loop [block (async/alt!
-                            c ([v _] v)
-                            (async/timeout 15000) :timeout)]
-      (cond
-                        ;; read-loop has stopped or timed out
-        (#{:stopped :timeout} block)
-        (do
-          (logger/info "stopped/timeout")
-          (async/put! dead-channel block)
-          block)
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (docker/read-loop socket-channel c))))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (docker/wait x)
+        (async/put! c :stopped))))
 
-                        ;; real stdout message
-        (and block (:stdout block))
-        (let [message (try (json/parse-string (:stdout block) keyword) (catch Throwable _))]
-          (if-let [p (get @response-promises (:id message))]
-            (do
-              (logger/info (:stdout block))
-              (async/put! p message))
-            (logger/debug "no promise found: " block))
-          (recur (async/alt!
-                   c ([v _] v)
-                   (async/timeout 15000) :timeout)))
+    ;; processs the jsonrpc messages
+    (async/go-loop []
+      (let [block (async/alt!
+                    c ([v _] v)
+                    (async/timeout 15000) :timeout)]
+        (cond
+          ;; read-loop has stopped or timed out
+          (#{:stopped :timeout} block)
+          (do
+            (logger/info "stopped/timeout")
+            (async/put! dead-channel block)
+            block)
 
-                        ;; channel is closed
-        (nil? block)
-        (do
-          (logger/info "nil block - closing")
-          (async/put! dead-channel :closed))
+          ;; real stdout message
+          (and block (:stdout block))
+          (let [messages (->> (string/split (:stdout block) #"\n")
+                              (map (fn [s] (try (json/parse-string s keyword) (catch Throwable _ s))))
+                              (into []))]
+            (doseq [message messages]
+              (if-let [p (get @response-promises (:id message))]
+                (async/put! p message)  
+                (logger/debug "no promise found: " message)))
+            (recur))
 
-                        ;; non-stdout message - show to user
-        :else
-        (do
-          (logger/info "socket read loop " (:stderr block))
-          (recur (async/alt!
-                   c ([v _] v)
-                   (async/timeout 15000) :timeout)))))
+          ;; channel is closed
+          (nil? block)
+          (do
+            (logger/info "nil block - closing")
+            (async/put! dead-channel :closed))
+
+          ;; non-stdout message - show to user
+          :else
+          (do
+            (logger/info "socket read loop " (:stderr block))
+            (recur)))))
 
        ;; add a function to send a jsonrpc request
     (assoc x
@@ -124,7 +128,7 @@
   f1 - handler for the jsonrpc response (could be just identity)
   returns
   a channel with the response the channel will emit [] if there's an error"
-  [{:keys [server-id stateful] :as container-definition} f]
+  [{:keys [_server-id stateful] :as container-definition} f]
   (try
     (let [{:keys [request notification dead-channel remove] :as server} (mcp-stdio-stateless-server container-definition)]
       ;; dead-channel will emit either :stopped :timeout or :closed
@@ -154,7 +158,9 @@
             (when (not (true? stateful))
               (remove))))))
     (catch Throwable t
-      (logger/error "error " t)
+      (logger/error (.getMessage t))
+      (when (ex-data t)
+        (logger/error (ex-data t)))
       (let [c (async/promise-chan)]
         (async/>!! c {:error :exception :ex t})
         c))))
@@ -336,7 +342,7 @@
   (->> mcp
        (map (fn [mcp-definition]
               (assoc-in mcp-definition [:container :parameter-values] parameter-values)))
-       (mapcat (comp local-get-tools :container))
+       (mapcat (comp (fn [tools] (if (and (map? tools) (contains? tools :error)) [] tools)) local-get-tools :container))
        (map (fn [tool]
               {:type "function"
                :function (-> tool
