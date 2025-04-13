@@ -367,8 +367,8 @@ Update a pull request branch with the latest changes from the base branch
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GITHUB_PERSONAL_ACCESS_TOKEN"
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
         "mcp/github"
       ],
       "env": {

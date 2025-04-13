@@ -229,12 +229,12 @@ Update a prompt
         "run",
         "-i",
         "--rm",
-        "-e"
-        "OPIK_API_BASE_URL"
-        "-e"
-        "OPIK_WORKSPACE_NAME"
-        "-e"
-        "OPIK_API_KEY"
+        "-e",
+        "OPIK_API_BASE_URL",
+        "-e",
+        "OPIK_WORKSPACE_NAME",
+        "-e",
+        "OPIK_API_KEY",
         "mcp/opik"
       ],
       "env": {

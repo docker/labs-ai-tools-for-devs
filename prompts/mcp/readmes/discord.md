@@ -239,8 +239,8 @@ A simple test tool to verify the MCP server is working correctly
         "run",
         "-i",
         "--rm",
-        "-e"
-        "DISCORD_TOKEN"
+        "-e",
+        "DISCORD_TOKEN",
         "mcp/discord"
       ],
       "env": {

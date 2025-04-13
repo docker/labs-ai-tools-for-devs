@@ -110,10 +110,10 @@ Reply to a specific message thread in Slack
         "run",
         "-i",
         "--rm",
-        "-e"
-        "SLACK_BOT_TOKEN"
-        "-e"
-        "SLACK_TEAM_ID"
+        "-e",
+        "SLACK_BOT_TOKEN",
+        "-e",
+        "SLACK_TEAM_ID",
         "mcp/slack"
       ],
       "env": {

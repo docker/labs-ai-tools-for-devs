@@ -262,9 +262,10 @@ It takes two arguments:
         "run",
         "-i",
         "--rm",
-        "-e"
-        "STRIPE_SECRET_KEY"
-        "mcp/stripe"
+        "-e",
+        "STRIPE_SECRET_KEY",
+        "mcp/stripe",
+        "--tools=all"
       ],
       "env": {
         "STRIPE_SECRET_KEY": "sk_STRIPE_SECRET_KEY"

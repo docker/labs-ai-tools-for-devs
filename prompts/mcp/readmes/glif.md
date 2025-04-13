@@ -142,12 +142,12 @@ Get detailed information about a specific bot (alias for load_bot)
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GLIF_IDS"
-        "-e"
-        "IGNORE_SAVED_GLIFS"
-        "-e"
-        "GLIF_API_TOKEN"
+        "-e",
+        "GLIF_IDS",
+        "-e",
+        "IGNORE_SAVED_GLIFS",
+        "-e",
+        "GLIF_API_TOKEN",
         "mcp/glif"
       ],
       "env": {

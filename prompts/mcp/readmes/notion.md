@@ -243,8 +243,8 @@ Update a database
         "run",
         "-i",
         "--rm",
-        "-e"
-        "OPENAPI_MCP_HEADERS"
+        "-e",
+        "OPENAPI_MCP_HEADERS",
         "mcp/notion"
       ],
       "env": {

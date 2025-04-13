@@ -39,8 +39,8 @@ Search the web using Exa AI - performs real-time web searches and can scrape con
         "run",
         "-i",
         "--rm",
-        "-e"
-        "EXA_API_KEY"
+        "-e",
+        "EXA_API_KEY",
         "mcp/exa"
       ],
       "env": {

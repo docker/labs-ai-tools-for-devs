@@ -195,8 +195,8 @@ Search the web using Bing. This tool allows you to search the web using bing.com
         "run",
         "-i",
         "--rm",
-        "-e"
-        "HYPERBROWSER_API_KEY"
+        "-e",
+        "HYPERBROWSER_API_KEY",
         "mcp/hyperbrowser"
       ],
       "env": {

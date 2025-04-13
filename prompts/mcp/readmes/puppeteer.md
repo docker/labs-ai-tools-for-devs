@@ -101,8 +101,8 @@ Select an element on the page with Select tag
         "run",
         "-i",
         "--rm",
-        "-e"
-        "DOCKER_CONTAINER"
+        "-e",
+        "DOCKER_CONTAINER",
         "mcp/puppeteer"
       ],
       "env": {

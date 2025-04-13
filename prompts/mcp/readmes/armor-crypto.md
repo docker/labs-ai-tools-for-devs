@@ -458,10 +458,10 @@ Wait for some short amount of time, no more than 10 seconds
         "run",
         "-i",
         "--rm",
-        "-e"
-        "ARMOR_API_URL"
-        "-e"
-        "ARMOR_API_KEY"
+        "-e",
+        "ARMOR_API_URL",
+        "-e",
+        "ARMOR_API_KEY",
         "mcp/armor-crypto"
       ],
       "env": {

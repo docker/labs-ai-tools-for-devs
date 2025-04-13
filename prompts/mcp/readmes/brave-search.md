@@ -58,8 +58,8 @@ Performs a web search using the Brave Search API, ideal for general queries, new
         "run",
         "-i",
         "--rm",
-        "-e"
-        "BRAVE_API_KEY"
+        "-e",
+        "BRAVE_API_KEY",
         "mcp/brave-search"
       ],
       "env": {

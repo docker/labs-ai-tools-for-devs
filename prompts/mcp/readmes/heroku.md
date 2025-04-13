@@ -460,8 +460,8 @@ Transfer ownership of a Heroku application. Use this tool when a user wants to: 
         "run",
         "-i",
         "--rm",
-        "-e"
-        "HEROKU_API_KEY"
+        "-e",
+        "HEROKU_API_KEY",
         "mcp/heroku"
       ],
       "env": {

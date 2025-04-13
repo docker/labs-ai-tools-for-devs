@@ -1278,6 +1278,8 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/postgresql.svg
     tools:
     - {name: query}
+    secrets:
+      - {name: postgres.url}
     prompts: 0
     resources: {}
   puppeteer:

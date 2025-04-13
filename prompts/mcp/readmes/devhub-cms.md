@@ -223,12 +223,12 @@ Upload an image to the DevHub media gallery
         "run",
         "-i",
         "--rm",
-        "-e"
-        "DEVHUB_BASE_URL"
-        "-e"
-        "DEVHUB_API_KEY"
-        "-e"
-        "DEVHUB_API_SECRET"
+        "-e",
+        "DEVHUB_BASE_URL",
+        "-e",
+        "DEVHUB_API_KEY",
+        "-e",
+        "DEVHUB_API_SECRET",
         "mcp/devhub-cms"
       ],
       "env": {

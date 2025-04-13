@@ -131,8 +131,8 @@ Restore a Tembo instance
         "run",
         "-i",
         "--rm",
-        "-e"
-        "TEMBO_API_KEY"
+        "-e",
+        "TEMBO_API_KEY",
         "mcp/tembo"
       ],
       "env": {

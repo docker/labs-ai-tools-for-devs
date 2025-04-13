@@ -162,10 +162,10 @@ Create a nft, sft or meta esdt transfer transaction and send it. Will send the s
         "run",
         "-i",
         "--rm",
-        "-e"
-        "MVX_NETWORK"
-        "-e"
-        "MVX_WALLET"
+        "-e",
+        "MVX_NETWORK",
+        "-e",
+        "MVX_WALLET",
         "mcp/multiversx-mx"
       ],
       "env": {

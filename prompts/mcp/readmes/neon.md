@@ -659,8 +659,8 @@ Execute a SQL transaction against a Neon database, should be used for multiple S
         "run",
         "-i",
         "--rm",
-        "-e"
-        "NEON_API_KEY"
+        "-e",
+        "NEON_API_KEY",
         "mcp/neon"
       ],
       "env": {

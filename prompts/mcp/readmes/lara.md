@@ -136,10 +136,10 @@ Updates a translation memory in your Lara Translate account.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "LARA_ACCESS_KEY_ID"
-        "-e"
-        "LARA_ACCESS_KEY_SECRET"
+        "-e",
+        "LARA_ACCESS_KEY_ID",
+        "-e",
+        "LARA_ACCESS_KEY_SECRET",
         "mcp/lara"
       ],
       "env": {

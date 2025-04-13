@@ -147,10 +147,10 @@ Reveal codes and PINs for a specific order by ID
         "run",
         "-i",
         "--rm",
-        "-e"
-        "BITREFILL_API_ID"
-        "-e"
-        "BITREFILL_API_SECRET"
+        "-e",
+        "BITREFILL_API_ID",
+        "-e",
+        "BITREFILL_API_SECRET",
         "mcp/bitrefill"
       ],
       "env": {

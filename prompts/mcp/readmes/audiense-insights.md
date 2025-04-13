@@ -145,12 +145,12 @@ Generates a comprehensive summary of an Audiense report, including segment detai
         "run",
         "-i",
         "--rm",
-        "-e"
-        "AUDIENSE_CLIENT_ID"
-        "-e"
-        "AUDIENSE_CLIENT_SECRET"
-        "-e"
-        "TWITTER_BEARER_TOKEN"
+        "-e",
+        "AUDIENSE_CLIENT_ID",
+        "-e",
+        "AUDIENSE_CLIENT_SECRET",
+        "-e",
+        "TWITTER_BEARER_TOKEN",
         "mcp/audiense-insights"
       ],
       "env": {

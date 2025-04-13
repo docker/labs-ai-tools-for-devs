@@ -49,8 +49,8 @@ Ask questions about a GitHub repository and receive detailed AI responses. The r
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GITHUB_API_KEY"
+        "-e",
+        "GITHUB_API_KEY",
         "mcp/github-chat"
       ],
       "env": {

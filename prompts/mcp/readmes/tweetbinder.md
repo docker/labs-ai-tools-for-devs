@@ -99,8 +99,8 @@ Retrieves a list of all your TweetBinder reports. Reports can be sorted by diffe
         "run",
         "-i",
         "--rm",
-        "-e"
-        "TWEETBINDER_API_TOKEN"
+        "-e",
+        "TWEETBINDER_API_TOKEN",
         "mcp/tweetbinder"
       ],
       "env": {

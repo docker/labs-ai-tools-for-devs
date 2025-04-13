@@ -106,10 +106,10 @@ Scrape url using Oxylabs Web Unblocker
         "run",
         "-i",
         "--rm",
-        "-e"
-        "OXYLABS_USERNAME"
-        "-e"
-        "OXYLABS_PASSWORD"
+        "-e",
+        "OXYLABS_USERNAME",
+        "-e",
+        "OXYLABS_PASSWORD",
         "mcp/oxylabs"
       ],
       "env": {

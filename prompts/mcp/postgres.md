@@ -3,8 +3,10 @@ mcp:
   - container:
       image: mcp/postgres:latest
       workdir: /app
+      secrets:
+        postgres.url: POSTGRES_URL
       command:
-        - postgresql://host.docker.internal:5432/mydb
+        - $POSTGRES_URL
     source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---
