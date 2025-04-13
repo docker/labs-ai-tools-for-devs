@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/obsidian:latest
+      workdir: /app
       secrets:
         obsidian.api_key: OBSIDIAN_API_KEY
     source:
