@@ -624,19 +624,6 @@ registry:
           - client_id
     prompts: 0
     resources: {}
-  aws-kb-retrieval-server:
-    description: "An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime."
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
-    tools:
-    - {name: retrieve_from_aws_kb}
-    secrets:
-      - {name: aws.access_key_id}
-      - {name: aws.secret_access_key}
-      - {name: aws.region}
-    prompts: 0
-    resources: {}
   basic-memory:
     description: "Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md"
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
