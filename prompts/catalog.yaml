@@ -103,15 +103,15 @@ registry:
     prompts: 0
     resources: {}
   brave:
-    description: Web and local search using Brave's Search API
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/brave.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave-search.md
+    description: "Web and local search using Brave's Search API"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
-    secrets:
-    - {name: brave.api_key}
     tools:
-    - {name: brave_web_search}
     - {name: brave_local_search}
+    - {name: brave_web_search}
+    secrets:
+      - {name: brave.api_key}
     prompts: 0
     resources: {}
   slack:
