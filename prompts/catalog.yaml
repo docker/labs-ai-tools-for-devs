@@ -208,11 +208,12 @@ registry:
     prompts: 0
     resources: {}
   fetch:
-    description: Fetches a URL from the internet and extracts its contents as markdown
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
+    description: "Fetches a URL from the internet and extracts its contents as markdown"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/fetch.md
     icon: https://img.icons8.com/ios/50/fetch-rewards.png
-    tools: []
+    tools:
+    - {name: fetch}
     prompts: 0
     resources: {}
   git:
