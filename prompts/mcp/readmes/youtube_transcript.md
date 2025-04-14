@@ -1,4 +1,4 @@
-# youtube-transcript MCP Server
+# youtube_transcript MCP Server
 
 Retrieves transcripts for given YouTube video URLs
 
@@ -33,7 +33,7 @@ Retrieves the transcript of a YouTube video.
 ```json
 {
   "mcpServers": {
-    "youtube-transcript": {
+    "youtube_transcript": {
       "command": "docker",
       "args": [
         "run",

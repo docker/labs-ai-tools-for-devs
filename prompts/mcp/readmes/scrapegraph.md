@@ -57,8 +57,8 @@ Extract structured data from a webpage using AI.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "SGAI_API_KEY"
+        "-e",
+        "SGAI_API_KEY",
         "mcp/scrapegraph"
       ],
       "env": {

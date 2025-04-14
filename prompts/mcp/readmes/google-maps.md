@@ -99,8 +99,8 @@ Search for places using Google Places API
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GOOGLE_MAPS_API_KEY"
+        "-e",
+        "GOOGLE_MAPS_API_KEY",
         "mcp/google-maps"
       ],
       "env": {

@@ -186,10 +186,10 @@ Get the current tasks for the current Cloud Redis account
         "run",
         "-i",
         "--rm",
-        "-e"
-        "API_KEY"
-        "-e"
-        "SECRET_KEY"
+        "-e",
+        "API_KEY",
+        "-e",
+        "SECRET_KEY",
         "mcp/redis-cloud"
       ],
       "env": {

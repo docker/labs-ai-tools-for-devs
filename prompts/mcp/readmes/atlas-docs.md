@@ -72,8 +72,8 @@ Searches a documentation set for specific content. Use this to find pages contai
         "run",
         "-i",
         "--rm",
-        "-e"
-        "ATLAS_API_URL"
+        "-e",
+        "ATLAS_API_URL",
         "mcp/atlas-docs"
       ],
       "env": {

@@ -49,10 +49,10 @@ Summarize content from a URL using the Kagi Summarizer API. The Summarizer can s
         "run",
         "-i",
         "--rm",
-        "-e"
-        "KAGI_SUMMARIZER_ENGINE"
-        "-e"
-        "KAGI_API_KEY"
+        "-e",
+        "KAGI_SUMMARIZER_ENGINE",
+        "-e",
+        "KAGI_API_KEY",
         "mcp/kagisearch"
       ],
       "env": {

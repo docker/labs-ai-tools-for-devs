@@ -72,8 +72,8 @@ You need to specify the tool name, method name, and any required parameters for 
         "run",
         "-i",
         "--rm",
-        "-e"
-        "VEYRAX_API_KEY"
+        "-e",
+        "VEYRAX_API_KEY",
         "mcp/veyrax"
       ],
       "env": {

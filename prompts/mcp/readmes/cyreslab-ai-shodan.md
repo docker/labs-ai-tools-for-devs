@@ -85,8 +85,8 @@ Search Shodan's database for devices and services
         "run",
         "-i",
         "--rm",
-        "-e"
-        "SHODAN_API_KEY"
+        "-e",
+        "SHODAN_API_KEY",
         "mcp/cyreslab-ai-shodan"
       ],
       "env": {

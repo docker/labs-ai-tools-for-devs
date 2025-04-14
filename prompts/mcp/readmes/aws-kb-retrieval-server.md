@@ -40,12 +40,12 @@ Performs retrieval from the AWS Knowledge Base using the provided query and Know
         "run",
         "-i",
         "--rm",
-        "-e"
-        "AWS_ACCESS_KEY_ID"
-        "-e"
-        "AWS_SECRET_ACCESS_KEY"
-        "-e"
-        "AWS_REGION"
+        "-e",
+        "AWS_ACCESS_KEY_ID",
+        "-e",
+        "AWS_SECRET_ACCESS_KEY",
+        "-e",
+        "AWS_REGION",
         "mcp/aws-kb-retrieval-server"
       ],
       "env": {

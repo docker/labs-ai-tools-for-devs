@@ -411,10 +411,10 @@ Execute an unstake transaction.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "ARMOR_API_URL"
-        "-e"
-        "ARMOR_API_KEY"
+        "-e",
+        "ARMOR_API_URL",
+        "-e",
+        "ARMOR_API_KEY",
         "mcp/armor-crypto"
       ],
       "env": {

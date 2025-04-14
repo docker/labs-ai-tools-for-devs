@@ -182,10 +182,10 @@ Update an existing task. You can modify any of its properties including title, d
         "run",
         "-i",
         "--rm",
-        "-e"
-        "DART_HOST"
-        "-e"
-        "DART_TOKEN"
+        "-e",
+        "DART_HOST",
+        "-e",
+        "DART_TOKEN",
         "mcp/dart"
       ],
       "env": {

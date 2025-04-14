@@ -130,7 +130,8 @@ Create a new file or completely overwrite an existing file with new content. Use
         "run",
         "-i",
         "--rm",
-        "mcp/filesystem"
+        "mcp/filesystem",
+        "."
       ]
     }
   }

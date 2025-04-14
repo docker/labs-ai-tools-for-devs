@@ -57,12 +57,12 @@ Search Hyperspell for documents and data.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "USE_RESOURCES"
-        "-e"
-        "HYPERSPELL_COLLECTION"
-        "-e"
-        "HYPERSPELL_TOKEN"
+        "-e",
+        "USE_RESOURCES",
+        "-e",
+        "HYPERSPELL_COLLECTION",
+        "-e",
+        "HYPERSPELL_TOKEN",
         "mcp/hyperspell"
       ],
       "env": {

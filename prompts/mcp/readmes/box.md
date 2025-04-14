@@ -177,10 +177,10 @@ return:
         "run",
         "-i",
         "--rm",
-        "-e"
-        "BOX_CLIENT_ID"
-        "-e"
-        "BOX_CLIENT_SECRET"
+        "-e",
+        "BOX_CLIENT_ID",
+        "-e",
+        "BOX_CLIENT_SECRET",
         "mcp/box"
       ],
       "env": {

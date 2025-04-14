@@ -373,10 +373,10 @@ List financial transactions from your Iaptic account.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "IAPTIC_APP_NAME"
-        "-e"
-        "IAPTIC_API_KEY"
+        "-e",
+        "IAPTIC_APP_NAME",
+        "-e",
+        "IAPTIC_API_KEY",
         "mcp/iaptic"
       ],
       "env": {

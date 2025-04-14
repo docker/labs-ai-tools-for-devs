@@ -44,12 +44,12 @@ Send an email using Resend
         "run",
         "-i",
         "--rm",
-        "-e"
-        "REPLY_TO_EMAIL_ADDRESSES"
-        "-e"
-        "SENDER_EMAIL_ADDRESS"
-        "-e"
-        "RESEND_API_KEY"
+        "-e",
+        "REPLY_TO_EMAIL_ADDRESSES",
+        "-e",
+        "SENDER_EMAIL_ADDRESS",
+        "-e",
+        "RESEND_API_KEY",
         "mcp/resend"
       ],
       "env": {

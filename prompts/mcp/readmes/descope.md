@@ -117,10 +117,10 @@ Search for users in Descope project
         "run",
         "-i",
         "--rm",
-        "-e"
-        "DESCOPE_PROJECT_ID"
-        "-e"
-        "DESCOPE_MANAGEMENT_KEY"
+        "-e",
+        "DESCOPE_PROJECT_ID",
+        "-e",
+        "DESCOPE_MANAGEMENT_KEY",
         "mcp/descope"
       ],
       "env": {

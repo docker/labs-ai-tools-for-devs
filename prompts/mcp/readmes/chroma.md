@@ -175,8 +175,8 @@ Update documents in a Chroma collection.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "CHROMA_API_KEY"
+        "-e",
+        "CHROMA_API_KEY",
         "mcp/chroma"
       ],
       "env": {

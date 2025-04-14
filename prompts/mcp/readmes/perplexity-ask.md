@@ -56,8 +56,8 @@ Performs deep research using the Perplexity API. Accepts an array of messages (e
         "run",
         "-i",
         "--rm",
-        "-e"
-        "PERPLEXITY_API_KEY"
+        "-e",
+        "PERPLEXITY_API_KEY",
         "mcp/perplexity-ask"
       ],
       "env": {

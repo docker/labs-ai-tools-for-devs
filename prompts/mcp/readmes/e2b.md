@@ -38,8 +38,8 @@ Run python code in a secure sandbox by E2B. Using the Jupyter Notebook syntax.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "E2B_API_KEY"
+        "-e",
+        "E2B_API_KEY",
         "mcp/e2b"
       ],
       "env": {
