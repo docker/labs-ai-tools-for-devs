@@ -414,15 +414,18 @@ registry:
         required:
           - server
   aws-kb-retrieval-server:
-    description: |
-      An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/aws-kb-retrieval-server.md
+    description: "An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
+    tools:
+    - {name: retrieve_from_aws_kb}
     secrets:
       - {name: aws.access_key_id}
       - {name: aws.secret_access_key}
       - {name: aws.region}
+    prompts: 0
+    resources: {}
   everart:
     description: "Image generation server using EverArt's API."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
