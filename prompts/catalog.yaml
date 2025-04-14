@@ -424,13 +424,16 @@ registry:
       - {name: aws.secret_access_key}
       - {name: aws.region}
   everart:
-    description: |
-      Image generation server using EverArt's API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/everart.md
+    description: "Image generation server using EverArt's API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/everart.md
     icon: https://10web.io/wp-content/uploads/2024/07/EverArt.png
+    tools:
+    - {name: generate_image}
     secrets:
       - {name: everart.api_key}
+    prompts: 0
+    resources: {}
   sentry:
     description: "A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
