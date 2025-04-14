@@ -17,7 +17,39 @@ Heroku Platform MCP Server
 
  1. **`create_addon`**: Create a new Heroku add-on for an application. Use this tool when you need to: 1) Provision a new add-on for your app, 2) Specify a particular service and plan, 3) Set a custom name for the add-on or attachment. The tool handles the provisioning process and returns the new add-on's details.
  1. **`create_app`**: Create a new Heroku application with customizable settings. Use this tool when a user wants to: 1) Create a new app with a specific name, 2) Create an app in a particular region (US/EU), 3) Create an app within a team, or 4) Create an app in a private space. The tool handles name generation if not specified and returns the new app's details.
- 1. **`deploy_to_heroku`**: Deploy projects to Heroku, replaces manual git push workflows. Use this tool when you need to: 1) Deploy a new application with specific app.json configuration, 2) Update an existing application with new code, 3) Configure team or private space deployments, or 4) Set up environment-specific configurations. The tool handles app creation, source code deployment, and environment setup. Requires valid app.json in workspace or provided via configuration. Supports team deployments, private spaces, and custom environment variables.Use apps_list tool with the "all" param to get a list of apps for the user to choose from when deploying to an existing app and the app name was not provided.
+ 1. **`deploy_one_off_dyno`**: Execute code or a command on a Heroku one-off dyno in a sandboxed environment with network and filesystem access.
+
+**Requirements:**
+- Display command output to the user.
+- Determine app language using the 'app_info' tool to identify the Heroku buildpack.
+- Use shell commands for environment setup (e.g., package installations) before execution.
+- Output must utilize standard input/output.
+
+**Capabilities:**
+- Network and filesystem access
+- Environment variables support
+- File creation and execution in supported languages
+- Temporary directory management
+
+**Guidelines:**
+1. Use the appropriate Heroku-supported language runtime.
+2. Ensure correct syntax and module imports for the chosen language.
+3. Organize code into classes/functions, executed from the top level.
+4. For external packages:
+   - Specify in the appropriate package manager file.
+   - Minimize dependencies.
+   - Prefer native modules when possible.
+
+**Example (Node.js package manager file):**
+```json
+{
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
+```
+ 1. **`deploy_to_heroku`**: Deploy projects to Heroku, replaces manual git push workflows. Use this tool when you need to: 1) Deploy a new application with specific app.json configuration, 2) Update an existing application with new code, 3) Configure team or private space deployments, or 4) Set up environment-specific configurations. Important: Check for an app.json file first. If an app.json does not exist in the workspace, you must create one and pass it in via the appJson parameter. The tool handles app creation, source code deployment, and environment setup. Requires valid app.json in workspace or provided via configuration. Supports team deployments, private spaces, and custom environment variables.Use apps_list tool with the "all" param to get a list of apps for the user to choose from when deploying to an existing app and the app name was not provided.
  1. **`get_addon_info`**: Get comprehensive information about a Heroku add-on. Use this tool when you need to: 1) View add-on details, 2) Check plan details and state, 3) View billing information. Accepts add-on ID, name, or attachment name.
  1. **`get_app_info`**: Get comprehensive information about a Heroku application. Use this tool when you need to: 1) View app configuration and settings, 2) Check dyno formation and scaling, 3) List add-ons and buildpacks, 4) View collaborators and access details, 5) Check domains and certificates. Accepts app name and optional JSON format. Returns detailed app status and configuration.
  1. **`get_app_logs`**: View application logs with flexible filtering options. Use this tool when you need to: 1) Monitor application activity in real-time, 2) Debug issues by viewing recent logs, 3) Filter logs by dyno, process type, or source.
@@ -73,16 +105,60 @@ Create a new Heroku application with customizable settings. Use this tool when a
 | `space` | `string` *optional* | Places the app in a specific private space, which provides enhanced security and networking features. Specify the private space name. Note: When used, the app inherits the region from the private space and the region parameter cannot be used. |
 | `team` | `string` *optional* | Associates the app with a specific team for collaborative development and management. Provide the team name to set ownership. The app will be created under the team's account rather than your personal account. |
 
-### Tool: **`deploy_to_heroku`**
+### Tool: **`deploy_one_off_dyno`**
 
-Deploy projects to Heroku, replaces manual git push workflows. Use this tool when you need to: 1) Deploy a new application with specific app.json configuration, 2) Update an existing application with new code, 3) Configure team or private space deployments, or 4) Set up environment-specific configurations. The tool handles app creation, source code deployment, and environment setup. Requires valid app.json in workspace or provided via configuration. Supports team deployments, private spaces, and custom environment variables.Use apps_list tool with the "all" param to get a list of apps for the user to choose from when deploying to an existing app and the app name was not provided.
+Execute code or a command on a Heroku one-off dyno in a sandboxed environment with network and filesystem access.
+
+**Requirements:**
+- Display command output to the user.
+- Determine app language using the 'app_info' tool to identify the Heroku buildpack.
+- Use shell commands for environment setup (e.g., package installations) before execution.
+- Output must utilize standard input/output.
+
+**Capabilities:**
+- Network and filesystem access
+- Environment variables support
+- File creation and execution in supported languages
+- Temporary directory management
+
+**Guidelines:**
+1. Use the appropriate Heroku-supported language runtime.
+2. Ensure correct syntax and module imports for the chosen language.
+3. Organize code into classes/functions, executed from the top level.
+4. For external packages:
+   - Specify in the appropriate package manager file.
+   - Minimize dependencies.
+   - Prefer native modules when possible.
+
+**Example (Node.js package manager file):**
+```json
+{
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
+```
 
 | Parameter | Type | Description |
 | - | - | - |
+| `command` | `string` | Command to execute in the one-off dyno. |
+| `name` | `string` | Name of the Heroku app for the one-off dyno. |
+| `env` | `object` *optional* | Environment variables for the dyno (optional). |
+| `size` | `string` *optional* | Dyno size (optional). |
+| `sources` | `array` *optional* | Array of objects representing the source files to include in the dyno. |
+| `timeToLive` | `number` *optional* | Dyno lifespan in seconds (optional). |
+
+### Tool: **`deploy_to_heroku`**
+
+Deploy projects to Heroku, replaces manual git push workflows. Use this tool when you need to: 1) Deploy a new application with specific app.json configuration, 2) Update an existing application with new code, 3) Configure team or private space deployments, or 4) Set up environment-specific configurations. Important: Check for an app.json file first. If an app.json does not exist in the workspace, you must create one and pass it in via the appJson parameter. The tool handles app creation, source code deployment, and environment setup. Requires valid app.json in workspace or provided via configuration. Supports team deployments, private spaces, and custom environment variables.Use apps_list tool with the "all" param to get a list of apps for the user to choose from when deploying to an existing app and the app name was not provided.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `appJson` | `string` | Stringified app.json configuration for deployment. Used for dynamic configurations or converted projects.
+  The app.json string must be valid and conform to the following schema: {"default":{"$schema":"http://json-schema.org/draft-07/schema#","title":"Heroku app.json Schema","description":"app.json is a manifest format for describing web apps. It declares environment variables, add-ons, and other information required to run an app on Heroku. Used for dynamic configurations or converted projects","type":"object","properties":{"name":{"type":"string","pattern":"^[a-zA-Z-_\\.]+","maxLength":300},"description":{"type":"string"},"keywords":{"type":"array","items":{"type":"string"}},"website":{"$ref":"#/definitions/uriString"},"repository":{"$ref":"#/definitions/uriString"},"logo":{"$ref":"#/definitions/uriString"},"success_url":{"type":"string"},"scripts":{"$ref":"#/definitions/scripts"},"env":{"$ref":"#/definitions/env"},"formation":{"$ref":"#/definitions/formation"},"addons":{"$ref":"#/definitions/addons"},"buildpacks":{"$ref":"#/definitions/buildpacks"},"environments":{"$ref":"#/definitions/environments"},"stack":{"$ref":"#/definitions/stack"},"image":{"type":"string"}},"additionalProperties":false,"definitions":{"uriString":{"type":"string","format":"uri"},"scripts":{"type":"object","properties":{"postdeploy":{"type":"string"},"pr-predestroy":{"type":"string"}},"additionalProperties":false},"env":{"type":"object","patternProperties":{"^[A-Z][A-Z0-9_]*$":{"type":"object","properties":{"description":{"type":"string"},"value":{"type":"string"},"required":{"type":"boolean"},"generator":{"type":"string","enum":["secret"]}},"additionalProperties":false}}},"dynoSize":{"type":"string","enum":["free","eco","hobby","basic","standard-1x","standard-2x","performance-m","performance-l","private-s","private-m","private-l","shield-s","shield-m","shield-l"]},"formation":{"type":"object","patternProperties":{"^[a-zA-Z0-9_-]+$":{"type":"object","properties":{"quantity":{"type":"integer","minimum":0},"size":{"$ref":"#/definitions/dynoSize"}},"required":["quantity"],"additionalProperties":false}}},"addons":{"type":"array","items":{"oneOf":[{"type":"string"},{"type":"object","properties":{"plan":{"type":"string"},"as":{"type":"string"},"options":{"type":"object"}},"required":["plan"],"additionalProperties":false}]}},"buildpacks":{"type":"array","items":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"],"additionalProperties":false}},"environmentConfig":{"type":"object","properties":{"env":{"type":"object"},"formation":{"type":"object"},"addons":{"type":"array"},"buildpacks":{"type":"array"}}},"environments":{"type":"object","properties":{"test":{"allOf":[{"$ref":"#/definitions/environmentConfig"},{"type":"object","properties":{"scripts":{"type":"object","properties":{"test":{"type":"string"}},"additionalProperties":false}}}]},"review":{"$ref":"#/definitions/environmentConfig"},"production":{"$ref":"#/definitions/environmentConfig"}},"additionalProperties":false},"stack":{"type":"string","enum":["heroku-18","heroku-20","heroku-22","heroku-24"]}}}} |
 | `name` | `string` | Heroku application name for deployment target. If omitted, a new app will be created with a random name. If supplied and the app does not exist, the tool will create a new app with the given name. |
 | `rootUri` | `string` | The absolute path of the user's workspace unless otherwise specified by the user. Must be a string that can be resolved to a valid directory using node's path module. |
-| `appJson` | `string` *optional* | Stringified app.json configuration for deployment. Used for dynamic configurations or converted projects.
-  The app.json string must be valid and conform to the following schema: {"default":{"$schema":"http://json-schema.org/draft-07/schema#","title":"Heroku app.json Schema","description":"app.json is a manifest format for describing web apps. It declares environment variables, add-ons, and other information required to run an app on Heroku. Used for dynamic configurations or converted projects","type":"object","properties":{"name":{"type":"string","pattern":"^[a-zA-Z-_\\.]+","maxLength":300},"description":{"type":"string"},"keywords":{"type":"array","items":{"type":"string"}},"website":{"$ref":"#/definitions/uriString"},"repository":{"$ref":"#/definitions/uriString"},"logo":{"$ref":"#/definitions/uriString"},"success_url":{"type":"string"},"scripts":{"$ref":"#/definitions/scripts"},"env":{"$ref":"#/definitions/env"},"formation":{"$ref":"#/definitions/formation"},"addons":{"$ref":"#/definitions/addons"},"buildpacks":{"$ref":"#/definitions/buildpacks"},"environments":{"$ref":"#/definitions/environments"},"stack":{"$ref":"#/definitions/stack"},"image":{"type":"string"}},"additionalProperties":false,"definitions":{"uriString":{"type":"string","format":"uri"},"scripts":{"type":"object","properties":{"postdeploy":{"type":"string"},"pr-predestroy":{"type":"string"}},"additionalProperties":false},"env":{"type":"object","patternProperties":{"^[A-Z][A-Z0-9_]*$":{"type":"object","properties":{"description":{"type":"string"},"value":{"type":"string"},"required":{"type":"boolean"},"generator":{"type":"string","enum":["secret"]}},"additionalProperties":false}}},"dynoSize":{"type":"string","enum":["free","eco","hobby","basic","standard-1x","standard-2x","performance-m","performance-l","private-s","private-m","private-l","shield-s","shield-m","shield-l"]},"formation":{"type":"object","patternProperties":{"^[a-zA-Z0-9_-]+$":{"type":"object","properties":{"quantity":{"type":"integer","minimum":0},"size":{"$ref":"#/definitions/dynoSize"}},"required":["quantity"],"additionalProperties":false}}},"addons":{"type":"array","items":{"oneOf":[{"type":"string"},{"type":"object","properties":{"plan":{"type":"string"},"as":{"type":"string"},"options":{"type":"object"}},"required":["plan"],"additionalProperties":false}]}},"buildpacks":{"type":"array","items":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"],"additionalProperties":false}},"environmentConfig":{"type":"object","properties":{"env":{"type":"object"},"formation":{"type":"object"},"addons":{"type":"array"},"buildpacks":{"type":"array"}}},"environments":{"type":"object","properties":{"test":{"allOf":[{"$ref":"#/definitions/environmentConfig"},{"type":"object","properties":{"scripts":{"type":"object","properties":{"test":{"type":"string"}},"additionalProperties":false}}}]},"review":{"$ref":"#/definitions/environmentConfig"},"production":{"$ref":"#/definitions/environmentConfig"}},"additionalProperties":false},"stack":{"type":"string","enum":["heroku-18","heroku-20","heroku-22","heroku-24"]}}}} |
 | `env` | `object` *optional* | Key-value pairs of environment variables for the deployment that override the ones in app.json |
 | `internalRouting` | `boolean` *optional* | Enables internal routing within private spaces. Use this flag when you need to configure private spaces for internal routing. |
 | `spaceId` | `string` *optional* | Heroku private space identifier for space-scoped deployments. Use spaces_list tool to get a list of spaces if needed. |

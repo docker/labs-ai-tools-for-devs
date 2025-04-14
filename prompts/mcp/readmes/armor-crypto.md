@@ -24,6 +24,9 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
  1. **`archive_wallets`**: Archive wallets.
 
     Expects a list of wallet names, returns a list of WalletArchiveOrUnarchiveResponse.
+ 1. **`calculate_token_conversion`**: Perform token conversion quote between two tokens. Good for quickly calculating market prices.
+
+    Expects a ConversionRequestContainer, returns a list of ConversionResponse.
  1. **`calculator`**: Safely evaluates a mathematical or statistical expression string using Python syntax.
 
     Supports arithmetic operations (+, -, *, /, **, %, //), list expressions, and a range of math and statistics functions: 
@@ -36,9 +39,6 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
  1. **`cancel_order`**: Cancel a limit or stop loss order.
 
     Expects a CancelOrderRequestContainer, returns a CancelOrderResponseContainer.
- 1. **`conversion_api`**: Perform token conversion.
-
-    Expects a ConversionRequestContainer, returns a list of ConversionResponse.
  1. **`create_dca_order`**: Create a DCA order.
 
     Expects a DCAOrderRequestContainer, returns a list of DCAOrderResponse.
@@ -58,13 +58,16 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
 
     Returns a list of Wallets and asssets
  1. **`get_armor_mcp_version`**: Get the current Armor Wallet version
- 1. **`get_stake_balances`**: Get the stake balance.
+ 1. **`get_candle_sticks`**: Get the candle sticks.
+
+    Expects a CandleStickRequest, returns a list of candle sticks.
+ 1. **`get_stake_balances`**: Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
  1. **`get_token_details`**: Retrieve token details.
 
     Expects a TokenDetailsRequestContainer, returns a list of TokenDetailsResponse.
- 1. **`get_top_trending_tokens`**: Get the top trending tokens in a particular time frame.
+ 1. **`get_top_trending_tokens`**: Get the top trending tokens in a particular time frame. Great for comparing market cap or volume.
 
     Expects a TopTrendingTokensRequest, returns a list of tokens with their details.
  1. **`get_wallet_token_balance`**: Get the balance for a list of wallet/token pairs.
@@ -82,6 +85,9 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
  1. **`remove_wallets_from_group`**: Remove wallets from a specified group.
 
     Expects the group name and a list of wallet names, returns a list of RemoveWalletFromGroupResponse.
+ 1. **`rename_wallets`**: Rename wallets.
+
+    Expects a RenameWalletRequestContainer, returns a list.
  1. **`stake_quote`**: Retrieve a stake quote.
 
     Expects a StakeQuoteRequestContainer, returns a SwapQuoteRequestContainer.
@@ -109,6 +115,7 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
  1. **`unstake_transaction`**: Execute an unstake transaction.
 
     Expects a UnstakeTransactionRequestContainer, returns a SwapTransactionRequestContainer.
+ 1. **`wait_a_moment`**: Wait for some short amount of time, no more than 10 seconds
 
 ## Tools
 
@@ -141,6 +148,16 @@ Archive wallets.
 | Parameter | Type | Description |
 | - | - | - |
 | `archive_wallet_requests` | `string` |  |
+
+### Tool: **`calculate_token_conversion`**
+
+Perform token conversion quote between two tokens. Good for quickly calculating market prices.
+
+    Expects a ConversionRequestContainer, returns a list of ConversionResponse.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `conversion_requests` | `string` |  |
 
 ### Tool: **`calculator`**
 
@@ -175,16 +192,6 @@ Cancel a limit or stop loss order.
 | Parameter | Type | Description |
 | - | - | - |
 | `cancel_order_requests` | `string` |  |
-
-### Tool: **`conversion_api`**
-
-Perform token conversion.
-
-    Expects a ConversionRequestContainer, returns a list of ConversionResponse.
-
-| Parameter | Type | Description |
-| - | - | - |
-| `conversion_requests` | `string` |  |
 
 ### Tool: **`create_dca_order`**
 
@@ -232,19 +239,37 @@ Retrieve all limit and stop loss orders.
 
     Returns a list of orders.
 
+| Parameter | Type | Description |
+| - | - | - |
+| `get_all_orders_requests` | `string` |  |
+
 ### Tool: **`get_all_wallets`**
 
 Retrieve all wallets with balances.
 
     Returns a list of Wallets and asssets
 
+| Parameter | Type | Description |
+| - | - | - |
+| `get_all_wallets_requests` | `string` |  |
+
 ### Tool: **`get_armor_mcp_version`**
 
 Get the current Armor Wallet version
 
+### Tool: **`get_candle_sticks`**
+
+Get the candle sticks.
+
+    Expects a CandleStickRequest, returns a list of candle sticks.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `candle_stick_requests` | `string` |  |
+
 ### Tool: **`get_stake_balances`**
 
-Get the stake balance.
+Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
 
@@ -260,7 +285,7 @@ Retrieve token details.
 
 ### Tool: **`get_top_trending_tokens`**
 
-Get the top trending tokens in a particular time frame.
+Get the top trending tokens in a particular time frame. Great for comparing market cap or volume.
 
     Expects a TopTrendingTokensRequest, returns a list of tokens with their details.
 
@@ -283,6 +308,10 @@ Get the balance for a list of wallet/token pairs.
 List all DCA orders.
 
     Returns a list of DCAOrderResponse.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `list_dca_order_requests` | `string` |  |
 
 ### Tool: **`list_groups`**
 
@@ -309,6 +338,16 @@ Remove wallets from a specified group.
 | Parameter | Type | Description |
 | - | - | - |
 | `remove_wallets_from_group_requests` | `string` |  |
+
+### Tool: **`rename_wallets`**
+
+Rename wallets.
+
+    Expects a RenameWalletRequestContainer, returns a list.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `rename_wallet_requests` | `string` |  |
 
 ### Tool: **`stake_quote`**
 
@@ -399,6 +438,14 @@ Execute an unstake transaction.
 | Parameter | Type | Description |
 | - | - | - |
 | `unstake_transaction_requests` | `string` |  |
+
+### Tool: **`wait_a_moment`**
+
+Wait for some short amount of time, no more than 10 seconds
+
+| Parameter | Type | Description |
+| - | - | - |
+| `seconds` | `number` |  |
 
 ## Use this MCP Server
 

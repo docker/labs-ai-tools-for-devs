@@ -495,6 +495,7 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
     secrets:
     - {name: github.personal_access_token}
+
   armor-crypto:
     description: "The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md
@@ -504,10 +505,10 @@ registry:
     - {name: add_wallets_to_group}
     - {name: archive_wallet_group}
     - {name: archive_wallets}
+    - {name: calculate_token_conversion}
     - {name: calculator}
     - {name: cancel_dca_order}
     - {name: cancel_order}
-    - {name: conversion_api}
     - {name: create_dca_order}
     - {name: create_groups}
     - {name: create_order}
@@ -515,6 +516,7 @@ registry:
     - {name: get_all_orders}
     - {name: get_all_wallets}
     - {name: get_armor_mcp_version}
+    - {name: get_candle_sticks}
     - {name: get_stake_balances}
     - {name: get_token_details}
     - {name: get_top_trending_tokens}
@@ -523,6 +525,7 @@ registry:
     - {name: list_groups}
     - {name: list_single_group}
     - {name: remove_wallets_from_group}
+    - {name: rename_wallets}
     - {name: stake_quote}
     - {name: stake_transaction}
     - {name: swap_quote}
@@ -532,16 +535,47 @@ registry:
     - {name: unarchive_wallets}
     - {name: unstake_quote}
     - {name: unstake_transaction}
+    - {name: wait_a_moment}
     secrets:
       - {name: armor-crypto.api_key}
     config:
       - name: armor-crypto
-        description: The MCP server needs to be configured
+        description: Configure the connection to Armor
         parameters:
           api_url:
             type: string
-        required:
-          - api_url
+    prompts: 0
+    resources: {}
+  astra-db:
+    description: "An MCP server for Astra DB workloads"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: BulkCreateRecords}
+    - {name: BulkDeleteRecords}
+    - {name: BulkUpdateRecords}
+    - {name: CreateCollection}
+    - {name: CreateRecord}
+    - {name: DeleteCollection}
+    - {name: DeleteRecord}
+    - {name: EstimateDocumentCount}
+    - {name: FindRecord}
+    - {name: GetCollections}
+    - {name: GetRecord}
+    - {name: HelpAddToClient}
+    - {name: ListRecords}
+    - {name: OpenBrowser}
+    - {name: UpdateCollection}
+    - {name: UpdateRecord}
+    secrets:
+      - {name: astra-db.applicatin_token}
+    config:
+      - name: astra-db
+        description: Configure the connection to Astra DB
+        parameters:
+          endpoint:
+            type: string
     prompts: 0
     resources: {}
   atlas-docs:
@@ -557,12 +591,10 @@ registry:
     - {name: search_docs}
     config:
       - name: atlas-docs
-        description: The MCP server needs to be configured
+        description: Configure the connection to Atlas Docs
         parameters:
           api_url:
             type: string
-        required:
-          - api_url
     prompts: 0
     resources: {}
   audiense-insights:
@@ -584,12 +616,25 @@ registry:
       - {name: audiense-insights.twitter_bearer_token}
     config:
       - name: audiense-insights
-        description: The MCP server needs to be configured
+        description: Configure the connection to Audiense Insights
         parameters:
           client_id:
             type: string
         required:
           - client_id
+    prompts: 0
+    resources: {}
+  aws-kb-retrieval-server:
+    description: "An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
+    tools:
+    - {name: retrieve_from_aws_kb}
+    secrets:
+      - {name: aws.access_key_id}
+      - {name: aws.secret_access_key}
+      - {name: aws.region}
     prompts: 0
     resources: {}
   basic-memory:
@@ -631,12 +676,35 @@ registry:
       - {name: bitrefill.api_secret}
     config:
       - name: bitrefill
-        description: The MCP server needs to be configured
+        description: Configure the connection to Bitrefill
         parameters:
           api_id:
             type: string
         required:
           - api_id
+    prompts: 0
+    resources: {}
+  box:
+    description: "An MCP server capable of interacting with the Box API"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: box_ai_extract_data}
+    - {name: box_ask_ai_tool}
+    - {name: box_ask_ai_tool_multi_file}
+    - {name: box_authorize_app_tool}
+    - {name: box_download_file_tool}
+    - {name: box_list_folder_content_by_folder_id}
+    - {name: box_manage_folder_tool}
+    - {name: box_read_tool}
+    - {name: box_search_folder_by_name}
+    - {name: box_search_tool}
+    - {name: box_upload_file_tool}
+    - {name: box_who_am_i}
+    secrets:
+      - {name: box.client_id}
+      - {name: box.client_secret}
     prompts: 0
     resources: {}
   chroma:
@@ -697,12 +765,10 @@ registry:
       - {name: dart.token}
     config:
       - name: dart
-        description: The MCP server needs to be configured
+        description: Configure the connection to Dart
         parameters:
           host:
             type: string
-        required:
-          - host
     prompts: 0
     resources: {}
   databutton:
@@ -728,7 +794,7 @@ registry:
       - {name: descope.management_key}
     config:
       - name: descope
-        description: The MCP server needs to be configured
+        description: Configure the connection to Descope
         parameters:
           project_id:
             type: string
@@ -757,7 +823,7 @@ registry:
       - {name: devhub-cms.api_secret}
     config:
       - name: devhub-cms
-        description: The MCP server needs to be configured
+        description: Configure the connection to DevHub CMS
         parameters:
           url:
             type: string
@@ -776,15 +842,26 @@ registry:
       - {name: e2b.api_key}
     prompts: 0
     resources: {}
-  exa:
-    description: "Claude can perform Web Search | Exa with MCP (Model Context Protocol)"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
+  elasticsearch:
+    description: "Interact with your Elasticsearch indices through natural language conversations."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elasticsearch.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: web_search}
+    - {name: get_mappings}
+    - {name: get_shards}
+    - {name: list_indices}
+    - {name: search}
     secrets:
-      - {name: exa.api_key}
+      - {name: elasticsearch.api_key}
+    config:
+      - name: elasticsearch
+        description: Configure the connection to Elasticsearch
+        parameters:
+          url:
+            type: string
+        required:
+          - url
     prompts: 0
     resources: {}
   firecrawl:
@@ -807,30 +884,22 @@ registry:
       - {name: firecrawl.api_key}
     config:
       - name: firecrawl
-        description: The MCP server needs to be configured
+        description: Configure the connection to Firecrawl
         parameters:
           url:
             type: string
           retry_max:
-            type: string
+            type: integer
           retry_delay:
-            type: string
+            type: integer
           retry_max_delay:
-            type: string
+            type: integer
           retry_backoff_factor:
-            type: string
+            type: integer
           credit_warning_threshold:
-            type: string
+            type: integer
           credit_critical_threshold:
-            type: string
-        required:
-          - url
-          - retry_max
-          - retry_delay
-          - retry_max_delay
-          - retry_backoff_factor
-          - credit_warning_threshold
-          - credit_critical_threshold
+            type: integer
     prompts: 0
     resources: {}
   github-chat:
@@ -845,41 +914,6 @@ registry:
       - {name: github-chat.api_key}
     prompts: 0
     resources: {}
-  glif:
-    description: "Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: glif_info}
-    - {name: list_bots}
-    - {name: list_featured_glifs}
-    - {name: list_saved_glif_tools}
-    - {name: load_bot}
-    - {name: my_glif_user_info}
-    - {name: my_glifs}
-    - {name: remove_all_glif_tools}
-    - {name: remove_glif_tool}
-    - {name: run_glif}
-    - {name: save_bot_skills_as_tools}
-    - {name: save_glif_as_tool}
-    - {name: search_glifs}
-    - {name: show_bot_info}
-    secrets:
-      - {name: glif.api_token}
-    config:
-      - name: glif
-        description: The MCP server needs to be configured
-        parameters:
-          ids:
-            type: string
-          ignored_saved:
-            type: string
-        required:
-          - ids
-          - ignored_saved
-    prompts: 0
-    resources: {}
   handwriting-ocr:
     description: "Model Context Protocol (MCP) Server for Handwriting OCR"
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/handwriting-ocr.md
@@ -891,6 +925,50 @@ registry:
     - {name: upload_document}
     secrets:
       - {name: handwriting-ocr.api_token}
+    prompts: 0
+    resources: {}
+  heroku:
+    description: "Heroku Platform MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create_addon}
+    - {name: create_app}
+    - {name: deploy_one_off_dyno}
+    - {name: deploy_to_heroku}
+    - {name: get_addon_info}
+    - {name: get_app_info}
+    - {name: get_app_logs}
+    - {name: list_addon_plans}
+    - {name: list_addon_services}
+    - {name: list_addons}
+    - {name: list_apps}
+    - {name: list_private_spaces}
+    - {name: list_teams}
+    - {name: maintenance_off}
+    - {name: maintenance_on}
+    - {name: pg_backups}
+    - {name: pg_credentials}
+    - {name: pg_info}
+    - {name: pg_kill}
+    - {name: pg_locks}
+    - {name: pg_maintenance}
+    - {name: pg_outliers}
+    - {name: pg_ps}
+    - {name: pg_psql}
+    - {name: pg_upgrade}
+    - {name: pipelines_create}
+    - {name: pipelines_info}
+    - {name: pipelines_list}
+    - {name: pipelines_promote}
+    - {name: ps_list}
+    - {name: ps_restart}
+    - {name: ps_scale}
+    - {name: rename_app}
+    - {name: transfer_app}
+    secrets:
+      - {name: heroku.api_key}
     prompts: 0
     resources: {}
   hyperbrowser:
@@ -908,17 +986,6 @@ registry:
     - {name: search_with_bing}
     secrets:
       - {name: hyperbrowser.api_key}
-    config:
-      - name: hyperbrowser
-        description: The MCP server needs to be configured
-        parameters:
-          use_resources:
-            type: string
-          collection:
-            type: string
-        required:
-          - use_resources
-          - collection
     prompts: 0
     resources: {}
   hyperspell:
@@ -934,15 +1001,12 @@ registry:
       - {name: hyperspell.token}
     config:
       - name: hyperspell
-        description: The MCP server needs to be configured
+        description: Configure the connection to Hyperspell
         parameters:
           use_resources:
-            type: string
+            type: boolean
           collection:
             type: string
-        required:
-          - use_resources
-          - collection
     prompts: 0
     resources: {}
   iaptic:
@@ -971,7 +1035,7 @@ registry:
       - {name: iaptic.api_key}
     config:
       - name: iaptic
-        description: The MCP server needs to be configured
+        description: Configure the connection to iaptic
         parameters:
           app_name:
             type: string
@@ -991,12 +1055,10 @@ registry:
       - {name: kagisearch.api_key}
     config:
       - name: kagisearch
-        description: The MCP server needs to be configured
+        description: Configure the connection to Kagi search
         parameters:
           engine:
             type: string
-        required:
-          - engine
     prompts: 0
     resources: {}
   multiversx-mx:
@@ -1021,7 +1083,7 @@ registry:
     - {name: send-sft-nft-meta-tokens}
     config:
       - name: multiversx-mx
-        description: The MCP server needs to be configured
+        description: Configure the connection to MultiversX blockchain
         parameters:
           network:
             type: string
@@ -1113,15 +1175,12 @@ registry:
       - {name: opik.api_key}
     config:
       - name: opik
-        description: The MCP server needs to be configured
+        description: Configure the connection to Opik
         parameters:
           api_base_url:
             type: string
           workspace_name:
             type: string
-        required:
-          - api_base_url
-          - workspace_name
     prompts: 0
     resources: {}
   osp_marketing_tools:
@@ -1144,13 +1203,16 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/oxylabs.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: oxylabs_scraper}
+    - {name: oxylabs_amazon_product_scraper}
+    - {name: oxylabs_amazon_search_scraper}
+    - {name: oxylabs_google_search_scraper}
+    - {name: oxylabs_universal_scraper}
     - {name: oxylabs_web_unblocker}
     secrets:
       - {name: oxylabs.password}
     config:
       - name: oxylabs
-        description: The MCP server needs to be configured
+        description: Configure the connection to Oxylabs Scraper
         parameters:
           username:
             type: string
@@ -1159,7 +1221,7 @@ registry:
     prompts: 0
     resources: {}
   perplexity-ask:
-    description: "A Model Context Protocol Server connector for Perplexity API, to enable web search without leaving the MCP ecosystem."
+    description: "Connector for Perplexity API, to enable real-time, web-wide research."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/perplexity-ask.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
@@ -1169,6 +1231,33 @@ registry:
     - {name: perplexity_research}
     secrets:
       - {name: perplexity-ask.api_key}
+    prompts: 0
+    resources: {}
+  redis-cloud:
+    description: "MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis-cloud.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis-cloud.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: create-essential-subscription}
+    - {name: create-pro-database}
+    - {name: create-pro-subscription}
+    - {name: delete-essential-subscription}
+    - {name: get-current-account}
+    - {name: get-current-payment-methods}
+    - {name: get-database-modules}
+    - {name: get-essential-subscription-by-id}
+    - {name: get-essential-subscriptions}
+    - {name: get-essentials-plans}
+    - {name: get-pro-databases}
+    - {name: get-pro-plans-regions}
+    - {name: get-pro-subscription}
+    - {name: get-pro-subscriptions}
+    - {name: get-task-by-id}
+    - {name: get-tasks}
+    secrets:
+      - {name: redis-cloud.api_key}
+      - {name: redis-cloud.secret_key}
     prompts: 0
     resources: {}
   scrapegraph:
@@ -1276,154 +1365,5 @@ registry:
     - {name: tool_call}
     secrets:
       - {name: veyrax.api_key}
-    prompts: 0
-    resources: {}
-  box:
-    description: "An MCP server capable of interacting with the Box API"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: box_ai_extract_data}
-    - {name: box_ask_ai_tool}
-    - {name: box_ask_ai_tool_multi_file}
-    - {name: box_authorize_app_tool}
-    - {name: box_download_file_tool}
-    - {name: box_list_folder_content_by_folder_id}
-    - {name: box_manage_folder_tool}
-    - {name: box_read_tool}
-    - {name: box_search_folder_by_name}
-    - {name: box_search_tool}
-    - {name: box_upload_file_tool}
-    - {name: box_who_am_i}
-    secrets:
-      - {name: box.client_id}
-      - {name: box.client_secret}
-    prompts: 0
-    resources: {}
-  astra-db:
-    description: "An MCP server for Astra DB workloads"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: BulkCreateRecords}
-    - {name: BulkDeleteRecords}
-    - {name: BulkUpdateRecords}
-    - {name: CreateCollection}
-    - {name: CreateRecord}
-    - {name: DeleteCollection}
-    - {name: DeleteRecord}
-    - {name: EstimateDocumentCount}
-    - {name: FindRecord}
-    - {name: GetCollections}
-    - {name: GetRecord}
-    - {name: HelpAddToClient}
-    - {name: ListRecords}
-    - {name: OpenBrowser}
-    - {name: UpdateCollection}
-    - {name: UpdateRecord}
-    secrets:
-      - {name: astra-db.applicatin_token}
-    config:
-      - name: astra-db
-        description: The MCP server needs to be configured
-        parameters:
-          endpoint:
-            type: string
-        required:
-          - endpoint
-    prompts: 0
-    resources: {}
-  redis-cloud:
-    description: "MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language."
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis-cloud.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis-cloud.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: create-essential-subscription}
-    - {name: create-pro-database}
-    - {name: create-pro-subscription}
-    - {name: delete-essential-subscription}
-    - {name: get-current-account}
-    - {name: get-current-payment-methods}
-    - {name: get-database-modules}
-    - {name: get-essential-subscription-by-id}
-    - {name: get-essential-subscriptions}
-    - {name: get-essentials-plans}
-    - {name: get-pro-databases}
-    - {name: get-pro-plans-regions}
-    - {name: get-pro-subscription}
-    - {name: get-pro-subscriptions}
-    - {name: get-task-by-id}
-    - {name: get-tasks}
-    secrets:
-      - {name: redis-cloud.api_key}
-      - {name: redis-cloud.secret_key}
-    prompts: 0
-    resources: {}
-  elasticsearch:
-    description: "Interact with your Elasticsearch indices through natural language conversations."
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elasticsearch.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: get_mappings}
-    - {name: get_shards}
-    - {name: list_indices}
-    - {name: search}
-    secrets:
-      - {name: elasticsearch.api_key}
-    config:
-      - name: elasticsearch
-        description: The MCP server needs to be configured
-        parameters:
-          url:
-            type: string
-        required:
-          - url
-    prompts: 0
-    resources: {}
-  heroku:
-    description: "Heroku Platform MCP Server"
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-    - {name: create_addon}
-    - {name: create_app}
-    - {name: deploy_to_heroku}
-    - {name: get_addon_info}
-    - {name: get_app_info}
-    - {name: get_app_logs}
-    - {name: list_addon_plans}
-    - {name: list_addon_services}
-    - {name: list_addons}
-    - {name: list_apps}
-    - {name: list_private_spaces}
-    - {name: list_teams}
-    - {name: maintenance_off}
-    - {name: maintenance_on}
-    - {name: pg_backups}
-    - {name: pg_credentials}
-    - {name: pg_info}
-    - {name: pg_kill}
-    - {name: pg_locks}
-    - {name: pg_maintenance}
-    - {name: pg_outliers}
-    - {name: pg_ps}
-    - {name: pg_psql}
-    - {name: pg_upgrade}
-    - {name: pipelines_create}
-    - {name: pipelines_info}
-    - {name: pipelines_list}
-    - {name: pipelines_promote}
-    - {name: ps_list}
-    - {name: ps_restart}
-    - {name: ps_scale}
-    - {name: rename_app}
-    - {name: transfer_app}
-    secrets:
-      - {name: heroku.api_key}
     prompts: 0
     resources: {}
