@@ -7,6 +7,6 @@ mcp:
         armor-crypto.api_key: ARMOR_API_KEY
       environment:
         ARMOR_API_URL: "{{armor-crypto.api_url|safe}}"
-  - source:
-      url: https://github.com/armorwallet/armor-crypto-mcp
+    source:
+      url: https://github.com/armorwallet/armor-crypto-mcp/tree/main
 ---

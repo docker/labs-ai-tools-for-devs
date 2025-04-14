@@ -7,6 +7,6 @@ mcp:
         devhub-cms.api_secret: DEVHUB_API_SECRET
       environment:
         DEVHUB_BASE_URL: "{{devhub-cms.url|safe}}"
-  - source:
-      url: https://github.com/devhub/devhub-cms-mcp
+    source:
+      url: https://github.com/devhub/devhub-cms-mcp/tree/main
 ---

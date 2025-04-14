@@ -7,6 +7,6 @@ mcp:
       environment:
         USE_RESOURCES: "{{hyperbrowser.use_resources}}"
         HYPERSPELL_COLLECTION: "{{hyperbrowser.collection}}"
-  - source:
-      url: https://github.com/hyperbrowserai/mcp
+    source:
+      url: https://github.com/hyperbrowserai/mcp/tree/main
 ---

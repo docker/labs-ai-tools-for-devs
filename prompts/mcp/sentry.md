@@ -9,5 +9,5 @@ mcp:
         - "--auth-token"
         - $SENTRY_AUTH_TOKEN
     source:
-      url: https://github.com/modelcontextprotocol/servers/tree/main
+      url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

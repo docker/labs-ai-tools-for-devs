@@ -8,5 +8,5 @@ mcp:
       environment:
         GITLAB_API_URL: "{{gitlab.url|safe}}"
     source:
-      url: https://github.com/modelcontextprotocol/servers/tree/main
+      url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 ---

@@ -2,6 +2,6 @@
 mcp:
   - container:
       image: mcp/basic-memory:latest
-  - source:
-      url: https://github.com/basicmachines-co/basic-memory
+    source:
+      url: https://github.com/basicmachines-co/basic-memory/tree/main
 ---

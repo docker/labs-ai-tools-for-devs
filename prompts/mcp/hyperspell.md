@@ -7,6 +7,6 @@ mcp:
       environment:
         USE_RESOURCES: "{{hyperspell.use_resources}}"
         HYPERSPELL_COLLECTION: "{{hyperspell.collection}}"
-  - source:
-      url: https://github.com/hyperspell/hyperspell-mcp
+    source:
+      url: https://github.com/hyperspell/hyperspell-mcp/tree/main
 ---
