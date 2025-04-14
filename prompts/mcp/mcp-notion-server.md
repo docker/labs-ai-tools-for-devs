@@ -1,10 +1,9 @@
 ---
 mcp:
   - container:
-      image: mcp/notion-server:latest
-      workdir: /app
+      image: mcp/notion:latest
       secrets:
-        notion.api_token: NOTION_API_TOKEN
+        notion.openai_mcp_headers: OPENAPI_MCP_HEADERS
     source:
-      url: https://github.com/slimslenderslacks/mcp-notion-server/tree/main
+      url: https://github.com/makenotion/notion-mcp-server/tree/main
 ---

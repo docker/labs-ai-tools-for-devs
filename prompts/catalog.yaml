@@ -326,31 +326,33 @@ registry:
     - {name: read-file}
     prompts: 0
     resources: {}
-  mcp-notion-server:
-    description: |
-      Interact with Notion workspaces.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/mcp-notion-server.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    secrets:
-    - {name: notion.api_token}
+  Notion:
+    description: "Official Notion MCP Server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/mcp-notion-server.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/mcp-notion-server.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/notion.svg
     tools:
-    - {name: notion_append_block_children}
-    - {name: notion_retrieve_block}
-    - {name: notion_retrieve_block_children}
-    - {name: notion_delete_block}
-    - {name: notion_retrieve_page}
-    - {name: notion_update_page_properties}
-    - {name: notion_list_all_users}
-    - {name: notion_retrieve_user}
-    - {name: notion_retrieve_bot_user}
-    - {name: notion_create_database}
-    - {name: notion_query_database}
-    - {name: notion_retrieve_database}
-    - {name: notion_update_database}
-    - {name: notion_create_database_item}
-    - {name: notion_create_comment}
-    - {name: notion_retrieve_comments}
-    - {name: notion_search}
+    - {name: API-create-a-comment}
+    - {name: API-create-a-database}
+    - {name: API-delete-a-block}
+    - {name: API-get-block-children}
+    - {name: API-get-self}
+    - {name: API-get-user}
+    - {name: API-get-users}
+    - {name: API-patch-block-children}
+    - {name: API-patch-page}
+    - {name: API-post-database-query}
+    - {name: API-post-page}
+    - {name: API-post-search}
+    - {name: API-retrieve-a-block}
+    - {name: API-retrieve-a-comment}
+    - {name: API-retrieve-a-database}
+    - {name: API-retrieve-a-page}
+    - {name: API-retrieve-a-page-property}
+    - {name: API-update-a-block}
+    - {name: API-update-a-database}
+    secrets:
+      - {name: notion.openai_mcp_headers}
     prompts: 0
     resources: {}
   openapi-schema:
