@@ -37,3 +37,14 @@
     (=
      ""
      (docker/injected-entrypoint nil nil nil))))
+
+(t/deftest inject-container-tests
+  (t/is
+    (=
+     ["/bin/sh"
+      "-c"
+      "export INTEGRATION_SECRET=$(cat /secret/notion.integration_secret | sed -e \"s/^[[:space:]]*//\") ; export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ; export NODE_VERSION=20.19.0 ; export YARN_VERSION=1.22.22 ; export OPENAPI_MCP_HEADERS={} ; export OPENAPI_MCP_HEADERS=\"{\\\"Authorization\": \\\"Bearer $INTEGRATION_SECERET\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\" ; notion-mcp-server"]
+     (:entrypoint (docker/inject-secret-transform
+                    {:secrets {:notion.integration_secret "INTEGRATION_SECRET"}
+                     :environment {"OPENAPI_MCP_HEADERS" "\"{\\\"Authorization\": \\\"Bearer $INTEGRATION_SECERET\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\""}
+                     :image "mcp/notion:latest"})))))

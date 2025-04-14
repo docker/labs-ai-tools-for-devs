@@ -3,6 +3,7 @@ registry:
     description: The MCP SQLite promptfile contributes all of the tools necessary to work with SQLite and SQLite databases. The file also includes a prompt to seed the database with initial data which helps to demonstrate what you can do with an SQLite MCP Server.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sqlite.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
     tools:
       - name: read-query
@@ -16,6 +17,7 @@ registry:
   curl:
     description: This prompt file contains the standard curl tool. In addition to the tool itself, you get a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
     tools:
       - name: curl-manual
@@ -25,6 +27,7 @@ registry:
   ffmpeg:
     description: Use ffmpeg to process video files. This prompt file contains the ffmpeg tool, and a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
     tools:
       - name: imagemagick-manual
@@ -36,6 +39,7 @@ registry:
   qr code:
     description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/qrencode.md
     icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
     tools:
       - name: qrencode
@@ -45,6 +49,7 @@ registry:
     description: Give your MCP client a memory system! This prompt file contains a tool to create entities, relations, and observations in a knowledge graph. It also contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/memory.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-memory.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
     tools:
       - name: create_entities
@@ -61,6 +66,7 @@ registry:
   chrome:
     description: Drive a headless Chrome browser to interact with web pages
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/chrome.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
     tools:
       - name: interact-with-chrome
@@ -72,6 +78,7 @@ registry:
   sequentialthinking:
     description: A tool for dynamic and reflective problem-solving through a structured thinking process
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/sequentialthinking.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sequentialthinking.md
     icon: https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/2454513/2454513-1570719639731-bfdf3620a4e0d.jpg
     tools:
@@ -205,6 +212,9 @@ registry:
     description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
+    source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/gdrive
+    secrets:
+      - name: google.gcp-oauth.keys.json
     tools:
       - name: gdrive_auth
     secrets:
@@ -236,6 +246,7 @@ registry:
     description: A Model Context Protocol server for Git repository interaction and automation
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/git.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
     tools:
       - name: git
@@ -310,7 +321,7 @@ registry:
       Local filesystem access with configurable allowed paths
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
-    source: https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem
+    source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     config:
       - name: filesystem
@@ -338,6 +349,7 @@ registry:
   postgres readonly:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgres.md
+    source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://img.icons8.com/ios/50/postgreesql.png
     tools: []
     secrets:
@@ -378,6 +390,7 @@ registry:
     description: |
       Bootstrap new tools from your MCP client
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/bootstrap.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: tool-registration
@@ -430,10 +443,16 @@ registry:
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
     tools: []
     secrets:
-      - name: atlassian.jira.token
-      - name: atlassian.confluence.token
     prompts: 0
     resources: {}
+      - name: atlassian.jira.api_token
+        required: false
+      - name: atlassian.confluence.api_token
+        required: false
+      - name: atlassian.jira.personal_token
+        required: false
+      - name: atlassian.confluence.personal_token
+        required: false
     config:
       - name: atlassian
         description: The MCP server is allowed to access these paths
@@ -618,7 +637,7 @@ registry:
     description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
-    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
+    source: https://github.com/github/github-mcp-server
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
     tools:
       - name: add_issue_comment
