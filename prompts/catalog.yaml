@@ -499,23 +499,26 @@ registry:
     secrets:
       - {name: discord.token}
   resend:
-    description: |
-      Sends emails using Resend's API. Why? Now you can let Cursor or Claude Desktop compose emails for you and send it right away without having to copy and paste the email content.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/resend.md
+    description: "Send emails directly from Cursor with this email sending MCP server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/resend.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/resend.md
     icon: https://img.icons8.com/ios/50/new-post--v1.png
+    tools:
+    - {name: send-email}
+    secrets:
+      - {name: resend.api_key}
     config:
       - name: resend
         description: Configure sender and reply email addresses
         parameters:
-          sender:
-            type: string
-            description: sender email address
           reply_to:
             type: string
             description: comma separated list of reply to email addresses
-    secrets:
-      - {name: resend.api_key}
+          sender:
+            type: string
+            description: sender email address
+    prompts: 0
+    resources: {}
   GitHub MCP Server:
     description: |
       Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
