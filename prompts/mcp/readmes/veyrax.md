@@ -50,6 +50,10 @@ You can use this tool to get the list of tools, method names and parameters, and
 This method also returns all flows with name and id that user has access to (if any).
 "
 
+| Parameter | Type | Description |
+| - | - | - |
+| `question` | `string` | Query question that you want find answer for. Try to ALWAYS provide this field based on conversation with user. Could be your reasoning for calling tool. |
+
 ### Tool: **`tool_call`**
 
 "Use this tool to execute a specific method of another tool with the provided parameters based on get-tools tool response.
@@ -60,6 +64,7 @@ You need to specify the tool name, method name, and any required parameters for 
 | `method` | `string` | The method of the tool to call (e.g., 'get_messages', 'send_message', 'list_events') |
 | `tool` | `string` | The name of the tool to call (e.g., 'gmail', 'google-calendar', 'slack') |
 | `parameters` | `object` *optional* | The parameters required by the specific tool method being called, it is MUST HAVE field. |
+| `question` | `string` *optional* | User question that you want find answer for. Try to ALWAYS provide this field based on conversation with user. Could be your reasoning for calling tool. |
 
 ## Use this MCP Server
 

@@ -46,7 +46,10 @@ Best suited use cases include:
 
 Provide detailed task instructions, relevant context, and clearly specify the desired outcome for best results. Returns the completed result or an error message if issues arise.
  1. **`crawl_webpages`**: Crawl a website starting from a URL and explore linked pages. This tool allows systematic collection of content from multiple pages within a domain. Use this for larger data collection tasks, content indexing, or site mapping.
+ 1. **`create_profile`**: Creates a new persistent Hyperbrowser profile.
+ 1. **`delete_profile`**: Deletes an existing persistent Hyperbrowser profile.
  1. **`extract_structured_data`**: Extract structured data from a webpage. This tool allows you to extract structured data from a webpage using a schema.
+ 1. **`list_profiles`**: Lists existing persistent Hyperbrowser profiles, with optional pagination.
  1. **`openai_computer_use_agent`**: This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser. It handles complex interactions effectively with practical reasoning and clear execution.
 
 Optimal for tasks requiring:
@@ -129,6 +132,18 @@ Crawl a website starting from a URL and explore linked pages. This tool allows s
 | `maxPages` | `integer` *optional* |  |
 | `sessionOptions` | `object` *optional* | Options for the browser session. Avoid setting these if not mentioned explicitly |
 
+### Tool: **`create_profile`**
+
+Creates a new persistent Hyperbrowser profile.
+
+### Tool: **`delete_profile`**
+
+Deletes an existing persistent Hyperbrowser profile.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `profileId` | `string` | ID of the profile to delete |
+
 ### Tool: **`extract_structured_data`**
 
 Extract structured data from a webpage. This tool allows you to extract structured data from a webpage using a schema.
@@ -139,6 +154,15 @@ Extract structured data from a webpage. This tool allows you to extract structur
 | `urls` | `array` | The list of URLs of the webpages to extract structured information from. Can include wildcards (e.g. https://example.com/*) |
 | `schema` | `string` *optional* | The json schema to use for the extraction. Must provide an object describing a spec compliant json schema, any other types are invalid. |
 | `sessionOptions` | `object` *optional* | Options for the browser session. Avoid setting these if not mentioned explicitly |
+
+### Tool: **`list_profiles`**
+
+Lists existing persistent Hyperbrowser profiles, with optional pagination.
+
+| Parameter | Type | Description |
+| - | - | - |
+| `limit` | `integer` *optional* | Number of profiles per page (optional) |
+| `page` | `integer` *optional* | Page number for pagination (optional) |
 
 ### Tool: **`openai_computer_use_agent`**
 

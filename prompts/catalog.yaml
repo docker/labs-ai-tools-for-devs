@@ -632,8 +632,9 @@ registry:
     - {name: get_all_orders}
     - {name: get_all_wallets}
     - {name: get_armor_mcp_version}
-    - {name: get_candle_sticks}
+    - {name: get_current_time}
     - {name: get_stake_balances}
+    - {name: get_token_candle_data}
     - {name: get_token_details}
     - {name: get_top_trending_tokens}
     - {name: get_wallet_token_balance}
@@ -1083,7 +1084,10 @@ registry:
     - {name: browser_use_agent}
     - {name: claude_computer_use_agent}
     - {name: crawl_webpages}
+    - {name: create_profile}
+    - {name: delete_profile}
     - {name: extract_structured_data}
+    - {name: list_profiles}
     - {name: openai_computer_use_agent}
     - {name: scrape_webpage}
     - {name: search_with_bing}

@@ -58,12 +58,13 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
 
     Returns a list of Wallets and asssets
  1. **`get_armor_mcp_version`**: Get the current Armor Wallet version
- 1. **`get_candle_sticks`**: Get the candle sticks.
-
-    Expects a CandleStickRequest, returns a list of candle sticks.
+ 1. **`get_current_time`**: Gets the current time and date
  1. **`get_stake_balances`**: Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
+ 1. **`get_token_candle_data`**: Get the candle sticks.
+
+    Expects a CandleStickRequest, returns a list of candle sticks.
  1. **`get_token_details`**: Retrieve token details.
 
     Expects a TokenDetailsRequestContainer, returns a list of TokenDetailsResponse.
@@ -257,7 +258,17 @@ Retrieve all wallets with balances.
 
 Get the current Armor Wallet version
 
-### Tool: **`get_candle_sticks`**
+### Tool: **`get_current_time`**
+
+Gets the current time and date
+
+### Tool: **`get_stake_balances`**
+
+Get the balance of staked SOL (jupSOL).
+
+    Returns a StakeBalanceResponse.
+
+### Tool: **`get_token_candle_data`**
 
 Get the candle sticks.
 
@@ -266,12 +277,6 @@ Get the candle sticks.
 | Parameter | Type | Description |
 | - | - | - |
 | `candle_stick_requests` | `string` |  |
-
-### Tool: **`get_stake_balances`**
-
-Get the balance of staked SOL (jupSOL).
-
-    Returns a StakeBalanceResponse.
 
 ### Tool: **`get_token_details`**
 
