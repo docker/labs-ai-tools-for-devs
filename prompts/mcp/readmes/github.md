@@ -1,6 +1,6 @@
 # github MCP Server
 
-Repository management, file operations, and GitHub API integration
+Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
@@ -367,8 +367,8 @@ Update a pull request branch with the latest changes from the base branch
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GITHUB_PERSONAL_ACCESS_TOKEN"
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
         "mcp/github"
       ],
       "env": {

@@ -59,8 +59,8 @@ Upload a document to Handwriting OCR API for transcription
         "run",
         "-i",
         "--rm",
-        "-e"
-        "API_TOKEN"
+        "-e",
+        "API_TOKEN",
         "mcp/handwriting-ocr"
       ],
       "env": {

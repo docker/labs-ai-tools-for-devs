@@ -338,8 +338,8 @@ If the API return 401 it means the API key is invalid, this means the api ket do
         "run",
         "-i",
         "--rm",
-        "-e"
-        "TRIPLEWHALE_API_KEY"
+        "-e",
+        "TRIPLEWHALE_API_KEY",
         "mcp/triplewhale"
       ],
       "env": {

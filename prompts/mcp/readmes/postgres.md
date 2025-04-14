@@ -38,8 +38,14 @@ Run a read-only SQL query
         "run",
         "-i",
         "--rm",
-        "mcp/postgres"
-      ]
+        "-e",
+        "POSTGRES_URL",
+        "mcp/postgres",
+        "$POSTGRES_URL"
+      ],
+      "env": {
+        "POSTGRES_URL": "postgresql://host.docker.internal:5432/mydb"
+      }
     }
   }
 }

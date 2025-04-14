@@ -180,10 +180,10 @@ Update an existing record in a collection
         "run",
         "-i",
         "--rm",
-        "-e"
-        "ASTRA_DB_API_ENDPOINT"
-        "-e"
-        "ASTRA_DB_APPLICATION_TOKEN"
+        "-e",
+        "ASTRA_DB_API_ENDPOINT",
+        "-e",
+        "ASTRA_DB_APPLICATION_TOKEN",
         "mcp/astra-db"
       ],
       "env": {

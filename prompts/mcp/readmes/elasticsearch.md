@@ -62,10 +62,10 @@ Perform an Elasticsearch search with the provided query DSL. Highlights are alwa
         "run",
         "-i",
         "--rm",
-        "-e"
-        "ES_URL"
-        "-e"
-        "ES_API_KEY"
+        "-e",
+        "ES_URL",
+        "-e",
+        "ES_API_KEY",
         "mcp/elasticsearch"
       ],
       "env": {

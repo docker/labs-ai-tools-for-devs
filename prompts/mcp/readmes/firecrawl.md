@@ -166,22 +166,22 @@ Search and retrieve content from web pages with optional scraping. Returns SERP 
         "run",
         "-i",
         "--rm",
-        "-e"
-        "FIRECRAWL_API_URL"
-        "-e"
-        "FIRECRAWL_RETRY_MAX_ATTEMPTS"
-        "-e"
-        "FIRECRAWL_RETRY_INITIAL_DELAY"
-        "-e"
-        "FIRECRAWL_RETRY_MAX_DELAY"
-        "-e"
-        "FIRECRAWL_RETRY_BACKOFF_FACTOR"
-        "-e"
-        "FIRECRAWL_CREDIT_WARNING_THRESHOLD"
-        "-e"
-        "FIRECRAWL_CREDIT_CRITICAL_THRESHOLD"
-        "-e"
-        "FIRECRAWL_API_KEY"
+        "-e",
+        "FIRECRAWL_API_URL",
+        "-e",
+        "FIRECRAWL_RETRY_MAX_ATTEMPTS",
+        "-e",
+        "FIRECRAWL_RETRY_INITIAL_DELAY",
+        "-e",
+        "FIRECRAWL_RETRY_MAX_DELAY",
+        "-e",
+        "FIRECRAWL_RETRY_BACKOFF_FACTOR",
+        "-e",
+        "FIRECRAWL_CREDIT_WARNING_THRESHOLD",
+        "-e",
+        "FIRECRAWL_CREDIT_CRITICAL_THRESHOLD",
+        "-e",
+        "FIRECRAWL_API_KEY",
         "mcp/firecrawl"
       ],
       "env": {

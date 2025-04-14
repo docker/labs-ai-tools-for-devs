@@ -139,10 +139,10 @@ Search for GitLab projects
         "run",
         "-i",
         "--rm",
-        "-e"
-        "GITLAB_API_URL"
-        "-e"
-        "GITLAB_PERSONAL_ACCESS_TOKEN"
+        "-e",
+        "GITLAB_API_URL",
+        "-e",
+        "GITLAB_PERSONAL_ACCESS_TOKEN",
         "mcp/gitlab"
       ],
       "env": {

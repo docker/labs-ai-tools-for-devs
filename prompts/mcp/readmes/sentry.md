@@ -48,9 +48,11 @@ Retrieve and analyze a Sentry issue by ID or URL. Use this tool when you need to
         "run",
         "-i",
         "--rm",
-        "-e"
-        "SENTRY_AUTH_TOKEN"
-        "mcp/sentry"
+        "-e",
+        "SENTRY_AUTH_TOKEN",
+        "mcp/sentry",
+        "--auth-token",
+        "$SENTRY_AUTH_TOKEN"
       ],
       "env": {
         "SENTRY_AUTH_TOKEN": "YOUR_SENTRY_TOKEN"

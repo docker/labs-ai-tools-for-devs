@@ -39,8 +39,8 @@ Extract structured data from a website.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "SCRAPEZY_API_KEY"
+        "-e",
+        "SCRAPEZY_API_KEY",
         "mcp/scrapezy"
       ],
       "env": {

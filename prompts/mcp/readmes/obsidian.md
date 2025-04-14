@@ -151,8 +151,8 @@ Simple search for documents matching a specified text query across all files in 
         "run",
         "-i",
         "--rm",
-        "-e"
-        "OBSIDIAN_API_KEY"
+        "-e",
+        "OBSIDIAN_API_KEY",
         "mcp/obsidian"
       ],
       "env": {

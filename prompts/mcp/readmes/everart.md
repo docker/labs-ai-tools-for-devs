@@ -54,8 +54,8 @@ The response will contain a direct link to view the generated image.
         "run",
         "-i",
         "--rm",
-        "-e"
-        "EVERART_API_KEY"
+        "-e",
+        "EVERART_API_KEY",
         "mcp/everart"
       ],
       "env": {

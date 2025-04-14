@@ -59,8 +59,8 @@ A powerful web search tool that provides comprehensive, real-time results using 
         "run",
         "-i",
         "--rm",
-        "-e"
-        "TAVILY_API_KEY"
+        "-e",
+        "TAVILY_API_KEY",
         "mcp/tavily"
       ],
       "env": {
