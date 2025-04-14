@@ -180,20 +180,20 @@ registry:
     prompts: 0
     resources: {}
   google-maps:
-    description: Tools for interacting with the Google Maps API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/google-maps.md
+    description: "Tools for interacting with the Google Maps API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/google-maps.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/google-maps.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
-    secrets:
-    - {name: google.api_key}
     tools:
-    - {name: maps_geocode}
-    - {name: maps_reverse_geocode}
-    - {name: maps_search_places}
-    - {name: maps_place_details}
+    - {name: maps_directions}
     - {name: maps_distance_matrix}
     - {name: maps_elevation}
-    - {name: maps_directions}
+    - {name: maps_geocode}
+    - {name: maps_place_details}
+    - {name: maps_reverse_geocode}
+    - {name: maps_search_places}
+    secrets:
+      - {name: google-maps.api_key}
     prompts: 0
     resources: {}
   gdrive:
