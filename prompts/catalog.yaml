@@ -1354,3 +1354,218 @@ registry:
       - {name: veyrax.api_key}
     prompts: 0
     resources: {}
+  desktop-commander:
+    description: "Search, update, manage files and run terminal commands with AI"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/desktop-commander.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/desktop-commander.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: block_command}
+    - {name: create_directory}
+    - {name: edit_block}
+    - {name: execute_command}
+    - {name: force_terminate}
+    - {name: get_file_info}
+    - {name: kill_process}
+    - {name: list_allowed_directories}
+    - {name: list_blocked_commands}
+    - {name: list_directory}
+    - {name: list_processes}
+    - {name: list_sessions}
+    - {name: move_file}
+    - {name: read_file}
+    - {name: read_multiple_files}
+    - {name: read_output}
+    - {name: search_code}
+    - {name: search_files}
+    - {name: unblock_command}
+    - {name: write_file}
+    prompts: 0
+    resources: {}
+  duckduckgo:
+    description: "A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/duckduckgo.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/duckduckgo.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/duckduckgo.svg
+    tools:
+    - {name: fetch_content}
+    - {name: search}
+    prompts: 0
+    resources: {}
+  edubase:
+    description: "The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP)."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/edubase.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/edubase.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: edubase_delete_class_members}
+    - {name: edubase_delete_class_permission}
+    - {name: edubase_delete_class_tag}
+    - {name: edubase_delete_course_permission}
+    - {name: edubase_delete_course_tag}
+    - {name: edubase_delete_event_permission}
+    - {name: edubase_delete_event_tag}
+    - {name: edubase_delete_exam}
+    - {name: edubase_delete_exam_permission}
+    - {name: edubase_delete_exam_tag}
+    - {name: edubase_delete_exam_users}
+    - {name: edubase_delete_integration_permission}
+    - {name: edubase_delete_integration_tag}
+    - {name: edubase_delete_organization_members}
+    - {name: edubase_delete_organization_permission}
+    - {name: edubase_delete_organization_tag}
+    - {name: edubase_delete_question}
+    - {name: edubase_delete_quiz}
+    - {name: edubase_delete_quiz_permission}
+    - {name: edubase_delete_quiz_questions}
+    - {name: edubase_delete_quiz_tag}
+    - {name: edubase_delete_scorm_permission}
+    - {name: edubase_delete_scorm_tag}
+    - {name: edubase_delete_tag_permission}
+    - {name: edubase_delete_user}
+    - {name: edubase_delete_user_assume}
+    - {name: edubase_delete_user_classes}
+    - {name: edubase_delete_user_login}
+    - {name: edubase_delete_user_organizations}
+    - {name: edubase_delete_video_permission}
+    - {name: edubase_delete_video_tag}
+    - {name: edubase_get_class}
+    - {name: edubase_get_class_assignments}
+    - {name: edubase_get_class_members}
+    - {name: edubase_get_class_permission}
+    - {name: edubase_get_class_tag}
+    - {name: edubase_get_class_tags}
+    - {name: edubase_get_classes}
+    - {name: edubase_get_course_permission}
+    - {name: edubase_get_course_tag}
+    - {name: edubase_get_course_tags}
+    - {name: edubase_get_event_permission}
+    - {name: edubase_get_event_tag}
+    - {name: edubase_get_event_tags}
+    - {name: edubase_get_exam}
+    - {name: edubase_get_exam_permission}
+    - {name: edubase_get_exam_results_raw}
+    - {name: edubase_get_exam_results_user}
+    - {name: edubase_get_exam_tag}
+    - {name: edubase_get_exam_tags}
+    - {name: edubase_get_exam_users}
+    - {name: edubase_get_exams}
+    - {name: edubase_get_integration_permission}
+    - {name: edubase_get_integration_tag}
+    - {name: edubase_get_integration_tags}
+    - {name: edubase_get_organization}
+    - {name: edubase_get_organization_members}
+    - {name: edubase_get_organization_permission}
+    - {name: edubase_get_organization_tag}
+    - {name: edubase_get_organization_tags}
+    - {name: edubase_get_organizations}
+    - {name: edubase_get_question}
+    - {name: edubase_get_quiz}
+    - {name: edubase_get_quiz_permission}
+    - {name: edubase_get_quiz_play_results}
+    - {name: edubase_get_quiz_questions}
+    - {name: edubase_get_quiz_results_user}
+    - {name: edubase_get_quiz_tag}
+    - {name: edubase_get_quiz_tags}
+    - {name: edubase_get_quizes}
+    - {name: edubase_get_scorm_permission}
+    - {name: edubase_get_scorm_tag}
+    - {name: edubase_get_scorm_tags}
+    - {name: edubase_get_tag}
+    - {name: edubase_get_tag_permission}
+    - {name: edubase_get_tags}
+    - {name: edubase_get_user}
+    - {name: edubase_get_user_classes}
+    - {name: edubase_get_user_group}
+    - {name: edubase_get_user_login}
+    - {name: edubase_get_user_name}
+    - {name: edubase_get_user_organizations}
+    - {name: edubase_get_user_search}
+    - {name: edubase_get_users}
+    - {name: edubase_get_video_permission}
+    - {name: edubase_get_video_tag}
+    - {name: edubase_get_video_tags}
+    - {name: edubase_post_class_members}
+    - {name: edubase_post_class_permission}
+    - {name: edubase_post_class_tag}
+    - {name: edubase_post_classes_members}
+    - {name: edubase_post_course_permission}
+    - {name: edubase_post_course_tag}
+    - {name: edubase_post_custom_metric}
+    - {name: edubase_post_event_permission}
+    - {name: edubase_post_event_tag}
+    - {name: edubase_post_exam}
+    - {name: edubase_post_exam_permission}
+    - {name: edubase_post_exam_summary}
+    - {name: edubase_post_exam_tag}
+    - {name: edubase_post_exam_users}
+    - {name: edubase_post_integration_permission}
+    - {name: edubase_post_integration_tag}
+    - {name: edubase_post_organization_members}
+    - {name: edubase_post_organization_permission}
+    - {name: edubase_post_organization_tag}
+    - {name: edubase_post_organizations_members}
+    - {name: edubase_post_question}
+    - {name: edubase_post_quiz}
+    - {name: edubase_post_quiz_permission}
+    - {name: edubase_post_quiz_questions}
+    - {name: edubase_post_quiz_tag}
+    - {name: edubase_post_scorm_permission}
+    - {name: edubase_post_scorm_tag}
+    - {name: edubase_post_tag_permission}
+    - {name: edubase_post_user}
+    - {name: edubase_post_user_assume}
+    - {name: edubase_post_user_classes}
+    - {name: edubase_post_user_group}
+    - {name: edubase_post_user_login}
+    - {name: edubase_post_user_name}
+    - {name: edubase_post_user_organizations}
+    - {name: edubase_post_video_permission}
+    - {name: edubase_post_video_tag}
+    secrets:
+      - {name: edubase.api_key}
+    config:
+      - name: edubase
+        description: Configure the connection to EduBase
+        parameters:
+          app:
+            type: string
+          url:
+            type: string
+        required:
+          - app
+          - url
+    prompts: 0
+    resources: {}
+  lara:
+    description: "Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/lara.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/lara.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: add_translation}
+    - {name: check_import_status}
+    - {name: create_memory}
+    - {name: delete_memory}
+    - {name: delete_translation}
+    - {name: import_tmx}
+    - {name: list_languages}
+    - {name: list_memories}
+    - {name: translate}
+    - {name: update_memory}
+    secrets:
+      - {name: lara.key_id}
+      - {name: lara.key_secret}
+    prompts: 0
+    resources: {}
+  wolfram-alpha:
+    description: "Connect your chat repl to wolfram alpha computational intelligence"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wolfram-alpha.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/wolfram-alpha.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/wolfram.svg
+    tools:
+    - {name: query-wolfram-alpha}
+    secrets:
+      - {name: wolfram-alpha.api_key}
+    prompts: 0
+    resources: {}
