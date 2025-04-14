@@ -12,6 +12,6 @@ mcp:
         FIRECRAWL_RETRY_BACKOFF_FACTOR: "{{firecrawl.retry_backoff_factor}}"
         FIRECRAWL_CREDIT_WARNING_THRESHOLD: "{{firecrawl.credit_warning_threshold}}"
         FIRECRAWL_CREDIT_CRITICAL_THRESHOLD: "{{firecrawl.credit_critical_threshold}}"
-  - source:
-      url: https://github.com/mendableai/firecrawl-mcp-server
+    source:
+      url: https://github.com/mendableai/firecrawl-mcp-server/tree/main
 ---
