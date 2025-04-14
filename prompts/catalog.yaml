@@ -198,13 +198,13 @@ registry:
     prompts: 0
     resources: {}
   time:
-    description: Tools for interacting with time.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
+    description: "Time and timezone conversion capabilities"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/time.md
     icon: https://img.icons8.com/ios/50/time_2.png
     tools:
-    - {name: get_current_time}
     - {name: convert_time}
+    - {name: get_current_time}
     prompts: 0
     resources: {}
   fetch:
