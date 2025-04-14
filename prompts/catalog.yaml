@@ -1644,3 +1644,35 @@ registry:
       - {name: wolfram-alpha.api_key}
     prompts: 0
     resources: {}
+  glif:
+    description: "Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: glif_info}
+    - {name: list_bots}
+    - {name: list_featured_glifs}
+    - {name: list_saved_glif_tools}
+    - {name: load_bot}
+    - {name: my_glif_user_info}
+    - {name: my_glifs}
+    - {name: remove_all_glif_tools}
+    - {name: remove_glif_tool}
+    - {name: run_glif}
+    - {name: save_bot_skills_as_tools}
+    - {name: save_glif_as_tool}
+    - {name: search_glifs}
+    - {name: show_bot_info}
+    secrets:
+      - {name: glif.api_token}
+    config:
+      - name: glif
+        description: Configure the connection to glif.app
+        parameters:
+          ids:
+            type: string
+          ignored_saved:
+            type: boolean
+    prompts: 0
+    resources: {}
