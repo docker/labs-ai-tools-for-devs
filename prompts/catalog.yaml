@@ -241,13 +241,18 @@ registry:
     prompts: 0
     resources: {}
   puppeteer:
-    description: |
-      UNDER CONSTRUCTION (support long running browser cache)
-      Browser automation and web scraping using Puppeteer.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
+    description: "UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/puppeteer.md
-    icon: https://img.icons8.com/officel/80/under-construction.png
-    tools: []
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/puppeteer.svg
+    tools:
+    - {name: puppeteer_click}
+    - {name: puppeteer_evaluate}
+    - {name: puppeteer_fill}
+    - {name: puppeteer_hover}
+    - {name: puppeteer_navigate}
+    - {name: puppeteer_screenshot}
+    - {name: puppeteer_select}
     prompts: 0
     resources: {}
   filesystem:
