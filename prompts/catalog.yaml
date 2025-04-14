@@ -426,13 +426,16 @@ registry:
     secrets:
       - {name: everart.api_key}
   sentry:
-    description: |
-      A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/sentry.md
+    description: "A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sentry.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sentry.svg
+    tools:
+    - {name: get_sentry_issue}
     secrets:
       - {name: sentry.auth_token}
+    prompts: 0
+    resources: {}
   gitlab:
     description: |
       MCP Server for the GitLab API, enabling project management, file operations, and more.
