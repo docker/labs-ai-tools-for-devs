@@ -79,27 +79,27 @@ registry:
     prompts: 0
     resources: {}
   stripe:
-    description: Interact with Stripe services over the Stripe API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
+    description: "Interact with Stripe services over the Stripe API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/stripe.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/stripe.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
-    secrets:
-    - {name: stripe.api_key}
     tools:
     - {name: create_customer}
-    - {name: list_customers}
-    - {name: create_product}
-    - {name: list_products}
-    - {name: create_price}
-    - {name: list_prices}
-    - {name: create_payment_link}
     - {name: create_invoice}
     - {name: create_invoice_item}
-    - {name: finalize_invoice}
-    - {name: retrieve_balance}
+    - {name: create_payment_link}
+    - {name: create_price}
+    - {name: create_product}
     - {name: create_refund}
+    - {name: finalize_invoice}
+    - {name: list_customers}
     - {name: list_payment_intents}
+    - {name: list_prices}
+    - {name: list_products}
+    - {name: retrieve_balance}
     - {name: search_documentation}
+    secrets:
+      - {name: stripe.secret_key}
     prompts: 0
     resources: {}
   brave:
