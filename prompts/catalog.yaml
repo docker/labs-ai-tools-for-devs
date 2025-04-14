@@ -315,8 +315,8 @@ registry:
     prompts: 0
     resources: {}
   youtube_transcript:
-    description: Retrieves transcripts for given YouTube video URLs
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/youtube_transcript.md
+    description: "Retrieves transcripts for given YouTube video URLs"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/youtube_transcript.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
     tools:
