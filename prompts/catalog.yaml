@@ -235,10 +235,42 @@ registry:
     prompts: 1
     resources: {}
   kubernetes:
-    description: Connect to a Kubernetes cluster and manage it
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/kubernetes.md
+    description: "Connect to a Kubernetes cluster and manage it"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kubernetes.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kubernetes.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
-    tools: []
+    tools:
+    - {name: cleanup}
+    - {name: create_configmap}
+    - {name: create_cronjob}
+    - {name: create_deployment}
+    - {name: create_namespace}
+    - {name: create_pod}
+    - {name: delete_cronjob}
+    - {name: delete_deployment}
+    - {name: delete_namespace}
+    - {name: delete_pod}
+    - {name: describe_cronjob}
+    - {name: describe_deployment}
+    - {name: describe_pod}
+    - {name: explain_resource}
+    - {name: get_events}
+    - {name: get_job_logs}
+    - {name: get_logs}
+    - {name: install_helm_chart}
+    - {name: list_api_resources}
+    - {name: list_cronjobs}
+    - {name: list_deployments}
+    - {name: list_jobs}
+    - {name: list_namespaces}
+    - {name: list_nodes}
+    - {name: list_pods}
+    - {name: list_services}
+    - {name: port_forward}
+    - {name: scale_deployment}
+    - {name: stop_port_forward}
+    - {name: uninstall_helm_chart}
+    - {name: upgrade_helm_chart}
     prompts: 0
     resources: {}
   docker:
