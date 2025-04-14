@@ -79,58 +79,58 @@ registry:
     prompts: 0
     resources: {}
   stripe:
-    description: Interact with Stripe services over the Stripe API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/stripe.md
+    description: "Interact with Stripe services over the Stripe API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/stripe.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/stripe.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
-    secrets:
-    - {name: stripe.api_key}
     tools:
     - {name: create_customer}
-    - {name: list_customers}
-    - {name: create_product}
-    - {name: list_products}
-    - {name: create_price}
-    - {name: list_prices}
-    - {name: create_payment_link}
     - {name: create_invoice}
     - {name: create_invoice_item}
-    - {name: finalize_invoice}
-    - {name: retrieve_balance}
+    - {name: create_payment_link}
+    - {name: create_price}
+    - {name: create_product}
     - {name: create_refund}
+    - {name: finalize_invoice}
+    - {name: list_customers}
     - {name: list_payment_intents}
+    - {name: list_prices}
+    - {name: list_products}
+    - {name: retrieve_balance}
     - {name: search_documentation}
+    secrets:
+      - {name: stripe.secret_key}
     prompts: 0
     resources: {}
   brave:
-    description: Web and local search using Brave's Search API
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/brave.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave-search.md
+    description: "Web and local search using Brave's Search API"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
-    secrets:
-    - {name: brave.api_key}
     tools:
-    - {name: brave_web_search}
     - {name: brave_local_search}
+    - {name: brave_web_search}
+    secrets:
+      - {name: brave.api_key}
     prompts: 0
     resources: {}
   slack:
-    description: Interact with Slack Workspaces over the Slack API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
+    description: "Interact with Slack Workspaces over the Slack API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/slack.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
-    secrets:
-    - {name: slack.team_id}
-    - {name: slack.bot_token}
     tools:
-    - {name: slack_list_channels}
-    - {name: slack_post_message}
-    - {name: slack_reply_to_thread}
     - {name: slack_add_reaction}
     - {name: slack_get_channel_history}
     - {name: slack_get_thread_replies}
-    - {name: slack_get_users}
     - {name: slack_get_user_profile}
+    - {name: slack_get_users}
+    - {name: slack_list_channels}
+    - {name: slack_post_message}
+    - {name: slack_reply_to_thread}
+    secrets:
+      - {name: slack.bot_token}
+      - {name: slack.team_id}
     prompts: 0
     resources: {}
   redis:
@@ -144,47 +144,56 @@ registry:
     prompts: 0
     resources: {}
   github:
-    description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github.md
+    description: "Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
-    secrets:
-    - {name: github.personal_access_token}
     tools:
-    - {name: create_or_update_file}
-    - {name: search_repositories}
-    - {name: create_repository}
-    - {name: get_file_contents}
-    - {name: push_files}
-    - {name: create_issue}
-    - {name: create_pull_request}
-    - {name: fork_repository}
+    - {name: add_issue_comment}
     - {name: create_branch}
+    - {name: create_issue}
+    - {name: create_or_update_file}
+    - {name: create_pull_request}
+    - {name: create_pull_request_review}
+    - {name: create_repository}
+    - {name: fork_repository}
+    - {name: get_file_contents}
+    - {name: get_issue}
+    - {name: get_pull_request}
+    - {name: get_pull_request_comments}
+    - {name: get_pull_request_files}
+    - {name: get_pull_request_reviews}
+    - {name: get_pull_request_status}
     - {name: list_commits}
     - {name: list_issues}
-    - {name: update_issue}
-    - {name: add_issue_comment}
+    - {name: list_pull_requests}
+    - {name: merge_pull_request}
+    - {name: push_files}
     - {name: search_code}
     - {name: search_issues}
+    - {name: search_repositories}
     - {name: search_users}
-    - {name: get_issue}
+    - {name: update_issue}
+    - {name: update_pull_request_branch}
+    secrets:
+      - {name: github.personal_access_token}
     prompts: 0
     resources: {}
   google-maps:
-    description: Tools for interacting with the Google Maps API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/google-maps.md
+    description: "Tools for interacting with the Google Maps API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/google-maps.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/google-maps.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
-    secrets:
-    - {name: google.api_key}
     tools:
-    - {name: maps_geocode}
-    - {name: maps_reverse_geocode}
-    - {name: maps_search_places}
-    - {name: maps_place_details}
+    - {name: maps_directions}
     - {name: maps_distance_matrix}
     - {name: maps_elevation}
-    - {name: maps_directions}
+    - {name: maps_geocode}
+    - {name: maps_place_details}
+    - {name: maps_reverse_geocode}
+    - {name: maps_search_places}
+    secrets:
+      - {name: google-maps.api_key}
     prompts: 0
     resources: {}
   gdrive:
@@ -198,21 +207,22 @@ registry:
     prompts: 0
     resources: {}
   time:
-    description: Tools for interacting with time.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/time.md
+    description: "Time and timezone conversion capabilities"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/time.md
     icon: https://img.icons8.com/ios/50/time_2.png
     tools:
-    - {name: get_current_time}
     - {name: convert_time}
+    - {name: get_current_time}
     prompts: 0
     resources: {}
   fetch:
-    description: Fetches a URL from the internet and extracts its contents as markdown
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/fetch.md
+    description: "Fetches a URL from the internet and extracts its contents as markdown"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/fetch.md
     icon: https://img.icons8.com/ios/50/fetch-rewards.png
-    tools: []
+    tools:
+    - {name: fetch}
     prompts: 0
     resources: {}
   git:
@@ -225,10 +235,42 @@ registry:
     prompts: 1
     resources: {}
   kubernetes:
-    description: Connect to a Kubernetes cluster and manage it
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/kubernetes.md
+    description: "Connect to a Kubernetes cluster and manage it"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kubernetes.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kubernetes.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
-    tools: []
+    tools:
+    - {name: cleanup}
+    - {name: create_configmap}
+    - {name: create_cronjob}
+    - {name: create_deployment}
+    - {name: create_namespace}
+    - {name: create_pod}
+    - {name: delete_cronjob}
+    - {name: delete_deployment}
+    - {name: delete_namespace}
+    - {name: delete_pod}
+    - {name: describe_cronjob}
+    - {name: describe_deployment}
+    - {name: describe_pod}
+    - {name: explain_resource}
+    - {name: get_events}
+    - {name: get_job_logs}
+    - {name: get_logs}
+    - {name: install_helm_chart}
+    - {name: list_api_resources}
+    - {name: list_cronjobs}
+    - {name: list_deployments}
+    - {name: list_jobs}
+    - {name: list_namespaces}
+    - {name: list_nodes}
+    - {name: list_pods}
+    - {name: list_services}
+    - {name: port_forward}
+    - {name: scale_deployment}
+    - {name: stop_port_forward}
+    - {name: uninstall_helm_chart}
+    - {name: upgrade_helm_chart}
     prompts: 0
     resources: {}
   docker:
@@ -240,13 +282,18 @@ registry:
     prompts: 0
     resources: {}
   puppeteer:
-    description: |
-      UNDER CONSTRUCTION (support long running browser cache)
-      Browser automation and web scraping using Puppeteer.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/puppeteer.md
+    description: "UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/puppeteer.md
-    icon: https://img.icons8.com/officel/80/under-construction.png
-    tools: []
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/puppeteer.svg
+    tools:
+    - {name: puppeteer_click}
+    - {name: puppeteer_evaluate}
+    - {name: puppeteer_fill}
+    - {name: puppeteer_hover}
+    - {name: puppeteer_navigate}
+    - {name: puppeteer_screenshot}
+    - {name: puppeteer_select}
     prompts: 0
     resources: {}
   filesystem:
@@ -268,8 +315,8 @@ registry:
     prompts: 0
     resources: {}
   youtube_transcript:
-    description: Retrieves transcripts for given YouTube video URLs
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/youtube_transcript.md
+    description: "Retrieves transcripts for given YouTube video URLs"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/youtube_transcript.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
     tools:
@@ -408,54 +455,88 @@ registry:
         required:
           - server
   aws-kb-retrieval-server:
-    description: |
-      An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/aws-kb-retrieval-server.md
+    description: "An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
+    tools:
+    - {name: retrieve_from_aws_kb}
     secrets:
       - {name: aws.access_key_id}
       - {name: aws.secret_access_key}
       - {name: aws.region}
+    prompts: 0
+    resources: {}
   everart:
-    description: |
-      Image generation server using EverArt's API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/everart.md
+    description: "Image generation server using EverArt's API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/everart.md
     icon: https://10web.io/wp-content/uploads/2024/07/EverArt.png
+    tools:
+    - {name: generate_image}
     secrets:
       - {name: everart.api_key}
+    prompts: 0
+    resources: {}
   sentry:
-    description: |
-      A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/sentry.md
+    description: "A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sentry.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sentry.svg
+    tools:
+    - {name: get_sentry_issue}
     secrets:
       - {name: sentry.auth_token}
+    prompts: 0
+    resources: {}
   gitlab:
-    description: |
-      MCP Server for the GitLab API, enabling project management, file operations, and more.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gitlab.md
+    description: "MCP Server for the GitLab API, enabling project management, file operations, and more."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gitlab.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gitlab.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/gitlab.svg
+    tools:
+    - {name: create_branch}
+    - {name: create_issue}
+    - {name: create_merge_request}
+    - {name: create_or_update_file}
+    - {name: create_repository}
+    - {name: fork_repository}
+    - {name: get_file_contents}
+    - {name: push_files}
+    - {name: search_repositories}
+    secrets:
+      - {name: gitlab.personal_access_token}
     config:
       - name: gitlab
-        decription: Configure the local or Cloud GitLab instance
+        description: Configure the local or Cloud GitLab instance
         parameters:
           url:
             type: string
             description: api url - optional for self-hosted instances
-    secrets:
-      - {name: gitlab.personal_access_token}
+    prompts: 0
+    resources: {}
   obsidian:
-    description: |
-      MCP server to interact with Obsidian via the Local REST API community plugin.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/obsidian.md
+    description: "MCP server that interacts with Obsidian via the Obsidian rest API community plugin"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/obsidian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/obsidian.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
+    tools:
+    - {name: obsidian_append_content}
+    - {name: obsidian_batch_get_file_contents}
+    - {name: obsidian_complex_search}
+    - {name: obsidian_delete_file}
+    - {name: obsidian_get_file_contents}
+    - {name: obsidian_get_periodic_note}
+    - {name: obsidian_get_recent_changes}
+    - {name: obsidian_get_recent_periodic_notes}
+    - {name: obsidian_list_files_in_dir}
+    - {name: obsidian_list_files_in_vault}
+    - {name: obsidian_patch_content}
+    - {name: obsidian_simple_search}
     secrets:
       - {name: obsidian.api_key}
+    prompts: 0
+    resources: {}
   mcp-discord:
     description: |
       A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
@@ -471,31 +552,66 @@ registry:
     secrets:
       - {name: discord.token}
   resend:
-    description: |
-      Sends emails using Resend's API. Why? Now you can let Cursor or Claude Desktop compose emails for you and send it right away without having to copy and paste the email content.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/resend.md
+    description: "Send emails directly from Cursor with this email sending MCP server"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/resend.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/resend.md
     icon: https://img.icons8.com/ios/50/new-post--v1.png
+    tools:
+    - {name: send-email}
+    secrets:
+      - {name: resend.api_key}
     config:
       - name: resend
         description: Configure sender and reply email addresses
         parameters:
-          sender:
-            type: string
-            description: sender email address
           reply_to:
             type: string
             description: comma separated list of reply to email addresses
-    secrets:
-      - {name: resend.api_key}
+          sender:
+            type: string
+            description: sender email address
+    prompts: 0
+    resources: {}
   GitHub MCP Server:
-    description: |
-      Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github-official.md
+    description: "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    tools:
+    - {name: add_issue_comment}
+    - {name: create_branch}
+    - {name: create_issue}
+    - {name: create_or_update_file}
+    - {name: create_pull_request}
+    - {name: create_pull_request_review}
+    - {name: create_repository}
+    - {name: fork_repository}
+    - {name: get_code_scanning_alert}
+    - {name: get_file_contents}
+    - {name: get_issue}
+    - {name: get_issue_comments}
+    - {name: get_me}
+    - {name: get_pull_request}
+    - {name: get_pull_request_comments}
+    - {name: get_pull_request_files}
+    - {name: get_pull_request_reviews}
+    - {name: get_pull_request_status}
+    - {name: list_code_scanning_alerts}
+    - {name: list_commits}
+    - {name: list_issues}
+    - {name: list_pull_requests}
+    - {name: merge_pull_request}
+    - {name: push_files}
+    - {name: search_code}
+    - {name: search_issues}
+    - {name: search_repositories}
+    - {name: search_users}
+    - {name: update_issue}
+    - {name: update_pull_request_branch}
     secrets:
-    - {name: github.personal_access_token}
-
+      - {name: github.personal_access_token}
+    prompts: 0
+    resources: {}
   armor-crypto:
     description: "The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md
@@ -1567,5 +1683,48 @@ registry:
     - {name: query-wolfram-alpha}
     secrets:
       - {name: wolfram-alpha.api_key}
+    prompts: 0
+    resources: {}
+  glif:
+    description: "Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: glif_info}
+    - {name: list_bots}
+    - {name: list_featured_glifs}
+    - {name: list_saved_glif_tools}
+    - {name: load_bot}
+    - {name: my_glif_user_info}
+    - {name: my_glifs}
+    - {name: remove_all_glif_tools}
+    - {name: remove_glif_tool}
+    - {name: run_glif}
+    - {name: save_bot_skills_as_tools}
+    - {name: save_glif_as_tool}
+    - {name: search_glifs}
+    - {name: show_bot_info}
+    secrets:
+      - {name: glif.api_token}
+    config:
+      - name: glif
+        description: Configure the connection to glif.app
+        parameters:
+          ids:
+            type: string
+          ignored_saved:
+            type: boolean
+    prompts: 0
+    resources: {}
+  exa:
+    description: "Claude can perform Web Search | Exa with MCP (Model Context Protocol)"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: web_search}
+    secrets:
+      - {name: exa.api_key}
     prompts: 0
     resources: {}
