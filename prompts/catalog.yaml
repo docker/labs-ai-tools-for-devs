@@ -115,22 +115,22 @@ registry:
     prompts: 0
     resources: {}
   slack:
-    description: Interact with Slack Workspaces over the Slack API.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/slack.md
+    description: "Interact with Slack Workspaces over the Slack API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/slack.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
-    secrets:
-    - {name: slack.team_id}
-    - {name: slack.bot_token}
     tools:
-    - {name: slack_list_channels}
-    - {name: slack_post_message}
-    - {name: slack_reply_to_thread}
     - {name: slack_add_reaction}
     - {name: slack_get_channel_history}
     - {name: slack_get_thread_replies}
-    - {name: slack_get_users}
     - {name: slack_get_user_profile}
+    - {name: slack_get_users}
+    - {name: slack_list_channels}
+    - {name: slack_post_message}
+    - {name: slack_reply_to_thread}
+    secrets:
+      - {name: slack.bot_token}
+      - {name: slack.team_id}
     prompts: 0
     resources: {}
   redis:
