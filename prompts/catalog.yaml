@@ -520,13 +520,45 @@ registry:
     prompts: 0
     resources: {}
   GitHub MCP Server:
-    description: |
-      Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/github-official.md
+    description: "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    tools:
+    - {name: add_issue_comment}
+    - {name: create_branch}
+    - {name: create_issue}
+    - {name: create_or_update_file}
+    - {name: create_pull_request}
+    - {name: create_pull_request_review}
+    - {name: create_repository}
+    - {name: fork_repository}
+    - {name: get_code_scanning_alert}
+    - {name: get_file_contents}
+    - {name: get_issue}
+    - {name: get_issue_comments}
+    - {name: get_me}
+    - {name: get_pull_request}
+    - {name: get_pull_request_comments}
+    - {name: get_pull_request_files}
+    - {name: get_pull_request_reviews}
+    - {name: get_pull_request_status}
+    - {name: list_code_scanning_alerts}
+    - {name: list_commits}
+    - {name: list_issues}
+    - {name: list_pull_requests}
+    - {name: merge_pull_request}
+    - {name: push_files}
+    - {name: search_code}
+    - {name: search_issues}
+    - {name: search_repositories}
+    - {name: search_users}
+    - {name: update_issue}
+    - {name: update_pull_request_branch}
     secrets:
-    - {name: github.personal_access_token}
-
+      - {name: github.personal_access_token}
+    prompts: 0
+    resources: {}
   armor-crypto:
     description: "The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more."
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md

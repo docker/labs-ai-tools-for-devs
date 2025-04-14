@@ -7,4 +7,3 @@ mcp:
     source:
       url: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
 ---
-
