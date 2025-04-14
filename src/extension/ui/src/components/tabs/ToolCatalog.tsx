@@ -51,17 +51,6 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems,
                     </Grid2>
                 )
             })}
-            <Grid2 size={12}>
-                <Card sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <CardContent>
-                        <IconButton sx={{ height: '100%' }} onClick={() => {
-                            client.host.openExternal('https://vonwig.github.io/prompts.docs/tools/docs/');
-                        }}>
-                            <AddIcon sx={{ width: '100%', height: 100 }} />
-                        </IconButton>
-                    </CardContent>
-                </Card>
-            </Grid2>
         </Grid2>
     );
 };

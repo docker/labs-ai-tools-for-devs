@@ -12,6 +12,7 @@
     "@mui/material": "6.4.5",
     "@tanstack/react-query": "^5.69.0",
     "ansi-to-html": "^0.7.2",
+    "json-schema-library": "^10.0.0-rc7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "yaml": "^2.3.1"

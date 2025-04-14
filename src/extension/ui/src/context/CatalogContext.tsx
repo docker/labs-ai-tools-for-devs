@@ -252,8 +252,31 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             try {
                 const currentRegistry = registryItems || {};
                 const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
+
+                // Handle configuration
                 if (item.config) {
-                    newRegistry[item.name] = { ref: item.ref, config: config?.[item.name] || {} };
+                    let itemConfig = config?.[item.name] || {};
+
+                    // If there's a JSON schema configuration, validate and generate default values
+                    if (Array.isArray(item.config) && item.config.length > 0) {
+                        const configSchema = item.config[0];
+
+                        // Check if we have required fields from anyOf conditions
+                        if (configSchema.anyOf) {
+                            configSchema.anyOf.forEach((condition: any) => {
+                                if (condition.required) {
+                                    condition.required.forEach((requiredField: string) => {
+                                        // Make sure each required field has at least an empty object if not already present
+                                        if (!itemConfig[requiredField]) {
+                                            itemConfig[requiredField] = {};
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                    newRegistry[item.name] = { ref: item.ref, config: itemConfig };
                 }
 
                 const payload = escapeJSONForPlatformShell({
