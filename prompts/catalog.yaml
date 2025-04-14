@@ -463,13 +463,27 @@ registry:
     prompts: 0
     resources: {}
   obsidian:
-    description: |
-      MCP server to interact with Obsidian via the Local REST API community plugin.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/obsidian.md
+    description: "MCP server that interacts with Obsidian via the Obsidian rest API community plugin"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/obsidian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/obsidian.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
+    tools:
+    - {name: obsidian_append_content}
+    - {name: obsidian_batch_get_file_contents}
+    - {name: obsidian_complex_search}
+    - {name: obsidian_delete_file}
+    - {name: obsidian_get_file_contents}
+    - {name: obsidian_get_periodic_note}
+    - {name: obsidian_get_recent_changes}
+    - {name: obsidian_get_recent_periodic_notes}
+    - {name: obsidian_list_files_in_dir}
+    - {name: obsidian_list_files_in_vault}
+    - {name: obsidian_patch_content}
+    - {name: obsidian_simple_search}
     secrets:
       - {name: obsidian.api_key}
+    prompts: 0
+    resources: {}
   mcp-discord:
     description: |
       A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
