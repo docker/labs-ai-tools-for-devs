@@ -1676,3 +1676,14 @@ registry:
             type: boolean
     prompts: 0
     resources: {}
+  exa:
+    description: "Claude can perform Web Search | Exa with MCP (Model Context Protocol)"
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+    - {name: web_search}
+    secrets:
+      - {name: exa.api_key}
+    prompts: 0
+    resources: {}
