@@ -51,12 +51,12 @@ const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => 
 
     useEffect(() => {
         const schema = new JsonSchema.Draft2019(configSchema[0]);
-        const template = schema.getTemplate(existingConfig);
+        const template = schema.getTemplate(existingConfigForItem);
         if (!localConfig) {
             setLocalConfig(deepFlattenObject(template));
         }
         setConfig(template);
-    }, [configSchema, existingConfig]);
+    }, [configSchema, existingConfigForItem]);
 
     if (!config || !localConfig) {
         return <EmptyState />
@@ -74,7 +74,7 @@ const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => 
                         <Stack key={key} direction="row" spacing={2}>
                             <TextField label={key} value={localConfig[key]} onChange={(e) => setLocalConfig({ ...localConfig, [key]: e.target.value })} />
                             {edited && <Stack direction="row" spacing={2}><IconButton onClick={() => {
-                                const updatedConfig = deepSet(existingConfig || {}, key, localConfig[key]);
+                                const updatedConfig = deepSet(existingConfigForItem || {}, key, localConfig[key]);
                                 console.log(catalogItem.name);
                                 console.log('updatedConfig', updatedConfig);
                                 updateExistingConfig(catalogItem.name, updatedConfig);
