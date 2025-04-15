@@ -5,12 +5,12 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sqlite.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
     tools:
-    - {name: read-query}
-    - {name: write-query}
-    - {name: create-table}
-    - {name: list-tables}
-    - {name: describe-table}
-    - {name: append-insight}
+      - name: read-query
+      - name: write-query
+      - name: create-table
+      - name: list-tables
+      - name: describe-table
+      - name: append-insight
     prompts: 1
     resources: {}
   curl:
@@ -18,8 +18,8 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
     tools:
-    - {name: curl-manual}
-    - {name: curl}
+      - name: curl-manual
+      - name: curl
     prompts: 1
     resources: {}
   ffmpeg:
@@ -27,10 +27,10 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
     tools:
-    - {name: imagemagick-manual}
-    - {name: imagemagick}
-    - {name: file-exists}
-    - {name: ffmpeg}
+      - name: imagemagick-manual
+      - name: imagemagick
+      - name: file-exists
+      - name: ffmpeg
     prompts: 1
     resources: {}
   qr code:
@@ -38,7 +38,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
     tools:
-    - {name: qrencode}
+      - name: qrencode
     prompts: 0
     resources: {}
   memory:
@@ -47,15 +47,15 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/memory.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/knowledgebase.svg
     tools:
-    - {name: create_entities}
-    - {name: create_relations}
-    - {name: add_observations}
-    - {name: delete_entities}
-    - {name: delete_observations}
-    - {name: delete_relations}
-    - {name: read_graph}
-    - {name: search_nodes}
-    - {name: open_nodes}
+      - name: create_entities
+      - name: create_relations
+      - name: add_observations
+      - name: delete_entities
+      - name: delete_observations
+      - name: delete_relations
+      - name: read_graph
+      - name: search_nodes
+      - name: open_nodes
     prompts: 0
     resources: {}
   chrome:
@@ -63,10 +63,10 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
     tools:
-    - {name: interact-with-chrome}
-    - {name: curl-manual}
-    - {name: curl}
-    - {name: start-chrome}
+      - name: interact-with-chrome
+      - name: curl-manual
+      - name: curl
+      - name: start-chrome
     prompts: 1
     resources: {}
   sequentialthinking:
@@ -75,161 +75,161 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sequentialthinking.md
     icon: https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/2454513/2454513-1570719639731-bfdf3620a4e0d.jpg
     tools:
-    - {name: sequentialthinking}
+      - name: sequentialthinking
     prompts: 0
     resources: {}
   stripe:
-    description: "Interact with Stripe services over the Stripe API."
+    description: Interact with Stripe services over the Stripe API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/stripe.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/stripe.md
     source: https://github.com/stripe/agent-toolkit/tree/main/modelcontextprotocol
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
     tools:
-    - {name: create_customer}
-    - {name: create_invoice}
-    - {name: create_invoice_item}
-    - {name: create_payment_link}
-    - {name: create_price}
-    - {name: create_product}
-    - {name: create_refund}
-    - {name: finalize_invoice}
-    - {name: list_customers}
-    - {name: list_payment_intents}
-    - {name: list_prices}
-    - {name: list_products}
-    - {name: retrieve_balance}
-    - {name: search_documentation}
+      - name: create_customer
+      - name: create_invoice
+      - name: create_invoice_item
+      - name: create_payment_link
+      - name: create_price
+      - name: create_product
+      - name: create_refund
+      - name: finalize_invoice
+      - name: list_customers
+      - name: list_payment_intents
+      - name: list_prices
+      - name: list_products
+      - name: retrieve_balance
+      - name: search_documentation
     secrets:
-      - {name: stripe.secret_key}
+      - name: stripe.secret_key
     prompts: 0
     resources: {}
   brave:
-    description: "Web and local search using Brave's Search API"
+    description: Web and local search using Brave's Search API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
     tools:
-    - {name: brave_local_search}
-    - {name: brave_web_search}
+      - name: brave_local_search
+      - name: brave_web_search
     secrets:
-      - {name: brave.api_key}
+      - name: brave.api_key
     prompts: 0
     resources: {}
   slack:
-    description: "Interact with Slack Workspaces over the Slack API."
+    description: Interact with Slack Workspaces over the Slack API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/slack.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
     tools:
-    - {name: slack_add_reaction}
-    - {name: slack_get_channel_history}
-    - {name: slack_get_thread_replies}
-    - {name: slack_get_user_profile}
-    - {name: slack_get_users}
-    - {name: slack_list_channels}
-    - {name: slack_post_message}
-    - {name: slack_reply_to_thread}
+      - name: slack_add_reaction
+      - name: slack_get_channel_history
+      - name: slack_get_thread_replies
+      - name: slack_get_user_profile
+      - name: slack_get_users
+      - name: slack_list_channels
+      - name: slack_post_message
+      - name: slack_reply_to_thread
     secrets:
-      - {name: slack.bot_token}
-      - {name: slack.team_id}
+      - name: slack.bot_token
+      - name: slack.team_id
     prompts: 0
     resources: {}
   redis:
     description: Access to Redis database operations.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
-    secrets:
-    - {name: redis.host}
-    - {name: redis.port}
     tools: []
+    secrets:
+      - name: redis.host
+      - name: redis.port
     prompts: 0
     resources: {}
   github:
-    description: "Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more."
+    description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
     tools:
-    - {name: add_issue_comment}
-    - {name: create_branch}
-    - {name: create_issue}
-    - {name: create_or_update_file}
-    - {name: create_pull_request}
-    - {name: create_pull_request_review}
-    - {name: create_repository}
-    - {name: fork_repository}
-    - {name: get_file_contents}
-    - {name: get_issue}
-    - {name: get_pull_request}
-    - {name: get_pull_request_comments}
-    - {name: get_pull_request_files}
-    - {name: get_pull_request_reviews}
-    - {name: get_pull_request_status}
-    - {name: list_commits}
-    - {name: list_issues}
-    - {name: list_pull_requests}
-    - {name: merge_pull_request}
-    - {name: push_files}
-    - {name: search_code}
-    - {name: search_issues}
-    - {name: search_repositories}
-    - {name: search_users}
-    - {name: update_issue}
-    - {name: update_pull_request_branch}
+      - name: add_issue_comment
+      - name: create_branch
+      - name: create_issue
+      - name: create_or_update_file
+      - name: create_pull_request
+      - name: create_pull_request_review
+      - name: create_repository
+      - name: fork_repository
+      - name: get_file_contents
+      - name: get_issue
+      - name: get_pull_request
+      - name: get_pull_request_comments
+      - name: get_pull_request_files
+      - name: get_pull_request_reviews
+      - name: get_pull_request_status
+      - name: list_commits
+      - name: list_issues
+      - name: list_pull_requests
+      - name: merge_pull_request
+      - name: push_files
+      - name: search_code
+      - name: search_issues
+      - name: search_repositories
+      - name: search_users
+      - name: update_issue
+      - name: update_pull_request_branch
     secrets:
-      - {name: github.personal_access_token}
+      - name: github.personal_access_token
     prompts: 0
     resources: {}
   google-maps:
-    description: "Tools for interacting with the Google Maps API."
+    description: Tools for interacting with the Google Maps API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/google-maps.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/google-maps.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
     tools:
-    - {name: maps_directions}
-    - {name: maps_distance_matrix}
-    - {name: maps_elevation}
-    - {name: maps_geocode}
-    - {name: maps_place_details}
-    - {name: maps_reverse_geocode}
-    - {name: maps_search_places}
+      - name: maps_directions
+      - name: maps_distance_matrix
+      - name: maps_elevation
+      - name: maps_geocode
+      - name: maps_place_details
+      - name: maps_reverse_geocode
+      - name: maps_search_places
     secrets:
-      - {name: google-maps.api_key}
+      - name: google-maps.api_key
     prompts: 0
     resources: {}
   gdrive:
     description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
-    secrets:
-    - {name: google.gcp-oauth.keys.json}
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
     tools:
-    - {name: gdrive_auth}
+      - name: gdrive_auth
+    secrets:
+      - name: google.gcp-oauth.keys.json
     prompts: 0
     resources: {}
   time:
-    description: "Time and timezone conversion capabilities"
+    description: Time and timezone conversion capabilities
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/time.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/time
     icon: https://img.icons8.com/ios/50/time_2.png
     tools:
-    - {name: convert_time}
-    - {name: get_current_time}
+      - name: convert_time
+      - name: get_current_time
     prompts: 0
     resources: {}
   fetch:
-    description: "Fetches a URL from the internet and extracts its contents as markdown"
+    description: Fetches a URL from the internet and extracts its contents as markdown
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/fetch.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/fetch
     icon: https://img.icons8.com/ios/50/fetch-rewards.png
     tools:
-    - {name: fetch}
+      - name: fetch
     prompts: 0
     resources: {}
   git:
@@ -238,47 +238,47 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/git.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
     tools:
-    - {name: git}
+      - name: git
     prompts: 1
     resources: {}
   kubernetes:
-    description: "Connect to a Kubernetes cluster and manage it"
+    description: Connect to a Kubernetes cluster and manage it
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kubernetes.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kubernetes.md
     source: https://github.com/Flux159/mcp-server-kubernetes/tree/main
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
     tools:
-    - {name: cleanup}
-    - {name: create_configmap}
-    - {name: create_cronjob}
-    - {name: create_deployment}
-    - {name: create_namespace}
-    - {name: create_pod}
-    - {name: delete_cronjob}
-    - {name: delete_deployment}
-    - {name: delete_namespace}
-    - {name: delete_pod}
-    - {name: describe_cronjob}
-    - {name: describe_deployment}
-    - {name: describe_pod}
-    - {name: explain_resource}
-    - {name: get_events}
-    - {name: get_job_logs}
-    - {name: get_logs}
-    - {name: install_helm_chart}
-    - {name: list_api_resources}
-    - {name: list_cronjobs}
-    - {name: list_deployments}
-    - {name: list_jobs}
-    - {name: list_namespaces}
-    - {name: list_nodes}
-    - {name: list_pods}
-    - {name: list_services}
-    - {name: port_forward}
-    - {name: scale_deployment}
-    - {name: stop_port_forward}
-    - {name: uninstall_helm_chart}
-    - {name: upgrade_helm_chart}
+      - name: cleanup
+      - name: create_configmap
+      - name: create_cronjob
+      - name: create_deployment
+      - name: create_namespace
+      - name: create_pod
+      - name: delete_cronjob
+      - name: delete_deployment
+      - name: delete_namespace
+      - name: delete_pod
+      - name: describe_cronjob
+      - name: describe_deployment
+      - name: describe_pod
+      - name: explain_resource
+      - name: get_events
+      - name: get_job_logs
+      - name: get_logs
+      - name: install_helm_chart
+      - name: list_api_resources
+      - name: list_cronjobs
+      - name: list_deployments
+      - name: list_jobs
+      - name: list_namespaces
+      - name: list_nodes
+      - name: list_pods
+      - name: list_services
+      - name: port_forward
+      - name: scale_deployment
+      - name: stop_port_forward
+      - name: uninstall_helm_chart
+      - name: upgrade_helm_chart
     prompts: 0
     resources: {}
   docker:
@@ -286,23 +286,23 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/docker.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
     tools:
-    - {name: docker}
+      - name: docker
     prompts: 0
     resources: {}
   puppeteer:
-    description: "UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer."
+    description: UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/puppeteer.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/puppeteer.svg
     tools:
-    - {name: puppeteer_click}
-    - {name: puppeteer_evaluate}
-    - {name: puppeteer_fill}
-    - {name: puppeteer_hover}
-    - {name: puppeteer_navigate}
-    - {name: puppeteer_screenshot}
-    - {name: puppeteer_select}
+      - name: puppeteer_click
+      - name: puppeteer_evaluate
+      - name: puppeteer_fill
+      - name: puppeteer_hover
+      - name: puppeteer_navigate
+      - name: puppeteer_screenshot
+      - name: puppeteer_select
     prompts: 0
     resources: {}
   filesystem:
@@ -311,35 +311,36 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    config:
-    - name: filesystem
-      description: The MCP server is allowed to access these paths
-      parameters:
-        paths:
-          type: array
-          items: {type: string}
-      required:
-        - paths
     tools: []
     prompts: 0
     resources: {}
+    config:
+      - name: filesystem
+        description: The MCP server is allowed to access these paths
+        parameters:
+          paths:
+            type: array
+            items:
+              type: string
+        required:
+          - paths
   youtube_transcript:
-    description: "Retrieves transcripts for given YouTube video URLs"
+    description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/youtube_transcript.md
     source: https://github.com/slimslenderslacks/mcp-youtube-transcript/tree/slim/docker
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
     tools:
-    - {name: get_transcript}
+      - name: get_transcript
     prompts: 0
     resources: {}
   postgres readonly:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgres.md
     icon: https://img.icons8.com/ios/50/postgreesql.png
-    secrets:
-    - {name: postgres.url}
     tools: []
+    secrets:
+      - name: postgres.url
     prompts: 0
     resources: {}
   postgres:
@@ -348,28 +349,28 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/postgres.md
     icon: https://img.icons8.com/ios/50/postgreesql.png
     tools:
-    - {name: analyze_database}
-    - {name: get_setup_instructions}
-    - {name: debug_database}
-    - {name: get_schema_info}
-    - {name: create_table}
-    - {name: alter_table}
-    - {name: export_table_data}
-    - {name: import_table_data}
-    - {name: copy_between_databases}
-    - {name: monitor_database}
-    - {name: get_functions}
-    - {name: create_function}
-    - {name: drop_function}
-    - {name: enable_rls}
-    - {name: disable_rls}
-    - {name: create_rls_policy}
-    - {name: drop_rls_policy}
-    - {name: get_rls_policies}
-    - {name: get_triggers}
-    - {name: create_trigger}
-    - {name: drop_trigger}
-    - {name: set_trigger_state}
+      - name: analyze_database
+      - name: get_setup_instructions
+      - name: debug_database
+      - name: get_schema_info
+      - name: create_table
+      - name: alter_table
+      - name: export_table_data
+      - name: import_table_data
+      - name: copy_between_databases
+      - name: monitor_database
+      - name: get_functions
+      - name: create_function
+      - name: drop_function
+      - name: enable_rls
+      - name: disable_rls
+      - name: create_rls_policy
+      - name: drop_rls_policy
+      - name: get_rls_policies
+      - name: get_triggers
+      - name: create_trigger
+      - name: drop_trigger
+      - name: set_trigger_state
     prompts: 0
     resources: {}
   bootstrap:
@@ -378,38 +379,39 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: tool-registration}
-    - {name: write_files}
-    - {name: read-file}
+      - name: tool-registration
+      - name: write_files
+      - name: read-file
     prompts: 0
     resources: {}
   notion:
-    description: "Official Notion MCP Server"
+    description: Official Notion MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/notion.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/notion.md
+    source: https://github.com/makenotion/notion-mcp-server/tree/main
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/notion.svg
     tools:
-    - {name: API-create-a-comment}
-    - {name: API-create-a-database}
-    - {name: API-delete-a-block}
-    - {name: API-get-block-children}
-    - {name: API-get-self}
-    - {name: API-get-user}
-    - {name: API-get-users}
-    - {name: API-patch-block-children}
-    - {name: API-patch-page}
-    - {name: API-post-database-query}
-    - {name: API-post-page}
-    - {name: API-post-search}
-    - {name: API-retrieve-a-block}
-    - {name: API-retrieve-a-comment}
-    - {name: API-retrieve-a-database}
-    - {name: API-retrieve-a-page}
-    - {name: API-retrieve-a-page-property}
-    - {name: API-update-a-block}
-    - {name: API-update-a-database}
+      - name: API-create-a-comment
+      - name: API-create-a-database
+      - name: API-delete-a-block
+      - name: API-get-block-children
+      - name: API-get-self
+      - name: API-get-user
+      - name: API-get-users
+      - name: API-patch-block-children
+      - name: API-patch-page
+      - name: API-post-database-query
+      - name: API-post-page
+      - name: API-post-search
+      - name: API-retrieve-a-block
+      - name: API-retrieve-a-comment
+      - name: API-retrieve-a-database
+      - name: API-retrieve-a-page
+      - name: API-retrieve-a-page-property
+      - name: API-update-a-block
+      - name: API-update-a-database
     secrets:
-      - {name: notion.openai_mcp_headers}
+      - name: notion.openai_mcp_headers
     prompts: 0
     resources: {}
   openapi-schema:
@@ -417,16 +419,20 @@ registry:
       Exposes OpenAPI schema information to Large Language Models (LLMs) like Claude. This server allows an LLM to explore and understand OpenAPI specifications through a set of specialized tools.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/openapi-schema.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools: []
+    prompts: 0
+    resources: {}
   atlassian:
     description: |
       Tools for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/atlassian.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
+    tools: []
     secrets:
       - name: atlassian.jira.token
-        required: false
       - name: atlassian.confluence.token
-        required: false
+    prompts: 0
+    resources: {}
     config:
       - name: atlassian
         description: The MCP server is allowed to access these paths
@@ -455,6 +461,9 @@ registry:
       The server proxies requests from client to JetBrains IDE.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/jetbrains.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/jetbrains.svg
+    tools: []
+    prompts: 0
+    resources: {}
     config:
       - name: jetbrains
         description: The MCP server needs to know about the local JetBrains IDE Config
@@ -467,61 +476,63 @@ registry:
         required:
           - server
   aws-kb-retrieval-server:
-    description: "An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime."
+    description: An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
     tools:
-    - {name: retrieve_from_aws_kb}
+      - name: retrieve_from_aws_kb
     secrets:
-      - {name: aws.access_key_id}
-      - {name: aws.secret_access_key}
-      - {name: aws.region}
+      - name: aws.access_key_id
+      - name: aws.secret_access_key
+      - name: aws.region
     prompts: 0
     resources: {}
   everart:
-    description: "Image generation server using EverArt's API."
+    description: Image generation server using EverArt's API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/everart.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://10web.io/wp-content/uploads/2024/07/EverArt.png
     tools:
-    - {name: generate_image}
+      - name: generate_image
     secrets:
-      - {name: everart.api_key}
+      - name: everart.api_key
     prompts: 0
     resources: {}
   sentry:
-    description: "A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account."
+    description: A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sentry.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/sentry
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sentry.svg
     tools:
-    - {name: get_sentry_issue}
+      - name: get_sentry_issue
     secrets:
-      - {name: sentry.auth_token}
+      - name: sentry.auth_token
     prompts: 0
     resources: {}
   gitlab:
-    description: "MCP Server for the GitLab API, enabling project management, file operations, and more."
+    description: MCP Server for the GitLab API, enabling project management, file operations, and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gitlab.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gitlab.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/gitlab.svg
     tools:
-    - {name: create_branch}
-    - {name: create_issue}
-    - {name: create_merge_request}
-    - {name: create_or_update_file}
-    - {name: create_repository}
-    - {name: fork_repository}
-    - {name: get_file_contents}
-    - {name: push_files}
-    - {name: search_repositories}
+      - name: create_branch
+      - name: create_issue
+      - name: create_merge_request
+      - name: create_or_update_file
+      - name: create_repository
+      - name: fork_repository
+      - name: get_file_contents
+      - name: push_files
+      - name: search_repositories
     secrets:
-      - {name: gitlab.personal_access_token}
+      - name: gitlab.personal_access_token
+    prompts: 0
+    resources: {}
     config:
       - name: gitlab
         description: Configure the local or Cloud GitLab instance
@@ -529,29 +540,27 @@ registry:
           url:
             type: string
             description: api url - optional for self-hosted instances
-    prompts: 0
-    resources: {}
   obsidian:
-    description: "MCP server that interacts with Obsidian via the Obsidian rest API community plugin"
+    description: MCP server that interacts with Obsidian via the Obsidian rest API community plugin
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/obsidian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/obsidian.md
     source: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
     tools:
-    - {name: obsidian_append_content}
-    - {name: obsidian_batch_get_file_contents}
-    - {name: obsidian_complex_search}
-    - {name: obsidian_delete_file}
-    - {name: obsidian_get_file_contents}
-    - {name: obsidian_get_periodic_note}
-    - {name: obsidian_get_recent_changes}
-    - {name: obsidian_get_recent_periodic_notes}
-    - {name: obsidian_list_files_in_dir}
-    - {name: obsidian_list_files_in_vault}
-    - {name: obsidian_patch_content}
-    - {name: obsidian_simple_search}
+      - name: obsidian_append_content
+      - name: obsidian_batch_get_file_contents
+      - name: obsidian_complex_search
+      - name: obsidian_delete_file
+      - name: obsidian_get_file_contents
+      - name: obsidian_get_periodic_note
+      - name: obsidian_get_recent_changes
+      - name: obsidian_get_recent_periodic_notes
+      - name: obsidian_list_files_in_dir
+      - name: obsidian_list_files_in_vault
+      - name: obsidian_patch_content
+      - name: obsidian_simple_search
     secrets:
-      - {name: obsidian.api_key}
+      - name: obsidian.api_key
     prompts: 0
     resources: {}
   mcp-discord:
@@ -559,25 +568,33 @@ registry:
       A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/barryyip0625-mcp-discord.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+    tools: []
     secrets:
-      - {name: discord.token}
+      - name: discord.token
+    prompts: 0
+    resources: {}
   discordmcp:
     description: |
       A Model Context Protocol (MCP) server that enables LLMs to interact with Discord channels, allowing them to send and read messages through Discord's API. Using this server, LLMs like Claude can directly interact with Discord channels while maintaining user control and security.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+    tools: []
     secrets:
-      - {name: discord.token}
+      - name: discord.token
+    prompts: 0
+    resources: {}
   resend:
-    description: "Send emails directly from Cursor with this email sending MCP server"
+    description: Send emails directly from Cursor with this email sending MCP server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/resend.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/resend.md
     source: https://github.com/slimslenderslacks/mcp-send-email/tree/slim/docker
     icon: https://img.icons8.com/ios/50/new-post--v1.png
     tools:
-    - {name: send-email}
+      - name: send-email
     secrets:
-      - {name: resend.api_key}
+      - name: resend.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: resend
         description: Configure sender and reply email addresses
@@ -588,172 +605,172 @@ registry:
           sender:
             type: string
             description: sender email address
-    prompts: 0
-    resources: {}
   GitHub MCP Server:
-    description: "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools."
+    description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
     tools:
-    - {name: add_issue_comment}
-    - {name: create_branch}
-    - {name: create_issue}
-    - {name: create_or_update_file}
-    - {name: create_pull_request}
-    - {name: create_pull_request_review}
-    - {name: create_repository}
-    - {name: fork_repository}
-    - {name: get_code_scanning_alert}
-    - {name: get_file_contents}
-    - {name: get_issue}
-    - {name: get_issue_comments}
-    - {name: get_me}
-    - {name: get_pull_request}
-    - {name: get_pull_request_comments}
-    - {name: get_pull_request_files}
-    - {name: get_pull_request_reviews}
-    - {name: get_pull_request_status}
-    - {name: list_code_scanning_alerts}
-    - {name: list_commits}
-    - {name: list_issues}
-    - {name: list_pull_requests}
-    - {name: merge_pull_request}
-    - {name: push_files}
-    - {name: search_code}
-    - {name: search_issues}
-    - {name: search_repositories}
-    - {name: search_users}
-    - {name: update_issue}
-    - {name: update_pull_request_branch}
+      - name: add_issue_comment
+      - name: create_branch
+      - name: create_issue
+      - name: create_or_update_file
+      - name: create_pull_request
+      - name: create_pull_request_review
+      - name: create_repository
+      - name: fork_repository
+      - name: get_code_scanning_alert
+      - name: get_file_contents
+      - name: get_issue
+      - name: get_issue_comments
+      - name: get_me
+      - name: get_pull_request
+      - name: get_pull_request_comments
+      - name: get_pull_request_files
+      - name: get_pull_request_reviews
+      - name: get_pull_request_status
+      - name: list_code_scanning_alerts
+      - name: list_commits
+      - name: list_issues
+      - name: list_pull_requests
+      - name: merge_pull_request
+      - name: push_files
+      - name: search_code
+      - name: search_issues
+      - name: search_repositories
+      - name: search_users
+      - name: update_issue
+      - name: update_pull_request_branch
     secrets:
-      - {name: github.personal_access_token}
+      - name: github.personal_access_token
     prompts: 0
     resources: {}
   armor-crypto:
-    description: "The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more."
+    description: The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/armor-crypto.md
     source: https://github.com/armorwallet/armor-crypto-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: add_wallets_to_group}
-    - {name: archive_wallet_group}
-    - {name: archive_wallets}
-    - {name: calculate_token_conversion}
-    - {name: calculator}
-    - {name: cancel_dca_order}
-    - {name: cancel_order}
-    - {name: create_dca_order}
-    - {name: create_groups}
-    - {name: create_order}
-    - {name: create_wallet}
-    - {name: get_all_orders}
-    - {name: get_all_wallets}
-    - {name: get_armor_mcp_version}
-    - {name: get_current_time}
-    - {name: get_stake_balances}
-    - {name: get_token_candle_data}
-    - {name: get_token_details}
-    - {name: get_top_trending_tokens}
-    - {name: get_wallet_token_balance}
-    - {name: list_dca_orders}
-    - {name: list_groups}
-    - {name: list_single_group}
-    - {name: remove_wallets_from_group}
-    - {name: rename_wallets}
-    - {name: stake_quote}
-    - {name: stake_transaction}
-    - {name: swap_quote}
-    - {name: swap_transaction}
-    - {name: transfer_tokens}
-    - {name: unarchive_wallet_group}
-    - {name: unarchive_wallets}
-    - {name: unstake_quote}
-    - {name: unstake_transaction}
-    - {name: wait_a_moment}
+      - name: add_wallets_to_group
+      - name: archive_wallet_group
+      - name: archive_wallets
+      - name: calculate_token_conversion
+      - name: calculator
+      - name: cancel_dca_order
+      - name: cancel_order
+      - name: create_dca_order
+      - name: create_groups
+      - name: create_order
+      - name: create_wallet
+      - name: get_all_orders
+      - name: get_all_wallets
+      - name: get_armor_mcp_version
+      - name: get_current_time
+      - name: get_stake_balances
+      - name: get_token_candle_data
+      - name: get_token_details
+      - name: get_top_trending_tokens
+      - name: get_wallet_token_balance
+      - name: list_dca_orders
+      - name: list_groups
+      - name: list_single_group
+      - name: remove_wallets_from_group
+      - name: rename_wallets
+      - name: stake_quote
+      - name: stake_transaction
+      - name: swap_quote
+      - name: swap_transaction
+      - name: transfer_tokens
+      - name: unarchive_wallet_group
+      - name: unarchive_wallets
+      - name: unstake_quote
+      - name: unstake_transaction
+      - name: wait_a_moment
     secrets:
-      - {name: armor-crypto.api_key}
+      - name: armor-crypto.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: armor-crypto
         description: Configure the connection to Armor
         parameters:
           api_url:
             type: string
-    prompts: 0
-    resources: {}
   astra-db:
-    description: "An MCP server for Astra DB workloads"
+    description: An MCP server for Astra DB workloads
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
     source: https://github.com/datastax/astra-db-mcp/tree/refs/pull/14/merge
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/datastax.svg
     tools:
-    - {name: BulkCreateRecords}
-    - {name: BulkDeleteRecords}
-    - {name: BulkUpdateRecords}
-    - {name: CreateCollection}
-    - {name: CreateRecord}
-    - {name: DeleteCollection}
-    - {name: DeleteRecord}
-    - {name: EstimateDocumentCount}
-    - {name: FindRecord}
-    - {name: GetCollections}
-    - {name: GetRecord}
-    - {name: HelpAddToClient}
-    - {name: ListRecords}
-    - {name: OpenBrowser}
-    - {name: UpdateCollection}
-    - {name: UpdateRecord}
+      - name: BulkCreateRecords
+      - name: BulkDeleteRecords
+      - name: BulkUpdateRecords
+      - name: CreateCollection
+      - name: CreateRecord
+      - name: DeleteCollection
+      - name: DeleteRecord
+      - name: EstimateDocumentCount
+      - name: FindRecord
+      - name: GetCollections
+      - name: GetRecord
+      - name: HelpAddToClient
+      - name: ListRecords
+      - name: OpenBrowser
+      - name: UpdateCollection
+      - name: UpdateRecord
     secrets:
-      - {name: astra-db.applicatin_token}
+      - name: astra-db.applicatin_token
+    prompts: 0
+    resources: {}
     config:
       - name: astra-db
         description: Configure the connection to Astra DB
         parameters:
           endpoint:
             type: string
-    prompts: 0
-    resources: {}
   atlas-docs:
-    description: "Provide LLMs hosted, clean markdown documentation of libraries and frameworks"
+    description: Provide LLMs hosted, clean markdown documentation of libraries and frameworks
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlas-docs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/atlas-docs.md
     source: https://github.com/CartographAI/atlas-docs-mcp/tree/master
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: get_docs_full}
-    - {name: get_docs_index}
-    - {name: get_docs_page}
-    - {name: list_docs}
-    - {name: search_docs}
+      - name: get_docs_full
+      - name: get_docs_index
+      - name: get_docs_page
+      - name: list_docs
+      - name: search_docs
+    prompts: 0
+    resources: {}
     config:
       - name: atlas-docs
         description: Configure the connection to Atlas Docs
         parameters:
           api_url:
             type: string
-    prompts: 0
-    resources: {}
   audiense-insights:
-    description: "Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account"
+    description: Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/audiense-insights.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/audiense-insights.md
     source: https://github.com/AudienseCo/mcp-audiense-insights/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: compare-audience-influencers}
-    - {name: get-audience-content}
-    - {name: get-audience-insights}
-    - {name: get-baselines}
-    - {name: get-categories}
-    - {name: get-report-info}
-    - {name: get-reports}
-    - {name: report-summary}
+      - name: compare-audience-influencers
+      - name: get-audience-content
+      - name: get-audience-insights
+      - name: get-baselines
+      - name: get-categories
+      - name: get-report-info
+      - name: get-reports
+      - name: report-summary
     secrets:
-      - {name: audiense-insights.client_secret}
-      - {name: audiense-insights.twitter_bearer_token}
+      - name: audiense-insights.client_secret
+      - name: audiense-insights.twitter_bearer_token
+    prompts: 0
+    resources: {}
     config:
       - name: audiense-insights
         description: Configure the connection to Audiense Insights
@@ -762,47 +779,47 @@ registry:
             type: string
         required:
           - client_id
-    prompts: 0
-    resources: {}
   basic-memory:
-    description: "Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md"
+    description: Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/basic-memory.md
     source: https://github.com/basicmachines-co/basic-memory/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: build_context}
-    - {name: canvas}
-    - {name: delete_note}
-    - {name: project_info}
-    - {name: read_content}
-    - {name: read_note}
-    - {name: recent_activity}
-    - {name: search_notes}
-    - {name: write_note}
+      - name: build_context
+      - name: canvas
+      - name: delete_note
+      - name: project_info
+      - name: read_content
+      - name: read_note
+      - name: recent_activity
+      - name: search_notes
+      - name: write_note
     prompts: 0
     resources: {}
   bitrefill:
-    description: "A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill."
+    description: A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/bitrefill.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/bitrefill.md
     source: https://github.com/bitrefill/bitrefill-mcp-server/tree/master
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: categories}
-    - {name: create_invoice}
-    - {name: detail}
-    - {name: get_account_balance}
-    - {name: get_invoice}
-    - {name: get_invoices}
-    - {name: get_order}
-    - {name: get_orders}
-    - {name: pay_invoice}
-    - {name: ping}
-    - {name: search}
-    - {name: unseal_order}
+      - name: categories
+      - name: create_invoice
+      - name: detail
+      - name: get_account_balance
+      - name: get_invoice
+      - name: get_invoices
+      - name: get_order
+      - name: get_orders
+      - name: pay_invoice
+      - name: ping
+      - name: search
+      - name: unseal_order
     secrets:
-      - {name: bitrefill.api_secret}
+      - name: bitrefill.api_secret
+    prompts: 0
+    resources: {}
     config:
       - name: bitrefill
         description: Configure the connection to Bitrefill
@@ -811,122 +828,122 @@ registry:
             type: string
         required:
           - api_id
-    prompts: 0
-    resources: {}
   box:
-    description: "An MCP server capable of interacting with the Box API"
+    description: An MCP server capable of interacting with the Box API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
     source: https://github.com/box-community/mcp-server-box/tree/refs/pull/4/merge
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/box.svg
     tools:
-    - {name: box_ai_extract_data}
-    - {name: box_ask_ai_tool}
-    - {name: box_ask_ai_tool_multi_file}
-    - {name: box_authorize_app_tool}
-    - {name: box_download_file_tool}
-    - {name: box_list_folder_content_by_folder_id}
-    - {name: box_manage_folder_tool}
-    - {name: box_read_tool}
-    - {name: box_search_folder_by_name}
-    - {name: box_search_tool}
-    - {name: box_upload_file_tool}
-    - {name: box_who_am_i}
+      - name: box_ai_extract_data
+      - name: box_ask_ai_tool
+      - name: box_ask_ai_tool_multi_file
+      - name: box_authorize_app_tool
+      - name: box_download_file_tool
+      - name: box_list_folder_content_by_folder_id
+      - name: box_manage_folder_tool
+      - name: box_read_tool
+      - name: box_search_folder_by_name
+      - name: box_search_tool
+      - name: box_upload_file_tool
+      - name: box_who_am_i
     secrets:
-      - {name: box.client_id}
-      - {name: box.client_secret}
+      - name: box.client_id
+      - name: box.client_secret
     prompts: 0
     resources: {}
   chroma:
-    description: "A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma"
+    description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/chroma.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/chroma.md
     source: https://github.com/chroma-core/chroma-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: chroma_add_documents}
-    - {name: chroma_create_collection}
-    - {name: chroma_delete_collection}
-    - {name: chroma_delete_documents}
-    - {name: chroma_get_collection_count}
-    - {name: chroma_get_collection_info}
-    - {name: chroma_get_documents}
-    - {name: chroma_list_collections}
-    - {name: chroma_modify_collection}
-    - {name: chroma_peek_collection}
-    - {name: chroma_query_documents}
-    - {name: chroma_update_documents}
+      - name: chroma_add_documents
+      - name: chroma_create_collection
+      - name: chroma_delete_collection
+      - name: chroma_delete_documents
+      - name: chroma_get_collection_count
+      - name: chroma_get_collection_info
+      - name: chroma_get_documents
+      - name: chroma_list_collections
+      - name: chroma_modify_collection
+      - name: chroma_peek_collection
+      - name: chroma_query_documents
+      - name: chroma_update_documents
     secrets:
-      - {name: chroma.api_key}
+      - name: chroma.api_key
     prompts: 0
     resources: {}
   cyreslab-ai-shodan:
-    description: "A Model Context Protocol server that provides access to Shodan API functionality"
+    description: A Model Context Protocol server that provides access to Shodan API functionality
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/cyreslab-ai-shodan.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/cyreslab-ai-shodan.md
     source: https://github.com/Cyreslab-AI/shodan-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: get_host_info}
-    - {name: get_ssl_info}
-    - {name: scan_network_range}
-    - {name: search_iot_devices}
-    - {name: search_shodan}
+      - name: get_host_info
+      - name: get_ssl_info
+      - name: scan_network_range
+      - name: search_iot_devices
+      - name: search_shodan
     secrets:
-      - {name: cyreslab-ai-shodan.api_key}
+      - name: cyreslab-ai-shodan.api_key
     prompts: 0
     resources: {}
   dart:
-    description: "Dart AI Model Context Protocol (MCP) server"
+    description: Dart AI Model Context Protocol (MCP) server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/dart.md
     source: https://github.com/its-dart/dart-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create_doc}
-    - {name: create_task}
-    - {name: delete_doc}
-    - {name: delete_task}
-    - {name: get_config}
-    - {name: get_doc}
-    - {name: get_task}
-    - {name: list_docs}
-    - {name: list_tasks}
-    - {name: update_doc}
-    - {name: update_task}
+      - name: create_doc
+      - name: create_task
+      - name: delete_doc
+      - name: delete_task
+      - name: get_config
+      - name: get_doc
+      - name: get_task
+      - name: list_docs
+      - name: list_tasks
+      - name: update_doc
+      - name: update_task
     secrets:
-      - {name: dart.token}
+      - name: dart.token
+    prompts: 0
+    resources: {}
     config:
       - name: dart
         description: Configure the connection to Dart
         parameters:
           host:
             type: string
-    prompts: 0
-    resources: {}
   databutton:
-    description: "Databutton MCP Server"
+    description: Databutton MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/databutton.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/databutton.md
     source: https://github.com/databutton/databutton-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: submit_app_requirements}
+      - name: submit_app_requirements
     prompts: 0
     resources: {}
   descope:
-    description: "The Descope Model Context Protocol (MCP) server provides an interface to interact with Descope's Management APIs, enabling the search and retrieval of project-related information."
+    description: The Descope Model Context Protocol (MCP) server provides an interface to interact with Descope's Management APIs, enabling the search and retrieval of project-related information.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/descope.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/descope.md
     source: https://github.com/descope-sample-apps/descope-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create-user}
-    - {name: invite-user}
-    - {name: search-audits}
-    - {name: search-users}
+      - name: create-user
+      - name: invite-user
+      - name: search-audits
+      - name: search-users
     secrets:
-      - {name: descope.management_key}
+      - name: descope.management_key
+    prompts: 0
+    resources: {}
     config:
       - name: descope
         description: Configure the connection to Descope
@@ -935,28 +952,28 @@ registry:
             type: string
         required:
           - project_id
-    prompts: 0
-    resources: {}
   devhub-cms:
-    description: "DevHub CMS LLM integration through the Model Context Protocol"
+    description: DevHub CMS LLM integration through the Model Context Protocol
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/devhub-cms.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/devhub-cms.md
     source: https://github.com/devhub/devhub-cms-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create_blog_post}
-    - {name: get_blog_post}
-    - {name: get_businesses}
-    - {name: get_hours_of_operation}
-    - {name: get_locations}
-    - {name: get_nearest_location}
-    - {name: site_from_url}
-    - {name: update_blog_post}
-    - {name: update_hours}
-    - {name: upload_image}
+      - name: create_blog_post
+      - name: get_blog_post
+      - name: get_businesses
+      - name: get_hours_of_operation
+      - name: get_locations
+      - name: get_nearest_location
+      - name: site_from_url
+      - name: update_blog_post
+      - name: update_hours
+      - name: upload_image
     secrets:
-      - {name: devhub-cms.api_key}
-      - {name: devhub-cms.api_secret}
+      - name: devhub-cms.api_key
+      - name: devhub-cms.api_secret
+    prompts: 0
+    resources: {}
     config:
       - name: devhub-cms
         description: Configure the connection to DevHub CMS
@@ -965,33 +982,33 @@ registry:
             type: string
         required:
           - url
-    prompts: 0
-    resources: {}
   e2b:
-    description: "Giving Claude ability to run code with E2B via MCP (Model Context Protocol)"
+    description: Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/e2b.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/e2b.md
     source: https://github.com/e2b-dev/mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: run_code}
+      - name: run_code
     secrets:
-      - {name: e2b.api_key}
+      - name: e2b.api_key
     prompts: 0
     resources: {}
   elasticsearch:
-    description: "Interact with your Elasticsearch indices through natural language conversations."
+    description: Interact with your Elasticsearch indices through natural language conversations.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elasticsearch.md
     source: https://github.com/elastic/mcp-server-elasticsearch/tree/refs/pull/37/merge
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/elasticsearch.svg
     tools:
-    - {name: get_mappings}
-    - {name: get_shards}
-    - {name: list_indices}
-    - {name: search}
+      - name: get_mappings
+      - name: get_shards
+      - name: list_indices
+      - name: search
     secrets:
-      - {name: elasticsearch.api_key}
+      - name: elasticsearch.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: elasticsearch
         description: Configure the connection to Elasticsearch
@@ -1000,187 +1017,187 @@ registry:
             type: string
         required:
           - url
-    prompts: 0
-    resources: {}
   firecrawl:
-    description: "Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients."
+    description: Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/firecrawl.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/firecrawl.md
     source: https://github.com/mendableai/firecrawl-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: firecrawl_batch_scrape}
-    - {name: firecrawl_check_batch_status}
-    - {name: firecrawl_check_crawl_status}
-    - {name: firecrawl_crawl}
-    - {name: firecrawl_deep_research}
-    - {name: firecrawl_extract}
-    - {name: firecrawl_generate_llmstxt}
-    - {name: firecrawl_map}
-    - {name: firecrawl_scrape}
-    - {name: firecrawl_search}
+      - name: firecrawl_batch_scrape
+      - name: firecrawl_check_batch_status
+      - name: firecrawl_check_crawl_status
+      - name: firecrawl_crawl
+      - name: firecrawl_deep_research
+      - name: firecrawl_extract
+      - name: firecrawl_generate_llmstxt
+      - name: firecrawl_map
+      - name: firecrawl_scrape
+      - name: firecrawl_search
     secrets:
-      - {name: firecrawl.api_key}
+      - name: firecrawl.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: firecrawl
         description: Configure the connection to Firecrawl
         parameters:
-          url:
-            type: string
-          retry_max:
-            type: integer
-          retry_delay:
-            type: integer
-          retry_max_delay:
-            type: integer
-          retry_backoff_factor:
+          credit_critical_threshold:
             type: integer
           credit_warning_threshold:
             type: integer
-          credit_critical_threshold:
+          retry_backoff_factor:
             type: integer
-    prompts: 0
-    resources: {}
+          retry_delay:
+            type: integer
+          retry_max:
+            type: integer
+          retry_max_delay:
+            type: integer
+          url:
+            type: string
   github-chat:
-    description: "A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API."
+    description: A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-chat.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-chat.md
     source: https://github.com/AsyncFuncAI/github-chat-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: index_repository}
-    - {name: query_repository}
+      - name: index_repository
+      - name: query_repository
     secrets:
-      - {name: github-chat.api_key}
+      - name: github-chat.api_key
     prompts: 0
     resources: {}
   handwriting-ocr:
-    description: "Model Context Protocol (MCP) Server for Handwriting OCR"
+    description: Model Context Protocol (MCP) Server for Handwriting OCR
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/handwriting-ocr.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/handwriting-ocr.md
     source: https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: check_status}
-    - {name: get_text}
-    - {name: upload_document}
+      - name: check_status
+      - name: get_text
+      - name: upload_document
     secrets:
-      - {name: handwriting-ocr.api_token}
+      - name: handwriting-ocr.api_token
     prompts: 0
     resources: {}
   heroku:
-    description: "Heroku Platform MCP Server"
+    description: Heroku Platform MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
     source: https://github.com/heroku/heroku-mcp-server/tree/refs/pull/24/merge
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/heroku.svg
     tools:
-    - {name: create_addon}
-    - {name: create_app}
-    - {name: deploy_one_off_dyno}
-    - {name: deploy_to_heroku}
-    - {name: get_addon_info}
-    - {name: get_app_info}
-    - {name: get_app_logs}
-    - {name: list_addon_plans}
-    - {name: list_addon_services}
-    - {name: list_addons}
-    - {name: list_apps}
-    - {name: list_private_spaces}
-    - {name: list_teams}
-    - {name: maintenance_off}
-    - {name: maintenance_on}
-    - {name: pg_backups}
-    - {name: pg_credentials}
-    - {name: pg_info}
-    - {name: pg_kill}
-    - {name: pg_locks}
-    - {name: pg_maintenance}
-    - {name: pg_outliers}
-    - {name: pg_ps}
-    - {name: pg_psql}
-    - {name: pg_upgrade}
-    - {name: pipelines_create}
-    - {name: pipelines_info}
-    - {name: pipelines_list}
-    - {name: pipelines_promote}
-    - {name: ps_list}
-    - {name: ps_restart}
-    - {name: ps_scale}
-    - {name: rename_app}
-    - {name: transfer_app}
+      - name: create_addon
+      - name: create_app
+      - name: deploy_one_off_dyno
+      - name: deploy_to_heroku
+      - name: get_addon_info
+      - name: get_app_info
+      - name: get_app_logs
+      - name: list_addon_plans
+      - name: list_addon_services
+      - name: list_addons
+      - name: list_apps
+      - name: list_private_spaces
+      - name: list_teams
+      - name: maintenance_off
+      - name: maintenance_on
+      - name: pg_backups
+      - name: pg_credentials
+      - name: pg_info
+      - name: pg_kill
+      - name: pg_locks
+      - name: pg_maintenance
+      - name: pg_outliers
+      - name: pg_ps
+      - name: pg_psql
+      - name: pg_upgrade
+      - name: pipelines_create
+      - name: pipelines_info
+      - name: pipelines_list
+      - name: pipelines_promote
+      - name: ps_list
+      - name: ps_restart
+      - name: ps_scale
+      - name: rename_app
+      - name: transfer_app
     secrets:
-      - {name: heroku.api_key}
+      - name: heroku.api_key
     prompts: 0
     resources: {}
   hyperbrowser:
-    description: "A MCP server implementation for hyperbrowser"
+    description: A MCP server implementation for hyperbrowser
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperbrowser.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperbrowser.md
     source: https://github.com/hyperbrowserai/mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: browser_use_agent}
-    - {name: claude_computer_use_agent}
-    - {name: crawl_webpages}
-    - {name: create_profile}
-    - {name: delete_profile}
-    - {name: extract_structured_data}
-    - {name: list_profiles}
-    - {name: openai_computer_use_agent}
-    - {name: scrape_webpage}
-    - {name: search_with_bing}
+      - name: browser_use_agent
+      - name: claude_computer_use_agent
+      - name: crawl_webpages
+      - name: create_profile
+      - name: delete_profile
+      - name: extract_structured_data
+      - name: list_profiles
+      - name: openai_computer_use_agent
+      - name: scrape_webpage
+      - name: search_with_bing
     secrets:
-      - {name: hyperbrowser.api_key}
+      - name: hyperbrowser.api_key
     prompts: 0
     resources: {}
   hyperspell:
-    description: "Hyperspell MCP Server"
+    description: Hyperspell MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperspell.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperspell.md
     source: https://github.com/hyperspell/hyperspell-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: Add File}
-    - {name: Add Memory}
-    - {name: Search Hyperspell}
+      - name: Add File
+      - name: Add Memory
+      - name: Search Hyperspell
     secrets:
-      - {name: hyperspell.token}
+      - name: hyperspell.token
+    prompts: 0
+    resources: {}
     config:
       - name: hyperspell
         description: Configure the connection to Hyperspell
         parameters:
-          use_resources:
-            type: boolean
           collection:
             type: string
-    prompts: 0
-    resources: {}
+          use_resources:
+            type: boolean
   iaptic:
-    description: "Model Context Protocol server for interacting with iaptic"
+    description: Model Context Protocol server for interacting with iaptic
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/iaptic.md
     source: https://github.com/iaptic/mcp-server-iaptic/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: customer_add_purchase}
-    - {name: customer_get}
-    - {name: customer_list}
-    - {name: customer_subscription}
-    - {name: customer_transactions}
-    - {name: event_list}
-    - {name: iaptic_current_app}
-    - {name: iaptic_reset_app}
-    - {name: iaptic_switch_app}
-    - {name: purchase_get}
-    - {name: purchase_list}
-    - {name: stats_app}
-    - {name: stats_get}
-    - {name: stripe_prices}
-    - {name: transaction_get}
-    - {name: transaction_list}
+      - name: customer_add_purchase
+      - name: customer_get
+      - name: customer_list
+      - name: customer_subscription
+      - name: customer_transactions
+      - name: event_list
+      - name: iaptic_current_app
+      - name: iaptic_reset_app
+      - name: iaptic_switch_app
+      - name: purchase_get
+      - name: purchase_list
+      - name: stats_app
+      - name: stats_get
+      - name: stripe_prices
+      - name: transaction_get
+      - name: transaction_list
     secrets:
-      - {name: iaptic.api_key}
+      - name: iaptic.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: iaptic
         description: Configure the connection to iaptic
@@ -1189,48 +1206,48 @@ registry:
             type: string
         required:
           - app_name
-    prompts: 0
-    resources: {}
   kagisearch:
-    description: "A Model Context Protocol (MCP) server for Kagi search & other tools."
+    description: A Model Context Protocol (MCP) server for Kagi search & other tools.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kagisearch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kagisearch.md
     source: https://github.com/kagisearch/kagimcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kagi.svg
     tools:
-    - {name: kagi_search_fetch}
-    - {name: kagi_summarizer}
+      - name: kagi_search_fetch
+      - name: kagi_summarizer
     secrets:
-      - {name: kagisearch.api_key}
+      - name: kagisearch.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: kagisearch
         description: Configure the connection to Kagi search
         parameters:
           engine:
             type: string
-    prompts: 0
-    resources: {}
   multiversx-mx:
-    description: "MCP Server for MultiversX"
+    description: MCP Server for MultiversX
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/multiversx-mx.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/multiversx-mx.md
     source: https://github.com/multiversx/mx-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create-sft-nft-mesdt-tokens}
-    - {name: create-wallet}
-    - {name: get-balance-of-address}
-    - {name: get-network}
-    - {name: get-tokens-of-address}
-    - {name: get-wallet-address}
-    - {name: issue-fungible-token}
-    - {name: issue-meta-esdt-collection}
-    - {name: issue-nft-collection}
-    - {name: issue-semi-fungible-collection}
-    - {name: send-egld}
-    - {name: send-egld-to-multiple-receivers}
-    - {name: send-fungible-tokens}
-    - {name: send-sft-nft-meta-tokens}
+      - name: create-sft-nft-mesdt-tokens
+      - name: create-wallet
+      - name: get-balance-of-address
+      - name: get-network
+      - name: get-tokens-of-address
+      - name: get-wallet-address
+      - name: issue-fungible-token
+      - name: issue-meta-esdt-collection
+      - name: issue-nft-collection
+      - name: issue-semi-fungible-collection
+      - name: send-egld
+      - name: send-egld-to-multiple-receivers
+      - name: send-fungible-tokens
+      - name: send-sft-nft-meta-tokens
+    prompts: 0
+    resources: {}
     config:
       - name: multiversx-mx
         description: Configure the connection to MultiversX blockchain
@@ -1242,90 +1259,90 @@ registry:
         required:
           - network
           - wallet
-    prompts: 0
-    resources: {}
   neon:
-    description: "MCP server for interacting with Neon Management API and databases"
+    description: MCP server for interacting with Neon Management API and databases
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neon.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neon.md
     source: https://github.com/neondatabase/mcp-server-neon/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: __node_version}
-    - {name: complete_database_migration}
-    - {name: create_branch}
-    - {name: create_project}
-    - {name: delete_branch}
-    - {name: delete_project}
-    - {name: describe_branch}
-    - {name: describe_project}
-    - {name: describe_table_schema}
-    - {name: get_connection_string}
-    - {name: get_database_tables}
-    - {name: list_projects}
-    - {name: prepare_database_migration}
-    - {name: provision_neon_auth}
-    - {name: run_sql}
-    - {name: run_sql_transaction}
+      - name: __node_version
+      - name: complete_database_migration
+      - name: create_branch
+      - name: create_project
+      - name: delete_branch
+      - name: delete_project
+      - name: describe_branch
+      - name: describe_project
+      - name: describe_table_schema
+      - name: get_connection_string
+      - name: get_database_tables
+      - name: list_projects
+      - name: prepare_database_migration
+      - name: provision_neon_auth
+      - name: run_sql
+      - name: run_sql_transaction
     secrets:
-      - {name: neon.api_key}
+      - name: neon.api_key
     prompts: 0
     resources: {}
   neondatabase-labs:
-    description: "MCP server for interacting with Neon Management API and databases"
+    description: MCP server for interacting with Neon Management API and databases
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neondatabase-labs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neondatabase-labs.md
     source: https://github.com/neondatabase-labs/mcp-server-neon/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: __node_version}
-    - {name: complete_database_migration}
-    - {name: create_branch}
-    - {name: create_project}
-    - {name: delete_branch}
-    - {name: delete_project}
-    - {name: describe_branch}
-    - {name: describe_project}
-    - {name: describe_table_schema}
-    - {name: get_connection_string}
-    - {name: get_database_tables}
-    - {name: list_projects}
-    - {name: prepare_database_migration}
-    - {name: provision_neon_auth}
-    - {name: run_sql}
-    - {name: run_sql_transaction}
+      - name: __node_version
+      - name: complete_database_migration
+      - name: create_branch
+      - name: create_project
+      - name: delete_branch
+      - name: delete_project
+      - name: describe_branch
+      - name: describe_project
+      - name: describe_table_schema
+      - name: get_connection_string
+      - name: get_database_tables
+      - name: list_projects
+      - name: prepare_database_migration
+      - name: provision_neon_auth
+      - name: run_sql
+      - name: run_sql_transaction
     secrets:
-      - {name: neondatabase-labs.api_key}
+      - name: neondatabase-labs.api_key
     prompts: 0
     resources: {}
   opik:
-    description: "Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics."
+    description: Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/opik.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/opik.md
     source: https://github.com/comet-ml/opik-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create-project}
-    - {name: create-prompt}
-    - {name: create-prompt-version}
-    - {name: delete-project}
-    - {name: delete-prompt}
-    - {name: get-metrics}
-    - {name: get-opik-examples}
-    - {name: get-opik-help}
-    - {name: get-opik-tracing-info}
-    - {name: get-project-by-id}
-    - {name: get-prompt-by-id}
-    - {name: get-server-info}
-    - {name: get-trace-by-id}
-    - {name: get-trace-stats}
-    - {name: list-projects}
-    - {name: list-prompts}
-    - {name: list-traces}
-    - {name: update-project}
-    - {name: update-prompt}
+      - name: create-project
+      - name: create-prompt
+      - name: create-prompt-version
+      - name: delete-project
+      - name: delete-prompt
+      - name: get-metrics
+      - name: get-opik-examples
+      - name: get-opik-help
+      - name: get-opik-tracing-info
+      - name: get-project-by-id
+      - name: get-prompt-by-id
+      - name: get-server-info
+      - name: get-trace-by-id
+      - name: get-trace-stats
+      - name: list-projects
+      - name: list-prompts
+      - name: list-traces
+      - name: update-project
+      - name: update-prompt
     secrets:
-      - {name: opik.api_key}
+      - name: opik.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: opik
         description: Configure the connection to Opik
@@ -1334,37 +1351,37 @@ registry:
             type: string
           workspace_name:
             type: string
-    prompts: 0
-    resources: {}
   osp_marketing_tools:
-    description: "A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques."
+    description: A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/osp_marketing_tools.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/osp_marketing_tools.md
     source: https://github.com/open-strategy-partners/osp_marketing_tools/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: get_editing_codes}
-    - {name: get_meta_guide}
-    - {name: get_on_page_seo_guide}
-    - {name: get_value_map_positioning_guide}
-    - {name: get_writing_guide}
-    - {name: health_check}
+      - name: get_editing_codes
+      - name: get_meta_guide
+      - name: get_on_page_seo_guide
+      - name: get_value_map_positioning_guide
+      - name: get_writing_guide
+      - name: health_check
     prompts: 0
     resources: {}
   oxylabs:
-    description: "A Model Context Protocol (MCP) server that enables AI assistants like Claude to seamlessly access web data through Oxylabs' powerful web scraping technology."
+    description: A Model Context Protocol (MCP) server that enables AI assistants like Claude to seamlessly access web data through Oxylabs' powerful web scraping technology.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/oxylabs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/oxylabs.md
     source: https://github.com/oxylabs/oxylabs-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: oxylabs_amazon_product_scraper}
-    - {name: oxylabs_amazon_search_scraper}
-    - {name: oxylabs_google_search_scraper}
-    - {name: oxylabs_universal_scraper}
-    - {name: oxylabs_web_unblocker}
+      - name: oxylabs_amazon_product_scraper
+      - name: oxylabs_amazon_search_scraper
+      - name: oxylabs_google_search_scraper
+      - name: oxylabs_universal_scraper
+      - name: oxylabs_web_unblocker
     secrets:
-      - {name: oxylabs.password}
+      - name: oxylabs.password
+    prompts: 0
+    resources: {}
     config:
       - name: oxylabs
         description: Configure the connection to Oxylabs Scraper
@@ -1373,338 +1390,338 @@ registry:
             type: string
         required:
           - username
-    prompts: 0
-    resources: {}
   perplexity-ask:
-    description: "Connector for Perplexity API, to enable real-time, web-wide research."
+    description: Connector for Perplexity API, to enable real-time, web-wide research.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/perplexity-ask.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
     source: https://github.com/ppl-ai/modelcontextprotocol/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/perplexity.svg
     tools:
-    - {name: perplexity_ask}
-    - {name: perplexity_reason}
-    - {name: perplexity_research}
+      - name: perplexity_ask
+      - name: perplexity_reason
+      - name: perplexity_research
     secrets:
-      - {name: perplexity-ask.api_key}
+      - name: perplexity-ask.api_key
     prompts: 0
     resources: {}
   redis-cloud:
-    description: "MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language."
+    description: MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis-cloud.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis-cloud.md
     source: https://github.com/redis/mcp-redis-cloud/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create-essential-subscription}
-    - {name: create-pro-database}
-    - {name: create-pro-subscription}
-    - {name: delete-essential-subscription}
-    - {name: get-current-account}
-    - {name: get-current-payment-methods}
-    - {name: get-database-modules}
-    - {name: get-essential-subscription-by-id}
-    - {name: get-essential-subscriptions}
-    - {name: get-essentials-plans}
-    - {name: get-pro-databases}
-    - {name: get-pro-plans-regions}
-    - {name: get-pro-subscription}
-    - {name: get-pro-subscriptions}
-    - {name: get-task-by-id}
-    - {name: get-tasks}
+      - name: create-essential-subscription
+      - name: create-pro-database
+      - name: create-pro-subscription
+      - name: delete-essential-subscription
+      - name: get-current-account
+      - name: get-current-payment-methods
+      - name: get-database-modules
+      - name: get-essential-subscription-by-id
+      - name: get-essential-subscriptions
+      - name: get-essentials-plans
+      - name: get-pro-databases
+      - name: get-pro-plans-regions
+      - name: get-pro-subscription
+      - name: get-pro-subscriptions
+      - name: get-task-by-id
+      - name: get-tasks
     secrets:
-      - {name: redis-cloud.api_key}
-      - {name: redis-cloud.secret_key}
+      - name: redis-cloud.api_key
+      - name: redis-cloud.secret_key
     prompts: 0
     resources: {}
   scrapegraph:
-    description: "ScapeGraph MCP Server"
+    description: ScapeGraph MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapegraph.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/scrapegraph.md
     source: https://github.com/ScrapeGraphAI/scrapegraph-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: markdownify}
-    - {name: searchscraper}
-    - {name: smartscraper}
+      - name: markdownify
+      - name: searchscraper
+      - name: smartscraper
     secrets:
-      - {name: scrapegraph.api_key}
+      - name: scrapegraph.api_key
     prompts: 0
     resources: {}
   scrapezy:
-    description: "A Model Context Protocol server for Scrapezy that enables AI models to extract structured data from websites."
+    description: A Model Context Protocol server for Scrapezy that enables AI models to extract structured data from websites.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapezy.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/scrapezy.md
     source: https://github.com/Scrapezy/mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: extract-structured-data}
+      - name: extract-structured-data
     secrets:
-      - {name: scrapezy.auth_token}
+      - name: scrapezy.auth_token
     prompts: 0
     resources: {}
   shopify:
-    description: "Shopify.dev MCP server"
+    description: Shopify.dev MCP server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/shopify.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/shopify.md
     source: https://github.com/Shopify/dev-mcp/tree/refs/pull/7/merge
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/shopify.svg
     tools:
-    - {name: introspect_admin_schema}
-    - {name: search_dev_docs}
+      - name: introspect_admin_schema
+      - name: search_dev_docs
     prompts: 0
     resources: {}
   tavily:
-    description: "The Tavily MCP server provides seamless interaction with the tavily-search and tavily-extract tools, real-time web search capabilities through the tavily-search tool and Intelligent data extraction from web pages via the tavily-extract tool."
+    description: The Tavily MCP server provides seamless interaction with the tavily-search and tavily-extract tools, real-time web search capabilities through the tavily-search tool and Intelligent data extraction from web pages via the tavily-extract tool.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tavily.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tavily.md
     source: https://github.com/tavily-ai/tavily-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: tavily-extract}
-    - {name: tavily-search}
+      - name: tavily-extract
+      - name: tavily-search
     secrets:
-      - {name: tavily.api_token}
+      - name: tavily.api_token
     prompts: 0
     resources: {}
   tembo:
-    description: "MCP server for Tembo Cloud's platform API"
+    description: MCP server for Tembo Cloud's platform API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tembo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tembo.md
     source: https://github.com/tembo-io/mcp-server-tembo/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: ask_tembo}
-    - {name: create_instance}
-    - {name: delete_instance}
-    - {name: get_all_apps}
-    - {name: get_all_instances}
-    - {name: get_app}
-    - {name: get_instance}
-    - {name: get_instance_schema}
-    - {name: patch_instance}
-    - {name: restore_instance}
+      - name: ask_tembo
+      - name: create_instance
+      - name: delete_instance
+      - name: get_all_apps
+      - name: get_all_instances
+      - name: get_app
+      - name: get_instance
+      - name: get_instance_schema
+      - name: patch_instance
+      - name: restore_instance
     secrets:
-      - {name: tembo.api_token}
+      - name: tembo.api_token
     prompts: 0
     resources: {}
   triplewhale:
-    description: "Triplewhale MCP Server"
+    description: Triplewhale MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/triplewhale.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/triplewhale.md
     source: https://github.com/Triple-Whale/mcp-server-triplewhale/tree/master
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: moby}
+      - name: moby
     secrets:
-      - {name: triplewhale.api_key}
+      - name: triplewhale.api_key
     prompts: 0
     resources: {}
   tweetbinder:
-    description: "TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account"
+    description: TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tweetbinder.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tweetbinder.md
     source: https://github.com/audienseco/mcp-tweetbinder/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: create-twitter-count}
-    - {name: create-twitter-report}
-    - {name: get-account-balances}
-    - {name: get-report-content}
-    - {name: get-report-stats}
-    - {name: get-report-status}
-    - {name: list-reports}
+      - name: create-twitter-count
+      - name: create-twitter-report
+      - name: get-account-balances
+      - name: get-report-content
+      - name: get-report-stats
+      - name: get-report-status
+      - name: list-reports
     secrets:
-      - {name: tweetbinder.api_token}
+      - name: tweetbinder.api_token
     prompts: 0
     resources: {}
   veyrax:
-    description: "VeyraX MCP is the only connection you need to access all your tools in any MCP-compatible environment."
+    description: VeyraX MCP is the only connection you need to access all your tools in any MCP-compatible environment.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/veyrax.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/veyrax.md
     source: https://github.com/VeyraX/veyrax-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: get_flow}
-    - {name: get_tools}
-    - {name: tool_call}
+      - name: get_flow
+      - name: get_tools
+      - name: tool_call
     secrets:
-      - {name: veyrax.api_key}
+      - name: veyrax.api_key
     prompts: 0
     resources: {}
   desktop-commander:
-    description: "Search, update, manage files and run terminal commands with AI"
+    description: Search, update, manage files and run terminal commands with AI
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/desktop-commander.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/desktop-commander.md
     source: https://github.com/wonderwhy-er/DesktopCommanderMCP/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: block_command}
-    - {name: create_directory}
-    - {name: edit_block}
-    - {name: execute_command}
-    - {name: force_terminate}
-    - {name: get_file_info}
-    - {name: kill_process}
-    - {name: list_allowed_directories}
-    - {name: list_blocked_commands}
-    - {name: list_directory}
-    - {name: list_processes}
-    - {name: list_sessions}
-    - {name: move_file}
-    - {name: read_file}
-    - {name: read_multiple_files}
-    - {name: read_output}
-    - {name: search_code}
-    - {name: search_files}
-    - {name: unblock_command}
-    - {name: write_file}
+      - name: block_command
+      - name: create_directory
+      - name: edit_block
+      - name: execute_command
+      - name: force_terminate
+      - name: get_file_info
+      - name: kill_process
+      - name: list_allowed_directories
+      - name: list_blocked_commands
+      - name: list_directory
+      - name: list_processes
+      - name: list_sessions
+      - name: move_file
+      - name: read_file
+      - name: read_multiple_files
+      - name: read_output
+      - name: search_code
+      - name: search_files
+      - name: unblock_command
+      - name: write_file
     prompts: 0
     resources: {}
   duckduckgo:
-    description: "A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing."
+    description: A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/duckduckgo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/duckduckgo.md
     source: https://github.com/nickclyde/duckduckgo-mcp-server/tree/main
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/duckduckgo.svg
     tools:
-    - {name: fetch_content}
-    - {name: search}
+      - name: fetch_content
+      - name: search
     prompts: 0
     resources: {}
   edubase:
-    description: "The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP)."
+    description: The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP).
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/edubase.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/edubase.md
     source: https://github.com/EduBase/MCP/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: edubase_delete_class_members}
-    - {name: edubase_delete_class_permission}
-    - {name: edubase_delete_class_tag}
-    - {name: edubase_delete_course_permission}
-    - {name: edubase_delete_course_tag}
-    - {name: edubase_delete_event_permission}
-    - {name: edubase_delete_event_tag}
-    - {name: edubase_delete_exam}
-    - {name: edubase_delete_exam_permission}
-    - {name: edubase_delete_exam_tag}
-    - {name: edubase_delete_exam_users}
-    - {name: edubase_delete_integration_permission}
-    - {name: edubase_delete_integration_tag}
-    - {name: edubase_delete_organization_members}
-    - {name: edubase_delete_organization_permission}
-    - {name: edubase_delete_organization_tag}
-    - {name: edubase_delete_question}
-    - {name: edubase_delete_quiz}
-    - {name: edubase_delete_quiz_permission}
-    - {name: edubase_delete_quiz_questions}
-    - {name: edubase_delete_quiz_tag}
-    - {name: edubase_delete_scorm_permission}
-    - {name: edubase_delete_scorm_tag}
-    - {name: edubase_delete_tag_permission}
-    - {name: edubase_delete_user}
-    - {name: edubase_delete_user_assume}
-    - {name: edubase_delete_user_classes}
-    - {name: edubase_delete_user_login}
-    - {name: edubase_delete_user_organizations}
-    - {name: edubase_delete_video_permission}
-    - {name: edubase_delete_video_tag}
-    - {name: edubase_get_class}
-    - {name: edubase_get_class_assignments}
-    - {name: edubase_get_class_members}
-    - {name: edubase_get_class_permission}
-    - {name: edubase_get_class_tag}
-    - {name: edubase_get_class_tags}
-    - {name: edubase_get_classes}
-    - {name: edubase_get_course_permission}
-    - {name: edubase_get_course_tag}
-    - {name: edubase_get_course_tags}
-    - {name: edubase_get_event_permission}
-    - {name: edubase_get_event_tag}
-    - {name: edubase_get_event_tags}
-    - {name: edubase_get_exam}
-    - {name: edubase_get_exam_permission}
-    - {name: edubase_get_exam_results_raw}
-    - {name: edubase_get_exam_results_user}
-    - {name: edubase_get_exam_tag}
-    - {name: edubase_get_exam_tags}
-    - {name: edubase_get_exam_users}
-    - {name: edubase_get_exams}
-    - {name: edubase_get_integration_permission}
-    - {name: edubase_get_integration_tag}
-    - {name: edubase_get_integration_tags}
-    - {name: edubase_get_organization}
-    - {name: edubase_get_organization_members}
-    - {name: edubase_get_organization_permission}
-    - {name: edubase_get_organization_tag}
-    - {name: edubase_get_organization_tags}
-    - {name: edubase_get_organizations}
-    - {name: edubase_get_question}
-    - {name: edubase_get_quiz}
-    - {name: edubase_get_quiz_permission}
-    - {name: edubase_get_quiz_play_results}
-    - {name: edubase_get_quiz_questions}
-    - {name: edubase_get_quiz_results_user}
-    - {name: edubase_get_quiz_tag}
-    - {name: edubase_get_quiz_tags}
-    - {name: edubase_get_quizes}
-    - {name: edubase_get_scorm_permission}
-    - {name: edubase_get_scorm_tag}
-    - {name: edubase_get_scorm_tags}
-    - {name: edubase_get_tag}
-    - {name: edubase_get_tag_permission}
-    - {name: edubase_get_tags}
-    - {name: edubase_get_user}
-    - {name: edubase_get_user_classes}
-    - {name: edubase_get_user_group}
-    - {name: edubase_get_user_login}
-    - {name: edubase_get_user_name}
-    - {name: edubase_get_user_organizations}
-    - {name: edubase_get_user_search}
-    - {name: edubase_get_users}
-    - {name: edubase_get_video_permission}
-    - {name: edubase_get_video_tag}
-    - {name: edubase_get_video_tags}
-    - {name: edubase_post_class_members}
-    - {name: edubase_post_class_permission}
-    - {name: edubase_post_class_tag}
-    - {name: edubase_post_classes_members}
-    - {name: edubase_post_course_permission}
-    - {name: edubase_post_course_tag}
-    - {name: edubase_post_custom_metric}
-    - {name: edubase_post_event_permission}
-    - {name: edubase_post_event_tag}
-    - {name: edubase_post_exam}
-    - {name: edubase_post_exam_permission}
-    - {name: edubase_post_exam_summary}
-    - {name: edubase_post_exam_tag}
-    - {name: edubase_post_exam_users}
-    - {name: edubase_post_integration_permission}
-    - {name: edubase_post_integration_tag}
-    - {name: edubase_post_organization_members}
-    - {name: edubase_post_organization_permission}
-    - {name: edubase_post_organization_tag}
-    - {name: edubase_post_organizations_members}
-    - {name: edubase_post_question}
-    - {name: edubase_post_quiz}
-    - {name: edubase_post_quiz_permission}
-    - {name: edubase_post_quiz_questions}
-    - {name: edubase_post_quiz_tag}
-    - {name: edubase_post_scorm_permission}
-    - {name: edubase_post_scorm_tag}
-    - {name: edubase_post_tag_permission}
-    - {name: edubase_post_user}
-    - {name: edubase_post_user_assume}
-    - {name: edubase_post_user_classes}
-    - {name: edubase_post_user_group}
-    - {name: edubase_post_user_login}
-    - {name: edubase_post_user_name}
-    - {name: edubase_post_user_organizations}
-    - {name: edubase_post_video_permission}
-    - {name: edubase_post_video_tag}
+      - name: edubase_delete_class_members
+      - name: edubase_delete_class_permission
+      - name: edubase_delete_class_tag
+      - name: edubase_delete_course_permission
+      - name: edubase_delete_course_tag
+      - name: edubase_delete_event_permission
+      - name: edubase_delete_event_tag
+      - name: edubase_delete_exam
+      - name: edubase_delete_exam_permission
+      - name: edubase_delete_exam_tag
+      - name: edubase_delete_exam_users
+      - name: edubase_delete_integration_permission
+      - name: edubase_delete_integration_tag
+      - name: edubase_delete_organization_members
+      - name: edubase_delete_organization_permission
+      - name: edubase_delete_organization_tag
+      - name: edubase_delete_question
+      - name: edubase_delete_quiz
+      - name: edubase_delete_quiz_permission
+      - name: edubase_delete_quiz_questions
+      - name: edubase_delete_quiz_tag
+      - name: edubase_delete_scorm_permission
+      - name: edubase_delete_scorm_tag
+      - name: edubase_delete_tag_permission
+      - name: edubase_delete_user
+      - name: edubase_delete_user_assume
+      - name: edubase_delete_user_classes
+      - name: edubase_delete_user_login
+      - name: edubase_delete_user_organizations
+      - name: edubase_delete_video_permission
+      - name: edubase_delete_video_tag
+      - name: edubase_get_class
+      - name: edubase_get_class_assignments
+      - name: edubase_get_class_members
+      - name: edubase_get_class_permission
+      - name: edubase_get_class_tag
+      - name: edubase_get_class_tags
+      - name: edubase_get_classes
+      - name: edubase_get_course_permission
+      - name: edubase_get_course_tag
+      - name: edubase_get_course_tags
+      - name: edubase_get_event_permission
+      - name: edubase_get_event_tag
+      - name: edubase_get_event_tags
+      - name: edubase_get_exam
+      - name: edubase_get_exam_permission
+      - name: edubase_get_exam_results_raw
+      - name: edubase_get_exam_results_user
+      - name: edubase_get_exam_tag
+      - name: edubase_get_exam_tags
+      - name: edubase_get_exam_users
+      - name: edubase_get_exams
+      - name: edubase_get_integration_permission
+      - name: edubase_get_integration_tag
+      - name: edubase_get_integration_tags
+      - name: edubase_get_organization
+      - name: edubase_get_organization_members
+      - name: edubase_get_organization_permission
+      - name: edubase_get_organization_tag
+      - name: edubase_get_organization_tags
+      - name: edubase_get_organizations
+      - name: edubase_get_question
+      - name: edubase_get_quiz
+      - name: edubase_get_quiz_permission
+      - name: edubase_get_quiz_play_results
+      - name: edubase_get_quiz_questions
+      - name: edubase_get_quiz_results_user
+      - name: edubase_get_quiz_tag
+      - name: edubase_get_quiz_tags
+      - name: edubase_get_quizes
+      - name: edubase_get_scorm_permission
+      - name: edubase_get_scorm_tag
+      - name: edubase_get_scorm_tags
+      - name: edubase_get_tag
+      - name: edubase_get_tag_permission
+      - name: edubase_get_tags
+      - name: edubase_get_user
+      - name: edubase_get_user_classes
+      - name: edubase_get_user_group
+      - name: edubase_get_user_login
+      - name: edubase_get_user_name
+      - name: edubase_get_user_organizations
+      - name: edubase_get_user_search
+      - name: edubase_get_users
+      - name: edubase_get_video_permission
+      - name: edubase_get_video_tag
+      - name: edubase_get_video_tags
+      - name: edubase_post_class_members
+      - name: edubase_post_class_permission
+      - name: edubase_post_class_tag
+      - name: edubase_post_classes_members
+      - name: edubase_post_course_permission
+      - name: edubase_post_course_tag
+      - name: edubase_post_custom_metric
+      - name: edubase_post_event_permission
+      - name: edubase_post_event_tag
+      - name: edubase_post_exam
+      - name: edubase_post_exam_permission
+      - name: edubase_post_exam_summary
+      - name: edubase_post_exam_tag
+      - name: edubase_post_exam_users
+      - name: edubase_post_integration_permission
+      - name: edubase_post_integration_tag
+      - name: edubase_post_organization_members
+      - name: edubase_post_organization_permission
+      - name: edubase_post_organization_tag
+      - name: edubase_post_organizations_members
+      - name: edubase_post_question
+      - name: edubase_post_quiz
+      - name: edubase_post_quiz_permission
+      - name: edubase_post_quiz_questions
+      - name: edubase_post_quiz_tag
+      - name: edubase_post_scorm_permission
+      - name: edubase_post_scorm_tag
+      - name: edubase_post_tag_permission
+      - name: edubase_post_user
+      - name: edubase_post_user_assume
+      - name: edubase_post_user_classes
+      - name: edubase_post_user_group
+      - name: edubase_post_user_login
+      - name: edubase_post_user_name
+      - name: edubase_post_user_organizations
+      - name: edubase_post_video_permission
+      - name: edubase_post_video_tag
     secrets:
-      - {name: edubase.api_key}
+      - name: edubase.api_key
+    prompts: 0
+    resources: {}
     config:
       - name: edubase
         description: Configure the connection to EduBase
@@ -1716,65 +1733,65 @@ registry:
         required:
           - app
           - url
-    prompts: 0
-    resources: {}
   lara:
-    description: "Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations."
+    description: Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/lara.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/lara.md
     source: https://github.com/translated/lara-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: add_translation}
-    - {name: check_import_status}
-    - {name: create_memory}
-    - {name: delete_memory}
-    - {name: delete_translation}
-    - {name: import_tmx}
-    - {name: list_languages}
-    - {name: list_memories}
-    - {name: translate}
-    - {name: update_memory}
+      - name: add_translation
+      - name: check_import_status
+      - name: create_memory
+      - name: delete_memory
+      - name: delete_translation
+      - name: import_tmx
+      - name: list_languages
+      - name: list_memories
+      - name: translate
+      - name: update_memory
     secrets:
-      - {name: lara.key_id}
-      - {name: lara.key_secret}
+      - name: lara.key_id
+      - name: lara.key_secret
     prompts: 0
     resources: {}
   wolfram-alpha:
-    description: "Connect your chat repl to wolfram alpha computational intelligence"
+    description: Connect your chat repl to wolfram alpha computational intelligence
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wolfram-alpha.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/wolfram-alpha.md
     source: https://github.com/SecretiveShell/MCP-wolfram-alpha/tree/master
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/wolfram.svg
     tools:
-    - {name: query-wolfram-alpha}
+      - name: query-wolfram-alpha
     secrets:
-      - {name: wolfram-alpha.api_key}
+      - name: wolfram-alpha.api_key
     prompts: 0
     resources: {}
   glif:
-    description: "Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app"
+    description: 'Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app'
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
     source: https://github.com/glifxyz/glif-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: glif_info}
-    - {name: list_bots}
-    - {name: list_featured_glifs}
-    - {name: list_saved_glif_tools}
-    - {name: load_bot}
-    - {name: my_glif_user_info}
-    - {name: my_glifs}
-    - {name: remove_all_glif_tools}
-    - {name: remove_glif_tool}
-    - {name: run_glif}
-    - {name: save_bot_skills_as_tools}
-    - {name: save_glif_as_tool}
-    - {name: search_glifs}
-    - {name: show_bot_info}
+      - name: glif_info
+      - name: list_bots
+      - name: list_featured_glifs
+      - name: list_saved_glif_tools
+      - name: load_bot
+      - name: my_glif_user_info
+      - name: my_glifs
+      - name: remove_all_glif_tools
+      - name: remove_glif_tool
+      - name: run_glif
+      - name: save_bot_skills_as_tools
+      - name: save_glif_as_tool
+      - name: search_glifs
+      - name: show_bot_info
     secrets:
-      - {name: glif.api_token}
+      - name: glif.api_token
+    prompts: 0
+    resources: {}
     config:
       - name: glif
         description: Configure the connection to glif.app
@@ -1783,49 +1800,47 @@ registry:
             type: string
           ignored_saved:
             type: boolean
-    prompts: 0
-    resources: {}
   exa:
-    description: "Claude can perform Web Search | Exa with MCP (Model Context Protocol)"
+    description: Claude can perform Web Search | Exa with MCP (Model Context Protocol)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
     source: https://github.com/exa-labs/exa-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-    - {name: web_search}
+      - name: web_search
     secrets:
-      - {name: exa.api_key}
+      - name: exa.api_key
     prompts: 0
     resources: {}
   webflow:
-    description: "Model Context Protocol (MCP) server for the Webflow Data API."
+    description: Model Context Protocol (MCP) server for the Webflow Data API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/webflow.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/webflow.md
     source: https://github.com/slimslenderslacks/mcp-server/tree/slim/docker
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/webflow.svg
     tools:
-    - {name: collection_fields_create_option}
-    - {name: collection_fields_create_reference}
-    - {name: collection_fields_create_static}
-    - {name: collection_fields_update}
-    - {name: collections_create}
-    - {name: collections_get}
-    - {name: collections_items_create_item}
-    - {name: collections_items_create_item_live}
-    - {name: collections_items_list_items}
-    - {name: collections_items_publish_items}
-    - {name: collections_items_update_items}
-    - {name: collections_items_update_items_live}
-    - {name: collections_list}
-    - {name: pages_get_content}
-    - {name: pages_get_metadata}
-    - {name: pages_list}
-    - {name: pages_update_page_settings}
-    - {name: pages_update_static_content}
-    - {name: sites_get}
-    - {name: sites_list}
-    - {name: sites_publish}
+      - name: collection_fields_create_option
+      - name: collection_fields_create_reference
+      - name: collection_fields_create_static
+      - name: collection_fields_update
+      - name: collections_create
+      - name: collections_get
+      - name: collections_items_create_item
+      - name: collections_items_create_item_live
+      - name: collections_items_list_items
+      - name: collections_items_publish_items
+      - name: collections_items_update_items
+      - name: collections_items_update_items_live
+      - name: collections_list
+      - name: pages_get_content
+      - name: pages_get_metadata
+      - name: pages_list
+      - name: pages_update_page_settings
+      - name: pages_update_static_content
+      - name: sites_get
+      - name: sites_list
+      - name: sites_publish
     secrets:
-      - {name: webflow.token}
+      - name: webflow.token
     prompts: 0
     resources: {}
