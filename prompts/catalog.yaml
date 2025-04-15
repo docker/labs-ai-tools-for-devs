@@ -325,16 +325,6 @@ registry:
     tools: []
     prompts: 0
     resources: {}
-    config:
-      - name: filesystem
-        description: The MCP server is allowed to access these paths
-        parameters:
-          paths:
-            type: array
-            items:
-              type: string
-        required:
-          - paths
   youtube_transcript:
     description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
