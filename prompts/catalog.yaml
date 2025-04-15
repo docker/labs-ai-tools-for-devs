@@ -1070,17 +1070,7 @@ registry:
           credit_warning_threshold:
             type: integer
           credit_critical_threshold:
-            type: integer 
-          retry_backoff_factor:
             type: integer
-          retry_delay:
-            type: integer
-          retry_max:
-            type: integer
-          retry_max_delay:
-            type: integer
-          url:
-            type: string
   github-chat:
     description: A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-chat.md
