@@ -1795,3 +1795,35 @@ registry:
       - {name: exa.api_key}
     prompts: 0
     resources: {}
+  webflow:
+    description: "Model Context Protocol (MCP) server for the Webflow Data API."
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/webflow.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/webflow.md
+    source: https://github.com/slimslenderslacks/mcp-server/tree/slim/docker
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/webflow.svg
+    tools:
+    - {name: collection_fields_create_option}
+    - {name: collection_fields_create_reference}
+    - {name: collection_fields_create_static}
+    - {name: collection_fields_update}
+    - {name: collections_create}
+    - {name: collections_get}
+    - {name: collections_items_create_item}
+    - {name: collections_items_create_item_live}
+    - {name: collections_items_list_items}
+    - {name: collections_items_publish_items}
+    - {name: collections_items_update_items}
+    - {name: collections_items_update_items_live}
+    - {name: collections_list}
+    - {name: pages_get_content}
+    - {name: pages_get_metadata}
+    - {name: pages_list}
+    - {name: pages_update_page_settings}
+    - {name: pages_update_static_content}
+    - {name: sites_get}
+    - {name: sites_list}
+    - {name: sites_publish}
+    secrets:
+      - {name: webflow.token}
+    prompts: 0
+    resources: {}
