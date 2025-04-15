@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CatalogItemWithName } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
 import Secrets from "../../Secrets";
-import ConfigurationModal from "../ConfigurationModal";
+import ConfigurationModal from "./Modal";
 import { useCatalogContext } from "../../context/CatalogContext";
 import Top from "./Top";
 import Center from "./Center";
@@ -42,7 +42,10 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
     }, [secrets])
 
     if (registryLoading) {
-        return <CircularProgress size={20} />
+        return <>
+            <CircularProgress size={20} />
+            <Typography>Loading registry...</Typography>
+        </>
     }
 
     const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
@@ -92,12 +95,21 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                 onClose={() => setShowConfigModal(false)}
                 catalogItem={item}
                 client={client}
+                registered={registered}
+                onToggleRegister={(checked) => {
+                    if (checked) {
+                        registerCatalogItem(item)
+                    } else {
+                        unregisterCatalogItem(item)
+                    }
+                }}
+                onSecretChange={onSecretChange}
             />
             <Card onClick={(e) => {
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {
                     setShowConfigModal(true)
                 }
-            }} sx={{ height: 140, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid', p: 0, cursor: 'pointer', transition: 'background-color 0.1s ease', '&:hover': { backgroundColor: 'action.hover' } }} >
+            }} sx={{ height: 150, borderColor: 'divider', borderWidth: 1, borderStyle: 'solid', p: 0, cursor: 'pointer', transition: 'background-color 0.1s ease', '&:hover': { backgroundColor: 'action.hover' } }} >
                 <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
                     <Stack direction="column" spacing={0}>
                         <Top onToggleRegister={(checked) => {
@@ -108,7 +120,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                             }
                         }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={registered} />
                         <Center item={item} />
-                        <Divider />
+                        <Divider sx={{ marginBottom: 1 }} />
                         <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length || unAssignedConfig.length)} />
                     </Stack>
                 </CardContent>

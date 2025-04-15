@@ -19,6 +19,7 @@ func main() {
 	paths.Init(paths.OnHost)
 	cmd := AddSecret(ctx)
 	cmd.AddCommand(ListSecrets(ctx))
+	cmd.AddCommand(DeleteSecret(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -86,13 +87,13 @@ func ListSecrets(ctx context.Context) *cobra.Command {
 func DeleteSecret(ctx context.Context) *cobra.Command {
 	opts := &deleteOptions{}
 	cmd := &cobra.Command{
-		Use:   "delete",
+		Use:   "delete",	
 		Short: "Delete a secret",
-		Args:  cobra.NoArgs,
+		Args:  cobra.ExactArgs(1),
+		RunE: func(*cobra.Command, []string) error {
+			return runDeleteSecret(ctx, *opts)
+		},
 	}
-	flags := cmd.Flags()
-	flags.StringVarP(&opts.Name, "name", "n", "", "Name of the secret")
-	_ = cmd.MarkFlagRequired("name")
 	return cmd
 }
 

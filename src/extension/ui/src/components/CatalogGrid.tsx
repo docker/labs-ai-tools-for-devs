@@ -11,7 +11,6 @@ import { CatalogItemWithName } from '../types/catalog';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
-const YourTools = React.lazy(() => import('./tabs/YourTools'));
 const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
 
 // Initialize the Docker Desktop client
@@ -61,8 +60,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [openMenus, setOpenMenus] = useState<{ [key: string]: { anchorEl: HTMLElement | null, open: boolean } }>({
         'demo-customized-menu': { anchorEl: null, open: false }
     });
+
     const [sort, setSort] = useState<'name-asc' | 'name-desc' | 'date-asc' | 'date-desc'>('date-desc');
-    const [showMine, setShowMine] = useState<boolean>(false);
+    const [showMine, setShowMine] = useState<boolean>(localStorage.getItem('showMine') === 'true');
 
     const loadDDVersion = async () => {
         try {
@@ -84,7 +84,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
 
 
     if (!registryItems) {
-        return <CircularProgress />
+        return <>
+            <CircularProgress />
+            <Typography>Loading registry...</Typography>
+        </>
     }
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
@@ -102,7 +105,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }) : catalogItems;
 
     if (!ddVersion) {
-        return <CircularProgress />
+        return <>
+            <CircularProgress />
+            <Typography>Loading Docker Desktop version...</Typography>
+        </>
     }
 
     const noConfiguredClients = !mcpLoading && !Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
@@ -158,7 +164,10 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                                     >
                                         <SwapVert />
                                     </IconButton>
-                                    <FormControlLabel control={<Switch checked={showMine} onChange={(e) => setShowMine(e.target.checked)} />} label="Show only my tools" />
+                                    <FormControlLabel control={<Switch checked={showMine} onChange={(e) => {
+                                        setShowMine(e.target.checked)
+                                        localStorage.setItem('showMine', e.target.checked.toString())
+                                    }} />} label="Show only my tools" />
                                 </Stack>
                             </FormGroup>
 
