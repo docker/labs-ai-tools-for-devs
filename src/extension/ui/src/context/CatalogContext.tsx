@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
@@ -381,18 +381,32 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         }
     });
 
+    // Add this ref before the useEffect
+    const prevSyncStateRef = useRef<{ config: any, registryItems: any }>({ config: null, registryItems: null });
+
     // Sync registry and config when both are available
     useEffect(() => {
-        if (registryItems && config) {
-            // Create a ref to check if we actually need to sync
-            const needsSync = Object.keys(registryItems).some(key => {
-                return registryItems[key].config &&
-                    (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
-            });
+        if (!registryItems || !config) return;
 
-            if (needsSync) {
-                syncConfigWithRegistryFromContext(registryItems);
-            }
+        // Skip if both objects haven't changed since last sync
+        if (prevSyncStateRef.current.config === config &&
+            prevSyncStateRef.current.registryItems === registryItems) {
+            return;
+        }
+
+        // Perform deep comparison to prevent unnecessary syncs
+        const needsSync = Object.keys(registryItems).some(key => {
+            return registryItems[key].config &&
+                (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
+        });
+
+        if (needsSync) {
+            // Store current state before syncing to prevent loops
+            prevSyncStateRef.current = { config, registryItems };
+            syncConfigWithRegistryFromContext(registryItems);
+        } else {
+            // Still update reference to prevent future unnecessary comparisons
+            prevSyncStateRef.current = { config, registryItems };
         }
     }, [registryItems, config, syncConfigWithRegistryFromContext]);
 

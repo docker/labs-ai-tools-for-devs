@@ -79,8 +79,9 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
 
                 // Update our ref with the new state after successful save
-                configRef.current = JSON.parse(JSON.stringify(updatedConfig));
-                return { itemName, updatedConfig };
+                const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
+                configRef.current = updatedConfigRef;
+                return { itemName, updatedConfig: updatedConfigRef };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to update config: ' + error);
                 throw error;
@@ -135,20 +136,28 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
     };
 
     const saveConfig = async (itemName: string, newConfig: { [key: string]: any }) => {
-        await saveConfigMutation.mutateAsync({ itemName, newConfig });
+        try {
+            await saveConfigMutation.mutateAsync({ itemName, newConfig });
+            // Force a direct refetch from the data source to ensure we have the latest data
+            await refetchConfig();
+        } catch (error) {
+            console.error("Error saving config:", error);
+            throw error;
+        }
     };
 
     const syncConfigWithRegistry = async (registryItems: { [key: string]: { ref: string; config: any } }) => {
         await syncRegistryMutation.mutateAsync(registryItems);
     };
 
-    const value = {
+    // Ensure we're providing a stable reference to avoid unnecessary rerenders
+    const value = React.useMemo(() => ({
         config,
         configLoading,
         tryLoadConfig,
         saveConfig,
         syncConfigWithRegistry
-    };
+    }), [config, configLoading]);
 
     return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
 } 
