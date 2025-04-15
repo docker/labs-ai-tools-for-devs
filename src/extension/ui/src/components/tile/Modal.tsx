@@ -365,7 +365,7 @@ const ConfigurationModal = ({
                 <FormControlLabel control={<Switch checked={registered} onChange={(e) => onToggleRegister(e.target.checked)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
                 <Divider sx={{ mt: 2 }} />
                 <Typography variant="caption" sx={{ mt: 2, color: 'text.secondary' }}>
-                    Repository: <Link onClick={() => client.host.openExternal(Ref.fromRef(catalogItem.ref).toURL())} href={Ref.fromRef(catalogItem.ref).toURL()} target="_blank">{Ref.fromRef(catalogItem.ref).toURL()}⤴</Link>
+                    Repository: <Link onClick={() => client.host.openExternal(catalogItem.source || '')} href={catalogItem.source || ''} target="_blank">{catalogItem.source || ''}⤴</Link>
                 </Typography>
                 {(configLoading) ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
