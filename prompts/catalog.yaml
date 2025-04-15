@@ -1187,8 +1187,6 @@ registry:
             type: boolean
           collection:
             type: string
-          use_resources:
-            type: boolean
   iaptic:
     description: Model Context Protocol server for interacting with iaptic
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
