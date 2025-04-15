@@ -9,7 +9,7 @@ A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Sra
 | **Image Source** | Official Image |
 | **Author** | [open-strategy-partners](https://github.com/open-strategy-partners) |
 | **Repository** | https://github.com/open-strategy-partners/osp_marketing_tools |
-| **Dockerfile** | https://github.com/open-strategy-partners/osp_marketing_tools/blob/refs/pull/3/merge/Dockerfile |
+| **Dockerfile** | https://github.com/open-strategy-partners/osp_marketing_tools/blob/main/Dockerfile |
 | **Docker Image built by** | Docker Inc. |
 | **Licence** | Creative Commons Attribution Share Alike 4.0 International |
 
@@ -71,6 +71,6 @@ Check if the server is running and can access its resources
 ## Rebuild this image
 
 ```console
-docker build -t mcp/osp_marketing_tools -f Dockerfile https://github.com/open-strategy-partners/osp_marketing_tools.git#refs/pull/3/merge
+docker build -t mcp/osp_marketing_tools -f Dockerfile https://github.com/open-strategy-partners/osp_marketing_tools.git
 ```
 
