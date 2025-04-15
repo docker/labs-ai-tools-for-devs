@@ -446,6 +446,8 @@ registry:
                 type: string
               username:
                 type: string
+            required:
+              - url
           jira:
             type: object
             properties:
@@ -453,6 +455,8 @@ registry:
                 type: string
               username:
                 type: string
+            required:
+              - url
         anyOf:
           - required:
               - confluence
