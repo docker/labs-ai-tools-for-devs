@@ -317,7 +317,8 @@ registry:
     config:
       - name: filesystem
         description: The MCP server is allowed to access these paths
-        parameters:
+        type: object
+        properties:
           paths:
             type: array
             items:
@@ -436,7 +437,8 @@ registry:
     config:
       - name: atlassian
         description: The MCP server is allowed to access these paths
-        parameters:
+        type: object
+        properties:
           confluence:
             type: object
             properties:
@@ -444,6 +446,8 @@ registry:
                 type: string
               username:
                 type: string
+            required:
+              - url
           jira:
             type: object
             properties:
@@ -451,6 +455,8 @@ registry:
                 type: string
               username:
                 type: string
+            required:
+              - url
         anyOf:
           - required:
               - confluence
@@ -467,7 +473,8 @@ registry:
     config:
       - name: jetbrains
         description: The MCP server needs to know about the local JetBrains IDE Config
-        parameters:
+        type: object
+        properties:
           server:
             type: object
             properties:
@@ -536,7 +543,8 @@ registry:
     config:
       - name: gitlab
         description: Configure the local or Cloud GitLab instance
-        parameters:
+        type: object
+        properties:
           url:
             type: string
             description: api url - optional for self-hosted instances
@@ -598,7 +606,8 @@ registry:
     config:
       - name: resend
         description: Configure sender and reply email addresses
-        parameters:
+        type: object
+        properties:
           reply_to:
             type: string
             description: comma separated list of reply to email addresses
@@ -695,7 +704,8 @@ registry:
     config:
       - name: armor-crypto
         description: Configure the connection to Armor
-        parameters:
+        type: object
+        properties:
           api_url:
             type: string
   astra-db:
@@ -728,7 +738,8 @@ registry:
     config:
       - name: astra-db
         description: Configure the connection to Astra DB
-        parameters:
+        type: object
+        properties:
           endpoint:
             type: string
   atlas-docs:
@@ -748,7 +759,8 @@ registry:
     config:
       - name: atlas-docs
         description: Configure the connection to Atlas Docs
-        parameters:
+        type: object
+        properties:
           api_url:
             type: string
   audiense-insights:
@@ -774,7 +786,8 @@ registry:
     config:
       - name: audiense-insights
         description: Configure the connection to Audiense Insights
-        parameters:
+        type: object
+        properties:
           client_id:
             type: string
         required:
@@ -823,7 +836,8 @@ registry:
     config:
       - name: bitrefill
         description: Configure the connection to Bitrefill
-        parameters:
+        type: object
+        properties:
           api_id:
             type: string
         required:
@@ -916,7 +930,8 @@ registry:
     config:
       - name: dart
         description: Configure the connection to Dart
-        parameters:
+        type: object
+        properties:
           host:
             type: string
   databutton:
@@ -947,7 +962,8 @@ registry:
     config:
       - name: descope
         description: Configure the connection to Descope
-        parameters:
+        type: object
+        properties:
           project_id:
             type: string
         required:
@@ -977,7 +993,8 @@ registry:
     config:
       - name: devhub-cms
         description: Configure the connection to DevHub CMS
-        parameters:
+        type: object
+        properties:
           url:
             type: string
         required:
@@ -1012,7 +1029,8 @@ registry:
     config:
       - name: elasticsearch
         description: Configure the connection to Elasticsearch
-        parameters:
+        type: object
+        properties:
           url:
             type: string
         required:
@@ -1041,7 +1059,8 @@ registry:
     config:
       - name: firecrawl
         description: Configure the connection to Firecrawl
-        parameters:
+        type: object
+        properties:
           credit_critical_threshold:
             type: integer
           credit_warning_threshold:
@@ -1166,7 +1185,8 @@ registry:
     config:
       - name: hyperspell
         description: Configure the connection to Hyperspell
-        parameters:
+        type: object
+        properties:
           collection:
             type: string
           use_resources:
@@ -1201,7 +1221,8 @@ registry:
     config:
       - name: iaptic
         description: Configure the connection to iaptic
-        parameters:
+        type: object
+        properties:
           app_name:
             type: string
         required:
@@ -1222,7 +1243,8 @@ registry:
     config:
       - name: kagisearch
         description: Configure the connection to Kagi search
-        parameters:
+        type: object
+        properties:
           engine:
             type: string
   multiversx-mx:
@@ -1251,7 +1273,8 @@ registry:
     config:
       - name: multiversx-mx
         description: Configure the connection to MultiversX blockchain
-        parameters:
+        type: object
+        properties:
           network:
             type: string
           wallet:
@@ -1346,7 +1369,8 @@ registry:
     config:
       - name: opik
         description: Configure the connection to Opik
-        parameters:
+        type: object
+        properties:
           api_base_url:
             type: string
           workspace_name:
@@ -1385,7 +1409,8 @@ registry:
     config:
       - name: oxylabs
         description: Configure the connection to Oxylabs Scraper
-        parameters:
+        type: object
+        properties:
           username:
             type: string
         required:
@@ -1725,7 +1750,8 @@ registry:
     config:
       - name: edubase
         description: Configure the connection to EduBase
-        parameters:
+        type: object
+        properties:
           app:
             type: string
           url:
@@ -1795,7 +1821,8 @@ registry:
     config:
       - name: glif
         description: Configure the connection to glif.app
-        parameters:
+        type: object
+        properties:
           ids:
             type: string
           ignored_saved:
