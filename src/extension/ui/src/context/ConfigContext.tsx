@@ -61,19 +61,13 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         gcTime: 300000
     });
 
-    console.log('config', config);
     // Save config mutation
     const saveConfigMutation = useMutation({
         mutationFn: async ({ itemName, newConfig }: { itemName: string, newConfig: { [key: string]: any } }) => {
             try {
                 // Use the ref which contains the pre-optimistic update state
                 const currentStoredConfig = { ...(configRef.current || {}) };
-                console.log('currentStoredConfig', currentStoredConfig);
                 const updatedConfig = { ...currentStoredConfig, [itemName]: newConfig };
-
-                console.log('updatedConfig from mutation', updatedConfig);
-
-                console.log('saving', stringify(updatedConfig));
 
                 const payload = escapeJSONForPlatformShell({
                     files: [{

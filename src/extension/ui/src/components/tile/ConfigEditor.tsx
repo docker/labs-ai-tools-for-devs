@@ -75,8 +75,6 @@ const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => 
                             <TextField label={key} value={localConfig[key]} onChange={(e) => setLocalConfig({ ...localConfig, [key]: e.target.value })} />
                             {edited && <Stack direction="row" spacing={2}><IconButton onClick={() => {
                                 const updatedConfig = deepSet(existingConfigForItem || {}, key, localConfig[key]);
-                                console.log(catalogItem.name);
-                                console.log('updatedConfig', updatedConfig);
                                 updateExistingConfig(catalogItem.name, updatedConfig);
                             }}>
                                 <CheckOutlined sx={{ color: 'success.main' }} />
