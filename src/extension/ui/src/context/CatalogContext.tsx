@@ -129,9 +129,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 }
                 return itemsWithName.reverse() as CatalogItemWithName[];
             } catch (error) {
-                if (showNotification) {
-                    client.desktopUI.toast.error('Failed to get latest catalog.' + error);
-                }
+                client.desktopUI.toast.error('Failed to get latest catalog.' + error);
                 throw error;
             }
         },
@@ -222,7 +220,8 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 await client.docker.cli.exec('pull', ['alpine:latest']);
                 return result;
             } catch (error) {
-                console.error(error);
+                client.desktopUI.toast.error('Failed to pull images: ' + error);
+                throw error;
             }
         },
         staleTime: Infinity, // Only load images when explicitly requested
@@ -288,9 +287,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
                 return { item, showNotification };
             } catch (error) {
-                if (showNotification) {
-                    client.desktopUI.toast.error('Failed to register prompt: ' + error);
-                }
+                client.desktopUI.toast.error('Failed to register prompt: ' + error);
                 throw error;
             }
         },
