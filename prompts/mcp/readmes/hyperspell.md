@@ -4,47 +4,43 @@ Hyperspell MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-| <!-- --> | <!-- --> |
-|-----------|---------|
-| **Image Source** | Official Image |
-| **Author** | [hyperspell](https://github.com/hyperspell) |
-| **Repository** | https://github.com/hyperspell/hyperspell-mcp |
-| **Dockerfile** | https://github.com/hyperspell/hyperspell-mcp/blob/main/Dockerfile |
-| **Docker Image built by** | Docker Inc. |
-| **Licence** |  |
+|<!-- -->|<!-- -->|
+|-|-|
+**Image Source**|Official Image
+|**Author**|[hyperspell](https://github.com/hyperspell)
+**Repository**|https://github.com/hyperspell/hyperspell-mcp
+**Dockerfile**|https://github.com/hyperspell/hyperspell-mcp/blob/main/Dockerfile
+**Docker Image built by**|Docker Inc.
+**Licence**|
 
-## Tools Summary
-
- 1. **`Add File`**: Add a file or website from a URL to Hyperspell.
- 1. **`Add Memory`**: Add a plain text document or memory to Hyperspell.
- 1. **`Search Hyperspell`**: Search Hyperspell for documents and data.
+## Summary
+1. `Add File` Add a file or website from a URL to Hyperspell.
+1. `Add Memory` Add a plain text document or memory to Hyperspell.
+1. `Search Hyperspell` Search Hyperspell for documents and data.
 
 ## Tools
 
-### Tool: **`Add File`**
-
+### Tool `Add File`
 Add a file or website from a URL to Hyperspell.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `url` | `string` |  |
+Parameter|Type|Description
+-|-|-
+`url`|`string`|
 
-### Tool: **`Add Memory`**
-
+### Tool `Add Memory`
 Add a plain text document or memory to Hyperspell.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `text` | `string` |  |
-| `title` | `string` *optional* |  |
+Parameter|Type|Description
+-|-|-
+`text`|`string`|
+`title`|`string` *optional*|
 
-### Tool: **`Search Hyperspell`**
-
+### Tool `Search Hyperspell`
 Search Hyperspell for documents and data.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `query` | `string` |  |
+Parameter|Type|Description
+-|-|-
+`query`|`string`|
 
 ## Use this MCP Server
 
@@ -76,10 +72,3 @@ Search Hyperspell for documents and data.
 ```
 
 [Why is it safer to run MCP Servers with Docker?](https://www.docker.com/blog/the-model-context-protocol-simplifying-building-ai-apps-with-anthropic-claude-desktop-and-docker/)
-
-## Rebuild this image
-
-```console
-docker build -t mcp/hyperspell -f Dockerfile https://github.com/hyperspell/hyperspell-mcp.git
-```
-

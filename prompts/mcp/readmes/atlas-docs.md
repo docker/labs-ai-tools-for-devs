@@ -4,62 +4,56 @@ Provide LLMs hosted, clean markdown documentation of libraries and frameworks
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-| <!-- --> | <!-- --> |
-|-----------|---------|
-| **Image Source** | Official Image |
-| **Author** | [CartographAI](https://github.com/CartographAI) |
-| **Repository** | https://github.com/CartographAI/atlas-docs-mcp |
-| **Dockerfile** | https://github.com/CartographAI/atlas-docs-mcp/blob/master/Dockerfile |
-| **Docker Image built by** | Docker Inc. |
-| **Licence** | MIT License |
+|<!-- -->|<!-- -->|
+|-|-|
+**Image Source**|Official Image
+|**Author**|[CartographAI](https://github.com/CartographAI)
+**Repository**|https://github.com/CartographAI/atlas-docs-mcp
+**Dockerfile**|https://github.com/CartographAI/atlas-docs-mcp/blob/master/Dockerfile
+**Docker Image built by**|Docker Inc.
+**Licence**|MIT License
 
-## Tools Summary
-
- 1. **`get_docs_full`**: Retrieves the complete documentation content in a single consolidated file. Use this when you need comprehensive knowledge or need to analyze the full documentation context. Returns a large volume of text - consider using get_docs_page or search_docs for targeted information.
- 1. **`get_docs_index`**: Retrieves a condensed, LLM-friendly index of the pages in a documentation set. Use this for initial exploration to understand what's covered and identify relevant pages. Returns a markdown page with a list of available pages. Follow up with get_docs_page to get full content.
- 1. **`get_docs_page`**: Retrieves a specific documentation page's content using its relative path. Use this to get detailed information about a known topic, after identifying the relevant page through get_docs_index or search_docs. Returns the complete content of a single documentation page.
- 1. **`list_docs`**: Lists all available documentation libraries and frameworks. Use this as your first step to discover available documentation sets. Returns name, description and source url for each documentation set. Required before using other documentation tools since you need the docName.
- 1. **`search_docs`**: Searches a documentation set for specific content. Use this to find pages containing particular keywords, concepts, or topics. Returns matching pages ranked by relevance with their paths and descriptions. Follow up with get_docs_page to get full content.
+## Summary
+1. `get_docs_full` Retrieves the complete documentation content in a single consolidated file.
+1. `get_docs_index` Retrieves a condensed, LLM-friendly index of the pages in a documentation set.
+1. `get_docs_page` Retrieves a specific documentation page's content using its relative path.
+1. `list_docs` Lists all available documentation libraries and frameworks.
+1. `search_docs` Searches a documentation set for specific content.
 
 ## Tools
 
-### Tool: **`get_docs_full`**
-
+### Tool `get_docs_full`
 Retrieves the complete documentation content in a single consolidated file. Use this when you need comprehensive knowledge or need to analyze the full documentation context. Returns a large volume of text - consider using get_docs_page or search_docs for targeted information.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `docName` | `string` | Name of the documentation set |
+Parameter|Type|Description
+-|-|-
+`docName`|`string`|Name of the documentation set
 
-### Tool: **`get_docs_index`**
-
+### Tool `get_docs_index`
 Retrieves a condensed, LLM-friendly index of the pages in a documentation set. Use this for initial exploration to understand what's covered and identify relevant pages. Returns a markdown page with a list of available pages. Follow up with get_docs_page to get full content.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `docName` | `string` | Name of the documentation set |
+Parameter|Type|Description
+-|-|-
+`docName`|`string`|Name of the documentation set
 
-### Tool: **`get_docs_page`**
-
+### Tool `get_docs_page`
 Retrieves a specific documentation page's content using its relative path. Use this to get detailed information about a known topic, after identifying the relevant page through get_docs_index or search_docs. Returns the complete content of a single documentation page.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `docName` | `string` | Name of the documentation set |
-| `pagePath` | `string` | The root-relative path of the specific documentation page (e.g., '/guides/getting-started', '/api/authentication') |
+Parameter|Type|Description
+-|-|-
+`docName`|`string`|Name of the documentation set
+`pagePath`|`string`|The root-relative path of the specific documentation page (e.g., '/guides/getting-started', '/api/authentication')
 
-### Tool: **`list_docs`**
-
+### Tool `list_docs`
 Lists all available documentation libraries and frameworks. Use this as your first step to discover available documentation sets. Returns name, description and source url for each documentation set. Required before using other documentation tools since you need the docName.
 
-### Tool: **`search_docs`**
-
+### Tool `search_docs`
 Searches a documentation set for specific content. Use this to find pages containing particular keywords, concepts, or topics. Returns matching pages ranked by relevance with their paths and descriptions. Follow up with get_docs_page to get full content.
 
-| Parameter | Type | Description |
-| - | - | - |
-| `docName` | `string` | Name of the documentation set |
-| `query` | `string` | Search query to find relevant pages within the documentation set |
+Parameter|Type|Description
+-|-|-
+`docName`|`string`|Name of the documentation set
+`query`|`string`|Search query to find relevant pages within the documentation set
 
 ## Use this MCP Server
 
@@ -85,10 +79,3 @@ Searches a documentation set for specific content. Use this to find pages contai
 ```
 
 [Why is it safer to run MCP Servers with Docker?](https://www.docker.com/blog/the-model-context-protocol-simplifying-building-ai-apps-with-anthropic-claude-desktop-and-docker/)
-
-## Rebuild this image
-
-```console
-docker build -t mcp/atlas-docs -f Dockerfile https://github.com/CartographAI/atlas-docs-mcp.git#master
-```
-
