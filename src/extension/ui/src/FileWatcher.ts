@@ -42,7 +42,7 @@ export const writeFileToPromptsVolume = async (client: v1.DockerDesktopClient, c
 }
 
 export const escapeJSONForPlatformShell = (json: Serializable, platform: string) => {
-    const jsonString = JSON.stringify(json)
+    const jsonString = JSON.stringify(json, null, 2)
     if (platform === 'win32') {
         // Use triple quotes to escape quotes
         return `"${jsonString.replace(/"/g, '\\"')}"`

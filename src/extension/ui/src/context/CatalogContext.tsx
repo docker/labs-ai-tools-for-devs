@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
@@ -129,9 +129,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 }
                 return itemsWithName.reverse() as CatalogItemWithName[];
             } catch (error) {
-                if (showNotification) {
-                    client.desktopUI.toast.error('Failed to get latest catalog.' + error);
-                }
+                client.desktopUI.toast.error('Failed to get latest catalog.' + error);
                 throw error;
             }
         },
@@ -222,7 +220,8 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 await client.docker.cli.exec('pull', ['alpine:latest']);
                 return result;
             } catch (error) {
-                console.error(error);
+                client.desktopUI.toast.error('Failed to pull images: ' + error);
+                throw error;
             }
         },
         staleTime: Infinity, // Only load images when explicitly requested
@@ -252,8 +251,31 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             try {
                 const currentRegistry = registryItems || {};
                 const newRegistry = { ...currentRegistry, [item.name]: { ref: item.ref } };
+
+                // Handle configuration
                 if (item.config) {
-                    newRegistry[item.name] = { ref: item.ref, config: config?.[item.name] || {} };
+                    let itemConfig = config?.[item.name] || {};
+
+                    // If there's a JSON schema configuration, validate and generate default values
+                    if (Array.isArray(item.config) && item.config.length > 0) {
+                        const configSchema = item.config[0];
+
+                        // Check if we have required fields from anyOf conditions
+                        if (configSchema.anyOf) {
+                            configSchema.anyOf.forEach((condition: any) => {
+                                if (condition.required) {
+                                    condition.required.forEach((requiredField: string) => {
+                                        // Make sure each required field has at least an empty object if not already present
+                                        if (!itemConfig[requiredField]) {
+                                            itemConfig[requiredField] = {};
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                    newRegistry[item.name] = { ref: item.ref, config: itemConfig };
                 }
 
                 const payload = escapeJSONForPlatformShell({
@@ -265,9 +287,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
                 return { item, showNotification };
             } catch (error) {
-                if (showNotification) {
-                    client.desktopUI.toast.error('Failed to register prompt: ' + error);
-                }
+                client.desktopUI.toast.error('Failed to register prompt: ' + error);
                 throw error;
             }
         },
@@ -300,7 +320,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         },
         onSuccess: ({ showNotification }) => {
             if (showNotification) {
-                client.desktopUI.toast.success('Prompt registered successfully. Reload your MCP clients to apply.');
+                client.desktopUI.toast.success('Tile enabled. You may need to reload your MCP clients to apply.');
             }
             // We still refetch to ensure consistency with the server
             refetchRegistry();
@@ -351,25 +371,39 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
             }
         },
         onSuccess: () => {
-            client.desktopUI.toast.success('Prompt unregistered successfully. Reload your MCP clients to apply.');
+            client.desktopUI.toast.success('Tile turned off. You may need to reload your MCP clients to apply.');
             // Refetch to ensure consistency
             refetchRegistry();
             // Logic for showing reload modal would go here
         }
     });
 
+    // Add this ref before the useEffect
+    const prevSyncStateRef = useRef<{ config: any, registryItems: any }>({ config: null, registryItems: null });
+
     // Sync registry and config when both are available
     useEffect(() => {
-        if (registryItems && config) {
-            // Create a ref to check if we actually need to sync
-            const needsSync = Object.keys(registryItems).some(key => {
-                return registryItems[key].config &&
-                    (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
-            });
+        if (!registryItems || !config) return;
 
-            if (needsSync) {
-                syncConfigWithRegistryFromContext(registryItems);
-            }
+        // Skip if both objects haven't changed since last sync
+        if (prevSyncStateRef.current.config === config &&
+            prevSyncStateRef.current.registryItems === registryItems) {
+            return;
+        }
+
+        // Perform deep comparison to prevent unnecessary syncs
+        const needsSync = Object.keys(registryItems).some(key => {
+            return registryItems[key].config &&
+                (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
+        });
+
+        if (needsSync) {
+            // Store current state before syncing to prevent loops
+            prevSyncStateRef.current = { config, registryItems };
+            syncConfigWithRegistryFromContext(registryItems);
+        } else {
+            // Still update reference to prevent future unnecessary comparisons
+            prevSyncStateRef.current = { config, registryItems };
         }
     }, [registryItems, config, syncConfigWithRegistryFromContext]);
 

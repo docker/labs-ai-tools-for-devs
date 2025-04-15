@@ -6,12 +6,13 @@ import { Secret } from "../secrets";
  */
 export interface CatalogItem {
     description?: string;
+    source?: string;
     icon?: string;
     secrets?: { name: string }[];
     ref: string;
     prompts: number;
     resources: object[];
-    tools: object[];
+    tools: { name: string }[];
     config?: any; // Configuration type
 }
 
