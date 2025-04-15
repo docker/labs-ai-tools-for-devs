@@ -1,11 +1,12 @@
-import { CircularProgress, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField, Typography } from "@mui/material";
 import { Alert, Stack } from "@mui/material";
 import { CatalogItemWithName } from "../../types/catalog";
 import { useEffect, useState } from "react";
 import * as JsonSchema from "json-schema-library";
 import { useConfigContext } from "../../context/ConfigContext";
 import { config } from "process";
-import { deepFlattenObject, mergeDeep } from "../../MergeDeep";
+import { buildObjectFromFlattenedObject, deepFlattenObject, deepSet, mergeDeep } from "../../MergeDeep";
+import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
 
 JsonSchema.settings.GET_TEMPLATE_RECURSION_LIMIT = 1000;
 JsonSchema.settings.templateDefaultOptions.addOptionalProps = true;
@@ -27,7 +28,10 @@ const LoadingState = () => {
 
 const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => {
     const configSchema = catalogItem.config;
-    const { config: existingConfig, saveConfig, configLoading } = useConfigContext();
+
+    const { config: existingConfig, saveConfig: updateExistingConfig, configLoading } = useConfigContext();
+
+    const existingConfigForItem = existingConfig?.[catalogItem.name];
 
     if (!configSchema) {
         return <EmptyState />
@@ -41,27 +45,49 @@ const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => 
         return <LoadingState />
     }
 
-    const [config, setConfig] = useState(existingConfig);
+    const [localConfig, setLocalConfig] = useState<{ [key: string]: any } | undefined>(undefined);
+
+    const [config, setConfig] = useState(existingConfigForItem);
 
     useEffect(() => {
-        const myJsonSchema: JsonSchema.JsonSchema = { properties: { ...configSchema[0].parameters, type: 'object' } };
-
-
-        const schema = new JsonSchema.Draft2019(myJsonSchema);
-        const template = schema.getTemplate(undefined, undefined);
-
-        console.log('template', template, 'existingConfig', existingConfig, 'schema', myJsonSchema);
-        // setConfig(template);
+        const schema = new JsonSchema.Draft2019(configSchema[0]);
+        const template = schema.getTemplate(existingConfig);
+        if (!localConfig) {
+            setLocalConfig(deepFlattenObject(template));
+        }
+        setConfig(template);
     }, [configSchema, existingConfig]);
 
-    useEffect(() => {
-        console.log(config);
-    }, [config]);
+    if (!config || !localConfig) {
+        return <EmptyState />
+    }
+
+    const flattenedConfig = deepFlattenObject(config);
 
     return (
         <Stack>
-            <Stack direction="row" spacing={2}>
-
+            <Typography variant="h6">Config</Typography>
+            <Stack direction="column" spacing={2}>
+                {Object.keys(flattenedConfig).map((key: string) => {
+                    const edited = localConfig[key] !== flattenedConfig[key];
+                    return (
+                        <Stack key={key} direction="row" spacing={2}>
+                            <TextField label={key} value={localConfig[key]} onChange={(e) => setLocalConfig({ ...localConfig, [key]: e.target.value })} />
+                            {edited && <Stack direction="row" spacing={2}><IconButton onClick={() => {
+                                const updatedConfig = deepSet(existingConfig || {}, key, localConfig[key]);
+                                console.log(catalogItem.name);
+                                console.log('updatedConfig', updatedConfig);
+                                updateExistingConfig(catalogItem.name, updatedConfig);
+                            }}>
+                                <CheckOutlined sx={{ color: 'success.main' }} />
+                            </IconButton>
+                                <IconButton onClick={() => setLocalConfig(undefined)}>
+                                    <CloseOutlined sx={{ color: 'error.main' }} />
+                                </IconButton>
+                            </Stack>}
+                        </Stack>
+                    )
+                })}
             </Stack>
         </Stack>
     )

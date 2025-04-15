@@ -44,6 +44,23 @@ export function deepFlattenObject(obj: DeepObject, prefix: string = ''): Record<
     }, {} as Record<string, any>);
 }
 
+export function buildObjectFromFlattenedObject(flattenedObject: Record<string, any>): DeepObject {
+    return Object.entries(flattenedObject).reduce((acc, [key, value]) => {
+        const keys = key.split('.');
+        let lastKey = keys.pop();
+        if (!lastKey) return acc;
+
+        let current = acc;
+        for (const k of keys) {
+            if (!current[k]) current[k] = {};
+            current = current[k];
+        }
+
+        current[lastKey] = value;
+        return acc;
+    }, {} as DeepObject);
+}
+
 export function deepGet(obj: DeepObject, path: string): any {
     return path.split('.').reduce((acc, key) => {
         if (isObject(acc)) {
@@ -57,14 +74,13 @@ export function deepSet(obj: DeepObject, path: string, value: any): DeepObject {
     const keys = path.split('.');
     const key = keys.pop();
     if (!key) return obj;
+
     const current = keys.reduce((acc, key) => {
-        if (isObject(acc)) {
-            return acc[key];
-        }
-        return undefined;
+        if (!acc[key]) acc[key] = {};
+        return acc[key];
     }, obj);
-    if (current) {
-        current[key] = value;
-    }
+
+    current[key] = value;
+
     return obj;
 }   

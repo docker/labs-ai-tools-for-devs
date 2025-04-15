@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useRef } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { getStoredConfig, syncRegistryWithConfig } from '../Registry';
 import { POLL_INTERVAL } from '../Constants';
@@ -35,6 +35,7 @@ interface ConfigProviderProps {
 
 export function ConfigProvider({ children, client }: ConfigProviderProps) {
     const queryClient = useQueryClient();
+    const configRef = useRef<any>(null);
 
     // Load config with React Query
     const {
@@ -46,7 +47,10 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         queryFn: async () => {
             try {
                 const response = await getStoredConfig(client);
-                return response || {};
+                const result = response || {};
+                // Store a deep copy of the config in the ref
+                configRef.current = JSON.parse(JSON.stringify(result));
+                return result;
             } catch (error) {
                 client.desktopUI.toast.error('Failed to get stored config: ' + error);
                 throw error;
@@ -57,12 +61,19 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         gcTime: 300000
     });
 
+    console.log('config', config);
     // Save config mutation
     const saveConfigMutation = useMutation({
         mutationFn: async ({ itemName, newConfig }: { itemName: string, newConfig: { [key: string]: any } }) => {
             try {
-                const currentStoredConfig = config || {};
+                // Use the ref which contains the pre-optimistic update state
+                const currentStoredConfig = { ...(configRef.current || {}) };
+                console.log('currentStoredConfig', currentStoredConfig);
                 const updatedConfig = { ...currentStoredConfig, [itemName]: newConfig };
+
+                console.log('updatedConfig from mutation', updatedConfig);
+
+                console.log('saving', stringify(updatedConfig));
 
                 const payload = escapeJSONForPlatformShell({
                     files: [{
@@ -73,6 +84,8 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
 
+                // Update our ref with the new state after successful save
+                configRef.current = JSON.parse(JSON.stringify(updatedConfig));
                 return { itemName, updatedConfig };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to update config: ' + error);
@@ -110,7 +123,7 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
     });
 
     // Sync config with registry
-    const syncConfigWithRegistryMutation = useMutation({
+    const syncRegistryMutation = useMutation({
         mutationFn: async (registryItems: { [key: string]: { ref: string; config: any } }) => {
             try {
                 if (!config) return;
@@ -132,7 +145,7 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
     };
 
     const syncConfigWithRegistry = async (registryItems: { [key: string]: { ref: string; config: any } }) => {
-        await syncConfigWithRegistryMutation.mutateAsync(registryItems);
+        await syncRegistryMutation.mutateAsync(registryItems);
     };
 
     const value = {
