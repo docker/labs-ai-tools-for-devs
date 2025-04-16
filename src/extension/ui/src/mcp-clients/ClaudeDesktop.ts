@@ -86,7 +86,7 @@ class ClaudeDesktopClient implements MCPClient {
                     '--workdir',
                     '/claude_desktop_config',
                     'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload) }] }, client.host.platform)])
+                    escapeJSONForPlatformShell({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)])
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
         }
@@ -126,7 +126,7 @@ class ClaudeDesktopClient implements MCPClient {
                         files:
                             [{
                                 path: 'claude_desktop_config.json',
-                                content: JSON.stringify(newConfig)
+                                content: JSON.stringify(newConfig, null, 2)
                             }]
                     },
                     client.host.platform)
