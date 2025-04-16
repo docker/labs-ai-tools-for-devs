@@ -1938,3 +1938,47 @@ registry:
             type: string
           printer.type:
             type: string
+  grafana:
+    description: MCP server for Grafana
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/grafana.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/grafana.md
+    source: https://github.com/grafana/mcp-grafana/tree/main
+    icon: https://avatars.githubusercontent.com/u/7195757?s=200&v=4
+    tools:
+      - name: add_activity_to_incident
+      - name: create_incident
+      - name: get_alert_rule_by_uid
+      - name: get_current_oncall_users
+      - name: get_dashboard_by_uid
+      - name: get_datasource_by_name
+      - name: get_datasource_by_uid
+      - name: get_incident
+      - name: get_oncall_shift
+      - name: list_alert_rules
+      - name: list_contact_points
+      - name: list_datasources
+      - name: list_incidents
+      - name: list_loki_label_names
+      - name: list_loki_label_values
+      - name: list_oncall_schedules
+      - name: list_oncall_teams
+      - name: list_oncall_users
+      - name: list_prometheus_label_names
+      - name: list_prometheus_label_values
+      - name: list_prometheus_metric_metadata
+      - name: list_prometheus_metric_names
+      - name: query_loki_logs
+      - name: query_loki_stats
+      - name: query_prometheus
+      - name: search_dashboards
+    secrets:
+      - name: grafana.api_key
+    prompts: 0
+    resources: {}
+    config:
+      - name: grafana
+        description: Configure the connection to Grafana
+        type: object
+        properties:
+          url:
+            type: string
