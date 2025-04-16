@@ -2,6 +2,7 @@ import { Settings } from "@mui/icons-material";
 import { Badge, CardMedia, IconButton, Stack, Switch, Tooltip, Typography } from "@mui/material";
 import { getUnsupportedSecretMessage } from "../../Constants";
 import { CatalogItemWithName } from "../../types/catalog";
+import { useConfigContext } from "../../context/ConfigContext";
 
 type TopProps = {
     unAssignedConfig: { name: string, assigned: boolean }[],
@@ -15,9 +16,13 @@ export default function Top({ item, unAssignedConfig, onToggleRegister, unAssign
 
     const hasAllSecrets = unAssignedSecrets.length === 0
 
-    const hasAllConfig = unAssignedConfig.length === 0
+
+    const { config } = useConfigContext()
+
+    const missingConfig = !config?.[item.name]
+
     const getActionButton = () => {
-        if (!hasAllSecrets || !hasAllConfig) {
+        if (!hasAllSecrets || missingConfig) {
             return <Stack direction="row" spacing={0} alignItems="center">
                 <Tooltip title="This tile needs configuration before it can be used.">
                     <span>
