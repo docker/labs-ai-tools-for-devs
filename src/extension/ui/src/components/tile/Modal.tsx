@@ -188,7 +188,7 @@ const ConfigurationModal = ({
         const loadedSecrets = Secrets.getAssignedSecrets(catalogItem, secrets);
         setAssignedSecrets(loadedSecrets);
         setLocalSecrets(loadedSecrets.reduce((acc, secret) => {
-            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : UNASSIGNED_SECRET_PLACEHOLDER;
+            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '';
             return acc;
         }, {} as { [key: string]: string | undefined }));
     }, [catalogItem, secrets]);
@@ -347,13 +347,13 @@ const ConfigurationModal = ({
                                     <ConfigEditor catalogItem={catalogItem} />
                                     <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
                                     {assignedSecrets?.map(secret => {
-                                        const secretEdited = secret.assigned ? localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER : localSecrets[secret.name] !== UNASSIGNED_SECRET_PLACEHOLDER;
+                                        const secretEdited = secret.assigned ? localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER : localSecrets[secret.name] !== '';
                                         return (
                                             <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
                                                 <TextField key={secret.name} label={secret.name} value={localSecrets[secret.name]} fullWidth onChange={(e) => {
                                                     setLocalSecrets({ ...localSecrets, [secret.name]: e.target.value });
                                                 }} type='password' />
-                                                {!secretEdited && <IconButton size="small" color="error" onClick={() => {
+                                                {secret.assigned && !secretEdited && <IconButton size="small" color="error" onClick={() => {
                                                     setLocalSecrets({ ...localSecrets, [secret.name]: UNASSIGNED_SECRET_PLACEHOLDER });
                                                     onSecretChange({ name: secret.name, value: UNASSIGNED_SECRET_PLACEHOLDER });
                                                 }}>
@@ -366,7 +366,7 @@ const ConfigurationModal = ({
                                                         <CheckOutlined sx={{ color: 'success.main' }} />
                                                     </IconButton>
                                                     <IconButton onClick={async () => {
-                                                        setLocalSecrets({ ...localSecrets, [secret.name]: secret.assigned ? UNASSIGNED_SECRET_PLACEHOLDER : ASSIGNED_SECRET_PLACEHOLDER });
+                                                        setLocalSecrets({ ...localSecrets, [secret.name]: secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '' });
                                                     }}>
                                                         <CloseOutlined sx={{ color: 'error.main' }} />
                                                     </IconButton>

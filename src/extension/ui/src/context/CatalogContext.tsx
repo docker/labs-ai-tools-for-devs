@@ -246,6 +246,10 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         },
         onSuccess: () => {
             refetchSecrets();
+        },
+        onError: (error) => {
+            client.desktopUI.toast.error('Failed to update secret: ' + error);
+            throw error;
         }
     });
 
