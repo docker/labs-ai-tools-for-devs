@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sentry/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
@@ -22,16 +22,13 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_sentry_issue`
-|Description|
-|-|
-|Retrieve and analyze a Sentry issue by ID or URL. Use this tool when you need to:
+#### Tool: **`get_sentry_issue`**
+Retrieve and analyze a Sentry issue by ID or URL. Use this tool when you need to:
                 - Investigate production errors and crashes
                 - Access detailed stacktraces from Sentry
                 - Analyze error patterns and frequencies
                 - Get information about when issues first/last occurred
-                - Review error counts and status|
-
+                - Review error counts and status
 Parameters|Type|Description
 -|-|-
 `issue_id_or_url`|`string`|Sentry issue ID or URL to analyze

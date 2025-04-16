@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `query`
-|Description|
-|-|
-|Run a read-only SQL query|
-
+#### Tool: **`query`**
+Run a read-only SQL query
 Parameters|Type|Description
 -|-|-
 `sql`|`string` *optional*|

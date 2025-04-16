@@ -23,21 +23,15 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `index_repository`
-|Description|
-|-|
-|Index a GitHub repository to analyze its codebase. This must be done before asking questions about the repository.|
-
+#### Tool: **`index_repository`**
+Index a GitHub repository to analyze its codebase. This must be done before asking questions about the repository.
 Parameters|Type|Description
 -|-|-
 `repo_url`|`string`|The GitHub repository URL to index (format: https://github.com/username/repo).
 
 ---
-#### Tool: `query_repository`
-|Description|
-|-|
-|Ask questions about a GitHub repository and receive detailed AI responses. The repository must be indexed first.|
-
+#### Tool: **`query_repository`**
+Ask questions about a GitHub repository and receive detailed AI responses. The repository must be indexed first.
 Parameters|Type|Description
 -|-|-
 `question`|`string`|The question to ask about the repository.

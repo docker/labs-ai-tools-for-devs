@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sqlite/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
@@ -27,56 +27,38 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `append_insight`
-|Description|
-|-|
-|Add a business insight to the memo|
-
+#### Tool: **`append_insight`**
+Add a business insight to the memo
 Parameters|Type|Description
 -|-|-
 `insight`|`string`|Business insight discovered from data analysis
 
 ---
-#### Tool: `create_table`
-|Description|
-|-|
-|Create a new table in the SQLite database|
-
+#### Tool: **`create_table`**
+Create a new table in the SQLite database
 Parameters|Type|Description
 -|-|-
 `query`|`string`|CREATE TABLE SQL statement
 
 ---
-#### Tool: `describe_table`
-|Description|
-|-|
-|Get the schema information for a specific table|
-
+#### Tool: **`describe_table`**
+Get the schema information for a specific table
 Parameters|Type|Description
 -|-|-
 `table_name`|`string`|Name of the table to describe
 
 ---
-#### Tool: `list_tables`
-|Description|
-|-|
-|List all tables in the SQLite database|
-
-#### Tool: `read_query`
-|Description|
-|-|
-|Execute a SELECT query on the SQLite database|
-
+#### Tool: **`list_tables`**
+List all tables in the SQLite database
+#### Tool: **`read_query`**
+Execute a SELECT query on the SQLite database
 Parameters|Type|Description
 -|-|-
 `query`|`string`|SELECT SQL query to execute
 
 ---
-#### Tool: `write_query`
-|Description|
-|-|
-|Execute an INSERT, UPDATE, or DELETE query on the SQLite database|
-
+#### Tool: **`write_query`**
+Execute an INSERT, UPDATE, or DELETE query on the SQLite database
 Parameters|Type|Description
 -|-|-
 `query`|`string`|SQL query to execute

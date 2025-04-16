@@ -8,8 +8,8 @@ Retrieves transcripts for given YouTube video URLs
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
-**Repository**|https://github.com/slimslenderslacks/mcp-youtube-transcript
+|**Author**|[jkawamoto](https://github.com/jkawamoto)
+**Repository**|https://github.com/jkawamoto/mcp-youtube-transcript
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-youtube-transcript/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_transcript`
-|Description|
-|-|
-|Retrieves the transcript of a YouTube video.|
-
+#### Tool: **`get_transcript`**
+Retrieves the transcript of a YouTube video.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL of the YouTube video

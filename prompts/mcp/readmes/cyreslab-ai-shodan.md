@@ -26,11 +26,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_host_info`
-|Description|
-|-|
-|Get detailed information about a specific IP address|
-
+#### Tool: **`get_host_info`**
+Get detailed information about a specific IP address
 Parameters|Type|Description
 -|-|-
 `ip`|`string`|IP address to look up
@@ -38,21 +35,15 @@ Parameters|Type|Description
 `max_items`|`number` *optional*|Maximum number of items to include in arrays (default: 5)
 
 ---
-#### Tool: `get_ssl_info`
-|Description|
-|-|
-|Get SSL certificate information for a domain|
-
+#### Tool: **`get_ssl_info`**
+Get SSL certificate information for a domain
 Parameters|Type|Description
 -|-|-
 `domain`|`string`|Domain name to look up SSL certificates for (e.g., example.com)
 
 ---
-#### Tool: `scan_network_range`
-|Description|
-|-|
-|Scan a network range (CIDR notation) for devices|
-
+#### Tool: **`scan_network_range`**
+Scan a network range (CIDR notation) for devices
 Parameters|Type|Description
 -|-|-
 `cidr`|`string`|Network range in CIDR notation (e.g., 192.168.1.0/24)
@@ -60,11 +51,8 @@ Parameters|Type|Description
 `max_items`|`number` *optional*|Maximum number of items to include in results (default: 5)
 
 ---
-#### Tool: `search_iot_devices`
-|Description|
-|-|
-|Search for specific types of IoT devices|
-
+#### Tool: **`search_iot_devices`**
+Search for specific types of IoT devices
 Parameters|Type|Description
 -|-|-
 `device_type`|`string`|Type of IoT device to search for (e.g., 'webcam', 'router', 'smart tv')
@@ -72,11 +60,8 @@ Parameters|Type|Description
 `max_items`|`number` *optional*|Maximum number of items to include in results (default: 5)
 
 ---
-#### Tool: `search_shodan`
-|Description|
-|-|
-|Search Shodan's database for devices and services|
-
+#### Tool: **`search_shodan`**
+Search Shodan's database for devices and services
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Shodan search query (e.g., 'apache country:US')

@@ -30,11 +30,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create_branch`
-|Description|
-|-|
-|Create a new branch in a GitLab project|
-
+#### Tool: **`create_branch`**
+Create a new branch in a GitLab project
 Parameters|Type|Description
 -|-|-
 `branch`|`string`|Name for the new branch
@@ -42,11 +39,8 @@ Parameters|Type|Description
 `ref`|`string` *optional*|Source branch/commit for new branch
 
 ---
-#### Tool: `create_issue`
-|Description|
-|-|
-|Create a new issue in a GitLab project|
-
+#### Tool: **`create_issue`**
+Create a new issue in a GitLab project
 Parameters|Type|Description
 -|-|-
 `project_id`|`string`|Project ID or URL-encoded path
@@ -57,11 +51,8 @@ Parameters|Type|Description
 `milestone_id`|`number` *optional*|Milestone ID to assign
 
 ---
-#### Tool: `create_merge_request`
-|Description|
-|-|
-|Create a new merge request in a GitLab project|
-
+#### Tool: **`create_merge_request`**
+Create a new merge request in a GitLab project
 Parameters|Type|Description
 -|-|-
 `project_id`|`string`|Project ID or URL-encoded path
@@ -73,11 +64,8 @@ Parameters|Type|Description
 `draft`|`boolean` *optional*|Create as draft merge request
 
 ---
-#### Tool: `create_or_update_file`
-|Description|
-|-|
-|Create or update a single file in a GitLab project|
-
+#### Tool: **`create_or_update_file`**
+Create or update a single file in a GitLab project
 Parameters|Type|Description
 -|-|-
 `branch`|`string`|Branch to create/update the file in
@@ -88,11 +76,8 @@ Parameters|Type|Description
 `previous_path`|`string` *optional*|Path of the file to move/rename
 
 ---
-#### Tool: `create_repository`
-|Description|
-|-|
-|Create a new GitLab project|
-
+#### Tool: **`create_repository`**
+Create a new GitLab project
 Parameters|Type|Description
 -|-|-
 `name`|`string`|Repository name
@@ -101,22 +86,16 @@ Parameters|Type|Description
 `visibility`|`string` *optional*|Repository visibility level
 
 ---
-#### Tool: `fork_repository`
-|Description|
-|-|
-|Fork a GitLab project to your account or specified namespace|
-
+#### Tool: **`fork_repository`**
+Fork a GitLab project to your account or specified namespace
 Parameters|Type|Description
 -|-|-
 `project_id`|`string`|Project ID or URL-encoded path
 `namespace`|`string` *optional*|Namespace to fork to (full path)
 
 ---
-#### Tool: `get_file_contents`
-|Description|
-|-|
-|Get the contents of a file or directory from a GitLab project|
-
+#### Tool: **`get_file_contents`**
+Get the contents of a file or directory from a GitLab project
 Parameters|Type|Description
 -|-|-
 `file_path`|`string`|Path to the file or directory
@@ -124,11 +103,8 @@ Parameters|Type|Description
 `ref`|`string` *optional*|Branch/tag/commit to get contents from
 
 ---
-#### Tool: `push_files`
-|Description|
-|-|
-|Push multiple files to a GitLab project in a single commit|
-
+#### Tool: **`push_files`**
+Push multiple files to a GitLab project in a single commit
 Parameters|Type|Description
 -|-|-
 `branch`|`string`|Branch to push to
@@ -137,11 +113,8 @@ Parameters|Type|Description
 `project_id`|`string`|Project ID or URL-encoded path
 
 ---
-#### Tool: `search_repositories`
-|Description|
-|-|
-|Search for GitLab projects|
-
+#### Tool: **`search_repositories`**
+Search for GitLab projects
 Parameters|Type|Description
 -|-|-
 `search`|`string`|Search query

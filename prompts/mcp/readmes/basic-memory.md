@@ -30,10 +30,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `build_context`
-|Description|
-|-|
-|Build context from a memory:// URI to continue conversations naturally.
+#### Tool: **`build_context`**
+Build context from a memory:// URI to continue conversations naturally.
 
     Use this to follow up on previous discussions or explore related topics.
     Timeframes support natural language like:
@@ -41,8 +39,7 @@ Tools provided by this Server|Short Description
     - "last week" 
     - "today"
     - "3 months ago"
-    Or standard formats like "7d", "24h"|
-
+    Or standard formats like "7d", "24h"
 Parameters|Type|Description
 -|-|-
 `url`|`string`|
@@ -53,11 +50,8 @@ Parameters|Type|Description
 `timeframe`|`string` *optional*|
 
 ---
-#### Tool: `canvas`
-|Description|
-|-|
-|Create an Obsidian canvas file to visualize concepts and connections.|
-
+#### Tool: **`canvas`**
+Create an Obsidian canvas file to visualize concepts and connections.
 Parameters|Type|Description
 -|-|-
 `edges`|`array`|
@@ -66,36 +60,24 @@ Parameters|Type|Description
 `title`|`string`|
 
 ---
-#### Tool: `delete_note`
-|Description|
-|-|
-|Delete a note by title or permalink|
-
+#### Tool: **`delete_note`**
+Delete a note by title or permalink
 Parameters|Type|Description
 -|-|-
 `identifier`|`string`|
 
 ---
-#### Tool: `project_info`
-|Description|
-|-|
-|Get information and statistics about the current Basic Memory project.|
-
-#### Tool: `read_content`
-|Description|
-|-|
-|Read a file's raw content by path or permalink|
-
+#### Tool: **`project_info`**
+Get information and statistics about the current Basic Memory project.
+#### Tool: **`read_content`**
+Read a file's raw content by path or permalink
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
-#### Tool: `read_note`
-|Description|
-|-|
-|Read a markdown note by title or permalink.|
-
+#### Tool: **`read_note`**
+Read a markdown note by title or permalink.
 Parameters|Type|Description
 -|-|-
 `identifier`|`string`|
@@ -103,10 +85,8 @@ Parameters|Type|Description
 `page_size`|`integer` *optional*|
 
 ---
-#### Tool: `recent_activity`
-|Description|
-|-|
-|Get recent activity from across the knowledge base.
+#### Tool: **`recent_activity`**
+Get recent activity from across the knowledge base.
 
     Timeframe supports natural language formats like:
     - "2 days ago"  
@@ -114,8 +94,7 @@ Parameters|Type|Description
     - "yesterday" 
     - "today"
     - "3 weeks ago"
-    Or standard formats like "7d"|
-
+    Or standard formats like "7d"
 Parameters|Type|Description
 -|-|-
 `depth`|`string` *optional*|
@@ -126,11 +105,8 @@ Parameters|Type|Description
 `type`|`string` *optional*|
 
 ---
-#### Tool: `search_notes`
-|Description|
-|-|
-|Search across all content in the knowledge base.|
-
+#### Tool: **`search_notes`**
+Search across all content in the knowledge base.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|
@@ -142,11 +118,8 @@ Parameters|Type|Description
 `types`|`string` *optional*|
 
 ---
-#### Tool: `write_note`
-|Description|
-|-|
-|Create or update a markdown note. Returns a markdown formatted summary of the semantic content.|
-
+#### Tool: **`write_note`**
+Create or update a markdown note. Returns a markdown formatted summary of the semantic content.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|

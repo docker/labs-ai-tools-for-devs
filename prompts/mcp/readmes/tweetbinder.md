@@ -28,22 +28,16 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create-twitter-count`
-|Description|
-|-|
-|Creates a new report that counts tweets matching a search query. Returns raw JSON response.|
-
+#### Tool: **`create-twitter-count`**
+Creates a new report that counts tweets matching a search query. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query for Twitter data. Can include operators like AND, OR, hashtags, mentions, etc.
 `reportType`|`string` *optional*|Type of report to create: '7-day' for last week or 'historical' for all time.
 
 ---
-#### Tool: `create-twitter-report`
-|Description|
-|-|
-|Creates a new report that analyzes Twitter/X data based on a search query. The report provides statistics and tweet data. Returns raw JSON response.|
-
+#### Tool: **`create-twitter-report`**
+Creates a new report that analyzes Twitter/X data based on a search query. The report provides statistics and tweet data. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query for Twitter data. Can include operators like AND, OR, hashtags, mentions, etc.
@@ -53,16 +47,10 @@ Parameters|Type|Description
 `startDate`|`number` *optional*|Start date as Unix timestamp (seconds since epoch).
 
 ---
-#### Tool: `get-account-balances`
-|Description|
-|-|
-|Retrieves information about your account's credit balance, usage, and remaining quota. Returns raw JSON response.|
-
-#### Tool: `get-report-content`
-|Description|
-|-|
-|Retrieves the content (tweets or users) of a TweetBinder report. The report must be in 'Generated' status. Returns raw JSON response.|
-
+#### Tool: **`get-account-balances`**
+Retrieves information about your account's credit balance, usage, and remaining quota. Returns raw JSON response.
+#### Tool: **`get-report-content`**
+Retrieves the content (tweets or users) of a TweetBinder report. The report must be in 'Generated' status. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `contentType`|`string`|The type of content to retrieve: 'tweets' for tweet IDs or 'users' for user IDs.
@@ -74,31 +62,22 @@ Parameters|Type|Description
 `sortDirection`|`string` *optional*|Sort direction: '1' for ascending, '-1' for descending.
 
 ---
-#### Tool: `get-report-stats`
-|Description|
-|-|
-|Retrieves comprehensive statistics and analytics for a TweetBinder report. The report must be in 'Generated' status to access statistics. Returns raw JSON response.|
-
+#### Tool: **`get-report-stats`**
+Retrieves comprehensive statistics and analytics for a TweetBinder report. The report must be in 'Generated' status to access statistics. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `reportId`|`string`|The ID of the report to retrieve statistics for.
 
 ---
-#### Tool: `get-report-status`
-|Description|
-|-|
-|Checks the current status of a TweetBinder report. Returns raw JSON response.|
-
+#### Tool: **`get-report-status`**
+Checks the current status of a TweetBinder report. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `reportId`|`string`|The ID of the report to check.
 
 ---
-#### Tool: `list-reports`
-|Description|
-|-|
-|Retrieves a list of all your TweetBinder reports. Reports can be sorted by different fields. Returns raw JSON response.|
-
+#### Tool: **`list-reports`**
+Retrieves a list of all your TweetBinder reports. Reports can be sorted by different fields. Returns raw JSON response.
 Parameters|Type|Description
 -|-|-
 `order`|`string` *optional*|Optional sorting parameter in the format 'field|direction'. Example: 'createdAt|-1' for newest first, 'createdAt|1' for oldest first.

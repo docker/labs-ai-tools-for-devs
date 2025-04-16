@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/time/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
@@ -23,11 +23,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `convert_time`
-|Description|
-|-|
-|Convert time between timezones|
-
+#### Tool: **`convert_time`**
+Convert time between timezones
 Parameters|Type|Description
 -|-|-
 `source_timezone`|`string`|Source IANA timezone name (e.g., 'America/New_York', 'Europe/London'). Use 'UTC' as local timezone if no source timezone provided by the user.
@@ -35,11 +32,8 @@ Parameters|Type|Description
 `time`|`string`|Time to convert in 24-hour format (HH:MM)
 
 ---
-#### Tool: `get_current_time`
-|Description|
-|-|
-|Get current time in a specific timezones|
-
+#### Tool: **`get_current_time`**
+Get current time in a specific timezones
 Parameters|Type|Description
 -|-|-
 `timezone`|`string`|IANA timezone name (e.g., 'America/New_York', 'Europe/London'). Use 'UTC' as local timezone if no timezone provided by the user.

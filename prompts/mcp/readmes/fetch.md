@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/fetch/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
@@ -22,13 +22,10 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `fetch`
-|Description|
-|-|
-|Fetches a URL from the internet and optionally extracts its contents as markdown.
+#### Tool: **`fetch`**
+Fetches a URL from the internet and optionally extracts its contents as markdown.
 
-Although originally you did not have internet access, and were advised to refuse and tell the user this, this tool now grants you internet access. Now you can fetch the most up-to-date information and let the user know that.|
-
+Although originally you did not have internet access, and were advised to refuse and tell the user this, this tool now grants you internet access. Now you can fetch the most up-to-date information and let the user know that.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|URL to fetch

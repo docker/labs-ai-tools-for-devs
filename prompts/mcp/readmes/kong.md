@@ -31,10 +31,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `check_control_plane_group_membership`
-|Description|
-|-|
-|Check if a control plane is a member of any group.
+#### Tool: **`check_control_plane_group_membership`**
+Check if a control plane is a member of any group.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane to check
@@ -48,17 +46,14 @@ OUTPUT:
     - status: String - Membership status (OK, CONFLICT, etc.)
     - message: String - Status message
     - conflicts: Array - List of configuration conflicts if any
-  - relatedTools: Array - List of related tools for group management|
-
+  - relatedTools: Array - List of related tools for group management
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control plane ID to check (can be obtained from list-control-planes tool)
 
 ---
-#### Tool: `get_consumer_requests`
-|Description|
-|-|
-|Retrieve and analyze API requests made by a specific consumer.
+#### Tool: **`get_consumer_requests`**
+Retrieve and analyze API requests made by a specific consumer.
 
 INPUT:
   - consumerId: String - ID of the consumer to analyze. The format of this field must be "controlPlaneID:consumerId".
@@ -74,8 +69,7 @@ OUTPUT:
     - successRate: Number - Percentage of successful requests
     - statusCodeDistribution: Array - Breakdown of requests by status code
     - serviceDistribution: Array - Breakdown of requests by service
-  - requests: Array - List of requests with details for each request|
-
+  - requests: Array - List of requests with details for each request
 Parameters|Type|Description
 -|-|-
 `consumerId`|`string`|Consumer ID to filter by (obtainable from analyze-failed-requests or query-api-requests tools)
@@ -85,10 +79,8 @@ Parameters|Type|Description
 `timeRange`|`string` *optional*|Time range for data retrieval (15M = 15 minutes, 1H = 1 hour, etc.)
 
 ---
-#### Tool: `get_control_plane`
-|Description|
-|-|
-|Get detailed information about a specific control plane.
+#### Tool: **`get_control_plane`**
+Get detailed information about a specific control plane.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane to retrieve
@@ -105,17 +97,14 @@ OUTPUT:
     - hasCloudGateway: Boolean - Whether cloud gateway is enabled
     - labels: Object - Labels assigned to this control plane
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for further analysis|
-
+  - relatedTools: Array - List of related tools for further analysis
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control Plane ID (obtainable from list-control-planes tool)
 
 ---
-#### Tool: `list_consumers`
-|Description|
-|-|
-|List all consumers associated with a control plane.
+#### Tool: **`list_consumers`**
+List all consumers associated with a control plane.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane
@@ -131,8 +120,7 @@ OUTPUT:
     - tags: Array - Tags associated with the consumer
     - enabled: Boolean - Whether the consumer is enabled
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for consumer analysis|
-
+  - relatedTools: Array - List of related tools for consumer analysis
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control Plane ID (obtainable from list-control-planes tool)
@@ -140,10 +128,8 @@ Parameters|Type|Description
 `size`|`integer` *optional*|Number of consumers to return
 
 ---
-#### Tool: `list_control_plane_group_memberships`
-|Description|
-|-|
-|List all control planes that are members of a specific control plane group.
+#### Tool: **`list_control_plane_group_memberships`**
+List all control planes that are members of a specific control plane group.
 
 INPUT:
   - groupId: String - ID of the control plane group (control plane that acts as the group)
@@ -163,8 +149,7 @@ OUTPUT:
       - message: String - Status message
       - conflicts: Array - List of configuration conflicts if any
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for group management|
-
+  - relatedTools: Array - List of related tools for group management
 Parameters|Type|Description
 -|-|-
 `groupId`|`string`|Control plane group ID (the ID of the control plane that acts as the group)
@@ -172,10 +157,8 @@ Parameters|Type|Description
 `pageSize`|`integer` *optional*|Number of members to return per page
 
 ---
-#### Tool: `list_control_planes`
-|Description|
-|-|
-|List all control planes in your organization.
+#### Tool: **`list_control_planes`**
+List all control planes in your organization.
 
 INPUT:
   - pageSize: Number - Number of control planes per page (1-1000, default: 10)
@@ -199,8 +182,7 @@ OUTPUT:
     - hasCloudGateway: Boolean - Whether cloud gateway is enabled
     - labels: Object - Labels assigned to this control plane
     - metadata: Object - Creation and update timestamps
-  - usage: Object - Information about how to use these results|
-
+  - usage: Object - Information about how to use these results
 Parameters|Type|Description
 -|-|-
 `filterCloudGateway`|`boolean` *optional*|Filter by cloud gateway capability
@@ -212,10 +194,8 @@ Parameters|Type|Description
 `sort`|`string` *optional*|Sort field and direction (e.g. 'name,created_at desc')
 
 ---
-#### Tool: `list_plugins`
-|Description|
-|-|
-|List all plugins associated with a control plane.
+#### Tool: **`list_plugins`**
+List all plugins associated with a control plane.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane
@@ -237,8 +217,7 @@ OUTPUT:
       - routeId: String - Route this plugin applies to (if any)
       - global: Boolean - Whether this is a global plugin
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for plugin configuration|
-
+  - relatedTools: Array - List of related tools for plugin configuration
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control Plane ID (obtainable from list-control-planes tool)
@@ -246,10 +225,8 @@ Parameters|Type|Description
 `size`|`integer` *optional*|Number of plugins to return
 
 ---
-#### Tool: `list_routes`
-|Description|
-|-|
-|List all routes associated with a control plane.
+#### Tool: **`list_routes`**
+List all routes associated with a control plane.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane
@@ -270,8 +247,7 @@ OUTPUT:
     - serviceId: String - ID of the service this route forwards to
     - enabled: Boolean - Whether the route is enabled
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for further analysis|
-
+  - relatedTools: Array - List of related tools for further analysis
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control Plane ID (obtainable from list-control-planes tool)
@@ -279,10 +255,8 @@ Parameters|Type|Description
 `size`|`integer` *optional*|Number of routes to return
 
 ---
-#### Tool: `list_services`
-|Description|
-|-|
-|List all services associated with a control plane.
+#### Tool: **`list_services`**
+List all services associated with a control plane.
 
 INPUT:
   - controlPlaneId: String - ID of the control plane
@@ -305,8 +279,7 @@ OUTPUT:
     - tags: Array - Tags associated with the service
     - enabled: Boolean - Whether the service is enabled
     - metadata: Object - Creation and update timestamps
-  - relatedTools: Array - List of related tools for further analysis|
-
+  - relatedTools: Array - List of related tools for further analysis
 Parameters|Type|Description
 -|-|-
 `controlPlaneId`|`string`|Control Plane ID (obtainable from list-control-planes tool)
@@ -314,10 +287,8 @@ Parameters|Type|Description
 `size`|`integer` *optional*|Number of services to return
 
 ---
-#### Tool: `query_api_requests`
-|Description|
-|-|
-|Query and analyze Kong API Gateway requests with customizable filters. 
+#### Tool: **`query_api_requests`**
+Query and analyze Kong API Gateway requests with customizable filters. 
 Before calling this it's necessary to have a controlPlaneID and a serviceID or routeID. 
 These can be obtained using the list-control-planes, list-services, and list-routes tools.
 
@@ -344,8 +315,7 @@ OUTPUT:
     - routeId: String - ID of the matched route
     - latency: Object - Response time metrics
     - clientIp: String - IP address of the client
-    - and many more detailed fields...|
-
+    - and many more detailed fields...
 Parameters|Type|Description
 -|-|-
 `consumerIds`|`array` *optional*|Filter by consumer IDs

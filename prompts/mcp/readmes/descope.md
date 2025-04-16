@@ -25,11 +25,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create-user`
-|Description|
-|-|
-|Create a new user in Descope project|
-
+#### Tool: **`create-user`**
+Create a new user in Descope project
 Parameters|Type|Description
 -|-|-
 `loginId`|`string`|Primary login identifier for the user
@@ -49,11 +46,8 @@ Parameters|Type|Description
 `verifiedPhone`|`boolean` *optional*|Whether the phone is pre-verified
 
 ---
-#### Tool: `invite-user`
-|Description|
-|-|
-|Create and invite a new user to the Descope project|
-
+#### Tool: **`invite-user`**
+Create and invite a new user to the Descope project
 Parameters|Type|Description
 -|-|-
 `loginId`|`string`|Primary login identifier for the user
@@ -78,11 +72,8 @@ Parameters|Type|Description
 `verifiedPhone`|`boolean` *optional*|Whether the phone is pre-verified
 
 ---
-#### Tool: `search-audits`
-|Description|
-|-|
-|Search Descope project audit logs|
-
+#### Tool: **`search-audits`**
+Search Descope project audit logs
 Parameters|Type|Description
 -|-|-
 `actions`|`array` *optional*|Filter by specific action types
@@ -96,11 +87,8 @@ Parameters|Type|Description
 `tenants`|`array` *optional*|Filter by specific tenant IDs
 
 ---
-#### Tool: `search-users`
-|Description|
-|-|
-|Search for users in Descope project|
-
+#### Tool: **`search-users`**
+Search for users in Descope project
 Parameters|Type|Description
 -|-|-
 `emails`|`array` *optional*|Filter by specific email addresses

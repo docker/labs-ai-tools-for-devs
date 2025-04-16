@@ -39,37 +39,28 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create_directory`
-|Description|
-|-|
-|Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. Only works within allowed directories.|
-
+#### Tool: **`create_directory`**
+Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. Only works within allowed directories.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
-#### Tool: `edit_block`
-|Description|
-|-|
-|Apply surgical text replacements to files. Best for small changes (<20% of file size). Call repeatedly to change multiple blocks. Will verify changes after application. Format:
+#### Tool: **`edit_block`**
+Apply surgical text replacements to files. Best for small changes (<20% of file size). Call repeatedly to change multiple blocks. Will verify changes after application. Format:
 filepath
 <<<<<<< SEARCH
 content to find
 =======
 new content
->>>>>>> REPLACE|
-
+>>>>>>> REPLACE
 Parameters|Type|Description
 -|-|-
 `blockContent`|`string`|
 
 ---
-#### Tool: `execute_command`
-|Description|
-|-|
-|Execute a terminal command with timeout. Command will continue running in background if it doesn't complete within timeout.|
-
+#### Tool: **`execute_command`**
+Execute a terminal command with timeout. Command will continue running in background if it doesn't complete within timeout.
 Parameters|Type|Description
 -|-|-
 `command`|`string`|
@@ -77,108 +68,72 @@ Parameters|Type|Description
 `timeout_ms`|`number` *optional*|
 
 ---
-#### Tool: `force_terminate`
-|Description|
-|-|
-|Force terminate a running terminal session.|
-
+#### Tool: **`force_terminate`**
+Force terminate a running terminal session.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
 
 ---
-#### Tool: `get_config`
-|Description|
-|-|
-|Get the complete server configuration as JSON. Config includes fields for: blockedCommands (array of blocked shell commands), defaultShell (shell to use for commands), allowedDirectories (paths the server can access).|
-
-#### Tool: `get_file_info`
-|Description|
-|-|
-|Retrieve detailed metadata about a file or directory including size, creation time, last modified time, permissions, and type. Only works within allowed directories.|
-
+#### Tool: **`get_config`**
+Get the complete server configuration as JSON. Config includes fields for: blockedCommands (array of blocked shell commands), defaultShell (shell to use for commands), allowedDirectories (paths the server can access).
+#### Tool: **`get_file_info`**
+Retrieve detailed metadata about a file or directory including size, creation time, last modified time, permissions, and type. Only works within allowed directories.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
-#### Tool: `kill_process`
-|Description|
-|-|
-|Terminate a running process by PID. Use with caution as this will forcefully terminate the specified process.|
-
+#### Tool: **`kill_process`**
+Terminate a running process by PID. Use with caution as this will forcefully terminate the specified process.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
 
 ---
-#### Tool: `list_directory`
-|Description|
-|-|
-|Get a detailed listing of all files and directories in a specified path. Results distinguish between files and directories with [FILE] and [DIR] prefixes. Only works within allowed directories.|
-
+#### Tool: **`list_directory`**
+Get a detailed listing of all files and directories in a specified path. Results distinguish between files and directories with [FILE] and [DIR] prefixes. Only works within allowed directories.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
-#### Tool: `list_processes`
-|Description|
-|-|
-|List all running processes. Returns process information including PID, command name, CPU usage, and memory usage.|
-
-#### Tool: `list_sessions`
-|Description|
-|-|
-|List all active terminal sessions.|
-
-#### Tool: `move_file`
-|Description|
-|-|
-|Move or rename files and directories. Can move files between directories and rename them in a single operation. Both source and destination must be within allowed directories.|
-
+#### Tool: **`list_processes`**
+List all running processes. Returns process information including PID, command name, CPU usage, and memory usage.
+#### Tool: **`list_sessions`**
+List all active terminal sessions.
+#### Tool: **`move_file`**
+Move or rename files and directories. Can move files between directories and rename them in a single operation. Both source and destination must be within allowed directories.
 Parameters|Type|Description
 -|-|-
 `destination`|`string`|
 `source`|`string`|
 
 ---
-#### Tool: `read_file`
-|Description|
-|-|
-|Read the complete contents of a file from the file system or a URL. When reading from the file system, only works within allowed directories. Can fetch content from URLs when isUrl parameter is set to true. Handles text files normally and image files are returned as viewable images. Recognized image types: PNG, JPEG, GIF, WebP.|
-
+#### Tool: **`read_file`**
+Read the complete contents of a file from the file system or a URL. When reading from the file system, only works within allowed directories. Can fetch content from URLs when isUrl parameter is set to true. Handles text files normally and image files are returned as viewable images. Recognized image types: PNG, JPEG, GIF, WebP.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 `isUrl`|`boolean` *optional*|
 
 ---
-#### Tool: `read_multiple_files`
-|Description|
-|-|
-|Read the contents of multiple files simultaneously. Each file's content is returned with its path as a reference. Handles text files normally and renders images as viewable content. Recognized image types: PNG, JPEG, GIF, WebP. Failed reads for individual files won't stop the entire operation. Only works within allowed directories.|
-
+#### Tool: **`read_multiple_files`**
+Read the contents of multiple files simultaneously. Each file's content is returned with its path as a reference. Handles text files normally and renders images as viewable content. Recognized image types: PNG, JPEG, GIF, WebP. Failed reads for individual files won't stop the entire operation. Only works within allowed directories.
 Parameters|Type|Description
 -|-|-
 `paths`|`array`|
 
 ---
-#### Tool: `read_output`
-|Description|
-|-|
-|Read new output from a running terminal session.|
-
+#### Tool: **`read_output`**
+Read new output from a running terminal session.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
 
 ---
-#### Tool: `search_code`
-|Description|
-|-|
-|Search for text/code patterns within file contents using ripgrep. Fast and powerful search similar to VS Code search functionality. Supports regular expressions, file pattern filtering, and context lines. Has a default timeout of 30 seconds which can be customized. Only searches within allowed directories.|
-
+#### Tool: **`search_code`**
+Search for text/code patterns within file contents using ripgrep. Fast and powerful search similar to VS Code search functionality. Supports regular expressions, file pattern filtering, and context lines. Has a default timeout of 30 seconds which can be customized. Only searches within allowed directories.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -191,11 +146,8 @@ Parameters|Type|Description
 `timeoutMs`|`number` *optional*|
 
 ---
-#### Tool: `search_files`
-|Description|
-|-|
-|Finds files by name using a case-insensitive substring matching. Searches through all subdirectories from the starting path. Has a default timeout of 30 seconds which can be customized using the timeoutMs parameter. Only searches within allowed directories.|
-
+#### Tool: **`search_files`**
+Finds files by name using a case-insensitive substring matching. Searches through all subdirectories from the starting path. Has a default timeout of 30 seconds which can be customized using the timeoutMs parameter. Only searches within allowed directories.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -203,22 +155,16 @@ Parameters|Type|Description
 `timeoutMs`|`number` *optional*|
 
 ---
-#### Tool: `set_config_value`
-|Description|
-|-|
-|Set a specific configuration value by key. WARNING: Should be used in a separate chat from file operations and command execution to prevent security issues. Config keys include: blockedCommands (array), defaultShell (string), allowedDirectories (array of paths). IMPORTANT: Setting allowedDirectories to an empty array ([]) allows full access to the entire file system, regardless of the operating system.|
-
+#### Tool: **`set_config_value`**
+Set a specific configuration value by key. WARNING: Should be used in a separate chat from file operations and command execution to prevent security issues. Config keys include: blockedCommands (array), defaultShell (string), allowedDirectories (array of paths). IMPORTANT: Setting allowedDirectories to an empty array ([]) allows full access to the entire file system, regardless of the operating system.
 Parameters|Type|Description
 -|-|-
 `key`|`string`|
 `value`|`string` *optional*|
 
 ---
-#### Tool: `write_file`
-|Description|
-|-|
-|Completely replace file contents. Best for large changes (>20% of file) or when edit_block fails. Use with caution as it will overwrite existing files. Only works within allowed directories.|
-
+#### Tool: **`write_file`**
+Completely replace file contents. Best for large changes (>20% of file) or when edit_block fails. Use with caution as it will overwrite existing files. Only works within allowed directories.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|

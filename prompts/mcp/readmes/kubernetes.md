@@ -57,16 +57,10 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `cleanup`
-|Description|
-|-|
-|Cleanup all managed resources|
-
-#### Tool: `create_configmap`
-|Description|
-|-|
-|Create a new Kubernetes ConfigMap|
-
+#### Tool: **`cleanup`**
+Cleanup all managed resources
+#### Tool: **`create_configmap`**
+Create a new Kubernetes ConfigMap
 Parameters|Type|Description
 -|-|-
 `data`|`object`|
@@ -74,11 +68,8 @@ Parameters|Type|Description
 `namespace`|`string`|
 
 ---
-#### Tool: `create_cronjob`
-|Description|
-|-|
-|Create a new Kubernetes CronJob|
-
+#### Tool: **`create_cronjob`**
+Create a new Kubernetes CronJob
 Parameters|Type|Description
 -|-|-
 `image`|`string`|
@@ -89,11 +80,8 @@ Parameters|Type|Description
 `suspend`|`boolean` *optional*|
 
 ---
-#### Tool: `create_deployment`
-|Description|
-|-|
-|Create a new Kubernetes deployment|
-
+#### Tool: **`create_deployment`**
+Create a new Kubernetes deployment
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -104,21 +92,15 @@ Parameters|Type|Description
 `replicas`|`number` *optional*|
 
 ---
-#### Tool: `create_namespace`
-|Description|
-|-|
-|Create a new Kubernetes namespace|
-
+#### Tool: **`create_namespace`**
+Create a new Kubernetes namespace
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 
 ---
-#### Tool: `create_pod`
-|Description|
-|-|
-|Create a new Kubernetes pod|
-
+#### Tool: **`create_pod`**
+Create a new Kubernetes pod
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -128,11 +110,8 @@ Parameters|Type|Description
 `customConfig`|`object` *optional*|
 
 ---
-#### Tool: `create_service`
-|Description|
-|-|
-|Create a new Kubernetes service|
-
+#### Tool: **`create_service`**
+Create a new Kubernetes service
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -142,22 +121,16 @@ Parameters|Type|Description
 `type`|`string` *optional*|
 
 ---
-#### Tool: `delete_cronjob`
-|Description|
-|-|
-|Delete a Kubernetes CronJob|
-
+#### Tool: **`delete_cronjob`**
+Delete a Kubernetes CronJob
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `namespace`|`string`|
 
 ---
-#### Tool: `delete_deployment`
-|Description|
-|-|
-|Delete a Kubernetes deployment|
-
+#### Tool: **`delete_deployment`**
+Delete a Kubernetes deployment
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -165,22 +138,16 @@ Parameters|Type|Description
 `ignoreNotFound`|`boolean` *optional*|
 
 ---
-#### Tool: `delete_namespace`
-|Description|
-|-|
-|Delete a Kubernetes namespace|
-
+#### Tool: **`delete_namespace`**
+Delete a Kubernetes namespace
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `ignoreNotFound`|`boolean` *optional*|
 
 ---
-#### Tool: `delete_pod`
-|Description|
-|-|
-|Delete a Kubernetes pod|
-
+#### Tool: **`delete_pod`**
+Delete a Kubernetes pod
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -188,44 +155,32 @@ Parameters|Type|Description
 `ignoreNotFound`|`boolean` *optional*|
 
 ---
-#### Tool: `describe_cronjob`
-|Description|
-|-|
-|Get detailed information about a Kubernetes CronJob including recent job history|
-
+#### Tool: **`describe_cronjob`**
+Get detailed information about a Kubernetes CronJob including recent job history
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `namespace`|`string`|
 
 ---
-#### Tool: `describe_deployment`
-|Description|
-|-|
-|Get details about a Kubernetes deployment|
-
+#### Tool: **`describe_deployment`**
+Get details about a Kubernetes deployment
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `namespace`|`string`|
 
 ---
-#### Tool: `describe_pod`
-|Description|
-|-|
-|Describe a Kubernetes pod (read details like status, containers, etc.)|
-
+#### Tool: **`describe_pod`**
+Describe a Kubernetes pod (read details like status, containers, etc.)
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `namespace`|`string`|
 
 ---
-#### Tool: `explain_resource`
-|Description|
-|-|
-|Get documentation for a Kubernetes resource or field|
-
+#### Tool: **`explain_resource`**
+Get documentation for a Kubernetes resource or field
 Parameters|Type|Description
 -|-|-
 `resource`|`string`|Resource name or field path (e.g. 'pods' or 'pods.spec.containers')
@@ -234,32 +189,23 @@ Parameters|Type|Description
 `recursive`|`boolean` *optional*|Print the fields of fields recursively
 
 ---
-#### Tool: `get_current_context`
-|Description|
-|-|
-|Get the current Kubernetes context|
-
+#### Tool: **`get_current_context`**
+Get the current Kubernetes context
 Parameters|Type|Description
 -|-|-
 `detailed`|`boolean` *optional*|Include detailed information about the current context
 
 ---
-#### Tool: `get_events`
-|Description|
-|-|
-|Get Kubernetes events from the cluster|
-
+#### Tool: **`get_events`**
+Get Kubernetes events from the cluster
 Parameters|Type|Description
 -|-|-
 `fieldSelector`|`string` *optional*|Field selector to filter events
 `namespace`|`string` *optional*|Namespace to get events from. If not specified, gets events from all namespaces
 
 ---
-#### Tool: `get_job_logs`
-|Description|
-|-|
-|Get logs from Pods created by a specific Job|
-
+#### Tool: **`get_job_logs`**
+Get logs from Pods created by a specific Job
 Parameters|Type|Description
 -|-|-
 `name`|`string`|Name of the Job to get logs from
@@ -268,11 +214,8 @@ Parameters|Type|Description
 `timestamps`|`boolean` *optional*|Include timestamps in the logs
 
 ---
-#### Tool: `get_logs`
-|Description|
-|-|
-|Get logs from pods, deployments, jobs, or resources matching a label selector|
-
+#### Tool: **`get_logs`**
+Get logs from pods, deployments, jobs, or resources matching a label selector
 Parameters|Type|Description
 -|-|-
 `resourceType`|`string`|Type of resource to get logs from
@@ -285,11 +228,8 @@ Parameters|Type|Description
 `timestamps`|`boolean` *optional*|Include timestamps in logs
 
 ---
-#### Tool: `install_helm_chart`
-|Description|
-|-|
-|Install a Helm chart|
-
+#### Tool: **`install_helm_chart`**
+Install a Helm chart
 Parameters|Type|Description
 -|-|-
 `chart`|`string`|Chart name
@@ -299,11 +239,8 @@ Parameters|Type|Description
 `values`|`object` *optional*|Chart values
 
 ---
-#### Tool: `list_api_resources`
-|Description|
-|-|
-|List the API resources available in the cluster|
-
+#### Tool: **`list_api_resources`**
+List the API resources available in the cluster
 Parameters|Type|Description
 -|-|-
 `apiGroup`|`string` *optional*|API group to filter by
@@ -312,82 +249,55 @@ Parameters|Type|Description
 `verbs`|`array` *optional*|List of verbs to filter by
 
 ---
-#### Tool: `list_contexts`
-|Description|
-|-|
-|List all available Kubernetes contexts|
-
+#### Tool: **`list_contexts`**
+List all available Kubernetes contexts
 Parameters|Type|Description
 -|-|-
 `showCurrent`|`boolean` *optional*|Show which context is currently active
 
 ---
-#### Tool: `list_cronjobs`
-|Description|
-|-|
-|List CronJobs in a namespace|
-
+#### Tool: **`list_cronjobs`**
+List CronJobs in a namespace
 Parameters|Type|Description
 -|-|-
 `namespace`|`string`|
 
 ---
-#### Tool: `list_deployments`
-|Description|
-|-|
-|List deployments in a namespace|
-
+#### Tool: **`list_deployments`**
+List deployments in a namespace
 Parameters|Type|Description
 -|-|-
 `namespace`|`string`|
 
 ---
-#### Tool: `list_jobs`
-|Description|
-|-|
-|List Jobs in a namespace, optionally filtered by a CronJob parent|
-
+#### Tool: **`list_jobs`**
+List Jobs in a namespace, optionally filtered by a CronJob parent
 Parameters|Type|Description
 -|-|-
 `namespace`|`string`|
 `cronJobName`|`string` *optional*|Optional: Filter jobs created by a specific CronJob
 
 ---
-#### Tool: `list_namespaces`
-|Description|
-|-|
-|List all namespaces|
-
-#### Tool: `list_nodes`
-|Description|
-|-|
-|List all nodes in the cluster|
-
-#### Tool: `list_pods`
-|Description|
-|-|
-|List pods in a namespace|
-
+#### Tool: **`list_namespaces`**
+List all namespaces
+#### Tool: **`list_nodes`**
+List all nodes in the cluster
+#### Tool: **`list_pods`**
+List pods in a namespace
 Parameters|Type|Description
 -|-|-
 `namespace`|`string`|
 
 ---
-#### Tool: `list_services`
-|Description|
-|-|
-|List services in a namespace|
-
+#### Tool: **`list_services`**
+List services in a namespace
 Parameters|Type|Description
 -|-|-
 `namespace`|`string`|
 
 ---
-#### Tool: `port_forward`
-|Description|
-|-|
-|Forward a local port to a port on a Kubernetes resource|
-
+#### Tool: **`port_forward`**
+Forward a local port to a port on a Kubernetes resource
 Parameters|Type|Description
 -|-|-
 `localPort`|`number`|
@@ -397,11 +307,8 @@ Parameters|Type|Description
 `namespace`|`string` *optional*|
 
 ---
-#### Tool: `scale_deployment`
-|Description|
-|-|
-|Scale a Kubernetes deployment|
-
+#### Tool: **`scale_deployment`**
+Scale a Kubernetes deployment
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -409,42 +316,30 @@ Parameters|Type|Description
 `replicas`|`number`|
 
 ---
-#### Tool: `set_current_context`
-|Description|
-|-|
-|Set the current Kubernetes context|
-
+#### Tool: **`set_current_context`**
+Set the current Kubernetes context
 Parameters|Type|Description
 -|-|-
 `name`|`string`|Name of the context to set as current
 
 ---
-#### Tool: `stop_port_forward`
-|Description|
-|-|
-|Stop a port-forward process|
-
+#### Tool: **`stop_port_forward`**
+Stop a port-forward process
 Parameters|Type|Description
 -|-|-
 `id`|`string`|
 
 ---
-#### Tool: `uninstall_helm_chart`
-|Description|
-|-|
-|Uninstall a Helm release|
-
+#### Tool: **`uninstall_helm_chart`**
+Uninstall a Helm release
 Parameters|Type|Description
 -|-|-
 `name`|`string`|Release name
 `namespace`|`string`|Kubernetes namespace
 
 ---
-#### Tool: `update_deployment`
-|Description|
-|-|
-|Update an existing kubernetes deployment in cluster|
-
+#### Tool: **`update_deployment`**
+Update an existing kubernetes deployment in cluster
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
@@ -455,11 +350,8 @@ Parameters|Type|Description
 `replicas`|`number` *optional*|
 
 ---
-#### Tool: `upgrade_helm_chart`
-|Description|
-|-|
-|Upgrade a Helm release|
-
+#### Tool: **`upgrade_helm_chart`**
+Upgrade a Helm release
 Parameters|Type|Description
 -|-|-
 `chart`|`string`|Chart name

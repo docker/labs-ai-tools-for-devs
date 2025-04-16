@@ -31,10 +31,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `browser_use_agent`
-|Description|
-|-|
-|This tool employs an open-source browser automation agent optimized specifically for fast, efficient, and cost-effective browser tasks using a cloud browser. It requires explicit, detailed instructions to perform highly specific interactions quickly.
+#### Tool: **`browser_use_agent`**
+This tool employs an open-source browser automation agent optimized specifically for fast, efficient, and cost-effective browser tasks using a cloud browser. It requires explicit, detailed instructions to perform highly specific interactions quickly.
 
 Optimal for tasks requiring:
 - Precise, explicitly defined interactions and actions
@@ -49,8 +47,7 @@ Best suited use cases include:
 
 You must provide extremely detailed step-by-step instructions, including exact elements, actions, and explicit context. Clearly define the desired outcome for optimal results. Returns the completed result or an error message if issues arise.
 
-Note: This agent trades off flexibility for significantly faster performance and lower costs compared to Claude and OpenAI agents.|
-
+Note: This agent trades off flexibility for significantly faster performance and lower costs compared to Claude and OpenAI agents.
 Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
@@ -59,10 +56,8 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `claude_computer_use_agent`
-|Description|
-|-|
-|This tool leverages Anthropic's Claude model to autonomously execute complex browser tasks with sophisticated reasoning capabilities using a cloud browser. It specializes in handling intricate, nuanced, or highly context-sensitive web interactions.
+#### Tool: **`claude_computer_use_agent`**
+This tool leverages Anthropic's Claude model to autonomously execute complex browser tasks with sophisticated reasoning capabilities using a cloud browser. It specializes in handling intricate, nuanced, or highly context-sensitive web interactions.
 
 Optimal for tasks requiring:
 - Complex reasoning over multiple web pages
@@ -75,8 +70,7 @@ Best suited use cases include:
 - Conducting in-depth research with complex conditions
 - Extracting information from dynamic or interactive websites
 
-Provide detailed task instructions, relevant context, and clearly specify the desired outcome for best results. Returns the completed result or an error message if issues arise.|
-
+Provide detailed task instructions, relevant context, and clearly specify the desired outcome for best results. Returns the completed result or an error message if issues arise.
 Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
@@ -85,11 +79,8 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `crawl_webpages`
-|Description|
-|-|
-|Crawl a website starting from a URL and explore linked pages. This tool allows systematic collection of content from multiple pages within a domain. Use this for larger data collection tasks, content indexing, or site mapping.|
-
+#### Tool: **`crawl_webpages`**
+Crawl a website starting from a URL and explore linked pages. This tool allows systematic collection of content from multiple pages within a domain. Use this for larger data collection tasks, content indexing, or site mapping.
 Parameters|Type|Description
 -|-|-
 `followLinks`|`boolean`|Whether to follow links on the crawled webpages
@@ -100,26 +91,17 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `create_profile`
-|Description|
-|-|
-|Creates a new persistent Hyperbrowser profile.|
-
-#### Tool: `delete_profile`
-|Description|
-|-|
-|Deletes an existing persistent Hyperbrowser profile.|
-
+#### Tool: **`create_profile`**
+Creates a new persistent Hyperbrowser profile.
+#### Tool: **`delete_profile`**
+Deletes an existing persistent Hyperbrowser profile.
 Parameters|Type|Description
 -|-|-
 `profileId`|`string`|ID of the profile to delete
 
 ---
-#### Tool: `extract_structured_data`
-|Description|
-|-|
-|Extract structured data from a webpage. This tool allows you to extract structured data from a webpage using a schema.|
-
+#### Tool: **`extract_structured_data`**
+Extract structured data from a webpage. This tool allows you to extract structured data from a webpage using a schema.
 Parameters|Type|Description
 -|-|-
 `prompt`|`string`|The prompt to use for the extraction
@@ -128,21 +110,16 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `list_profiles`
-|Description|
-|-|
-|Lists existing persistent Hyperbrowser profiles, with optional pagination.|
-
+#### Tool: **`list_profiles`**
+Lists existing persistent Hyperbrowser profiles, with optional pagination.
 Parameters|Type|Description
 -|-|-
 `limit`|`integer` *optional*|Number of profiles per page (optional)
 `page`|`integer` *optional*|Page number for pagination (optional)
 
 ---
-#### Tool: `openai_computer_use_agent`
-|Description|
-|-|
-|This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser. It handles complex interactions effectively with practical reasoning and clear execution.
+#### Tool: **`openai_computer_use_agent`**
+This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser. It handles complex interactions effectively with practical reasoning and clear execution.
 
 Optimal for tasks requiring:
 - Reliable, general-purpose browser automation
@@ -155,8 +132,7 @@ Best suited use cases include:
 - Conducting structured web research tasks
 - Extracting data through interactive web processes
 
-Provide a clear step-by-step description, necessary context, and expected outcomes. Returns the completed result or an error message if issues arise.|
-
+Provide a clear step-by-step description, necessary context, and expected outcomes. Returns the completed result or an error message if issues arise.
 Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
@@ -165,11 +141,8 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `scrape_webpage`
-|Description|
-|-|
-|Scrape a webpage and extract its content in various formats. This tool allows fetching content from a single URL with configurable browser behavior options. Use this for extracting text content, HTML structure, collecting links, or capturing screenshots of webpages.|
-
+#### Tool: **`scrape_webpage`**
+Scrape a webpage and extract its content in various formats. This tool allows fetching content from a single URL with configurable browser behavior options. Use this for extracting text content, HTML structure, collecting links, or capturing screenshots of webpages.
 Parameters|Type|Description
 -|-|-
 `outputFormat`|`array`|The format of the output
@@ -177,11 +150,8 @@ Parameters|Type|Description
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
 ---
-#### Tool: `search_with_bing`
-|Description|
-|-|
-|Search the web using Bing. This tool allows you to search the web using bing.com|
-
+#### Tool: **`search_with_bing`**
+Search the web using Bing. This tool allows you to search the web using bing.com
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query to submit to Bing

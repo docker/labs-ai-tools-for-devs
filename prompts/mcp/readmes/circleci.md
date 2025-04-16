@@ -23,10 +23,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `find_flaky_tests`
-|Description|
-|-|
-|This tool retrieves information about flaky tests in a CircleCI project. 
+#### Tool: **`find_flaky_tests`**
+This tool retrieves information about flaky tests in a CircleCI project. 
 
     The agent receiving this output MUST analyze the flaky test data and implement appropriate fixes based on the specific issues identified.
 
@@ -47,17 +45,14 @@ Tools provided by this Server|Short Description
     - Never call this tool with incomplete parameters
     - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
     - If using Option 2, BOTH parameters (workspaceRoot, gitRemoteURL) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call|
-
+    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `get_build_failure_logs`
-|Description|
-|-|
-|This tool helps debug CircleCI build failures by retrieving failure logs.
+#### Tool: **`get_build_failure_logs`**
+This tool helps debug CircleCI build failures by retrieving failure logs.
 
     Input options (EXACTLY ONE of these two options must be used):
 
@@ -77,8 +72,7 @@ Parameters|Type|Description
     - Never call this tool with incomplete parameters
     - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
     - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call|
-
+    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
 -|-|-
 `params`|`object`|

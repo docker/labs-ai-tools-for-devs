@@ -51,11 +51,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `confluence_attach_content`
-|Description|
-|-|
-|Attach content to a Confluence page|
-
+#### Tool: **`confluence_attach_content`**
+Attach content to a Confluence page
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The content to attach (bytes)
@@ -64,11 +61,8 @@ Parameters|Type|Description
 `content_type`|`string` *optional*|Optional: The MIME type of the content (e.g., 'image/png', 'application/pdf'). If omitted, it will be guessed from the filename.
 
 ---
-#### Tool: `confluence_create_page`
-|Description|
-|-|
-|Create a new Confluence page|
-
+#### Tool: **`confluence_create_page`**
+Create a new Confluence page
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The content of the page in Markdown format. Supports headings, lists, tables, code blocks, and other Markdown syntax
@@ -77,31 +71,22 @@ Parameters|Type|Description
 `parent_id`|`string` *optional*|Optional parent page ID. If provided, this page will be created as a child of the specified page
 
 ---
-#### Tool: `confluence_delete_page`
-|Description|
-|-|
-|Delete an existing Confluence page|
-
+#### Tool: **`confluence_delete_page`**
+Delete an existing Confluence page
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The ID of the page to delete
 
 ---
-#### Tool: `confluence_get_comments`
-|Description|
-|-|
-|Get comments for a specific Confluence page|
-
+#### Tool: **`confluence_get_comments`**
+Get comments for a specific Confluence page
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be parsed from URL, e.g. from 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title' -> '123456789')
 
 ---
-#### Tool: `confluence_get_page`
-|Description|
-|-|
-|Get content of a specific Confluence page by ID|
-
+#### Tool: **`confluence_get_page`**
+Get content of a specific Confluence page by ID
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be found in the page URL). For example, in the URL 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title', the page ID is '123456789'
@@ -109,21 +94,15 @@ Parameters|Type|Description
 `include_metadata`|`boolean` *optional*|Whether to include page metadata such as creation date, last update, version, and labels
 
 ---
-#### Tool: `confluence_get_page_ancestors`
-|Description|
-|-|
-|Get ancestor (parent) pages of a specific Confluence page|
-
+#### Tool: **`confluence_get_page_ancestors`**
+Get ancestor (parent) pages of a specific Confluence page
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The ID of the page whose ancestors you want to retrieve
 
 ---
-#### Tool: `confluence_get_page_children`
-|Description|
-|-|
-|Get child pages of a specific Confluence page|
-
+#### Tool: **`confluence_get_page_children`**
+Get child pages of a specific Confluence page
 Parameters|Type|Description
 -|-|-
 `parent_id`|`string`|The ID of the parent page whose children you want to retrieve
@@ -132,11 +111,8 @@ Parameters|Type|Description
 `limit`|`number` *optional*|Maximum number of child pages to return (1-50)
 
 ---
-#### Tool: `confluence_search`
-|Description|
-|-|
-|Search Confluence content using simple terms or CQL|
-
+#### Tool: **`confluence_search`**
+Search Confluence content using simple terms or CQL
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query - can be either a simple text (e.g. 'project documentation') or a CQL query string. Examples of CQL:
@@ -156,11 +132,8 @@ Note: Special identifiers need proper quoting in CQL: personal space keys (e.g.,
 `spaces_filter`|`string` *optional*|Comma-separated list of space keys to filter results by. Overrides the environment variable CONFLUENCE_SPACES_FILTER if provided.
 
 ---
-#### Tool: `confluence_update_page`
-|Description|
-|-|
-|Update an existing Confluence page|
-
+#### Tool: **`confluence_update_page`**
+Update an existing Confluence page
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The new content of the page in Markdown format
@@ -170,22 +143,16 @@ Parameters|Type|Description
 `version_comment`|`string` *optional*|Optional comment for this version
 
 ---
-#### Tool: `jira_add_comment`
-|Description|
-|-|
-|Add a comment to a Jira issue|
-
+#### Tool: **`jira_add_comment`**
+Add a comment to a Jira issue
 Parameters|Type|Description
 -|-|-
 `comment`|`string`|Comment text in Markdown format
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
-#### Tool: `jira_add_worklog`
-|Description|
-|-|
-|Add a worklog entry to a Jira issue|
-
+#### Tool: **`jira_add_worklog`**
+Add a worklog entry to a Jira issue
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
@@ -194,11 +161,8 @@ Parameters|Type|Description
 `started`|`string` *optional*|Optional start time in ISO format. If not provided, the current time will be used. Example: '2023-08-01T12:00:00.000+0000'
 
 ---
-#### Tool: `jira_batch_create_issues`
-|Description|
-|-|
-|Create multiple Jira issues in a batch|
-
+#### Tool: **`jira_batch_create_issues`**
+Create multiple Jira issues in a batch
 Parameters|Type|Description
 -|-|-
 `issues`|`string`|JSON array of issue objects. Each object should contain:
@@ -215,11 +179,8 @@ Example: [
 `validate_only`|`boolean` *optional*|If true, only validates the issues without creating them
 
 ---
-#### Tool: `jira_create_issue`
-|Description|
-|-|
-|Create a new Jira issue with optional Epic link or parent for subtasks|
-
+#### Tool: **`jira_create_issue`**
+Create a new Jira issue with optional Epic link or parent for subtasks
 Parameters|Type|Description
 -|-|-
 `issue_type`|`string`|Issue type (e.g. 'Task', 'Bug', 'Story', 'Epic', 'Subtask'). The available types depend on your project configuration. For subtasks, use 'Subtask' (not 'Sub-task') and include parent in additional_fields.
@@ -236,11 +197,8 @@ Parameters|Type|Description
 `description`|`string` *optional*|Issue description
 
 ---
-#### Tool: `jira_create_issue_link`
-|Description|
-|-|
-|Create a link between two Jira issues|
-
+#### Tool: **`jira_create_issue_link`**
+Create a link between two Jira issues
 Parameters|Type|Description
 -|-|-
 `inward_issue_key`|`string`|The key of the inward issue (e.g., 'PROJ-123')
@@ -250,32 +208,23 @@ Parameters|Type|Description
 `comment_visibility`|`object` *optional*|Optional visibility settings for the comment
 
 ---
-#### Tool: `jira_delete_issue`
-|Description|
-|-|
-|Delete an existing Jira issue|
-
+#### Tool: **`jira_delete_issue`**
+Delete an existing Jira issue
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g. PROJ-123)
 
 ---
-#### Tool: `jira_download_attachments`
-|Description|
-|-|
-|Download attachments from a Jira issue|
-
+#### Tool: **`jira_download_attachments`**
+Download attachments from a Jira issue
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `target_dir`|`string`|Directory where attachments should be saved
 
 ---
-#### Tool: `jira_get_agile_boards`
-|Description|
-|-|
-|Get jira agile boards by name, project key, or type|
-
+#### Tool: **`jira_get_agile_boards`**
+Get jira agile boards by name, project key, or type
 Parameters|Type|Description
 -|-|-
 `board_name`|`string` *optional*|The name of board, support fuzzy search
@@ -285,11 +234,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_get_board_issues`
-|Description|
-|-|
-|Get all issues linked to a specific board|
-
+#### Tool: **`jira_get_board_issues`**
+Get all issues linked to a specific board
 Parameters|Type|Description
 -|-|-
 `board_id`|`string`|The id of the board (e.g., '1001')
@@ -307,11 +253,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_get_epic_issues`
-|Description|
-|-|
-|Get all issues linked to a specific epic|
-
+#### Tool: **`jira_get_epic_issues`**
+Get all issues linked to a specific epic
 Parameters|Type|Description
 -|-|-
 `epic_key`|`string`|The key of the epic (e.g., 'PROJ-123')
@@ -319,11 +262,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_get_issue`
-|Description|
-|-|
-|Get details of a specific Jira issue including its Epic links and relationship information|
-
+#### Tool: **`jira_get_issue`**
+Get details of a specific Jira issue including its Epic links and relationship information
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
@@ -334,11 +274,8 @@ Parameters|Type|Description
 `update_history`|`boolean` *optional*|Whether to update the issue view history for the requesting user
 
 ---
-#### Tool: `jira_get_project_issues`
-|Description|
-|-|
-|Get all issues for a specific Jira project|
-
+#### Tool: **`jira_get_project_issues`**
+Get all issues for a specific Jira project
 Parameters|Type|Description
 -|-|-
 `project_key`|`string`|The project key
@@ -346,11 +283,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_get_sprint_issues`
-|Description|
-|-|
-|Get jira issues from sprint|
-
+#### Tool: **`jira_get_sprint_issues`**
+Get jira issues from sprint
 Parameters|Type|Description
 -|-|-
 `sprint_id`|`string`|The id of sprint (e.g., '10001')
@@ -359,11 +293,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_get_sprints_from_board`
-|Description|
-|-|
-|Get jira sprints from board by state|
-
+#### Tool: **`jira_get_sprints_from_board`**
+Get jira sprints from board by state
 Parameters|Type|Description
 -|-|-
 `board_id`|`string` *optional*|The id of board (e.g., '1000')
@@ -372,52 +303,37 @@ Parameters|Type|Description
 `state`|`string` *optional*|Sprint state (e.g., 'active', 'future', 'closed')
 
 ---
-#### Tool: `jira_get_transitions`
-|Description|
-|-|
-|Get available status transitions for a Jira issue|
-
+#### Tool: **`jira_get_transitions`**
+Get available status transitions for a Jira issue
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
-#### Tool: `jira_get_worklog`
-|Description|
-|-|
-|Get worklog entries for a Jira issue|
-
+#### Tool: **`jira_get_worklog`**
+Get worklog entries for a Jira issue
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
-#### Tool: `jira_link_to_epic`
-|Description|
-|-|
-|Link an existing issue to an epic|
-
+#### Tool: **`jira_link_to_epic`**
+Link an existing issue to an epic
 Parameters|Type|Description
 -|-|-
 `epic_key`|`string`|The key of the epic to link to (e.g., 'PROJ-456')
 `issue_key`|`string`|The key of the issue to link (e.g., 'PROJ-123')
 
 ---
-#### Tool: `jira_remove_issue_link`
-|Description|
-|-|
-|Remove a link between two Jira issues|
-
+#### Tool: **`jira_remove_issue_link`**
+Remove a link between two Jira issues
 Parameters|Type|Description
 -|-|-
 `link_id`|`string`|The ID of the link to remove
 
 ---
-#### Tool: `jira_search`
-|Description|
-|-|
-|Search Jira issues using JQL (Jira Query Language)|
-
+#### Tool: **`jira_search`**
+Search Jira issues using JQL (Jira Query Language)
 Parameters|Type|Description
 -|-|-
 `jql`|`string`|JQL query string (Jira Query Language). Examples:
@@ -434,11 +350,8 @@ Parameters|Type|Description
 `startAt`|`number` *optional*|Starting index for pagination (0-based)
 
 ---
-#### Tool: `jira_transition_issue`
-|Description|
-|-|
-|Transition a Jira issue to a new status|
-
+#### Tool: **`jira_transition_issue`**
+Transition a Jira issue to a new status
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
@@ -447,11 +360,8 @@ Parameters|Type|Description
 `fields`|`string` *optional*|JSON string of fields to update during the transition. Some transitions require specific fields to be set. Example: '{"resolution": {"name": "Fixed"}}'
 
 ---
-#### Tool: `jira_update_issue`
-|Description|
-|-|
-|Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.|
-
+#### Tool: **`jira_update_issue`**
+Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.
 Parameters|Type|Description
 -|-|-
 `fields`|`string`|A valid JSON object of fields to update as a string. Example: '{"summary": "New title", "description": "Updated description", "priority": {"name": "High"}, "assignee": {"name": "john.doe"}}'

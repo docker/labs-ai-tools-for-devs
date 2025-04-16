@@ -24,40 +24,31 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_flow`
-|Description|
-|-|
-|"Use this tool to retrieve a specific workflow by its ID.
+#### Tool: **`get_flow`**
+"Use this tool to retrieve a specific workflow by its ID.
 
 Workflow is sequence of steps that are executed in order to get some result. Flow comes with description, steps and input schema of all methods to call.
 
-You can call this tool once you have a flowId which usually you can get from: user directly OR using get-tools method."|
-
+You can call this tool once you have a flowId which usually you can get from: user directly OR using get-tools method."
 Parameters|Type|Description
 -|-|-
 `flowId`|`string`|The ID of the workflow to retrieve.
 
 ---
-#### Tool: `get_tools`
-|Description|
-|-|
-|"Use this tool to retrieve a list of available tools from the Veyrax API.
+#### Tool: **`get_tools`**
+"Use this tool to retrieve a list of available tools from the Veyrax API.
 This will return dynamic tools that user has access to.
 You can use this tool to get the list of tools, method names and parameters, and then use tool_call tool to call the tool with the provided parameters.
 This method also returns all flows with name and id that user has access to (if any).
-"|
-
+"
 Parameters|Type|Description
 -|-|-
 `question`|`string`|Query question that you want find answer for. Try to ALWAYS provide this field based on conversation with user. Could be your reasoning for calling tool.
 
 ---
-#### Tool: `tool_call`
-|Description|
-|-|
-|"Use this tool to execute a specific method of another tool with the provided parameters based on get-tools tool response.
-You need to specify the tool name, method name, and any required parameters for that method."|
-
+#### Tool: **`tool_call`**
+"Use this tool to execute a specific method of another tool with the provided parameters based on get-tools tool response.
+You need to specify the tool name, method name, and any required parameters for that method."
 Parameters|Type|Description
 -|-|-
 `method`|`string`|The method of the tool to call (e.g., 'get_messages', 'send_message', 'list_events')
