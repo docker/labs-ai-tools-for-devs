@@ -2002,3 +2002,51 @@ registry:
       - name: pulumi-registry-list-resources
     prompts: 0
     resources: {}
+  kong:
+    description: A Model Context Protocol (MCP) server for interacting with Kong Konnect APIs, allowing AI assistants to query and analyze Kong Gateway configurations, traffic, and analytics.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kong.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kong.md
+    source: https://github.com/Kong/mcp-konnect/tree/refs/pull/7/merge
+    icon: https://avatars.githubusercontent.com/u/962416?s=200&v=4
+    tools:
+      - name: check_control_plane_group_membership
+      - name: get_consumer_requests
+      - name: get_control_plane
+      - name: list_consumers
+      - name: list_control_plane_group_memberships
+      - name: list_control_planes
+      - name: list_plugins
+      - name: list_routes
+      - name: list_services
+      - name: query_api_requests
+    secrets:
+      - name: kong.access_token
+    prompts: 0
+    resources: {}
+    config:
+      - name: kong
+        description: Configure the connection to Kong Konnect
+        type: object
+        properties:
+          region:
+            type: string
+  circleci:
+    description: A specialized server implementation for the Model Context Protocol (MCP) designed to integrate with CircleCI's development workflow. This project serves as a bridge between CircleCI's infrastructure and the Model Context Protocol, enabling enhanced AI-powered development experiences.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/circleci.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/circleci.md
+    source: https://github.com/CircleCI-Public/mcp-server-circleci/tree/refs/pull/22/merge
+    icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
+    tools:
+      - name: find_flaky_tests
+      - name: get_build_failure_logs
+    secrets:
+      - name: circleci.token
+    prompts: 0
+    resources: {}
+    config:
+      - name: circleci
+        description: Configure the connection to CircleCI
+        type: object
+        properties:
+          url:
+            type: string
