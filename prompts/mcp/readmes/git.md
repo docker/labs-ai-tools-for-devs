@@ -1,10 +1,11 @@
-# git MCP Server
+# Git MCP Server
 
 A Model Context Protocol server for Git repository interaction and automation
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,114 +14,153 @@ A Model Context Protocol server for Git repository interaction and automation
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `git_add` Adds file contents to the staging area
-1. `git_checkout` Switches branches
-1. `git_commit` Records changes to the repository
-1. `git_create_branch` Creates a new branch from an optional base branch
-1. `git_diff` Shows differences between branches or commits
-1. `git_diff_staged` Shows changes that are staged for commit
-1. `git_diff_unstaged` Shows changes in the working directory that are not yet staged
-1. `git_init` Initialize a new Git repository
-1. `git_log` Shows the commit logs
-1. `git_reset` Unstages all staged changes
-1. `git_show` Shows the contents of a commit
-1. `git_status` Shows the working tree status
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`git_add`|Adds file contents to the staging area|
+`git_checkout`|Switches branches|
+`git_commit`|Records changes to the repository|
+`git_create_branch`|Creates a new branch from an optional base branch|
+`git_diff`|Shows differences between branches or commits|
+`git_diff_staged`|Shows changes that are staged for commit|
+`git_diff_unstaged`|Shows changes in the working directory that are not yet staged|
+`git_init`|Initialize a new Git repository|
+`git_log`|Shows the commit logs|
+`git_reset`|Unstages all staged changes|
+`git_show`|Shows the contents of a commit|
+`git_status`|Shows the working tree status|
 
-## Tools
+---
+## Tools Details
 
-### Tool `git_add`
-Adds file contents to the staging area
+#### Tool: `git_add`
+|Description|
+|-|
+|Adds file contents to the staging area|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `files`|`array`|
 `repo_path`|`string`|
 
-### Tool `git_checkout`
-Switches branches
+---
+#### Tool: `git_checkout`
+|Description|
+|-|
+|Switches branches|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `branch_name`|`string`|
 `repo_path`|`string`|
 
-### Tool `git_commit`
-Records changes to the repository
+---
+#### Tool: `git_commit`
+|Description|
+|-|
+|Records changes to the repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `message`|`string`|
 `repo_path`|`string`|
 
-### Tool `git_create_branch`
-Creates a new branch from an optional base branch
+---
+#### Tool: `git_create_branch`
+|Description|
+|-|
+|Creates a new branch from an optional base branch|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `branch_name`|`string`|
 `repo_path`|`string`|
 `base_branch`|`string` *optional*|
 
-### Tool `git_diff`
-Shows differences between branches or commits
+---
+#### Tool: `git_diff`
+|Description|
+|-|
+|Shows differences between branches or commits|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `target`|`string`|
 
-### Tool `git_diff_staged`
-Shows changes that are staged for commit
+---
+#### Tool: `git_diff_staged`
+|Description|
+|-|
+|Shows changes that are staged for commit|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
-### Tool `git_diff_unstaged`
-Shows changes in the working directory that are not yet staged
+---
+#### Tool: `git_diff_unstaged`
+|Description|
+|-|
+|Shows changes in the working directory that are not yet staged|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
-### Tool `git_init`
-Initialize a new Git repository
+---
+#### Tool: `git_init`
+|Description|
+|-|
+|Initialize a new Git repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
-### Tool `git_log`
-Shows the commit logs
+---
+#### Tool: `git_log`
+|Description|
+|-|
+|Shows the commit logs|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `max_count`|`integer` *optional*|
 
-### Tool `git_reset`
-Unstages all staged changes
+---
+#### Tool: `git_reset`
+|Description|
+|-|
+|Unstages all staged changes|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
-### Tool `git_show`
-Shows the contents of a commit
+---
+#### Tool: `git_show`
+|Description|
+|-|
+|Shows the contents of a commit|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `revision`|`string`|
 
-### Tool `git_status`
-Shows the working tree status
+---
+#### Tool: `git_status`
+|Description|
+|-|
+|Shows the working tree status|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
+---
 ## Use this MCP Server
 
 ```json

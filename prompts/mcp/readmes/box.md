@@ -1,10 +1,11 @@
-# box MCP Server
+# Box MCP Server
 
 An MCP server capable of interacting with the Box API
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[box-community](https://github.com/box-community)
@@ -13,83 +14,105 @@ An MCP server capable of interacting with the Box API
 **Docker Image built by**|Docker Inc.
 **Licence**|
 
-## Summary
-1. `box_ai_extract_data` "
-Extract data from a single file in Box using AI.
-1. `box_ask_ai_tool` Ask box ai about a file in Box.
-1. `box_ask_ai_tool_multi_file` Use Box AI to analyze and respond to a prompt based on the content of multiple files.
-1. `box_authorize_app_tool` Authorize the Box application.
-1. `box_download_file_tool` Download a file from Box and return its content as a string.
-1. `box_list_folder_content_by_folder_id` List the content of a folder in Box by its ID.
-1. `box_manage_folder_tool` Manage Box folders - create, delete, or update.
-1. `box_read_tool` Read the text content of a file in Box.
-1. `box_search_folder_by_name` Locate a folder in Box by its name.
-1. `box_search_tool` Search for files in Box with the given query.
-1. `box_upload_file_tool` Upload content as a file to Box.
-1. `box_who_am_i` Get the current user's information.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`box_ai_extract_data`|"
+Extract data from a single file in Box using AI.|
+`box_ask_ai_tool`|Ask box ai about a file in Box.|
+`box_ask_ai_tool_multi_file`|Use Box AI to analyze and respond to a prompt based on the content of multiple files.|
+`box_authorize_app_tool`|Authorize the Box application.|
+`box_download_file_tool`|Download a file from Box and return its content as a string.|
+`box_list_folder_content_by_folder_id`|List the content of a folder in Box by its ID.|
+`box_manage_folder_tool`|Manage Box folders - create, delete, or update.|
+`box_read_tool`|Read the text content of a file in Box.|
+`box_search_folder_by_name`|Locate a folder in Box by its name.|
+`box_search_tool`|Search for files in Box with the given query.|
+`box_upload_file_tool`|Upload content as a file to Box.|
+`box_who_am_i`|Get the current user's information.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `box_ai_extract_data`
-"
-Extract data from a single file in Box using AI.
+#### Tool: `box_ai_extract_data`
+|Description|
+|-|
+|"
+Extract data from a single file in Box using AI.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `fields`|`string`|
 `file_id`|`string`|
 
-### Tool `box_ask_ai_tool`
-Ask box ai about a file in Box.
+---
+#### Tool: `box_ask_ai_tool`
+|Description|
+|-|
+|Ask box ai about a file in Box.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `file_id`|`string`|
 `prompt`|`string`|
 
-### Tool `box_ask_ai_tool_multi_file`
-Use Box AI to analyze and respond to a prompt based on the content of multiple files.
+---
+#### Tool: `box_ask_ai_tool_multi_file`
+|Description|
+|-|
+|Use Box AI to analyze and respond to a prompt based on the content of multiple files.
 
 This tool allows users to query Box AI with a specific prompt, leveraging the content
 of multiple files stored in Box. The AI processes the files and generates a response
-based on the provided prompt.
+based on the provided prompt.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `file_ids`|`array`|
 `prompt`|`string`|
 
-### Tool `box_authorize_app_tool`
-Authorize the Box application.
+---
+#### Tool: `box_authorize_app_tool`
+|Description|
+|-|
+|Authorize the Box application.
 Start the Box app authorization process
 
 return:
-    str: Message
+    str: Message|
 
-### Tool `box_download_file_tool`
-Download a file from Box and return its content as a string.
+#### Tool: `box_download_file_tool`
+|Description|
+|-|
+|Download a file from Box and return its content as a string.
 Supports text files (returns content directly) and images (returns base64-encoded).
 Other file types will return an error message.
-Optionally saves the file locally.
+Optionally saves the file locally.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `file_id`|`string`|
 `save_file`|`boolean` *optional*|
 `save_path`|`string` *optional*|
 
-### Tool `box_list_folder_content_by_folder_id`
-List the content of a folder in Box by its ID.
+---
+#### Tool: `box_list_folder_content_by_folder_id`
+|Description|
+|-|
+|List the content of a folder in Box by its ID.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `folder_id`|`string`|
 `is_recursive`|`string`|
 
-### Tool `box_manage_folder_tool`
-Manage Box folders - create, delete, or update.
+---
+#### Tool: `box_manage_folder_tool`
+|Description|
+|-|
+|Manage Box folders - create, delete, or update.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `action`|`string`|
 `description`|`string` *optional*|
@@ -98,45 +121,60 @@ Parameter|Type|Description
 `parent_id`|`string` *optional*|
 `recursive`|`boolean` *optional*|
 
-### Tool `box_read_tool`
-Read the text content of a file in Box.
+---
+#### Tool: `box_read_tool`
+|Description|
+|-|
+|Read the text content of a file in Box.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `file_id`|`string`|
 
-### Tool `box_search_folder_by_name`
-Locate a folder in Box by its name.
+---
+#### Tool: `box_search_folder_by_name`
+|Description|
+|-|
+|Locate a folder in Box by its name.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `folder_name`|`string`|
 
-### Tool `box_search_tool`
-Search for files in Box with the given query.
+---
+#### Tool: `box_search_tool`
+|Description|
+|-|
+|Search for files in Box with the given query.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|
 `ancestor_folder_ids`|`string` *optional*|
 `file_extensions`|`string` *optional*|
 `where_to_look_for_query`|`string` *optional*|
 
-### Tool `box_upload_file_tool`
-Upload content as a file to Box.
+---
+#### Tool: `box_upload_file_tool`
+|Description|
+|-|
+|Upload content as a file to Box.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `content`|`string`|
 `file_name`|`string`|
 `folder_id`|`string` *optional*|
 
-### Tool `box_who_am_i`
-Get the current user's information.
+---
+#### Tool: `box_who_am_i`
+|Description|
+|-|
+|Get the current user's information.
 This is also useful to check the connection status.
 
 return:
-    str: The current user's information.
+    str: The current user's information.|
 
 ## Use this MCP Server
 

@@ -1,10 +1,11 @@
-# resend MCP Server
+# Resend MCP Server
 
 Send emails directly from Cursor with this email sending MCP server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
@@ -13,15 +14,20 @@ Send emails directly from Cursor with this email sending MCP server
 **Docker Image built by**|Docker Inc.
 **Licence**|
 
-## Summary
-1. `send-email` Send an email using Resend
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`send-email`|Send an email using Resend|
 
-## Tools
+---
+## Tools Details
 
-### Tool `send-email`
-Send an email using Resend
+#### Tool: `send-email`
+|Description|
+|-|
+|Send an email using Resend|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `subject`|`string`|Email subject line
 `text`|`string`|Plain text email content
@@ -31,6 +37,7 @@ Parameter|Type|Description
 `html`|`string` *optional*|HTML email content. When provided, the plain text argument MUST be provided as well.
 `scheduledAt`|`string` *optional*|Optional parameter to schedule the email. This uses natural language. Examples would be 'tomorrow at 10am' or 'in 2 hours' or 'next day at 9am PST' or 'Friday at 3pm ET'.
 
+---
 ## Use this MCP Server
 
 ```json

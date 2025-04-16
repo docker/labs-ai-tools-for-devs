@@ -1,10 +1,11 @@
-# descope MCP Server
+# Descope MCP Server
 
 The Descope Model Context Protocol (MCP) server provides an interface to interact with Descope's Management APIs, enabling the search and retrieval of project-related information.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[descope-sample-apps](https://github.com/descope-sample-apps)
@@ -13,18 +14,23 @@ The Descope Model Context Protocol (MCP) server provides an interface to interac
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `create-user` Create a new user in Descope project
-1. `invite-user` Create and invite a new user to the Descope project
-1. `search-audits` Search Descope project audit logs
-1. `search-users` Search for users in Descope project
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`create-user`|Create a new user in Descope project|
+`invite-user`|Create and invite a new user to the Descope project|
+`search-audits`|Search Descope project audit logs|
+`search-users`|Search for users in Descope project|
 
-## Tools
+---
+## Tools Details
 
-### Tool `create-user`
-Create a new user in Descope project
+#### Tool: `create-user`
+|Description|
+|-|
+|Create a new user in Descope project|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `loginId`|`string`|Primary login identifier for the user
 `additionalLoginIds`|`array` *optional*|Additional login identifiers
@@ -42,10 +48,13 @@ Parameter|Type|Description
 `verifiedEmail`|`boolean` *optional*|Whether the email is pre-verified
 `verifiedPhone`|`boolean` *optional*|Whether the phone is pre-verified
 
-### Tool `invite-user`
-Create and invite a new user to the Descope project
+---
+#### Tool: `invite-user`
+|Description|
+|-|
+|Create and invite a new user to the Descope project|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `loginId`|`string`|Primary login identifier for the user
 `additionalLoginIds`|`array` *optional*|Additional login identifiers
@@ -68,10 +77,13 @@ Parameter|Type|Description
 `verifiedEmail`|`boolean` *optional*|Whether the email is pre-verified
 `verifiedPhone`|`boolean` *optional*|Whether the phone is pre-verified
 
-### Tool `search-audits`
-Search Descope project audit logs
+---
+#### Tool: `search-audits`
+|Description|
+|-|
+|Search Descope project audit logs|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `actions`|`array` *optional*|Filter by specific action types
 `excludedActions`|`array` *optional*|Actions to exclude from results
@@ -83,10 +95,13 @@ Parameter|Type|Description
 `noTenants`|`boolean` *optional*|If true, only show events without tenants
 `tenants`|`array` *optional*|Filter by specific tenant IDs
 
-### Tool `search-users`
-Search for users in Descope project
+---
+#### Tool: `search-users`
+|Description|
+|-|
+|Search for users in Descope project|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `emails`|`array` *optional*|Filter by specific email addresses
 `limit`|`number` *optional*|Number of users per page (max 100)
@@ -101,6 +116,7 @@ Parameter|Type|Description
 `text`|`string` *optional*|Text to search for in user fields
 `withTestUser`|`boolean` *optional*|Include test users in results
 
+---
 ## Use this MCP Server
 
 ```json

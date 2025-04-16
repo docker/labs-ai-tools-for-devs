@@ -1,10 +1,11 @@
-# elasticsearch MCP Server
+# Elasticsearch MCP Server
 
 Interact with your Elasticsearch indices through natural language conversations.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[elastic](https://github.com/elastic)
@@ -13,39 +14,53 @@ Interact with your Elasticsearch indices through natural language conversations.
 **Docker Image built by**|Docker Inc.
 **Licence**|Apache License 2.0
 
-## Summary
-1. `get_mappings` Get field mappings for a specific Elasticsearch index
-1. `get_shards` Get shard information for all or specific indices
-1. `list_indices` List all available Elasticsearch indices
-1. `search` Perform an Elasticsearch search with the provided query DSL.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`get_mappings`|Get field mappings for a specific Elasticsearch index|
+`get_shards`|Get shard information for all or specific indices|
+`list_indices`|List all available Elasticsearch indices|
+`search`|Perform an Elasticsearch search with the provided query DSL.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `get_mappings`
-Get field mappings for a specific Elasticsearch index
+#### Tool: `get_mappings`
+|Description|
+|-|
+|Get field mappings for a specific Elasticsearch index|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to get mappings for
 
-### Tool `get_shards`
-Get shard information for all or specific indices
+---
+#### Tool: `get_shards`
+|Description|
+|-|
+|Get shard information for all or specific indices|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string` *optional*|Optional index name to get shard information for
 
-### Tool `list_indices`
-List all available Elasticsearch indices
+---
+#### Tool: `list_indices`
+|Description|
+|-|
+|List all available Elasticsearch indices|
 
-### Tool `search`
-Perform an Elasticsearch search with the provided query DSL. Highlights are always enabled.
+#### Tool: `search`
+|Description|
+|-|
+|Perform an Elasticsearch search with the provided query DSL. Highlights are always enabled.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to search
 `queryBody`|`object`|Complete Elasticsearch query DSL object that can include query, size, from, sort, etc.
 
+---
 ## Use this MCP Server
 
 ```json

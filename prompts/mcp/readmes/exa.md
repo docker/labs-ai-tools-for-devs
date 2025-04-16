@@ -1,10 +1,11 @@
-# exa MCP Server
+# Exa MCP Server
 
 Claude can perform Web Search | Exa with MCP (Model Context Protocol)
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[exa-labs](https://github.com/exa-labs)
@@ -13,19 +14,25 @@ Claude can perform Web Search | Exa with MCP (Model Context Protocol)
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `web_search` Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`web_search`|Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `web_search`
-Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.
+#### Tool: `web_search`
+|Description|
+|-|
+|Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query
 `numResults`|`number` *optional*|Number of search results to return (default: 5)
 
+---
 ## Use this MCP Server
 
 ```json

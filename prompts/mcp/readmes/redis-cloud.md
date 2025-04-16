@@ -1,10 +1,11 @@
-# redis-cloud MCP Server
+# Redis-cloud MCP Server
 
 MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[redis](https://github.com/redis)
@@ -13,40 +14,48 @@ MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resour
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `create-essential-subscription` Create a new essential subscription.
-1. `create-pro-database` Create a new database inside the specified subscription ID.
-1. `create-pro-subscription` Create a new pro subscription.
-1. `delete-essential-subscription` Delete an essential subscription by ID
-1. `get-current-account` Get the current Cloud Redis account
-1. `get-current-payment-methods` Get the current payment methods for the current Cloud Redis account
-1. `get-database-modules` Lookup list of database modules supported in current account (support may differ based on subscription and database settings).
-1. `get-essential-subscription-by-id` Get an essential subscription by ID for the current Cloud Redis account
-1. `get-essential-subscriptions` Get the essential subscriptions for the current Cloud Redis account.
-1. `get-essentials-plans` Get the available plans for essential subscriptions.
-1. `get-pro-databases` Get the pro databases for the provided subscription Id
-1. `get-pro-plans-regions` Lookup list of regions for cloud provider.
-1. `get-pro-subscription` Get pro subscription by ID.
-1. `get-pro-subscriptions` Get the pro subscriptions for the current Cloud Redis account
-1. `get-task-by-id` Get a task by ID for the current Cloud Redis account
-1. `get-tasks` Get the current tasks for the current Cloud Redis account
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`create-essential-subscription`|Create a new essential subscription.|
+`create-pro-database`|Create a new database inside the specified subscription ID.|
+`create-pro-subscription`|Create a new pro subscription.|
+`delete-essential-subscription`|Delete an essential subscription by ID|
+`get-current-account`|Get the current Cloud Redis account|
+`get-current-payment-methods`|Get the current payment methods for the current Cloud Redis account|
+`get-database-modules`|Lookup list of database modules supported in current account (support may differ based on subscription and database settings).|
+`get-essential-subscription-by-id`|Get an essential subscription by ID for the current Cloud Redis account|
+`get-essential-subscriptions`|Get the essential subscriptions for the current Cloud Redis account.|
+`get-essentials-plans`|Get the available plans for essential subscriptions.|
+`get-pro-databases`|Get the pro databases for the provided subscription Id|
+`get-pro-plans-regions`|Lookup list of regions for cloud provider.|
+`get-pro-subscription`|Get pro subscription by ID.|
+`get-pro-subscriptions`|Get the pro subscriptions for the current Cloud Redis account|
+`get-task-by-id`|Get a task by ID for the current Cloud Redis account|
+`get-tasks`|Get the current tasks for the current Cloud Redis account|
 
-## Tools
+---
+## Tools Details
 
-### Tool `create-essential-subscription`
-Create a new essential subscription. Returns a TASK ID that can be used to track the status of the subscription creation
+#### Tool: `create-essential-subscription`
+|Description|
+|-|
+|Create a new essential subscription. Returns a TASK ID that can be used to track the status of the subscription creation|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Subscription name
 `planId`|`number`|Plan ID. The plan ID can be taken from /fixed/plans
 `paymentMethod`|`string` *optional*|Payment method
 `paymentMethodId`|`number` *optional*|Payment method ID
 
-### Tool `create-pro-database`
-Create a new database inside the specified subscription ID. Returns a TASK ID that can be used to track the status of the database creationPrerequisites: 1) For database modules, validate against get-database-modules list. 2) Validate regions using get-pro-plans-regions. The payload must match the input schema.
+---
+#### Tool: `create-pro-database`
+|Description|
+|-|
+|Create a new database inside the specified subscription ID. Returns a TASK ID that can be used to track the status of the database creationPrerequisites: 1) For database modules, validate against get-database-modules list. 2) Validate regions using get-pro-plans-regions. The payload must match the input schema.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Required. Name of the database. Database name is limited to 40 characters or less and must include only letters, digits, and hyphens ('-'). It must start with a letter and end with a letter or digit.
 `subscriptionId`|`number`|Subscription ID
@@ -70,10 +79,13 @@ Parameter|Type|Description
 `supportOSSClusterApi`|`boolean` *optional*|Optional. Support Redis open-source (OSS) Cluster API. Default: 'false'
 `throughputMeasurement`|`object` *optional*|Optional. Throughput measurement method.
 
-### Tool `create-pro-subscription`
-Create a new pro subscription. Returns a TASK ID that can be used to track the status of the subscription creation. Prerequisites: 1) Verify payment method by checking get-current-payment-methods. 2) For database modules, validate against get-database-modules list. 3) Validate regions using get-pro-plans-regions. The payload must match the input schema.
+---
+#### Tool: `create-pro-subscription`
+|Description|
+|-|
+|Create a new pro subscription. Returns a TASK ID that can be used to track the status of the subscription creation. Prerequisites: 1) Verify payment method by checking get-current-payment-methods. 2) For database modules, validate against get-database-modules list. 3) Validate regions using get-pro-plans-regions. The payload must match the input schema.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `cloudProviders`|`array`|Required. Cloud hosting & networking details.  Make sure to validate this before submitting the subscription.
 `databases`|`array`|Required. Databases specifications for each planned database. Make sure to validate this before submitting the subscription.
@@ -85,78 +97,112 @@ Parameter|Type|Description
 `paymentMethodId`|`integer` *optional*|Required if paymentMethod is credit-card. A valid payment method that was pre-defined in the current account. This value is Optional if 'paymentMethod' is 'marketplace', but Required for all other account types. Validate this before submitting the subscription.
 `redisVersion`|`string` *optional*|Optional. If specified, the redisVersion defines the Redis version of the databases in the subscription. If omitted, the Redis version will be the default
 
-### Tool `delete-essential-subscription`
-Delete an essential subscription by ID
+---
+#### Tool: `delete-essential-subscription`
+|Description|
+|-|
+|Delete an essential subscription by ID|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `subscriptionId`|`number`|Subscription ID
 
-### Tool `get-current-account`
-Get the current Cloud Redis account
+---
+#### Tool: `get-current-account`
+|Description|
+|-|
+|Get the current Cloud Redis account|
 
-### Tool `get-current-payment-methods`
-Get the current payment methods for the current Cloud Redis account
+#### Tool: `get-current-payment-methods`
+|Description|
+|-|
+|Get the current payment methods for the current Cloud Redis account|
 
-### Tool `get-database-modules`
-Lookup list of database modules supported in current account (support may differ based on subscription and database settings). These modules are also called capabilities.
+#### Tool: `get-database-modules`
+|Description|
+|-|
+|Lookup list of database modules supported in current account (support may differ based on subscription and database settings). These modules are also called capabilities.|
 
-### Tool `get-essential-subscription-by-id`
-Get an essential subscription by ID for the current Cloud Redis account
+#### Tool: `get-essential-subscription-by-id`
+|Description|
+|-|
+|Get an essential subscription by ID for the current Cloud Redis account|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `subscriptionId`|`number`|Subscription ID
 
-### Tool `get-essential-subscriptions`
-Get the essential subscriptions for the current Cloud Redis account. A paginated response is returned, and to get all the essential subscriptions, the page and size parameters must be used until all the essential subscriptions are retrieved.
+---
+#### Tool: `get-essential-subscriptions`
+|Description|
+|-|
+|Get the essential subscriptions for the current Cloud Redis account. A paginated response is returned, and to get all the essential subscriptions, the page and size parameters must be used until all the essential subscriptions are retrieved.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `page`|`number` *optional*|Page number
 `size`|`number` *optional*|Page size
 
-### Tool `get-essentials-plans`
-Get the available plans for essential subscriptions. Always ask for which provider the plans are want to be retrieved. A paginated response is returned, and to get all the plans, the page and size parameters must be used until all the plans are retrieved.
+---
+#### Tool: `get-essentials-plans`
+|Description|
+|-|
+|Get the available plans for essential subscriptions. Always ask for which provider the plans are want to be retrieved. A paginated response is returned, and to get all the plans, the page and size parameters must be used until all the plans are retrieved.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `provider`|`string`|Provider name.
 `page`|`number` *optional*|Page number
 `redisFlex`|`boolean` *optional*|Redis Flex
 `size`|`number` *optional*|Page size
 
-### Tool `get-pro-databases`
-Get the pro databases for the provided subscription Id
+---
+#### Tool: `get-pro-databases`
+|Description|
+|-|
+|Get the pro databases for the provided subscription Id|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `subscriptionId`|`number`|Subscription ID
 `limit`|`number` *optional*|Optional. Maximum number of items to return
 `offset`|`number` *optional*|Optional. Number of items to skip
 
-### Tool `get-pro-plans-regions`
-Lookup list of regions for cloud provider. These regions include the providers too.
+---
+#### Tool: `get-pro-plans-regions`
+|Description|
+|-|
+|Lookup list of regions for cloud provider. These regions include the providers too.|
 
-### Tool `get-pro-subscription`
-Get pro subscription by ID. The payload must match the input schema.
+#### Tool: `get-pro-subscription`
+|Description|
+|-|
+|Get pro subscription by ID. The payload must match the input schema.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `subscriptionId`|`number`|Subscription ID
 
-### Tool `get-pro-subscriptions`
-Get the pro subscriptions for the current Cloud Redis account
+---
+#### Tool: `get-pro-subscriptions`
+|Description|
+|-|
+|Get the pro subscriptions for the current Cloud Redis account|
 
-### Tool `get-task-by-id`
-Get a task by ID for the current Cloud Redis account
+#### Tool: `get-task-by-id`
+|Description|
+|-|
+|Get a task by ID for the current Cloud Redis account|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `taskId`|`string`|Task ID
 
-### Tool `get-tasks`
-Get the current tasks for the current Cloud Redis account
+---
+#### Tool: `get-tasks`
+|Description|
+|-|
+|Get the current tasks for the current Cloud Redis account|
 
 ## Use this MCP Server
 

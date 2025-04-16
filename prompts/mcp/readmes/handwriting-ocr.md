@@ -1,10 +1,11 @@
-# handwriting-ocr MCP Server
+# Handwriting-ocr MCP Server
 
 Model Context Protocol (MCP) Server for Handwriting OCR 
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[Handwriting-OCR](https://github.com/Handwriting-OCR)
@@ -13,37 +14,49 @@ Model Context Protocol (MCP) Server for Handwriting OCR
 **Docker Image built by**|Docker Inc.
 **Licence**|
 
-## Summary
-1. `check_status` Check the status of a document
-1. `get_text` Retrieve the transcribed text from a document
-1. `upload_document` Upload a document to Handwriting OCR API for transcription
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`check_status`|Check the status of a document|
+`get_text`|Retrieve the transcribed text from a document|
+`upload_document`|Upload a document to Handwriting OCR API for transcription|
 
-## Tools
+---
+## Tools Details
 
-### Tool `check_status`
-Check the status of a document
+#### Tool: `check_status`
+|Description|
+|-|
+|Check the status of a document|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Document ID
 
-### Tool `get_text`
-Retrieve the transcribed text from a document
+---
+#### Tool: `get_text`
+|Description|
+|-|
+|Retrieve the transcribed text from a document|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Document ID
 
-### Tool `upload_document`
-Upload a document to Handwriting OCR API for transcription
+---
+#### Tool: `upload_document`
+|Description|
+|-|
+|Upload a document to Handwriting OCR API for transcription|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `file`|`string`|Path to the document (PDF, JPG, PNG, etc.)
 `delete_after`|`integer` *optional*|Seconds until auto-deletion (optional)
 `extractor_id`|`string` *optional*|Extractor ID (required if action is extractor, will be ignored)
 `prompt_id`|`string` *optional*|Prompt ID (requires Enterprise subscription, will be ignored)
 
+---
 ## Use this MCP Server
 
 ```json

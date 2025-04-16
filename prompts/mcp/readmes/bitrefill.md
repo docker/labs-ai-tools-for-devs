@@ -1,10 +1,11 @@
-# bitrefill MCP Server
+# Bitrefill MCP Server
 
 A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[bitrefill](https://github.com/bitrefill)
@@ -13,93 +14,125 @@ A Model Context Protocol Server connector for Bitrefill public API, to enable AI
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `categories` Get the full product type/categories map.
-1. `create_invoice` Create a new invoice for purchasing products with various payment methods
-1. `detail` Get detailed information about a product
-1. `get_account_balance` Retrieve your account balance
-1. `get_invoice` Retrieve details for a specific invoice by ID
-1. `get_invoices` Retrieve a list of invoices with optional filtering
-1. `get_order` Retrieve details for a specific order by ID
-1. `get_orders` Retrieve a list of orders with optional filtering
-1. `pay_invoice` Pay an unpaid invoice (only works with 'balance' payment method)
-1. `ping` Check if the Bitrefill API is available
-1. `search` Search for gift cards, esims, mobile topups and more.
-1. `unseal_order` Reveal codes and PINs for a specific order by ID
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`categories`|Get the full product type/categories map.|
+`create_invoice`|Create a new invoice for purchasing products with various payment methods|
+`detail`|Get detailed information about a product|
+`get_account_balance`|Retrieve your account balance|
+`get_invoice`|Retrieve details for a specific invoice by ID|
+`get_invoices`|Retrieve a list of invoices with optional filtering|
+`get_order`|Retrieve details for a specific order by ID|
+`get_orders`|Retrieve a list of orders with optional filtering|
+`pay_invoice`|Pay an unpaid invoice (only works with 'balance' payment method)|
+`ping`|Check if the Bitrefill API is available|
+`search`|Search for gift cards, esims, mobile topups and more.|
+`unseal_order`|Reveal codes and PINs for a specific order by ID|
 
-## Tools
+---
+## Tools Details
 
-### Tool `categories`
-Get the full product type/categories map. It's suggested to use this tool to get the categories and then use the `search` tool to search for products in a specific category.
+#### Tool: `categories`
+|Description|
+|-|
+|Get the full product type/categories map. It's suggested to use this tool to get the categories and then use the `search` tool to search for products in a specific category.|
 
-### Tool `create_invoice`
-Create a new invoice for purchasing products with various payment methods
+#### Tool: `create_invoice`
+|Description|
+|-|
+|Create a new invoice for purchasing products with various payment methods|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `payment_method`|`string`|Required payment method. Available methods: balance, lightning, bitcoin, eth_base, usdc_base
 `products`|`array`|Array of products to include in the invoice
 `auto_pay`|`boolean` *optional*|Optional: Automatically pay with balance
 `webhook_url`|`string` *optional*|Optional: URL for webhook notifications
 
-### Tool `detail`
-Get detailed information about a product
+---
+#### Tool: `detail`
+|Description|
+|-|
+|Get detailed information about a product|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique identifier of the product
 
-### Tool `get_account_balance`
-Retrieve your account balance
+---
+#### Tool: `get_account_balance`
+|Description|
+|-|
+|Retrieve your account balance|
 
-### Tool `get_invoice`
-Retrieve details for a specific invoice by ID
+#### Tool: `get_invoice`
+|Description|
+|-|
+|Retrieve details for a specific invoice by ID|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique invoice identifier
 
-### Tool `get_invoices`
-Retrieve a list of invoices with optional filtering
+---
+#### Tool: `get_invoices`
+|Description|
+|-|
+|Retrieve a list of invoices with optional filtering|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `after`|`string` *optional*|Start date for limiting results (Inclusive). Format: YYYY-MM-DD HH:MM:SS
 `before`|`string` *optional*|End date for limiting results (Non-Inclusive). Format: YYYY-MM-DD HH:MM:SS
 `limit`|`integer` *optional*|Maximum number of records. Maximum/Default: 50
 `start`|`integer` *optional*|Start index. Default: 0
 
-### Tool `get_order`
-Retrieve details for a specific order by ID
+---
+#### Tool: `get_order`
+|Description|
+|-|
+|Retrieve details for a specific order by ID|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique order identifier
 
-### Tool `get_orders`
-Retrieve a list of orders with optional filtering
+---
+#### Tool: `get_orders`
+|Description|
+|-|
+|Retrieve a list of orders with optional filtering|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `after`|`string` *optional*|Start date for limiting results (Inclusive). Format: YYYY-MM-DD HH:MM:SS
 `before`|`string` *optional*|End date for limiting results (Non-Inclusive). Format: YYYY-MM-DD HH:MM:SS
 `limit`|`integer` *optional*|Maximum number of records. Maximum/Default: 50
 `start`|`integer` *optional*|Start index. Default: 0
 
-### Tool `pay_invoice`
-Pay an unpaid invoice (only works with 'balance' payment method)
+---
+#### Tool: `pay_invoice`
+|Description|
+|-|
+|Pay an unpaid invoice (only works with 'balance' payment method)|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique invoice identifier
 
-### Tool `ping`
-Check if the Bitrefill API is available
+---
+#### Tool: `ping`
+|Description|
+|-|
+|Check if the Bitrefill API is available|
 
-### Tool `search`
-Search for gift cards, esims, mobile topups and more. It's suggested to use the `categories` tool before searching for products, to have a better understanding of what's available.
+#### Tool: `search`
+|Description|
+|-|
+|Search for gift cards, esims, mobile topups and more. It's suggested to use the `categories` tool before searching for products, to have a better understanding of what's available.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query (e.g., 'Amazon', 'Netflix', 'AT&T' or '*' for all the available products)
 `beta_flags`|`string` *optional*|Beta feature flags
@@ -116,13 +149,17 @@ Parameter|Type|Description
 `skip`|`number` *optional*|Number of results to skip (for pagination)
 `src`|`string` *optional*|Source of the request
 
-### Tool `unseal_order`
-Reveal codes and PINs for a specific order by ID
+---
+#### Tool: `unseal_order`
+|Description|
+|-|
+|Reveal codes and PINs for a specific order by ID|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique order identifier
 
+---
 ## Use this MCP Server
 
 ```json

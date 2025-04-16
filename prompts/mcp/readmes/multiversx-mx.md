@@ -1,10 +1,11 @@
-# multiversx-mx MCP Server
+# Multiversx-mx MCP Server
 
 MCP Server for MultiversX
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[multiversx](https://github.com/multiversx)
@@ -13,128 +14,170 @@ MCP Server for MultiversX
 **Docker Image built by**|Docker Inc.
 **Licence**|Other
 
-## Summary
-1. `create-sft-nft-mesdt-tokens` Create a transaction to issue a semi-fungible token (SFT), or a non-fungible token (NFT), or a MetaESDT token for a collection and send it.
-1. `create-wallet` Create a new wallet and save it as a PEM file.
-1. `get-balance-of-address` Get the balance for a MultiversX address
-1. `get-network` Get the network set in the environment config
-1. `get-tokens-of-address` Get the tokens of an address.
-1. `get-wallet-address` Get the bech32 address of the wallet set in the environment config
-1. `issue-fungible-token` Create a transaction to issue a fungible token and send it.
-1. `issue-meta-esdt-collection` Create a transaction to issue a MetaESDT token collection (MESDT) and send it.
-1. `issue-nft-collection` Create a transaction to issue a non-fungible token collection (NFT) and send it.
-1. `issue-semi-fungible-collection` Create a transaction to issue a semi-fungible collection (SFT) and send it.
-1. `send-egld` Create a move balance transaction and send it.
-1. `send-egld-to-multiple-receivers` Create move balance transactions and send them.
-1. `send-fungible-tokens` Create a fungible token transfer transaction and send it.
-1. `send-sft-nft-meta-tokens` Create a nft, sft or meta esdt transfer transaction and send it.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`create-sft-nft-mesdt-tokens`|Create a transaction to issue a semi-fungible token (SFT), or a non-fungible token (NFT), or a MetaESDT token for a collection and send it.|
+`create-wallet`|Create a new wallet and save it as a PEM file.|
+`get-balance-of-address`|Get the balance for a MultiversX address|
+`get-network`|Get the network set in the environment config|
+`get-tokens-of-address`|Get the tokens of an address.|
+`get-wallet-address`|Get the bech32 address of the wallet set in the environment config|
+`issue-fungible-token`|Create a transaction to issue a fungible token and send it.|
+`issue-meta-esdt-collection`|Create a transaction to issue a MetaESDT token collection (MESDT) and send it.|
+`issue-nft-collection`|Create a transaction to issue a non-fungible token collection (NFT) and send it.|
+`issue-semi-fungible-collection`|Create a transaction to issue a semi-fungible collection (SFT) and send it.|
+`send-egld`|Create a move balance transaction and send it.|
+`send-egld-to-multiple-receivers`|Create move balance transactions and send them.|
+`send-fungible-tokens`|Create a fungible token transfer transaction and send it.|
+`send-sft-nft-meta-tokens`|Create a nft, sft or meta esdt transfer transaction and send it.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `create-sft-nft-mesdt-tokens`
-Create a transaction to issue a semi-fungible token (SFT), or a non-fungible token (NFT), or a MetaESDT token for a collection and send it.
-Please also specify the initial quantity and the royalties.
+#### Tool: `create-sft-nft-mesdt-tokens`
+|Description|
+|-|
+|Create a transaction to issue a semi-fungible token (SFT), or a non-fungible token (NFT), or a MetaESDT token for a collection and send it.
+Please also specify the initial quantity and the royalties.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `initialQuantity`|`string`|The initial quantity(number of tokens) that will be minted. If not provided, defaults to 1.
 `name`|`string`|The name of the token.
 `tokenIdentifier`|`string`|The identifier of the collection.
 `royalties`|`string` *optional*|The royalties you'll receive.
 
-### Tool `create-wallet`
-Create a new wallet and save it as a PEM file. PEM file ARE NOT SECURE. If a wallet already exists, will abort operation.
+---
+#### Tool: `create-wallet`
+|Description|
+|-|
+|Create a new wallet and save it as a PEM file. PEM file ARE NOT SECURE. If a wallet already exists, will abort operation.|
 
-### Tool `get-balance-of-address`
-Get the balance for a MultiversX address
+#### Tool: `get-balance-of-address`
+|Description|
+|-|
+|Get the balance for a MultiversX address|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `address`|`string`|The bech32 representation of the address
 
-### Tool `get-network`
-Get the network set in the environment config
+---
+#### Tool: `get-network`
+|Description|
+|-|
+|Get the network set in the environment config|
 
-### Tool `get-tokens-of-address`
-Get the tokens of an address. Returns the first 25 fungible tokens and the first 25 NFTs, SFTs and MetaESDT. To get more tokens, specify the number of tokens you want to get. Will return the specified number of fungible tokens and the same number of non-fungible. The returned list will contain twice the number of tokens specified, if tokens are available.
+#### Tool: `get-tokens-of-address`
+|Description|
+|-|
+|Get the tokens of an address. Returns the first 25 fungible tokens and the first 25 NFTs, SFTs and MetaESDT. To get more tokens, specify the number of tokens you want to get. Will return the specified number of fungible tokens and the same number of non-fungible. The returned list will contain twice the number of tokens specified, if tokens are available.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `address`|`string`|The bech32 address of the account (erd1...)
 `size`|`number` *optional*|The number of each token type to be returned. By default, the number is 25.
 
-### Tool `get-wallet-address`
-Get the bech32 address of the wallet set in the environment config
+---
+#### Tool: `get-wallet-address`
+|Description|
+|-|
+|Get the bech32 address of the wallet set in the environment config|
 
-### Tool `issue-fungible-token`
-Create a transaction to issue a fungible token and send it. Will issue the token with the specified arguments. All the properties will be set to true.
+#### Tool: `issue-fungible-token`
+|Description|
+|-|
+|Create a transaction to issue a fungible token and send it. Will issue the token with the specified arguments. All the properties will be set to true.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `initialSupply`|`string`|The initial supply that will be minted.
 `numDecimals`|`string`|The number of decimals the token will have.
 `tokenName`|`string`|The token name.
 `tokenTicker`|`string`|The token ticker.
 
-### Tool `issue-meta-esdt-collection`
-Create a transaction to issue a MetaESDT token collection (MESDT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.
+---
+#### Tool: `issue-meta-esdt-collection`
+|Description|
+|-|
+|Create a transaction to issue a MetaESDT token collection (MESDT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `numDecimals`|`string`|The number of decimals.
 `tokenName`|`string`|The token name.
 `tokenTicker`|`string`|The token ticker.
 
-### Tool `issue-nft-collection`
-Create a transaction to issue a non-fungible token collection (NFT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.
+---
+#### Tool: `issue-nft-collection`
+|Description|
+|-|
+|Create a transaction to issue a non-fungible token collection (NFT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tokenName`|`string`|The token name.
 `tokenTicker`|`string`|The token ticker.
 
-### Tool `issue-semi-fungible-collection`
-Create a transaction to issue a semi-fungible collection (SFT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.
+---
+#### Tool: `issue-semi-fungible-collection`
+|Description|
+|-|
+|Create a transaction to issue a semi-fungible collection (SFT) and send it. Will issue the collection with the specified arguments. All the properties will be set to true.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tokenName`|`string`|The token name.
 `tokenTicker`|`string`|The token ticker.
 
-### Tool `send-egld`
-Create a move balance transaction and send it. Will send EGLD using the wallet set in the env to the specified receiver.
+---
+#### Tool: `send-egld`
+|Description|
+|-|
+|Create a move balance transaction and send it. Will send EGLD using the wallet set in the env to the specified receiver.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `amount`|`string`|The amount of EGLD to send. This amount will then be denominated (1 EGLD=1000000000000000000)
 `receiver`|`string`|The bech32 address of the receiver (erd1...)
 
-### Tool `send-egld-to-multiple-receivers`
-Create move balance transactions and send them. Will send EGLD using the wallet set in the env to each specified receiver.
+---
+#### Tool: `send-egld-to-multiple-receivers`
+|Description|
+|-|
+|Create move balance transactions and send them. Will send EGLD using the wallet set in the env to each specified receiver.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `amount`|`string`|The amount of EGLD to send. This amount will then be denominated (1 EGLD=1000000000000000000)
 `receivers`|`array`|An array of bech32 addresses of the receivers (erd1...)
 
-### Tool `send-fungible-tokens`
-Create a fungible token transfer transaction and send it. Will send the specified token using the wallet set in the env to the specified receiver.
+---
+#### Tool: `send-fungible-tokens`
+|Description|
+|-|
+|Create a fungible token transfer transaction and send it. Will send the specified token using the wallet set in the env to the specified receiver.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `amount`|`string`|The amount to send. This amount will then be denominated.
 `receiver`|`string`|The bech32 address of the receiver (erd1...)
 `token`|`string`|The identifier of the token to send.
 
-### Tool `send-sft-nft-meta-tokens`
-Create a nft, sft or meta esdt transfer transaction and send it. Will send the specified token using the wallet set in the env to the specified receiver.
+---
+#### Tool: `send-sft-nft-meta-tokens`
+|Description|
+|-|
+|Create a nft, sft or meta esdt transfer transaction and send it. Will send the specified token using the wallet set in the env to the specified receiver.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `receiver`|`string`|The bech32 address of the receiver (erd1...)
 `token`|`string`|The extended identifier of the token to send (e.g. NFTEST-123456-0a).
 `amount`|`string` *optional*|The amount of tokens to send. ONLY needed for SFT or Meta-ESDT.
 
+---
 ## Use this MCP Server
 
 ```json

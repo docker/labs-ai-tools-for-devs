@@ -1,10 +1,11 @@
-# youtube_transcript MCP Server
+# Youtube_transcript MCP Server
 
 Retrieves transcripts for given YouTube video URLs
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
@@ -13,19 +14,25 @@ Retrieves transcripts for given YouTube video URLs
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `get_transcript` Retrieves the transcript of a YouTube video.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`get_transcript`|Retrieves the transcript of a YouTube video.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `get_transcript`
-Retrieves the transcript of a YouTube video.
+#### Tool: `get_transcript`
+|Description|
+|-|
+|Retrieves the transcript of a YouTube video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL of the YouTube video
 `lang`|`string` *optional*|The preferred language for the transcript
 
+---
 ## Use this MCP Server
 
 ```json

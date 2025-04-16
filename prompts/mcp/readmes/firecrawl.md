@@ -1,10 +1,11 @@
-# firecrawl MCP Server
+# Firecrawl MCP Server
 
 Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[mendableai](https://github.com/mendableai)
@@ -13,46 +14,60 @@ Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `firecrawl_batch_scrape` Scrape multiple URLs in batch mode.
-1. `firecrawl_check_batch_status` Check the status of a batch scraping job.
-1. `firecrawl_check_crawl_status` Check the status of a crawl job.
-1. `firecrawl_crawl` Start an asynchronous crawl of multiple pages from a starting URL.
-1. `firecrawl_deep_research` Conduct deep research on a query using web crawling, search, and AI analysis.
-1. `firecrawl_extract` Extract structured information from web pages using LLM.
-1. `firecrawl_generate_llmstxt` Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.
-1. `firecrawl_map` Discover URLs from a starting point.
-1. `firecrawl_scrape` Scrape a single webpage with advanced options for content extraction.
-1. `firecrawl_search` Search and retrieve content from web pages with optional scraping.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`firecrawl_batch_scrape`|Scrape multiple URLs in batch mode.|
+`firecrawl_check_batch_status`|Check the status of a batch scraping job.|
+`firecrawl_check_crawl_status`|Check the status of a crawl job.|
+`firecrawl_crawl`|Start an asynchronous crawl of multiple pages from a starting URL.|
+`firecrawl_deep_research`|Conduct deep research on a query using web crawling, search, and AI analysis.|
+`firecrawl_extract`|Extract structured information from web pages using LLM.|
+`firecrawl_generate_llmstxt`|Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.|
+`firecrawl_map`|Discover URLs from a starting point.|
+`firecrawl_scrape`|Scrape a single webpage with advanced options for content extraction.|
+`firecrawl_search`|Search and retrieve content from web pages with optional scraping.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `firecrawl_batch_scrape`
-Scrape multiple URLs in batch mode. Returns a job ID that can be used to check status.
+#### Tool: `firecrawl_batch_scrape`
+|Description|
+|-|
+|Scrape multiple URLs in batch mode. Returns a job ID that can be used to check status.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to scrape
 `options`|`object` *optional*|
 
-### Tool `firecrawl_check_batch_status`
-Check the status of a batch scraping job.
+---
+#### Tool: `firecrawl_check_batch_status`
+|Description|
+|-|
+|Check the status of a batch scraping job.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Batch job ID to check
 
-### Tool `firecrawl_check_crawl_status`
-Check the status of a crawl job.
+---
+#### Tool: `firecrawl_check_crawl_status`
+|Description|
+|-|
+|Check the status of a crawl job.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|Crawl job ID to check
 
-### Tool `firecrawl_crawl`
-Start an asynchronous crawl of multiple pages from a starting URL. Supports depth control, path filtering, and webhook notifications.
+---
+#### Tool: `firecrawl_crawl`
+|Description|
+|-|
+|Start an asynchronous crawl of multiple pages from a starting URL. Supports depth control, path filtering, and webhook notifications.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|Starting URL for the crawl
 `allowBackwardLinks`|`boolean` *optional*|Allow crawling links that point to parent directories
@@ -67,20 +82,26 @@ Parameter|Type|Description
 `scrapeOptions`|`object` *optional*|Options for scraping each page
 `webhook`|`string` *optional*|
 
-### Tool `firecrawl_deep_research`
-Conduct deep research on a query using web crawling, search, and AI analysis.
+---
+#### Tool: `firecrawl_deep_research`
+|Description|
+|-|
+|Conduct deep research on a query using web crawling, search, and AI analysis.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|The query to research
 `maxDepth`|`number` *optional*|Maximum depth of research iterations (1-10)
 `maxUrls`|`number` *optional*|Maximum number of URLs to analyze (1-1000)
 `timeLimit`|`number` *optional*|Time limit in seconds (30-300)
 
-### Tool `firecrawl_extract`
-Extract structured information from web pages using LLM. Supports both cloud AI and self-hosted LLM extraction.
+---
+#### Tool: `firecrawl_extract`
+|Description|
+|-|
+|Extract structured information from web pages using LLM. Supports both cloud AI and self-hosted LLM extraction.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to extract information from
 `allowExternalLinks`|`boolean` *optional*|Allow extraction from external links
@@ -90,19 +111,25 @@ Parameter|Type|Description
 `schema`|`object` *optional*|JSON schema for structured data extraction
 `systemPrompt`|`string` *optional*|System prompt for LLM extraction
 
-### Tool `firecrawl_generate_llmstxt`
-Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.
+---
+#### Tool: `firecrawl_generate_llmstxt`
+|Description|
+|-|
+|Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL to generate LLMs.txt from
 `maxUrls`|`number` *optional*|Maximum number of URLs to process (1-100, default: 10)
 `showFullText`|`boolean` *optional*|Whether to show the full LLMs-full.txt in the response
 
-### Tool `firecrawl_map`
-Discover URLs from a starting point. Can use both sitemap.xml and HTML link discovery.
+---
+#### Tool: `firecrawl_map`
+|Description|
+|-|
+|Discover URLs from a starting point. Can use both sitemap.xml and HTML link discovery.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|Starting URL for URL discovery
 `ignoreSitemap`|`boolean` *optional*|Skip sitemap.xml discovery and only use HTML links
@@ -111,10 +138,13 @@ Parameter|Type|Description
 `search`|`string` *optional*|Optional search term to filter URLs
 `sitemapOnly`|`boolean` *optional*|Only use sitemap.xml for discovery, ignore HTML links
 
-### Tool `firecrawl_scrape`
-Scrape a single webpage with advanced options for content extraction. Supports various formats including markdown, HTML, and screenshots. Can execute custom actions like clicking or scrolling before scraping.
+---
+#### Tool: `firecrawl_scrape`
+|Description|
+|-|
+|Scrape a single webpage with advanced options for content extraction. Supports various formats including markdown, HTML, and screenshots. Can execute custom actions like clicking or scrolling before scraping.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL to scrape
 `actions`|`array` *optional*|List of actions to perform before scraping
@@ -130,10 +160,13 @@ Parameter|Type|Description
 `timeout`|`number` *optional*|Maximum time in milliseconds to wait for the page to load
 `waitFor`|`number` *optional*|Time in milliseconds to wait for dynamic content to load
 
-### Tool `firecrawl_search`
-Search and retrieve content from web pages with optional scraping. Returns SERP results by default (url, title, description) or full page content when scrapeOptions are provided.
+---
+#### Tool: `firecrawl_search`
+|Description|
+|-|
+|Search and retrieve content from web pages with optional scraping. Returns SERP results by default (url, title, description) or full page content when scrapeOptions are provided.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query string
 `country`|`string` *optional*|Country code for search results (default: us)
@@ -144,6 +177,7 @@ Parameter|Type|Description
 `scrapeOptions`|`object` *optional*|Options for scraping search results
 `tbs`|`string` *optional*|Time-based search filter
 
+---
 ## Use this MCP Server
 
 ```json

@@ -1,10 +1,11 @@
-# slack MCP Server
+# Slack MCP Server
 
 Interact with Slack Workspaces over the Slack API.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,83 +14,110 @@ Interact with Slack Workspaces over the Slack API.
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `slack_add_reaction` Add a reaction emoji to a message
-1. `slack_get_channel_history` Get recent messages from a channel
-1. `slack_get_thread_replies` Get all replies in a message thread
-1. `slack_get_user_profile` Get detailed profile information for a specific user
-1. `slack_get_users` Get a list of all users in the workspace with their basic profile information
-1. `slack_list_channels` List public channels in the workspace with pagination
-1. `slack_post_message` Post a new message to a Slack channel
-1. `slack_reply_to_thread` Reply to a specific message thread in Slack
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`slack_add_reaction`|Add a reaction emoji to a message|
+`slack_get_channel_history`|Get recent messages from a channel|
+`slack_get_thread_replies`|Get all replies in a message thread|
+`slack_get_user_profile`|Get detailed profile information for a specific user|
+`slack_get_users`|Get a list of all users in the workspace with their basic profile information|
+`slack_list_channels`|List public channels in the workspace with pagination|
+`slack_post_message`|Post a new message to a Slack channel|
+`slack_reply_to_thread`|Reply to a specific message thread in Slack|
 
-## Tools
+---
+## Tools Details
 
-### Tool `slack_add_reaction`
-Add a reaction emoji to a message
+#### Tool: `slack_add_reaction`
+|Description|
+|-|
+|Add a reaction emoji to a message|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `channel_id`|`string`|The ID of the channel containing the message
 `reaction`|`string`|The name of the emoji reaction (without ::)
 `timestamp`|`string`|The timestamp of the message to react to
 
-### Tool `slack_get_channel_history`
-Get recent messages from a channel
+---
+#### Tool: `slack_get_channel_history`
+|Description|
+|-|
+|Get recent messages from a channel|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `channel_id`|`string`|The ID of the channel
 `limit`|`number` *optional*|Number of messages to retrieve (default 10)
 
-### Tool `slack_get_thread_replies`
-Get all replies in a message thread
+---
+#### Tool: `slack_get_thread_replies`
+|Description|
+|-|
+|Get all replies in a message thread|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `channel_id`|`string`|The ID of the channel containing the thread
 `thread_ts`|`string`|The timestamp of the parent message in the format '1234567890.123456'. Timestamps in the format without the period can be converted by adding the period such that 6 numbers come after it.
 
-### Tool `slack_get_user_profile`
-Get detailed profile information for a specific user
+---
+#### Tool: `slack_get_user_profile`
+|Description|
+|-|
+|Get detailed profile information for a specific user|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user_id`|`string`|The ID of the user
 
-### Tool `slack_get_users`
-Get a list of all users in the workspace with their basic profile information
+---
+#### Tool: `slack_get_users`
+|Description|
+|-|
+|Get a list of all users in the workspace with their basic profile information|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `cursor`|`string` *optional*|Pagination cursor for next page of results
 `limit`|`number` *optional*|Maximum number of users to return (default 100, max 200)
 
-### Tool `slack_list_channels`
-List public channels in the workspace with pagination
+---
+#### Tool: `slack_list_channels`
+|Description|
+|-|
+|List public channels in the workspace with pagination|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `cursor`|`string` *optional*|Pagination cursor for next page of results
 `limit`|`number` *optional*|Maximum number of channels to return (default 100, max 200)
 
-### Tool `slack_post_message`
-Post a new message to a Slack channel
+---
+#### Tool: `slack_post_message`
+|Description|
+|-|
+|Post a new message to a Slack channel|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `channel_id`|`string`|The ID of the channel to post to
 `text`|`string`|The message text to post
 
-### Tool `slack_reply_to_thread`
-Reply to a specific message thread in Slack
+---
+#### Tool: `slack_reply_to_thread`
+|Description|
+|-|
+|Reply to a specific message thread in Slack|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `channel_id`|`string`|The ID of the channel containing the thread
 `text`|`string`|The reply text
 `thread_ts`|`string`|The timestamp of the parent message in the format '1234567890.123456'. Timestamps in the format without the period can be converted by adding the period such that 6 numbers come after it.
 
+---
 ## Use this MCP Server
 
 ```json

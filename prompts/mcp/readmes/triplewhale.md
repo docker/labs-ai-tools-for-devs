@@ -1,10 +1,11 @@
-# triplewhale MCP Server
+# Triplewhale MCP Server
 
 Triplewhale MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[Triple-Whale](https://github.com/Triple-Whale)
@@ -13,14 +14,19 @@ Triplewhale MCP Server
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `moby` <background>
-  moby tool helps users access e-commerce performance data.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`moby`|<background>
+  moby tool helps users access e-commerce performance data.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `moby`
-<background>
+#### Tool: `moby`
+|Description|
+|-|
+|<background>
   moby tool helps users access e-commerce performance data.
   the tool prompts the user to enter their **shopId**, which is then used for tool as input, shopId is must for this tool.
 
@@ -170,12 +176,13 @@ components:
 - For other errors, respond with: "Something went wrong. Please try again later."
 
 If the API return 401 it means the API key is invalid, this means the api ket doesn't have access to the shop so just say that api key is expired or doesn't have access to the shop.
-  </error_handling>
+  </error_handling>|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
+---
 ## Use this MCP Server
 
 ```json

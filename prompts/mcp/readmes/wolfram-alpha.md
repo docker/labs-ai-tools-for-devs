@@ -1,10 +1,11 @@
-# wolfram-alpha MCP Server
+# Wolfram-alpha MCP Server
 
 Connect your chat repl to wolfram alpha computational intelligence
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[SecretiveShell](https://github.com/SecretiveShell)
@@ -13,18 +14,24 @@ Connect your chat repl to wolfram alpha computational intelligence
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `query-wolfram-alpha` Use Wolfram Alpha to answer a question.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`query-wolfram-alpha`|Use Wolfram Alpha to answer a question.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `query-wolfram-alpha`
-Use Wolfram Alpha to answer a question. This tool should be used when you need complex math or symbolic intelligence.
+#### Tool: `query-wolfram-alpha`
+|Description|
+|-|
+|Use Wolfram Alpha to answer a question. This tool should be used when you need complex math or symbolic intelligence.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|
 
+---
 ## Use this MCP Server
 
 ```json

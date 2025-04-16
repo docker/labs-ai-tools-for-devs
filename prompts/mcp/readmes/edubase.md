@@ -1,10 +1,11 @@
-# edubase MCP Server
+# Edubase MCP Server
 
 The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP).
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[EduBase](https://github.com/EduBase)
@@ -13,909 +14,1202 @@ The EduBase MCP server enables Claude and other LLMs to interact with EduBase's 
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `edubase_delete_class_members` Remove user(s) from a class.
-1. `edubase_delete_class_permission` Remove a user permission from a class.
-1. `edubase_delete_class_tag` Remove a tag attachment from a class.
-1. `edubase_delete_course_permission` Remove a user permission from a course.
-1. `edubase_delete_course_tag` Remove a tag attachment from a course.
-1. `edubase_delete_event_permission` Remove a user permission from an event.
-1. `edubase_delete_event_tag` Remove a tag attachment from an event.
-1. `edubase_delete_exam` Remove/archive exam.
-1. `edubase_delete_exam_permission` Remove a user permission from an exam.
-1. `edubase_delete_exam_tag` Remove a tag attachment from an exam.
-1. `edubase_delete_exam_users` Remove user(s) from an exam.
-1. `edubase_delete_integration_permission` Remove a user permission from an integration.
-1. `edubase_delete_integration_tag` Remove a tag attachment from an integration.
-1. `edubase_delete_organization_members` Remove user(s) from an organization.
-1. `edubase_delete_organization_permission` Remove a user permission from an organization.
-1. `edubase_delete_organization_tag` Remove a tag attachment from an organization.
-1. `edubase_delete_question` Permanently delete a Quiz question.
-1. `edubase_delete_quiz` Remove/archive Quiz set.
-1. `edubase_delete_quiz_permission` Remove a user permission from a quiz.
-1. `edubase_delete_quiz_questions` Remove question(s) from a Quiz set, or one of its question group.
-1. `edubase_delete_quiz_tag` Remove a tag attachment from a Quiz.
-1. `edubase_delete_scorm_permission` Remove a user permission from a SCORM learning material.
-1. `edubase_delete_scorm_tag` Remove a tag attachment from a SCORM learning material.
-1. `edubase_delete_tag_permission` Remove a user permission from a tag.
-1. `edubase_delete_user` Delete user.
-1. `edubase_delete_user_assume` Revoke assume token.
-1. `edubase_delete_user_classes` Remove user from class(es).
-1. `edubase_delete_user_login` Delete a previously generated login link.
-1. `edubase_delete_user_organizations` Remove user from organization(s).
-1. `edubase_delete_video_permission` Remove a user permission from a video.
-1. `edubase_delete_video_tag` Remove a tag attachment from a video.
-1. `edubase_get_class` Get/check class.
-1. `edubase_get_class_assignments` List all assignments in a class.
-1. `edubase_get_class_members` List all members in a class.
-1. `edubase_get_class_permission` Check if a user has permission on a class.
-1. `edubase_get_class_tag` Check if tag is attached to a class.
-1. `edubase_get_class_tags` List all attached tags of a class.
-1. `edubase_get_classes` List owned and managed classes.
-1. `edubase_get_course_permission` Check if a user has permission on a course.
-1. `edubase_get_course_tag` Check if tag is attached to a course.
-1. `edubase_get_course_tags` List all attached tags of a course.
-1. `edubase_get_event_permission` Check if a user has permission on an event.
-1. `edubase_get_event_tag` Check if tag is attached to an event.
-1. `edubase_get_event_tags` List all attached tags of an event.
-1. `edubase_get_exam` Get/check exam.
-1. `edubase_get_exam_permission` Check if a user has permission on an exam.
-1. `edubase_get_exam_results_raw` Get raw results for a specific exam.
-1. `edubase_get_exam_results_user` Get user results for a specific exam.
-1. `edubase_get_exam_tag` Check if tag is attached to an exam.
-1. `edubase_get_exam_tags` List all attached tags of an exam.
-1. `edubase_get_exam_users` List all users on an exam.
-1. `edubase_get_exams` List owned and managed exams.
-1. `edubase_get_integration_permission` Check if a user has permission on an integration.
-1. `edubase_get_integration_tag` Check if tag is attached to an integration.
-1. `edubase_get_integration_tags` List all attached tags of an integration.
-1. `edubase_get_organization` Get/check organization.
-1. `edubase_get_organization_members` List all members in an organization.
-1. `edubase_get_organization_permission` Check if a user has permission on an organization.
-1. `edubase_get_organization_tag` Check if tag is attached to an organization.
-1. `edubase_get_organization_tags` List all attached tags of an organization.
-1. `edubase_get_organizations` List owned and managed organizations.
-1. `edubase_get_question` Check existing question.
-1. `edubase_get_quiz` Get/check Quiz set.
-1. `edubase_get_quiz_permission` Check if a user has permission on a quiz.
-1. `edubase_get_quiz_play_results` Get detailed results for a specific Quiz play.
-1. `edubase_get_quiz_questions` List all questions and question groups in a Quiz set.
-1. `edubase_get_quiz_results_user` Get user results for a specific Quiz set.
-1. `edubase_get_quiz_tag` Check if tag is attached to a Quiz.
-1. `edubase_get_quiz_tags` List all attached tags of a Quiz.
-1. `edubase_get_quizes` List owned and managed Quiz sets.
-1. `edubase_get_scorm_permission` Check if a user has permission on a SCORM learning material.
-1. `edubase_get_scorm_tag` Check if tag is attached to a SCORM learning material.
-1. `edubase_get_scorm_tags` List all attached tags of a SCORM learning material.
-1. `edubase_get_tag` Get/check tag.
-1. `edubase_get_tag_permission` Check if a user has permission on a tag.
-1. `edubase_get_tags` List owned and managed tags.
-1. `edubase_get_user` Get/check user.
-1. `edubase_get_user_classes` List all classes a user is member of.
-1. `edubase_get_user_group` Get user's group.
-1. `edubase_get_user_login` Get latest valid login link for user.
-1. `edubase_get_user_name` Get user's name.
-1. `edubase_get_user_organizations` List all organizations a user is member of.
-1. `edubase_get_user_search` Lookup user by email, username or code.
-1. `edubase_get_users` List managed, non-generated users.
-1. `edubase_get_video_permission` Check if a user has permission on a video.
-1. `edubase_get_video_tag` Check if tag is attached to a video.
-1. `edubase_get_video_tags` List all attached tags of a video.
-1. `edubase_post_class_members` Assign user(s) to a class.
-1. `edubase_post_class_permission` Create new permission for a user on a class.
-1. `edubase_post_class_tag` Attach tag to a class.
-1. `edubase_post_classes_members` Assign user(s) to class(es).
-1. `edubase_post_course_permission` Create new permission for a user on a course.
-1. `edubase_post_course_tag` Attach tag to a course.
-1. `edubase_post_custom_metric` Update a custom metric.
-1. `edubase_post_event_permission` Create new permission for a user on an event.
-1. `edubase_post_event_tag` Attach tag to an event.
-1. `edubase_post_exam` Create a new exam from an existing Quiz set.
-1. `edubase_post_exam_permission` Create new permission for a user on an exam.
-1. `edubase_post_exam_summary` Submit a new AI exam summary.
-1. `edubase_post_exam_tag` Attach tag to an exam.
-1. `edubase_post_exam_users` Assign user(s) to an exam.
-1. `edubase_post_integration_permission` Create new permission for a user on an integration.
-1. `edubase_post_integration_tag` Attach tag to an integration.
-1. `edubase_post_organization_members` Assign user(s) to an organization.
-1. `edubase_post_organization_permission` Create new permission for a user on an organization.
-1. `edubase_post_organization_tag` Attach tag to an organization.
-1. `edubase_post_organizations_members` Assign user(s) to organization(s).
-1. `edubase_post_question` Publish or update a question.
-1. `edubase_post_quiz` Create a new Quiz set.
-1. `edubase_post_quiz_permission` Create new permission for a user on a quiz.
-1. `edubase_post_quiz_questions` Assign question(s) to a Quiz set, or one of its question group.
-1. `edubase_post_quiz_tag` Attach tag to a Quiz.
-1. `edubase_post_scorm_permission` Create new permission for a user on a SCORM learning material.
-1. `edubase_post_scorm_tag` Attach tag to a SCORM learning material.
-1. `edubase_post_tag_permission` Create new permission for a user on a tag.
-1. `edubase_post_user` Create new EduBase user account.
-1. `edubase_post_user_assume` Assume user for next requests with assume token.
-1. `edubase_post_user_classes` Assign user to class(es).
-1. `edubase_post_user_group` Update a user's group.
-1. `edubase_post_user_login` Generate login link.
-1. `edubase_post_user_name` Update a user's name.
-1. `edubase_post_user_organizations` Assign user to organization(s).
-1. `edubase_post_video_permission` Create new permission for a user on a video.
-1. `edubase_post_video_tag` Attach tag to a video.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`edubase_delete_class_members`|Remove user(s) from a class.|
+`edubase_delete_class_permission`|Remove a user permission from a class.|
+`edubase_delete_class_tag`|Remove a tag attachment from a class.|
+`edubase_delete_course_permission`|Remove a user permission from a course.|
+`edubase_delete_course_tag`|Remove a tag attachment from a course.|
+`edubase_delete_event_permission`|Remove a user permission from an event.|
+`edubase_delete_event_tag`|Remove a tag attachment from an event.|
+`edubase_delete_exam`|Remove/archive exam.|
+`edubase_delete_exam_permission`|Remove a user permission from an exam.|
+`edubase_delete_exam_tag`|Remove a tag attachment from an exam.|
+`edubase_delete_exam_users`|Remove user(s) from an exam.|
+`edubase_delete_integration_permission`|Remove a user permission from an integration.|
+`edubase_delete_integration_tag`|Remove a tag attachment from an integration.|
+`edubase_delete_organization_members`|Remove user(s) from an organization.|
+`edubase_delete_organization_permission`|Remove a user permission from an organization.|
+`edubase_delete_organization_tag`|Remove a tag attachment from an organization.|
+`edubase_delete_question`|Permanently delete a Quiz question.|
+`edubase_delete_quiz`|Remove/archive Quiz set.|
+`edubase_delete_quiz_permission`|Remove a user permission from a quiz.|
+`edubase_delete_quiz_questions`|Remove question(s) from a Quiz set, or one of its question group.|
+`edubase_delete_quiz_tag`|Remove a tag attachment from a Quiz.|
+`edubase_delete_scorm_permission`|Remove a user permission from a SCORM learning material.|
+`edubase_delete_scorm_tag`|Remove a tag attachment from a SCORM learning material.|
+`edubase_delete_tag_permission`|Remove a user permission from a tag.|
+`edubase_delete_user`|Delete user.|
+`edubase_delete_user_assume`|Revoke assume token.|
+`edubase_delete_user_classes`|Remove user from class(es).|
+`edubase_delete_user_login`|Delete a previously generated login link.|
+`edubase_delete_user_organizations`|Remove user from organization(s).|
+`edubase_delete_video_permission`|Remove a user permission from a video.|
+`edubase_delete_video_tag`|Remove a tag attachment from a video.|
+`edubase_get_class`|Get/check class.|
+`edubase_get_class_assignments`|List all assignments in a class.|
+`edubase_get_class_members`|List all members in a class.|
+`edubase_get_class_permission`|Check if a user has permission on a class.|
+`edubase_get_class_tag`|Check if tag is attached to a class.|
+`edubase_get_class_tags`|List all attached tags of a class.|
+`edubase_get_classes`|List owned and managed classes.|
+`edubase_get_course_permission`|Check if a user has permission on a course.|
+`edubase_get_course_tag`|Check if tag is attached to a course.|
+`edubase_get_course_tags`|List all attached tags of a course.|
+`edubase_get_event_permission`|Check if a user has permission on an event.|
+`edubase_get_event_tag`|Check if tag is attached to an event.|
+`edubase_get_event_tags`|List all attached tags of an event.|
+`edubase_get_exam`|Get/check exam.|
+`edubase_get_exam_permission`|Check if a user has permission on an exam.|
+`edubase_get_exam_results_raw`|Get raw results for a specific exam.|
+`edubase_get_exam_results_user`|Get user results for a specific exam.|
+`edubase_get_exam_tag`|Check if tag is attached to an exam.|
+`edubase_get_exam_tags`|List all attached tags of an exam.|
+`edubase_get_exam_users`|List all users on an exam.|
+`edubase_get_exams`|List owned and managed exams.|
+`edubase_get_integration_permission`|Check if a user has permission on an integration.|
+`edubase_get_integration_tag`|Check if tag is attached to an integration.|
+`edubase_get_integration_tags`|List all attached tags of an integration.|
+`edubase_get_organization`|Get/check organization.|
+`edubase_get_organization_members`|List all members in an organization.|
+`edubase_get_organization_permission`|Check if a user has permission on an organization.|
+`edubase_get_organization_tag`|Check if tag is attached to an organization.|
+`edubase_get_organization_tags`|List all attached tags of an organization.|
+`edubase_get_organizations`|List owned and managed organizations.|
+`edubase_get_question`|Check existing question.|
+`edubase_get_quiz`|Get/check Quiz set.|
+`edubase_get_quiz_permission`|Check if a user has permission on a quiz.|
+`edubase_get_quiz_play_results`|Get detailed results for a specific Quiz play.|
+`edubase_get_quiz_questions`|List all questions and question groups in a Quiz set.|
+`edubase_get_quiz_results_user`|Get user results for a specific Quiz set.|
+`edubase_get_quiz_tag`|Check if tag is attached to a Quiz.|
+`edubase_get_quiz_tags`|List all attached tags of a Quiz.|
+`edubase_get_quizes`|List owned and managed Quiz sets.|
+`edubase_get_scorm_permission`|Check if a user has permission on a SCORM learning material.|
+`edubase_get_scorm_tag`|Check if tag is attached to a SCORM learning material.|
+`edubase_get_scorm_tags`|List all attached tags of a SCORM learning material.|
+`edubase_get_tag`|Get/check tag.|
+`edubase_get_tag_permission`|Check if a user has permission on a tag.|
+`edubase_get_tags`|List owned and managed tags.|
+`edubase_get_user`|Get/check user.|
+`edubase_get_user_classes`|List all classes a user is member of.|
+`edubase_get_user_group`|Get user's group.|
+`edubase_get_user_login`|Get latest valid login link for user.|
+`edubase_get_user_name`|Get user's name.|
+`edubase_get_user_organizations`|List all organizations a user is member of.|
+`edubase_get_user_search`|Lookup user by email, username or code.|
+`edubase_get_users`|List managed, non-generated users.|
+`edubase_get_video_permission`|Check if a user has permission on a video.|
+`edubase_get_video_tag`|Check if tag is attached to a video.|
+`edubase_get_video_tags`|List all attached tags of a video.|
+`edubase_post_class_members`|Assign user(s) to a class.|
+`edubase_post_class_permission`|Create new permission for a user on a class.|
+`edubase_post_class_tag`|Attach tag to a class.|
+`edubase_post_classes_members`|Assign user(s) to class(es).|
+`edubase_post_course_permission`|Create new permission for a user on a course.|
+`edubase_post_course_tag`|Attach tag to a course.|
+`edubase_post_custom_metric`|Update a custom metric.|
+`edubase_post_event_permission`|Create new permission for a user on an event.|
+`edubase_post_event_tag`|Attach tag to an event.|
+`edubase_post_exam`|Create a new exam from an existing Quiz set.|
+`edubase_post_exam_permission`|Create new permission for a user on an exam.|
+`edubase_post_exam_summary`|Submit a new AI exam summary.|
+`edubase_post_exam_tag`|Attach tag to an exam.|
+`edubase_post_exam_users`|Assign user(s) to an exam.|
+`edubase_post_integration_permission`|Create new permission for a user on an integration.|
+`edubase_post_integration_tag`|Attach tag to an integration.|
+`edubase_post_organization_members`|Assign user(s) to an organization.|
+`edubase_post_organization_permission`|Create new permission for a user on an organization.|
+`edubase_post_organization_tag`|Attach tag to an organization.|
+`edubase_post_organizations_members`|Assign user(s) to organization(s).|
+`edubase_post_question`|Publish or update a question.|
+`edubase_post_quiz`|Create a new Quiz set.|
+`edubase_post_quiz_permission`|Create new permission for a user on a quiz.|
+`edubase_post_quiz_questions`|Assign question(s) to a Quiz set, or one of its question group.|
+`edubase_post_quiz_tag`|Attach tag to a Quiz.|
+`edubase_post_scorm_permission`|Create new permission for a user on a SCORM learning material.|
+`edubase_post_scorm_tag`|Attach tag to a SCORM learning material.|
+`edubase_post_tag_permission`|Create new permission for a user on a tag.|
+`edubase_post_user`|Create new EduBase user account.|
+`edubase_post_user_assume`|Assume user for next requests with assume token.|
+`edubase_post_user_classes`|Assign user to class(es).|
+`edubase_post_user_group`|Update a user's group.|
+`edubase_post_user_login`|Generate login link.|
+`edubase_post_user_name`|Update a user's name.|
+`edubase_post_user_organizations`|Assign user to organization(s).|
+`edubase_post_video_permission`|Create new permission for a user on a video.|
+`edubase_post_video_tag`|Attach tag to a video.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `edubase_delete_class_members`
-Remove user(s) from a class.
+#### Tool: `edubase_delete_class_members`
+|Description|
+|-|
+|Remove user(s) from a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `users`|`string`|comma-separated list of user identification strings
 
-### Tool `edubase_delete_class_permission`
-Remove a user permission from a class.
+---
+#### Tool: `edubase_delete_class_permission`
+|Description|
+|-|
+|Remove a user permission from a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_class_tag`
-Remove a tag attachment from a class.
+---
+#### Tool: `edubase_delete_class_tag`
+|Description|
+|-|
+|Remove a tag attachment from a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_course_permission`
-Remove a user permission from a course.
+---
+#### Tool: `edubase_delete_course_permission`
+|Description|
+|-|
+|Remove a user permission from a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_course_tag`
-Remove a tag attachment from a course.
+---
+#### Tool: `edubase_delete_course_tag`
+|Description|
+|-|
+|Remove a tag attachment from a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_event_permission`
-Remove a user permission from an event.
+---
+#### Tool: `edubase_delete_event_permission`
+|Description|
+|-|
+|Remove a user permission from an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `permission`|`string`|permission level (view / control / modify / finances / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_event_tag`
-Remove a tag attachment from an event.
+---
+#### Tool: `edubase_delete_event_tag`
+|Description|
+|-|
+|Remove a tag attachment from an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_exam`
-Remove/archive exam.
+---
+#### Tool: `edubase_delete_exam`
+|Description|
+|-|
+|Remove/archive exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 
-### Tool `edubase_delete_exam_permission`
-Remove a user permission from an exam.
+---
+#### Tool: `edubase_delete_exam_permission`
+|Description|
+|-|
+|Remove a user permission from an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_exam_tag`
-Remove a tag attachment from an exam.
+---
+#### Tool: `edubase_delete_exam_tag`
+|Description|
+|-|
+|Remove a tag attachment from an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_exam_users`
-Remove user(s) from an exam.
+---
+#### Tool: `edubase_delete_exam_users`
+|Description|
+|-|
+|Remove user(s) from an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `users`|`string`|comma-separated list of user identification strings
 
-### Tool `edubase_delete_integration_permission`
-Remove a user permission from an integration.
+---
+#### Tool: `edubase_delete_integration_permission`
+|Description|
+|-|
+|Remove a user permission from an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_integration_tag`
-Remove a tag attachment from an integration.
+---
+#### Tool: `edubase_delete_integration_tag`
+|Description|
+|-|
+|Remove a tag attachment from an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_organization_members`
-Remove user(s) from an organization.
+---
+#### Tool: `edubase_delete_organization_members`
+|Description|
+|-|
+|Remove user(s) from an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `users`|`string`|comma-separated list of user identification strings
 
-### Tool `edubase_delete_organization_permission`
-Remove a user permission from an organization.
+---
+#### Tool: `edubase_delete_organization_permission`
+|Description|
+|-|
+|Remove a user permission from an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_organization_tag`
-Remove a tag attachment from an organization.
+---
+#### Tool: `edubase_delete_organization_tag`
+|Description|
+|-|
+|Remove a tag attachment from an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_question`
-Permanently delete a Quiz question.
+---
+#### Tool: `edubase_delete_question`
+|Description|
+|-|
+|Permanently delete a Quiz question.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|external unique question identifier
 
-### Tool `edubase_delete_quiz`
-Remove/archive Quiz set.
+---
+#### Tool: `edubase_delete_quiz`
+|Description|
+|-|
+|Remove/archive Quiz set.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 
-### Tool `edubase_delete_quiz_permission`
-Remove a user permission from a quiz.
+---
+#### Tool: `edubase_delete_quiz_permission`
+|Description|
+|-|
+|Remove a user permission from a quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `quiz`|`string`|quiz identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_quiz_questions`
-Remove question(s) from a Quiz set, or one of its question group.
+---
+#### Tool: `edubase_delete_quiz_questions`
+|Description|
+|-|
+|Remove question(s) from a Quiz set, or one of its question group.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `questions`|`string`|comma-separated list of question identification strings
 `quiz`|`string`|quiz identification string
 `group`|`string` *optional*|question group title
 
-### Tool `edubase_delete_quiz_tag`
-Remove a tag attachment from a Quiz.
+---
+#### Tool: `edubase_delete_quiz_tag`
+|Description|
+|-|
+|Remove a tag attachment from a Quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_scorm_permission`
-Remove a user permission from a SCORM learning material.
+---
+#### Tool: `edubase_delete_scorm_permission`
+|Description|
+|-|
+|Remove a user permission from a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `scorm`|`string`|SCORM identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_scorm_tag`
-Remove a tag attachment from a SCORM learning material.
+---
+#### Tool: `edubase_delete_scorm_tag`
+|Description|
+|-|
+|Remove a tag attachment from a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `scorm`|`string`|SCORM identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_delete_tag_permission`
-Remove a user permission from a tag.
+---
+#### Tool: `edubase_delete_tag_permission`
+|Description|
+|-|
+|Remove a user permission from a tag.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `tag`|`string`|tag identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_user`
-Delete user.
+---
+#### Tool: `edubase_delete_user`
+|Description|
+|-|
+|Delete user.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_user_assume`
-Revoke assume token.
+---
+#### Tool: `edubase_delete_user_assume`
+|Description|
+|-|
+|Revoke assume token.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `token`|`string`|assume token
 
-### Tool `edubase_delete_user_classes`
-Remove user from class(es).
+---
+#### Tool: `edubase_delete_user_classes`
+|Description|
+|-|
+|Remove user from class(es).|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `classes`|`string`|comma-separated list of class identification strings
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_user_login`
-Delete a previously generated login link.
+---
+#### Tool: `edubase_delete_user_login`
+|Description|
+|-|
+|Delete a previously generated login link.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|generated login link to be invalidated
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_user_organizations`
-Remove user from organization(s).
+---
+#### Tool: `edubase_delete_user_organizations`
+|Description|
+|-|
+|Remove user from organization(s).|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organizations`|`string`|comma-separated list of organization identification strings
 `user`|`string`|user identification string
 
-### Tool `edubase_delete_video_permission`
-Remove a user permission from a video.
+---
+#### Tool: `edubase_delete_video_permission`
+|Description|
+|-|
+|Remove a user permission from a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 `video`|`string`|video identification string
 
-### Tool `edubase_delete_video_tag`
-Remove a tag attachment from a video.
+---
+#### Tool: `edubase_delete_video_tag`
+|Description|
+|-|
+|Remove a tag attachment from a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tag`|`string`|tag identification string
 `video`|`string`|video identification string
 
-### Tool `edubase_get_class`
-Get/check class.
+---
+#### Tool: `edubase_get_class`
+|Description|
+|-|
+|Get/check class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 
-### Tool `edubase_get_class_assignments`
-List all assignments in a class.
+---
+#### Tool: `edubase_get_class_assignments`
+|Description|
+|-|
+|List all assignments in a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 
-### Tool `edubase_get_class_members`
-List all members in a class.
+---
+#### Tool: `edubase_get_class_members`
+|Description|
+|-|
+|List all members in a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 
-### Tool `edubase_get_class_permission`
-Check if a user has permission on a class.
+---
+#### Tool: `edubase_get_class_permission`
+|Description|
+|-|
+|Check if a user has permission on a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_class_tag`
-Check if tag is attached to a class.
+---
+#### Tool: `edubase_get_class_tag`
+|Description|
+|-|
+|Check if tag is attached to a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_class_tags`
-List all attached tags of a class.
+---
+#### Tool: `edubase_get_class_tags`
+|Description|
+|-|
+|List all attached tags of a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 
-### Tool `edubase_get_classes`
-List owned and managed classes.
+---
+#### Tool: `edubase_get_classes`
+|Description|
+|-|
+|List owned and managed classes.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_course_permission`
-Check if a user has permission on a course.
+---
+#### Tool: `edubase_get_course_permission`
+|Description|
+|-|
+|Check if a user has permission on a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_course_tag`
-Check if tag is attached to a course.
+---
+#### Tool: `edubase_get_course_tag`
+|Description|
+|-|
+|Check if tag is attached to a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_course_tags`
-List all attached tags of a course.
+---
+#### Tool: `edubase_get_course_tags`
+|Description|
+|-|
+|List all attached tags of a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 
-### Tool `edubase_get_event_permission`
-Check if a user has permission on an event.
+---
+#### Tool: `edubase_get_event_permission`
+|Description|
+|-|
+|Check if a user has permission on an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `permission`|`string`|permission level (view / control / modify / finances / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_event_tag`
-Check if tag is attached to an event.
+---
+#### Tool: `edubase_get_event_tag`
+|Description|
+|-|
+|Check if tag is attached to an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_event_tags`
-List all attached tags of an event.
+---
+#### Tool: `edubase_get_event_tags`
+|Description|
+|-|
+|List all attached tags of an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 
-### Tool `edubase_get_exam`
-Get/check exam.
+---
+#### Tool: `edubase_get_exam`
+|Description|
+|-|
+|Get/check exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 
-### Tool `edubase_get_exam_permission`
-Check if a user has permission on an exam.
+---
+#### Tool: `edubase_get_exam_permission`
+|Description|
+|-|
+|Check if a user has permission on an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_exam_results_raw`
-Get raw results for a specific exam.
+---
+#### Tool: `edubase_get_exam_results_raw`
+|Description|
+|-|
+|Get raw results for a specific exam.
 - This endpoint returns raw results, including all answers given by the user. It is not meant to be displayed to the user.
-- This might require additional permissions.
+- This might require additional permissions.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 
-### Tool `edubase_get_exam_results_user`
-Get user results for a specific exam.
+---
+#### Tool: `edubase_get_exam_results_user`
+|Description|
+|-|
+|Get user results for a specific exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_get_exam_tag`
-Check if tag is attached to an exam.
+---
+#### Tool: `edubase_get_exam_tag`
+|Description|
+|-|
+|Check if tag is attached to an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_exam_tags`
-List all attached tags of an exam.
+---
+#### Tool: `edubase_get_exam_tags`
+|Description|
+|-|
+|List all attached tags of an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 
-### Tool `edubase_get_exam_users`
-List all users on an exam.
+---
+#### Tool: `edubase_get_exam_users`
+|Description|
+|-|
+|List all users on an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 
-### Tool `edubase_get_exams`
-List owned and managed exams. Exams are the highest level in the EduBase Quiz hierarchy, built from Quiz sets.
+---
+#### Tool: `edubase_get_exams`
+|Description|
+|-|
+|List owned and managed exams. Exams are the highest level in the EduBase Quiz hierarchy, built from Quiz sets.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_integration_permission`
-Check if a user has permission on an integration.
+---
+#### Tool: `edubase_get_integration_permission`
+|Description|
+|-|
+|Check if a user has permission on an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_integration_tag`
-Check if tag is attached to an integration.
+---
+#### Tool: `edubase_get_integration_tag`
+|Description|
+|-|
+|Check if tag is attached to an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_integration_tags`
-List all attached tags of an integration.
+---
+#### Tool: `edubase_get_integration_tags`
+|Description|
+|-|
+|List all attached tags of an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 
-### Tool `edubase_get_organization`
-Get/check organization.
+---
+#### Tool: `edubase_get_organization`
+|Description|
+|-|
+|Get/check organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 
-### Tool `edubase_get_organization_members`
-List all members in an organization.
+---
+#### Tool: `edubase_get_organization_members`
+|Description|
+|-|
+|List all members in an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 
-### Tool `edubase_get_organization_permission`
-Check if a user has permission on an organization.
+---
+#### Tool: `edubase_get_organization_permission`
+|Description|
+|-|
+|Check if a user has permission on an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_get_organization_tag`
-Check if tag is attached to an organization.
+---
+#### Tool: `edubase_get_organization_tag`
+|Description|
+|-|
+|Check if tag is attached to an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_organization_tags`
-List all attached tags of an organization.
+---
+#### Tool: `edubase_get_organization_tags`
+|Description|
+|-|
+|List all attached tags of an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 
-### Tool `edubase_get_organizations`
-List owned and managed organizations.
+---
+#### Tool: `edubase_get_organizations`
+|Description|
+|-|
+|List owned and managed organizations.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_question`
-Check existing question. Questions are the lowest level in the EduBase hierarchy, serving as the building blocks for Quiz sets.
+---
+#### Tool: `edubase_get_question`
+|Description|
+|-|
+|Check existing question. Questions are the lowest level in the EduBase hierarchy, serving as the building blocks for Quiz sets.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|external unique question identifier
 
-### Tool `edubase_get_quiz`
-Get/check Quiz set. Containing questions and powering Exams.
+---
+#### Tool: `edubase_get_quiz`
+|Description|
+|-|
+|Get/check Quiz set. Containing questions and powering Exams.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 
-### Tool `edubase_get_quiz_permission`
-Check if a user has permission on a quiz.
+---
+#### Tool: `edubase_get_quiz_permission`
+|Description|
+|-|
+|Check if a user has permission on a quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `quiz`|`string`|quiz identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_get_quiz_play_results`
-Get detailed results for a specific Quiz play.
+---
+#### Tool: `edubase_get_quiz_play_results`
+|Description|
+|-|
+|Get detailed results for a specific Quiz play.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `play`|`string`|Quiz play identification string
 
-### Tool `edubase_get_quiz_questions`
-List all questions and question groups in a Quiz set. Quiz sets contain questions (lowest level) and can be used by exams (highest level).
+---
+#### Tool: `edubase_get_quiz_questions`
+|Description|
+|-|
+|List all questions and question groups in a Quiz set. Quiz sets contain questions (lowest level) and can be used by exams (highest level).|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 
-### Tool `edubase_get_quiz_results_user`
-Get user results for a specific Quiz set.
+---
+#### Tool: `edubase_get_quiz_results_user`
+|Description|
+|-|
+|Get user results for a specific Quiz set.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|Quiz set identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_get_quiz_tag`
-Check if tag is attached to a Quiz.
+---
+#### Tool: `edubase_get_quiz_tag`
+|Description|
+|-|
+|Check if tag is attached to a Quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_quiz_tags`
-List all attached tags of a Quiz.
+---
+#### Tool: `edubase_get_quiz_tags`
+|Description|
+|-|
+|List all attached tags of a Quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 
-### Tool `edubase_get_quizes`
-List owned and managed Quiz sets. Quiz sets are named collections of questions that sit at the middle level of the EduBase Quiz hierarchy.
+---
+#### Tool: `edubase_get_quizes`
+|Description|
+|-|
+|List owned and managed Quiz sets. Quiz sets are named collections of questions that sit at the middle level of the EduBase Quiz hierarchy.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_scorm_permission`
-Check if a user has permission on a SCORM learning material.
+---
+#### Tool: `edubase_get_scorm_permission`
+|Description|
+|-|
+|Check if a user has permission on a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `scorm`|`string`|SCORM identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_get_scorm_tag`
-Check if tag is attached to a SCORM learning material.
+---
+#### Tool: `edubase_get_scorm_tag`
+|Description|
+|-|
+|Check if tag is attached to a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `scorm`|`string`|SCORM identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_scorm_tags`
-List all attached tags of a SCORM learning material.
+---
+#### Tool: `edubase_get_scorm_tags`
+|Description|
+|-|
+|List all attached tags of a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `scorm`|`string`|SCORM identification string
 
-### Tool `edubase_get_tag`
-Get/check tag.
+---
+#### Tool: `edubase_get_tag`
+|Description|
+|-|
+|Get/check tag.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tag`|`string`|tag identification string
 
-### Tool `edubase_get_tag_permission`
-Check if a user has permission on a tag.
+---
+#### Tool: `edubase_get_tag_permission`
+|Description|
+|-|
+|Check if a user has permission on a tag.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `tag`|`string`|tag identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_get_tags`
-List owned and managed tags.
+---
+#### Tool: `edubase_get_tags`
+|Description|
+|-|
+|List owned and managed tags.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_user`
-Get/check user. Can be used to retrieve the caller user's ID by using 'me' as the user identification string.
+---
+#### Tool: `edubase_get_user`
+|Description|
+|-|
+|Get/check user. Can be used to retrieve the caller user's ID by using 'me' as the user identification string.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|User identification string.
 - Use 'me' to get the current user.
 
-### Tool `edubase_get_user_classes`
-List all classes a user is member of.
+---
+#### Tool: `edubase_get_user_classes`
+|Description|
+|-|
+|List all classes a user is member of.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_get_user_group`
-Get user's group.
+---
+#### Tool: `edubase_get_user_group`
+|Description|
+|-|
+|Get user's group.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_get_user_login`
-Get latest valid login link for user.
+---
+#### Tool: `edubase_get_user_login`
+|Description|
+|-|
+|Get latest valid login link for user.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_get_user_name`
-Get user's name.
+---
+#### Tool: `edubase_get_user_name`
+|Description|
+|-|
+|Get user's name.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_get_user_organizations`
-List all organizations a user is member of.
+---
+#### Tool: `edubase_get_user_organizations`
+|Description|
+|-|
+|List all organizations a user is member of.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 
-### Tool `edubase_get_user_search`
-Lookup user by email, username or code.
+---
+#### Tool: `edubase_get_user_search`
+|Description|
+|-|
+|Lookup user by email, username or code.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|query string
 
-### Tool `edubase_get_users`
-List managed, non-generated users.
+---
+#### Tool: `edubase_get_users`
+|Description|
+|-|
+|List managed, non-generated users.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`number` *optional*|limit number of results (default, in search mode: 16)
 `page`|`number` *optional*|page number (default: 1), not used in search mode!
 `search`|`string` *optional*|search string to filter results
 
-### Tool `edubase_get_video_permission`
-Check if a user has permission on a video.
+---
+#### Tool: `edubase_get_video_permission`
+|Description|
+|-|
+|Check if a user has permission on a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 `video`|`string`|video identification string
 
-### Tool `edubase_get_video_tag`
-Check if tag is attached to a video.
+---
+#### Tool: `edubase_get_video_tag`
+|Description|
+|-|
+|Check if tag is attached to a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tag`|`string`|tag identification string
 `video`|`string`|video identification string
 
-### Tool `edubase_get_video_tags`
-List all attached tags of a video.
+---
+#### Tool: `edubase_get_video_tags`
+|Description|
+|-|
+|List all attached tags of a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `video`|`string`|video identification string
 
-### Tool `edubase_post_class_members`
-Assign user(s) to a class. Updates memberships if already member of the class.
+---
+#### Tool: `edubase_post_class_members`
+|Description|
+|-|
+|Assign user(s) to a class. Updates memberships if already member of the class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `users`|`string`|comma-separated list of user identification strings
 `expires`|`string` *optional*|expiry in days or YYYY-MM-DD HH:ii:ss
 `notify`|`boolean` *optional*|notify users (default: false)
 
-### Tool `edubase_post_class_permission`
-Create new permission for a user on a class.
+---
+#### Tool: `edubase_post_class_permission`
+|Description|
+|-|
+|Create new permission for a user on a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_class_tag`
-Attach tag to a class.
+---
+#### Tool: `edubase_post_class_tag`
+|Description|
+|-|
+|Attach tag to a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `class`|`string`|class identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_classes_members`
-Assign user(s) to class(es). Updates memberships if already member of a class.
+---
+#### Tool: `edubase_post_classes_members`
+|Description|
+|-|
+|Assign user(s) to class(es). Updates memberships if already member of a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `classes`|`string`|comma-separated list of class identification strings
 `users`|`string`|comma-separated list of user identification strings
 `expires`|`string` *optional*|expiry in days or YYYY-MM-DD HH:ii:ss
 `notify`|`boolean` *optional*|notify users (default: false)
 
-### Tool `edubase_post_course_permission`
-Create new permission for a user on a course.
+---
+#### Tool: `edubase_post_course_permission`
+|Description|
+|-|
+|Create new permission for a user on a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_course_tag`
-Attach tag to a course.
+---
+#### Tool: `edubase_post_course_tag`
+|Description|
+|-|
+|Attach tag to a course.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `course`|`string`|course identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_custom_metric`
-Update a custom metric.
+---
+#### Tool: `edubase_post_custom_metric`
+|Description|
+|-|
+|Update a custom metric.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `metric`|`string`|metric name
 `value`|`number`|target value (also accepts increments with a + prefix)
 
-### Tool `edubase_post_event_permission`
-Create new permission for a user on an event.
+---
+#### Tool: `edubase_post_event_permission`
+|Description|
+|-|
+|Create new permission for a user on an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `permission`|`string`|permission level (view / control / modify / finances / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_event_tag`
-Attach tag to an event.
+---
+#### Tool: `edubase_post_event_tag`
+|Description|
+|-|
+|Attach tag to an event.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `event`|`string`|event identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_exam`
-Create a new exam from an existing Quiz set. Exams are at the top level of the EduBase Quiz hierarchy and MUST be created from existing Quiz sets. They are time-constrained, secured assessment instances of Quiz sets.
+---
+#### Tool: `edubase_post_exam`
+|Description|
+|-|
+|Create a new exam from an existing Quiz set. Exams are at the top level of the EduBase Quiz hierarchy and MUST be created from existing Quiz sets. They are time-constrained, secured assessment instances of Quiz sets.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `close`|`string`|exam end time (in YYYY-mm-dd HH:ii:ss format)
 `open`|`string`|exam start time (in YYYY-mm-dd HH:ii:ss format)
@@ -928,19 +1222,25 @@ Parameter|Type|Description
 - homework: homework assignment, can be paused and continued during the exam period
 - survey: survey (optionally anonymous) with no grading
 
-### Tool `edubase_post_exam_permission`
-Create new permission for a user on an exam.
+---
+#### Tool: `edubase_post_exam_permission`
+|Description|
+|-|
+|Create new permission for a user on an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_exam_summary`
-Submit a new AI exam summary.
+---
+#### Tool: `edubase_post_exam_summary`
+|Description|
+|-|
+|Submit a new AI exam summary.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `llm`|`string`|Name of the Large Language Model used to generate the summary.
@@ -954,43 +1254,58 @@ Parameter|Type|Description
 - ai: AI-generated summary
 `language`|`string` *optional*|summary language
 
-### Tool `edubase_post_exam_tag`
-Attach tag to an exam.
+---
+#### Tool: `edubase_post_exam_tag`
+|Description|
+|-|
+|Attach tag to an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_exam_users`
-Assign user(s) to an exam.
+---
+#### Tool: `edubase_post_exam_users`
+|Description|
+|-|
+|Assign user(s) to an exam.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `exam`|`string`|exam identification string
 `users`|`string`|comma-separated list of user identification strings
 
-### Tool `edubase_post_integration_permission`
-Create new permission for a user on an integration.
+---
+#### Tool: `edubase_post_integration_permission`
+|Description|
+|-|
+|Create new permission for a user on an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_integration_tag`
-Attach tag to an integration.
+---
+#### Tool: `edubase_post_integration_tag`
+|Description|
+|-|
+|Attach tag to an integration.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `integration`|`string`|integration identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_organization_members`
-Assign user(s) to an organization. Updates memberships if already member of the organization.
+---
+#### Tool: `edubase_post_organization_members`
+|Description|
+|-|
+|Assign user(s) to an organization. Updates memberships if already member of the organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `users`|`string`|comma-separated list of user identification strings
@@ -999,27 +1314,36 @@ Parameter|Type|Description
 `permission_content`|`string` *optional*|optional permission level to contents in organization (none / view / control / modify / grant / admin) (default: none)
 `permission_organization`|`string` *optional*|optional permission level to organization (member / teacher / supervisor / admin) (default: member)
 
-### Tool `edubase_post_organization_permission`
-Create new permission for a user on an organization.
+---
+#### Tool: `edubase_post_organization_permission`
+|Description|
+|-|
+|Create new permission for a user on an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 
-### Tool `edubase_post_organization_tag`
-Attach tag to an organization.
+---
+#### Tool: `edubase_post_organization_tag`
+|Description|
+|-|
+|Attach tag to an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organization`|`string`|organization identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_organizations_members`
-Assign user(s) to organization(s). Updates memberships if already member of an organization.
+---
+#### Tool: `edubase_post_organizations_members`
+|Description|
+|-|
+|Assign user(s) to organization(s). Updates memberships if already member of an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organizations`|`string`|comma-separated list of organization identification strings
 `users`|`string`|comma-separated list of user identification strings
@@ -1028,10 +1352,13 @@ Parameter|Type|Description
 `permission_content`|`string` *optional*|optional permission level to contents in organization (none / view / control / modify / grant / admin) (default: none)
 `permission_organization`|`string` *optional*|optional permission level to organization (member / teacher / supervisor / admin) (default: member)
 
-### Tool `edubase_post_question`
-Publish or update a question. Questions are the atomic building blocks of the EduBase Quiz system and represent the lowest level in the hierarchy (Questions -> Quiz sets -> Exams).
+---
+#### Tool: `edubase_post_question`
+|Description|
+|-|
+|Publish or update a question. Questions are the atomic building blocks of the EduBase Quiz system and represent the lowest level in the hierarchy (Questions -> Quiz sets -> Exams).|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `ai`|`string`|Flag to mark question as AI generated.
 - If set to any value, question will be marked as AI generated
@@ -1711,10 +2038,13 @@ truefalse_third_options_label=Not enough information
 `video_penalty`|`string` *optional*|Similar to HINT_PENALTY
 Point deduction for video assistance used (NONE, ONCE:N%) (default: NONE)
 
-### Tool `edubase_post_quiz`
-Create a new Quiz set. Quiz sets are collections of questions that can be used for practice or to power multiple Exams.
+---
+#### Tool: `edubase_post_quiz`
+|Description|
+|-|
+|Create a new Quiz set. Quiz sets are collections of questions that can be used for practice or to power multiple Exams.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `title`|`string`|title of the Quiz set
 `description`|`string` *optional*|short description
@@ -1729,62 +2059,83 @@ Parameter|Type|Description
 - private: for private purposes (e.g testing)
 
 
-### Tool `edubase_post_quiz_permission`
-Create new permission for a user on a quiz.
+---
+#### Tool: `edubase_post_quiz_permission`
+|Description|
+|-|
+|Create new permission for a user on a quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `quiz`|`string`|quiz identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_post_quiz_questions`
-Assign question(s) to a Quiz set, or one of its question group. Questions can exist independently from Quiz sets.
+---
+#### Tool: `edubase_post_quiz_questions`
+|Description|
+|-|
+|Assign question(s) to a Quiz set, or one of its question group. Questions can exist independently from Quiz sets.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `questions`|`string`|comma-separated list of question identification strings
 `quiz`|`string`|quiz identification string
 `group`|`string` *optional*|question group title
 
-### Tool `edubase_post_quiz_tag`
-Attach tag to a Quiz.
+---
+#### Tool: `edubase_post_quiz_tag`
+|Description|
+|-|
+|Attach tag to a Quiz.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `quiz`|`string`|quiz identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_scorm_permission`
-Create new permission for a user on a SCORM learning material.
+---
+#### Tool: `edubase_post_scorm_permission`
+|Description|
+|-|
+|Create new permission for a user on a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `scorm`|`string`|SCORM identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_post_scorm_tag`
-Attach tag to a SCORM learning material.
+---
+#### Tool: `edubase_post_scorm_tag`
+|Description|
+|-|
+|Attach tag to a SCORM learning material.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `scorm`|`string`|SCORM identification string
 `tag`|`string`|tag identification string
 
-### Tool `edubase_post_tag_permission`
-Create new permission for a user on a tag.
+---
+#### Tool: `edubase_post_tag_permission`
+|Description|
+|-|
+|Create new permission for a user on a tag.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `tag`|`string`|tag identification string
 `user`|`string`|user identification string
 
-### Tool `edubase_post_user`
-Create new EduBase user account.
+---
+#### Tool: `edubase_post_user`
+|Description|
+|-|
+|Create new EduBase user account.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `email`|`string`|valid email address
 `first_name`|`string`|first name (1-64 characters)
@@ -1805,36 +2156,48 @@ Parameter|Type|Description
 `template`|`string` *optional*|a template ID for the new account (default: none)
 `timezone`|`string` *optional*|desired timezone (default: API application owner's timezone)
 
-### Tool `edubase_post_user_assume`
-Assume user for next requests with assume token.
+---
+#### Tool: `edubase_post_user_assume`
+|Description|
+|-|
+|Assume user for next requests with assume token.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string, username or email address
 `password`|`string` *optional*|password or user secret
 
-### Tool `edubase_post_user_classes`
-Assign user to class(es). Updates membership if already member of a class.
+---
+#### Tool: `edubase_post_user_classes`
+|Description|
+|-|
+|Assign user to class(es). Updates membership if already member of a class.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `classes`|`string`|comma-separated list of class identification strings
 `user`|`string`|user identification string
 `expires`|`string` *optional*|expiry in days or YYYY-MM-DD HH:ii:ss
 `notify`|`boolean` *optional*|notify user (default: false)
 
-### Tool `edubase_post_user_group`
-Update a user's group.
+---
+#### Tool: `edubase_post_user_group`
+|Description|
+|-|
+|Update a user's group.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `group`|`string`|user group code
 `user`|`string`|user identification string
 
-### Tool `edubase_post_user_login`
-Generate login link. If a valid link with the same settings exists, it will be returned instead of creating a new one.
+---
+#### Tool: `edubase_post_user_login`
+|Description|
+|-|
+|Generate login link. If a valid link with the same settings exists, it will be returned instead of creating a new one.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user`|`string`|user identification string
 `expires`|`string` *optional*|expiry in days (1-30) or YYYY-MM-DD (default: 1 day)
@@ -1843,10 +2206,13 @@ Parameter|Type|Description
 `short`|`boolean` *optional*|generate shortened (eduba.se) link (only if feature is enabled on EduBase) (default: false)
 `template`|`string` *optional*|a template ID for the login link
 
-### Tool `edubase_post_user_name`
-Update a user's name.
+---
+#### Tool: `edubase_post_user_name`
+|Description|
+|-|
+|Update a user's name.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `first_name`|`string`|first name (1-64 characters)
 `last_name`|`string`|last name (1-64 characters)
@@ -1854,10 +2220,13 @@ Parameter|Type|Description
 `display_name`|`string` *optional*|display name (1-255 characters)
 `full_name`|`string` *optional*|full name (1-255 characters)
 
-### Tool `edubase_post_user_organizations`
-Assign user to organization(s). Updates membership if already member of an organization.
+---
+#### Tool: `edubase_post_user_organizations`
+|Description|
+|-|
+|Assign user to organization(s). Updates membership if already member of an organization.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `organizations`|`string`|comma-separated list of organization identification strings
 `user`|`string`|user identification string
@@ -1866,23 +2235,30 @@ Parameter|Type|Description
 `permission_content`|`string` *optional*|optional permission level to contents in organization (none / view / control / modify / grant / admin) (default: none)
 `permission_organization`|`string` *optional*|optional permission level to organization (member / teacher / supervisor / admin) (default: member)
 
-### Tool `edubase_post_video_permission`
-Create new permission for a user on a video.
+---
+#### Tool: `edubase_post_video_permission`
+|Description|
+|-|
+|Create new permission for a user on a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `permission`|`string`|permission level (view / control / modify / grant / admin)
 `user`|`string`|user identification string
 `video`|`string`|video identification string
 
-### Tool `edubase_post_video_tag`
-Attach tag to a video.
+---
+#### Tool: `edubase_post_video_tag`
+|Description|
+|-|
+|Attach tag to a video.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `tag`|`string`|tag identification string
 `video`|`string`|video identification string
 
+---
 ## Use this MCP Server
 
 ```json

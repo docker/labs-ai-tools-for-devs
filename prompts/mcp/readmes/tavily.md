@@ -1,10 +1,11 @@
-# tavily MCP Server
+# Tavily MCP Server
 
 The Tavily MCP server provides seamless interaction with the tavily-search and tavily-extract tools, real-time web search capabilities through the tavily-search tool and Intelligent data extraction from web pages via the tavily-extract tool.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[tavily-ai](https://github.com/tavily-ai)
@@ -13,25 +14,33 @@ The Tavily MCP server provides seamless interaction with the tavily-search and t
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `tavily-extract` A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.
-1. `tavily-search` A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`tavily-extract`|A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.|
+`tavily-search`|A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `tavily-extract`
-A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.
+#### Tool: `tavily-extract`
+|Description|
+|-|
+|A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to extract content from
 `extract_depth`|`string` *optional*|Depth of extraction - 'basic' or 'advanced', if usrls are linkedin use 'advanced' or if explicitly told to use advanced
 `include_images`|`boolean` *optional*|Include a list of images extracted from the urls in the response
 
-### Tool `tavily-search`
-A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine. Returns relevant web content with customizable parameters for result count, content type, and domain filtering. Ideal for gathering current information, news, and detailed web content analysis.
+---
+#### Tool: `tavily-search`
+|Description|
+|-|
+|A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine. Returns relevant web content with customizable parameters for result count, content type, and domain filtering. Ideal for gathering current information, news, and detailed web content analysis.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query
 `days`|`number` *optional*|The number of days back from the current date to include in the search results. This specifies the time frame of data to be retrieved. Please note that this feature is only available when using the 'news' search topic
@@ -45,6 +54,7 @@ Parameter|Type|Description
 `time_range`|`string` *optional*|The time range back from the current date to include in the search results. This feature is available for both 'general' and 'news' search topics
 `topic`|`string` *optional*|The category of the search. This will determine which of our agents will be used for the search
 
+---
 ## Use this MCP Server
 
 ```json
