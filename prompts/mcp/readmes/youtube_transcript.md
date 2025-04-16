@@ -8,8 +8,8 @@ Retrieves transcripts for given YouTube video URLs
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
-**Repository**|https://github.com/slimslenderslacks/mcp-youtube-transcript
+|**Author**|[jkawamoto](https://github.com/jkawamoto)
+**Repository**|https://github.com/jkawamoto/mcp-youtube-transcript
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-youtube-transcript/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License

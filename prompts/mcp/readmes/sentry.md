@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sentry/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 

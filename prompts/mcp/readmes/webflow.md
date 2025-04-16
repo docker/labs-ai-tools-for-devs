@@ -8,8 +8,8 @@ Model Context Protocol (MCP) server for the Webflow Data API.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
-**Repository**|https://github.com/slimslenderslacks/mcp-server
+|**Author**|[webflow](https://github.com/webflow)
+**Repository**|https://github.com/webflow/mcp-server
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-server/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License

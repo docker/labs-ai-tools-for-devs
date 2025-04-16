@@ -10,7 +10,7 @@ Attribute|Details|
 **Image Source**|Official Image
 |**Author**|[stripe](https://github.com/stripe)
 **Repository**|https://github.com/stripe/agent-toolkit
-**Dockerfile**|https://github.com/stripe/agent-toolkit/blob/main/Dockerfile
+**Dockerfile**|https://github.com/stripe/agent-toolkit/blob/main/modelcontextprotocol/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 

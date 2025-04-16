@@ -8,8 +8,8 @@ MCP server that interacts with Obsidian via the Obsidian rest API community plug
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
-**Repository**|https://github.com/slimslenderslacks/mcp-obsidian
+|**Author**|[MarkusPfundstein](https://github.com/MarkusPfundstein)
+**Repository**|https://github.com/MarkusPfundstein/mcp-obsidian
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-obsidian/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License

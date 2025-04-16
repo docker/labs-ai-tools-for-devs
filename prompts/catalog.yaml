@@ -83,7 +83,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/stripe.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/stripe.md
     source: https://github.com/stripe/agent-toolkit/tree/main/modelcontextprotocol
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/stripe.svg
+    icon: https://avatars.githubusercontent.com/u/856813?s=200&v=4
     tools:
       - name: create_customer
       - name: create_invoice
@@ -108,7 +108,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/brave.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: brave_local_search
       - name: brave_web_search
@@ -121,7 +121,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/slack.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/slack.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: slack_add_reaction
       - name: slack_get_channel_history
@@ -151,7 +151,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: add_issue_comment
       - name: create_branch
@@ -188,7 +188,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/google-maps.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/google-maps.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/google.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: maps_directions
       - name: maps_distance_matrix
@@ -299,7 +299,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/puppeteer.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/puppeteer.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: puppeteer_click
       - name: puppeteer_evaluate
@@ -396,7 +396,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/notion.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/notion.md
     source: https://github.com/makenotion/notion-mcp-server/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/notion.svg
+    icon: https://avatars.githubusercontent.com/u/4792552?s=200&v=4
     tools:
       - name: API-create-a-comment
       - name: API-create-a-database
@@ -524,7 +524,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/aws-kb-retrieval-server.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/amazonaws.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: retrieve_from_aws_kb
     secrets:
@@ -550,7 +550,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sentry.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/sentry
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sentry.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: get_sentry_issue
     secrets:
@@ -562,7 +562,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gitlab.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gitlab.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/gitlab.svg
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: create_branch
       - name: create_issue
@@ -656,7 +656,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    icon: https://avatars.githubusercontent.com/u/9919?s=200&v=4
     tools:
       - name: add_issue_comment
       - name: create_branch
@@ -1054,7 +1054,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elasticsearch.md
     source: https://github.com/elastic/mcp-server-elasticsearch/tree/refs/pull/37/merge
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/elasticsearch.svg
+    icon: https://avatars.githubusercontent.com/u/6764390?s=200&v=4
     tools:
       - name: get_mappings
       - name: get_shards
@@ -1145,7 +1145,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
     source: https://github.com/heroku/heroku-mcp-server/tree/refs/pull/24/merge
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/heroku.svg
+    icon: https://avatars.githubusercontent.com/u/23211?s=200&v=4
     tools:
       - name: create_addon
       - name: create_app
@@ -1270,7 +1270,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kagisearch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kagisearch.md
     source: https://github.com/kagisearch/kagimcp/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kagi.svg
+    icon: https://avatars.githubusercontent.com/u/92134518?s=200&v=4
     tools:
       - name: kagi_search_fetch
       - name: kagi_summarizer
@@ -1458,7 +1458,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/perplexity-ask.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
     source: https://github.com/ppl-ai/modelcontextprotocol/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/perplexity.svg
+    icon: https://avatars.githubusercontent.com/u/110299016?s=200&v=4
     tools:
       - name: perplexity_ask
       - name: perplexity_reason
@@ -1472,7 +1472,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis-cloud.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis-cloud.md
     source: https://github.com/redis/mcp-redis-cloud/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/1529926?s=200&v=4
     tools:
       - name: create-essential-subscription
       - name: create-pro-database
@@ -1526,7 +1526,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/shopify.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/shopify.md
     source: https://github.com/Shopify/dev-mcp/tree/refs/pull/7/merge
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/shopify.svg
+    icon: https://avatars.githubusercontent.com/u/8085?s=200&v=4
     tools:
       - name: introspect_admin_schema
       - name: search_dev_docs
@@ -1880,7 +1880,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/webflow.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/webflow.md
     source: https://github.com/slimslenderslacks/mcp-server/tree/slim/docker
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/webflow.svg
+    icon: https://avatars.githubusercontent.com/u/1229663?s=200&v=4
     tools:
       - name: collection_fields_create_option
       - name: collection_fields_create_reference
