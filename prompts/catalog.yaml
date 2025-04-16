@@ -254,6 +254,7 @@ registry:
       - name: create_deployment
       - name: create_namespace
       - name: create_pod
+      - name: create_service
       - name: delete_cronjob
       - name: delete_deployment
       - name: delete_namespace
@@ -262,11 +263,13 @@ registry:
       - name: describe_deployment
       - name: describe_pod
       - name: explain_resource
+      - name: get_current_context
       - name: get_events
       - name: get_job_logs
       - name: get_logs
       - name: install_helm_chart
       - name: list_api_resources
+      - name: list_contexts
       - name: list_cronjobs
       - name: list_deployments
       - name: list_jobs
@@ -276,8 +279,10 @@ registry:
       - name: list_services
       - name: port_forward
       - name: scale_deployment
+      - name: set_current_context
       - name: stop_port_forward
       - name: uninstall_helm_chart
+      - name: update_deployment
       - name: upgrade_helm_chart
     prompts: 0
     resources: {}
@@ -444,6 +449,7 @@ registry:
       - name: jira_add_worklog
       - name: jira_batch_create_issues
       - name: jira_create_issue
+      - name: jira_create_issue_link
       - name: jira_delete_issue
       - name: jira_download_attachments
       - name: jira_get_agile_boards
@@ -456,6 +462,7 @@ registry:
       - name: jira_get_transitions
       - name: jira_get_worklog
       - name: jira_link_to_epic
+      - name: jira_remove_issue_link
       - name: jira_search
       - name: jira_transition_issue
       - name: jira_update_issue
@@ -717,6 +724,7 @@ registry:
       - name: list_single_group
       - name: remove_wallets_from_group
       - name: rename_wallets
+      - name: send_key_to_telegram
       - name: stake_quote
       - name: stake_transaction
       - name: swap_quote
@@ -1609,15 +1617,13 @@ registry:
     source: https://github.com/wonderwhy-er/DesktopCommanderMCP/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
-      - name: block_command
       - name: create_directory
       - name: edit_block
       - name: execute_command
       - name: force_terminate
+      - name: get_config
       - name: get_file_info
       - name: kill_process
-      - name: list_allowed_directories
-      - name: list_blocked_commands
       - name: list_directory
       - name: list_processes
       - name: list_sessions
@@ -1627,7 +1633,7 @@ registry:
       - name: read_output
       - name: search_code
       - name: search_files
-      - name: unblock_command
+      - name: set_config_value
       - name: write_file
     prompts: 0
     resources: {}
