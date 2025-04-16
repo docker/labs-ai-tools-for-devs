@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/iaptic:latest
+      workdir: /app
       secrets:
         iaptic.api_key: IAPTIC_API_KEY
       environment:

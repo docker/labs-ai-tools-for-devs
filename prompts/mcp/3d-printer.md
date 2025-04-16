@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/3d-printer:latest
+      workdir: /app
       secrets:
         3d-printer-server.token: BAMBU_TOKEN
       environment:

@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/tembo:latest
+      workdir: /app
       secrets:
         tembo.api_token: TEMBO_API_KEY
     source:

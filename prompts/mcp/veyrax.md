@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/veyrax:latest
+      workdir: /app
       secrets:
         veyrax.api_key: VEYRAX_API_KEY
     source:

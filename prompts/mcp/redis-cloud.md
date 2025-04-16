@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/redis-cloud:latest
+      workdir: /app
       secrets:
         redis-cloud.api_key: API_KEY
         redis-cloud.secret_key: SECRET_KEY
