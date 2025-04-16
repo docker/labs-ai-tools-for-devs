@@ -4,7 +4,7 @@ import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
-import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
+import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
@@ -233,15 +233,23 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
     const updateSecretsMutation = useMutation({
         mutationFn: async (secret: { name: string, value: string }) => {
             try {
-                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
-                return secret;
-            } catch (error) {
+                if (secret.value === UNASSIGNED_SECRET_PLACEHOLDER) {
+                    await Secrets.deleteSecret(client, secret.name);
+                } else {
+                    await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
+                }
+            }
+            catch (error) {
                 client.desktopUI.toast.error('Failed to update secret: ' + error);
                 throw error;
             }
         },
         onSuccess: () => {
             refetchSecrets();
+        },
+        onError: (error) => {
+            client.desktopUI.toast.error('Failed to update secret: ' + error);
+            throw error;
         }
     });
 
@@ -275,7 +283,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                         }
                     }
 
-                    newRegistry[item.name] = { ref: item.ref, config: itemConfig };
+                    newRegistry[item.name] = { ref: item.ref, config: { [item.name]: itemConfig } };
                 }
 
                 const payload = escapeJSONForPlatformShell({
@@ -394,7 +402,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         // Perform deep comparison to prevent unnecessary syncs
         const needsSync = Object.keys(registryItems).some(key => {
             return registryItems[key].config &&
-                (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
+                (!config[key] || JSON.stringify(registryItems[key].config[key]) !== JSON.stringify(config[key]));
         });
 
         if (needsSync) {

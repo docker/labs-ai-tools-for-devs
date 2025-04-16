@@ -16,3 +16,7 @@ export const CATALOG_LAYOUT_SX = {
     width: '90vw',
     maxWidth: '1200px',
 }
+
+
+export const ASSIGNED_SECRET_PLACEHOLDER = '********';
+export const UNASSIGNED_SECRET_PLACEHOLDER = 'UNASSIGNED';
