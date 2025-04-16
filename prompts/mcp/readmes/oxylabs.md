@@ -26,11 +26,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `oxylabs_amazon_product_scraper`
-|Description|
-|-|
-|Scrape Amazon Products using Oxylabs Web API|
-
+#### Tool: **`oxylabs_amazon_product_scraper`**
+Scrape Amazon Products using Oxylabs Web API
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
@@ -44,11 +41,8 @@ Parameters|Type|Description
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
 ---
-#### Tool: `oxylabs_amazon_search_scraper`
-|Description|
-|-|
-|Scrape Amazon Search results using Oxylabs Web API|
-
+#### Tool: **`oxylabs_amazon_search_scraper`**
+Scrape Amazon Search results using Oxylabs Web API
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
@@ -65,11 +59,8 @@ Parameters|Type|Description
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
 ---
-#### Tool: `oxylabs_google_search_scraper`
-|Description|
-|-|
-|Scrape Google Search results using Oxylabs Web API|
-
+#### Tool: **`oxylabs_google_search_scraper`**
+Scrape Google Search results using Oxylabs Web API
 Parameters|Type|Description
 -|-|-
 `query`|`string`|URL-encoded keyword to search for.
@@ -85,11 +76,8 @@ Parameters|Type|Description
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
 ---
-#### Tool: `oxylabs_universal_scraper`
-|Description|
-|-|
-|Scrape url using Oxylabs Web API with universal scraper|
-
+#### Tool: **`oxylabs_universal_scraper`**
+Scrape url using Oxylabs Web API with universal scraper
 Parameters|Type|Description
 -|-|-
 `url`|`string`|Url to scrape with web scraper.
@@ -97,11 +85,8 @@ Parameters|Type|Description
 `render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
 
 ---
-#### Tool: `oxylabs_web_unblocker`
-|Description|
-|-|
-|Scrape url using Oxylabs Web Unblocker|
-
+#### Tool: **`oxylabs_web_unblocker`**
+Scrape url using Oxylabs Web Unblocker
 Parameters|Type|Description
 -|-|-
 `url`|`string`|Url to scrape with web scraper.

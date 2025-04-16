@@ -24,31 +24,22 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `perplexity_ask`
-|Description|
-|-|
-|Engages in a conversation using the Sonar API. Accepts an array of messages (each with a role and content) and returns a ask completion response from the Perplexity model.|
-
+#### Tool: **`perplexity_ask`**
+Engages in a conversation using the Sonar API. Accepts an array of messages (each with a role and content) and returns a ask completion response from the Perplexity model.
 Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages
 
 ---
-#### Tool: `perplexity_reason`
-|Description|
-|-|
-|Performs reasoning tasks using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a well-reasoned response using the sonar-reasoning-pro model.|
-
+#### Tool: **`perplexity_reason`**
+Performs reasoning tasks using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a well-reasoned response using the sonar-reasoning-pro model.
 Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages
 
 ---
-#### Tool: `perplexity_research`
-|Description|
-|-|
-|Performs deep research using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a comprehensive research response with citations.|
-
+#### Tool: **`perplexity_research`**
+Performs deep research using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a comprehensive research response with citations.
 Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages

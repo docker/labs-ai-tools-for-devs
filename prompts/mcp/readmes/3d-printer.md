@@ -36,21 +36,15 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `center_model`
-|Description|
-|-|
-|Translate the model so its geometric center is at the origin (0,0,0).|
-
+#### Tool: **`center_model`**
+Translate the model so its geometric center is at the origin (0,0,0).
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file to center.
 
 ---
-#### Tool: `confirm_temperatures`
-|Description|
-|-|
-|Confirm temperature settings in a G-code file|
-
+#### Tool: **`confirm_temperatures`**
+Confirm temperature settings in a G-code file
 Parameters|Type|Description
 -|-|-
 `gcode_path`|`string`|Path to the G-code file
@@ -58,22 +52,16 @@ Parameters|Type|Description
 `extruder_temp`|`number` *optional*|Expected extruder temperature
 
 ---
-#### Tool: `extend_stl_base`
-|Description|
-|-|
-|Extend the base of an STL file by a specified amount|
-
+#### Tool: **`extend_stl_base`**
+Extend the base of an STL file by a specified amount
 Parameters|Type|Description
 -|-|-
 `extension_inches`|`number`|Amount to extend the base in inches
 `stl_path`|`string`|Path to the STL file to modify
 
 ---
-#### Tool: `generate_stl_visualization`
-|Description|
-|-|
-|Generate an SVG visualization of an STL file from multiple angles|
-
+#### Tool: **`generate_stl_visualization`**
+Generate an SVG visualization of an STL file from multiple angles
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file
@@ -81,11 +69,8 @@ Parameters|Type|Description
 `width`|`number` *optional*|Width of each view in pixels (default: 300)
 
 ---
-#### Tool: `get_printer_status`
-|Description|
-|-|
-|Get the current status of the 3D printer|
-
+#### Tool: **`get_printer_status`**
+Get the current status of the 3D printer
 Parameters|Type|Description
 -|-|-
 `api_key`|`string` *optional*|API key for authentication (default: value from env)
@@ -96,42 +81,30 @@ Parameters|Type|Description
 `type`|`string` *optional*|Type of printer management system (octoprint, klipper, duet, repetier, bambu, prusa, creality) (default: value from env)
 
 ---
-#### Tool: `get_stl_info`
-|Description|
-|-|
-|Get detailed information about an STL file|
-
+#### Tool: **`get_stl_info`**
+Get detailed information about an STL file
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file
 
 ---
-#### Tool: `lay_flat`
-|Description|
-|-|
-|Attempt to rotate the model so its largest flat face lies on the XY plane (Z=0).|
-
+#### Tool: **`lay_flat`**
+Attempt to rotate the model so its largest flat face lies on the XY plane (Z=0).
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file to lay flat.
 
 ---
-#### Tool: `merge_vertices`
-|Description|
-|-|
-|Merge vertices in an STL file that are closer than the specified tolerance.|
-
+#### Tool: **`merge_vertices`**
+Merge vertices in an STL file that are closer than the specified tolerance.
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file to modify.
 `tolerance`|`number` *optional*|Maximum distance between vertices to merge (in mm, default: 0.01).
 
 ---
-#### Tool: `modify_stl_section`
-|Description|
-|-|
-|Apply a specific transformation to a selected section of an STL file|
-
+#### Tool: **`modify_stl_section`**
+Apply a specific transformation to a selected section of an STL file
 Parameters|Type|Description
 -|-|-
 `section`|`string`|Section to modify: 'top', 'bottom', 'center', or custom bounds
@@ -148,11 +121,8 @@ Parameters|Type|Description
 `value_z`|`number` *optional*|Transformation value for Z axis
 
 ---
-#### Tool: `print_3mf`
-|Description|
-|-|
-|Print a 3MF file on a Bambu Lab printer, potentially overriding settings.|
-
+#### Tool: **`print_3mf`**
+Print a 3MF file on a Bambu Lab printer, potentially overriding settings.
 Parameters|Type|Description
 -|-|-
 `three_mf_path`|`string`|Path to the 3MF file to print.
@@ -166,11 +136,8 @@ Parameters|Type|Description
 `support_enabled`|`boolean` *optional*|Override support generation.
 
 ---
-#### Tool: `process_and_print_stl`
-|Description|
-|-|
-|Process an STL file (extend base), slice it, confirm temperatures, and start printing|
-
+#### Tool: **`process_and_print_stl`**
+Process an STL file (extend base), slice it, confirm temperatures, and start printing
 Parameters|Type|Description
 -|-|-
 `extension_inches`|`number`|Amount to extend the base in inches
@@ -183,11 +150,8 @@ Parameters|Type|Description
 `type`|`string` *optional*|Type of printer management system (default: value from env)
 
 ---
-#### Tool: `rotate_stl`
-|Description|
-|-|
-|Rotate an STL model around specific axes|
-
+#### Tool: **`rotate_stl`**
+Rotate an STL model around specific axes
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file
@@ -196,11 +160,8 @@ Parameters|Type|Description
 `rotate_z`|`number` *optional*|Rotation around Z-axis in degrees
 
 ---
-#### Tool: `scale_stl`
-|Description|
-|-|
-|Scale an STL model uniformly or along specific axes|
-
+#### Tool: **`scale_stl`**
+Scale an STL model uniformly or along specific axes
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file
@@ -210,11 +171,8 @@ Parameters|Type|Description
 `scale_z`|`number` *optional*|Z-axis scaling factor (overrides scale_factor for Z axis)
 
 ---
-#### Tool: `slice_stl`
-|Description|
-|-|
-|Slice an STL file to generate G-code|
-
+#### Tool: **`slice_stl`**
+Slice an STL file to generate G-code
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file to slice
@@ -223,11 +181,8 @@ Parameters|Type|Description
 `slicer_type`|`string` *optional*|Type of slicer to use (prusaslicer, cura, slic3r, orcaslicer) (default: value from env)
 
 ---
-#### Tool: `translate_stl`
-|Description|
-|-|
-|Move an STL model along specific axes|
-
+#### Tool: **`translate_stl`**
+Move an STL model along specific axes
 Parameters|Type|Description
 -|-|-
 `stl_path`|`string`|Path to the STL file

@@ -32,11 +32,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create_doc`
-|Description|
-|-|
-|Create a new doc in Dart. You can specify title, text content, and folder.|
-
+#### Tool: **`create_doc`**
+Create a new doc in Dart. You can specify title, text content, and folder.
 Parameters|Type|Description
 -|-|-
 `title`|`string`|The title of the doc (required)
@@ -44,11 +41,8 @@ Parameters|Type|Description
 `text`|`string` *optional*|The text content of the doc, which can include markdown formatting
 
 ---
-#### Tool: `create_task`
-|Description|
-|-|
-|Create a new task in Dart. You can specify title, description, status, priority, size, dates, dartboard, assignees, tags, and parent task.|
-
+#### Tool: **`create_task`**
+Create a new task in Dart. You can specify title, description, status, priority, size, dates, dartboard, assignees, tags, and parent task.
 Parameters|Type|Description
 -|-|-
 `title`|`string`|The title of the task (required)
@@ -65,56 +59,38 @@ Parameters|Type|Description
 `tags`|`array` *optional*|Array of tags to apply to the task
 
 ---
-#### Tool: `delete_doc`
-|Description|
-|-|
-|Move an existing doc to the trash, where it can be recovered if needed. Nothing else about the doc will be changed.|
-
+#### Tool: **`delete_doc`**
+Move an existing doc to the trash, where it can be recovered if needed. Nothing else about the doc will be changed.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
 
 ---
-#### Tool: `delete_task`
-|Description|
-|-|
-|Move an existing task to the trash, where it can be recovered if needed. Nothing else about the task will be changed.|
-
+#### Tool: **`delete_task`**
+Move an existing task to the trash, where it can be recovered if needed. Nothing else about the task will be changed.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task
 
 ---
-#### Tool: `get_config`
-|Description|
-|-|
-|Get information about the user's space, including all of the possible values that can be provided to other endpoints. This includes available assignees, dartboards, folders, statuses, tags, priorities, and sizes.|
-
-#### Tool: `get_doc`
-|Description|
-|-|
-|Retrieve an existing doc by its ID. Returns the doc's information including title, text content, folder, and more.|
-
+#### Tool: **`get_config`**
+Get information about the user's space, including all of the possible values that can be provided to other endpoints. This includes available assignees, dartboards, folders, statuses, tags, priorities, and sizes.
+#### Tool: **`get_doc`**
+Retrieve an existing doc by its ID. Returns the doc's information including title, text content, folder, and more.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
 
 ---
-#### Tool: `get_task`
-|Description|
-|-|
-|Retrieve an existing task by its ID. Returns the task's information including title, description, status, priority, dates, and more.|
-
+#### Tool: **`get_task`**
+Retrieve an existing task by its ID. Returns the task's information including title, description, status, priority, dates, and more.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task
 
 ---
-#### Tool: `list_docs`
-|Description|
-|-|
-|List docs from Dart with optional filtering parameters. You can filter by folder, title, text content, and more.|
-
+#### Tool: **`list_docs`**
+List docs from Dart with optional filtering parameters. You can filter by folder, title, text content, and more.
 Parameters|Type|Description
 -|-|-
 `duids`|`string` *optional*|Filter by IDs
@@ -129,11 +105,8 @@ Parameters|Type|Description
 `title`|`string` *optional*|Filter by title
 
 ---
-#### Tool: `list_tasks`
-|Description|
-|-|
-|List tasks from Dart with optional filtering parameters. You can filter by assignee, status, dartboard, priority, due date, and more.|
-
+#### Tool: **`list_tasks`**
+List tasks from Dart with optional filtering parameters. You can filter by assignee, status, dartboard, priority, due date, and more.
 Parameters|Type|Description
 -|-|-
 `assignee`|`string` *optional*|Filter by assignee name or email
@@ -160,11 +133,8 @@ Parameters|Type|Description
 `title`|`string` *optional*|Filter by title
 
 ---
-#### Tool: `update_doc`
-|Description|
-|-|
-|Update an existing doc. You can modify its title, text content, and folder.|
-
+#### Tool: **`update_doc`**
+Update an existing doc. You can modify its title, text content, and folder.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
@@ -173,11 +143,8 @@ Parameters|Type|Description
 `title`|`string` *optional*|The title of the doc
 
 ---
-#### Tool: `update_task`
-|Description|
-|-|
-|Update an existing task. You can modify any of its properties including title, description, status, priority, dates, assignees, and more.|
-
+#### Tool: **`update_task`**
+Update an existing task. You can modify any of its properties including title, description, status, priority, dates, assignees, and more.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task

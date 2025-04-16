@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_transcript`
-|Description|
-|-|
-|Retrieves the transcript of a YouTube video.|
-
+#### Tool: **`get_transcript`**
+Retrieves the transcript of a YouTube video.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL of the YouTube video

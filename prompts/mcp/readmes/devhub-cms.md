@@ -31,11 +31,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `create_blog_post`
-|Description|
-|-|
-|Create a new blog post|
-
+#### Tool: **`create_blog_post`**
+Create a new blog post
 Parameters|Type|Description
 -|-|-
 `content`|`string`|HTML content of blog post. Should not include a <h1> tag, only h2+
@@ -43,31 +40,23 @@ Parameters|Type|Description
 `title`|`string`|Blog post title
 
 ---
-#### Tool: `get_blog_post`
-|Description|
-|-|
-|Get a single blog post|
-
+#### Tool: **`get_blog_post`**
+Get a single blog post
 Parameters|Type|Description
 -|-|-
 `post_id`|`integer`|Blog post id
 
 ---
-#### Tool: `get_businesses`
-|Description|
-|-|
-|Get all businesses within the DevHub account
+#### Tool: **`get_businesses`**
+Get all businesses within the DevHub account
 
     Returns a list of businesses with the following fields:
     - id: Business ID that can be used in the other tools
     - business_name: Business name
 
-    If only one business exists in the account, you can assume that the user wants to use that business for any business_id related tools.|
-
-#### Tool: `get_hours_of_operation`
-|Description|
-|-|
-|Get the hours of operation for a DevHub location
+    If only one business exists in the account, you can assume that the user wants to use that business for any business_id related tools.
+#### Tool: **`get_hours_of_operation`**
+Get the hours of operation for a DevHub location
 
     Returns a list of items representing days of the week
 
@@ -78,18 +67,15 @@ Parameters|Type|Description
     Examples:
     9am-5pm [["09:00:00", "17:00:00"]]
     9am-12pm and 1pm-5pm [["09:00:00", "12:00:00"], ["13:00:00", "17:00:00"]]
-    Closed - an empty list []|
-
+    Closed - an empty list []
 Parameters|Type|Description
 -|-|-
 `location_id`|`integer`|DevHub Location ID
 `hours_type`|`string` *optional*|Defaults to 'primary' unless the user specifies a different type
 
 ---
-#### Tool: `get_locations`
-|Description|
-|-|
-|Get all locations for a business
+#### Tool: **`get_locations`**
+Get all locations for a business
 
     Returns a list of locations with the following fields:
     - id: Location ID that can be used in the other tools
@@ -101,18 +87,14 @@ Parameters|Type|Description
     - country: Country
     - postal_code: Postal code
     - lat: Latitude
-    - lon: Longitude|
-
+    - lon: Longitude
 Parameters|Type|Description
 -|-|-
 `business_id`|`integer`|
 
 ---
-#### Tool: `get_nearest_location`
-|Description|
-|-|
-|Get the nearest DevHub location|
-
+#### Tool: **`get_nearest_location`**
+Get the nearest DevHub location
 Parameters|Type|Description
 -|-|-
 `business_id`|`integer`|DevHub Business ID associated with the location. Prompt the user for this ID
@@ -120,28 +102,22 @@ Parameters|Type|Description
 `longitude`|`number`|Longitude of the location
 
 ---
-#### Tool: `site_from_url`
-|Description|
-|-|
-|Get the DevHub site ID from a URL.
+#### Tool: **`site_from_url`**
+Get the DevHub site ID from a URL.
 
     Can prompt the user for the URL instead of passing a site_id.
 
     Returns details about the Site matches the URL that can be used in the other tools.
     - Site ID: ID of the DevHub site
     - Site URL: URL of the DevHub site
-    - Site Location IDs: List of location IDs associated with the site|
-
+    - Site Location IDs: List of location IDs associated with the site
 Parameters|Type|Description
 -|-|-
 `url`|`string`|URL of the DevHub site, all lowercase and ends with a slash
 
 ---
-#### Tool: `update_blog_post`
-|Description|
-|-|
-|Update a single blog post|
-
+#### Tool: **`update_blog_post`**
+Update a single blog post
 Parameters|Type|Description
 -|-|-
 `post_id`|`integer`|Blog post ID
@@ -149,10 +125,8 @@ Parameters|Type|Description
 `title`|`string` *optional*|Blog post title
 
 ---
-#### Tool: `update_hours`
-|Description|
-|-|
-|Update the hours of operation for a DevHub location
+#### Tool: **`update_hours`**
+Update the hours of operation for a DevHub location
 
     Send a list of items representing days of the week
 
@@ -163,8 +137,7 @@ Parameters|Type|Description
     Examples:
     9am-5pm [["09:00:00", "17:00:00"]]
     9am-12pm and 1pm-5pm [["09:00:00", "12:00:00"], ["13:00:00", "17:00:00"]]
-    Closed - an empty list []|
-
+    Closed - an empty list []
 Parameters|Type|Description
 -|-|-
 `location_id`|`integer`|DevHub Location ID
@@ -172,13 +145,10 @@ Parameters|Type|Description
 `hours_type`|`string` *optional*|Defaults to 'primary' unless the user specifies a different type
 
 ---
-#### Tool: `upload_image`
-|Description|
-|-|
-|Upload an image to the DevHub media gallery
+#### Tool: **`upload_image`**
+Upload an image to the DevHub media gallery
 
-    Supports webp, jpeg and png images|
-
+    Supports webp, jpeg and png images
 Parameters|Type|Description
 -|-|-
 `base64_image_content`|`string`|Base 64 encoded content of the image file

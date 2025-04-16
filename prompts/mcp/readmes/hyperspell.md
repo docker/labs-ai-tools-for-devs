@@ -24,32 +24,23 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `Add File`
-|Description|
-|-|
-|Add a file or website from a URL to Hyperspell.|
-
+#### Tool: **`Add File`**
+Add a file or website from a URL to Hyperspell.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|
 
 ---
-#### Tool: `Add Memory`
-|Description|
-|-|
-|Add a plain text document or memory to Hyperspell.|
-
+#### Tool: **`Add Memory`**
+Add a plain text document or memory to Hyperspell.
 Parameters|Type|Description
 -|-|-
 `text`|`string`|
 `title`|`string` *optional*|
 
 ---
-#### Tool: `Search Hyperspell`
-|Description|
-|-|
-|Search Hyperspell for documents and data.|
-
+#### Tool: **`Search Hyperspell`**
+Search Hyperspell for documents and data.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|

@@ -23,10 +23,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `moby`
-|Description|
-|-|
-|<background>
+#### Tool: **`moby`**
+<background>
   moby tool helps users access e-commerce performance data.
   the tool prompts the user to enter their **shopId**, which is then used for tool as input, shopId is must for this tool.
 
@@ -176,8 +174,7 @@ components:
 - For other errors, respond with: "Something went wrong. Please try again later."
 
 If the API return 401 it means the API key is invalid, this means the api ket doesn't have access to the shop so just say that api key is expired or doesn't have access to the shop.
-  </error_handling>|
-
+  </error_handling>
 Parameters|Type|Description
 -|-|-
 `params`|`object`|

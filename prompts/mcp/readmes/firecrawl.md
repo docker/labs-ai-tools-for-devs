@@ -31,42 +31,30 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `firecrawl_batch_scrape`
-|Description|
-|-|
-|Scrape multiple URLs in batch mode. Returns a job ID that can be used to check status.|
-
+#### Tool: **`firecrawl_batch_scrape`**
+Scrape multiple URLs in batch mode. Returns a job ID that can be used to check status.
 Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to scrape
 `options`|`object` *optional*|
 
 ---
-#### Tool: `firecrawl_check_batch_status`
-|Description|
-|-|
-|Check the status of a batch scraping job.|
-
+#### Tool: **`firecrawl_check_batch_status`**
+Check the status of a batch scraping job.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Batch job ID to check
 
 ---
-#### Tool: `firecrawl_check_crawl_status`
-|Description|
-|-|
-|Check the status of a crawl job.|
-
+#### Tool: **`firecrawl_check_crawl_status`**
+Check the status of a crawl job.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Crawl job ID to check
 
 ---
-#### Tool: `firecrawl_crawl`
-|Description|
-|-|
-|Start an asynchronous crawl of multiple pages from a starting URL. Supports depth control, path filtering, and webhook notifications.|
-
+#### Tool: **`firecrawl_crawl`**
+Start an asynchronous crawl of multiple pages from a starting URL. Supports depth control, path filtering, and webhook notifications.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|Starting URL for the crawl
@@ -83,11 +71,8 @@ Parameters|Type|Description
 `webhook`|`string` *optional*|
 
 ---
-#### Tool: `firecrawl_deep_research`
-|Description|
-|-|
-|Conduct deep research on a query using web crawling, search, and AI analysis.|
-
+#### Tool: **`firecrawl_deep_research`**
+Conduct deep research on a query using web crawling, search, and AI analysis.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The query to research
@@ -96,11 +81,8 @@ Parameters|Type|Description
 `timeLimit`|`number` *optional*|Time limit in seconds (30-300)
 
 ---
-#### Tool: `firecrawl_extract`
-|Description|
-|-|
-|Extract structured information from web pages using LLM. Supports both cloud AI and self-hosted LLM extraction.|
-
+#### Tool: **`firecrawl_extract`**
+Extract structured information from web pages using LLM. Supports both cloud AI and self-hosted LLM extraction.
 Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to extract information from
@@ -112,11 +94,8 @@ Parameters|Type|Description
 `systemPrompt`|`string` *optional*|System prompt for LLM extraction
 
 ---
-#### Tool: `firecrawl_generate_llmstxt`
-|Description|
-|-|
-|Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.|
-
+#### Tool: **`firecrawl_generate_llmstxt`**
+Generate standardized LLMs.txt file for a given URL, which provides context about how LLMs should interact with the website.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL to generate LLMs.txt from
@@ -124,11 +103,8 @@ Parameters|Type|Description
 `showFullText`|`boolean` *optional*|Whether to show the full LLMs-full.txt in the response
 
 ---
-#### Tool: `firecrawl_map`
-|Description|
-|-|
-|Discover URLs from a starting point. Can use both sitemap.xml and HTML link discovery.|
-
+#### Tool: **`firecrawl_map`**
+Discover URLs from a starting point. Can use both sitemap.xml and HTML link discovery.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|Starting URL for URL discovery
@@ -139,11 +115,8 @@ Parameters|Type|Description
 `sitemapOnly`|`boolean` *optional*|Only use sitemap.xml for discovery, ignore HTML links
 
 ---
-#### Tool: `firecrawl_scrape`
-|Description|
-|-|
-|Scrape a single webpage with advanced options for content extraction. Supports various formats including markdown, HTML, and screenshots. Can execute custom actions like clicking or scrolling before scraping.|
-
+#### Tool: **`firecrawl_scrape`**
+Scrape a single webpage with advanced options for content extraction. Supports various formats including markdown, HTML, and screenshots. Can execute custom actions like clicking or scrolling before scraping.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL to scrape
@@ -161,11 +134,8 @@ Parameters|Type|Description
 `waitFor`|`number` *optional*|Time in milliseconds to wait for dynamic content to load
 
 ---
-#### Tool: `firecrawl_search`
-|Description|
-|-|
-|Search and retrieve content from web pages with optional scraping. Returns SERP results by default (url, title, description) or full page content when scrapeOptions are provided.|
-
+#### Tool: **`firecrawl_search`**
+Search and retrieve content from web pages with optional scraping. Returns SERP results by default (url, title, description) or full page content when scrapeOptions are provided.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query string

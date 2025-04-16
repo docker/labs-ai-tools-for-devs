@@ -24,31 +24,22 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `markdownify`
-|Description|
-|-|
-|Convert a webpage into clean, formatted markdown.|
-
+#### Tool: **`markdownify`**
+Convert a webpage into clean, formatted markdown.
 Parameters|Type|Description
 -|-|-
 `website_url`|`string`|URL of the webpage to convert
 
 ---
-#### Tool: `searchscraper`
-|Description|
-|-|
-|Perform AI-powered web searches with structured results.|
-
+#### Tool: **`searchscraper`**
+Perform AI-powered web searches with structured results.
 Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Search query or instructions
 
 ---
-#### Tool: `smartscraper`
-|Description|
-|-|
-|Extract structured data from a webpage using AI.|
-
+#### Tool: **`smartscraper`**
+Extract structured data from a webpage using AI.
 Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Instructions for what data to extract

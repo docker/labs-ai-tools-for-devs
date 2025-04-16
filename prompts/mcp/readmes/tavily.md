@@ -23,11 +23,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `tavily-extract`
-|Description|
-|-|
-|A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.|
-
+#### Tool: **`tavily-extract`**
+A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.
 Parameters|Type|Description
 -|-|-
 `urls`|`array`|List of URLs to extract content from
@@ -35,11 +32,8 @@ Parameters|Type|Description
 `include_images`|`boolean` *optional*|Include a list of images extracted from the urls in the response
 
 ---
-#### Tool: `tavily-search`
-|Description|
-|-|
-|A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine. Returns relevant web content with customizable parameters for result count, content type, and domain filtering. Ideal for gathering current information, news, and detailed web content analysis.|
-
+#### Tool: **`tavily-search`**
+A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine. Returns relevant web content with customizable parameters for result count, content type, and domain filtering. Ideal for gathering current information, news, and detailed web content analysis.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query

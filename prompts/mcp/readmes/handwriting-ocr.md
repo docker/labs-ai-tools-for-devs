@@ -24,31 +24,22 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `check_status`
-|Description|
-|-|
-|Check the status of a document|
-
+#### Tool: **`check_status`**
+Check the status of a document
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Document ID
 
 ---
-#### Tool: `get_text`
-|Description|
-|-|
-|Retrieve the transcribed text from a document|
-
+#### Tool: **`get_text`**
+Retrieve the transcribed text from a document
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Document ID
 
 ---
-#### Tool: `upload_document`
-|Description|
-|-|
-|Upload a document to Handwriting OCR API for transcription|
-
+#### Tool: **`upload_document`**
+Upload a document to Handwriting OCR API for transcription
 Parameters|Type|Description
 -|-|-
 `file`|`string`|Path to the document (PDF, JPG, PNG, etc.)

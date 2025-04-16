@@ -30,86 +30,59 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `add_observations`
-|Description|
-|-|
-|Add new observations to existing entities in the knowledge graph|
-
+#### Tool: **`add_observations`**
+Add new observations to existing entities in the knowledge graph
 Parameters|Type|Description
 -|-|-
 `observations`|`array`|
 
 ---
-#### Tool: `create_entities`
-|Description|
-|-|
-|Create multiple new entities in the knowledge graph|
-
+#### Tool: **`create_entities`**
+Create multiple new entities in the knowledge graph
 Parameters|Type|Description
 -|-|-
 `entities`|`array`|
 
 ---
-#### Tool: `create_relations`
-|Description|
-|-|
-|Create multiple new relations between entities in the knowledge graph. Relations should be in active voice|
-
+#### Tool: **`create_relations`**
+Create multiple new relations between entities in the knowledge graph. Relations should be in active voice
 Parameters|Type|Description
 -|-|-
 `relations`|`array`|
 
 ---
-#### Tool: `delete_entities`
-|Description|
-|-|
-|Delete multiple entities and their associated relations from the knowledge graph|
-
+#### Tool: **`delete_entities`**
+Delete multiple entities and their associated relations from the knowledge graph
 Parameters|Type|Description
 -|-|-
 `entityNames`|`array`|An array of entity names to delete
 
 ---
-#### Tool: `delete_observations`
-|Description|
-|-|
-|Delete specific observations from entities in the knowledge graph|
-
+#### Tool: **`delete_observations`**
+Delete specific observations from entities in the knowledge graph
 Parameters|Type|Description
 -|-|-
 `deletions`|`array`|
 
 ---
-#### Tool: `delete_relations`
-|Description|
-|-|
-|Delete multiple relations from the knowledge graph|
-
+#### Tool: **`delete_relations`**
+Delete multiple relations from the knowledge graph
 Parameters|Type|Description
 -|-|-
 `relations`|`array`|An array of relations to delete
 
 ---
-#### Tool: `open_nodes`
-|Description|
-|-|
-|Open specific nodes in the knowledge graph by their names|
-
+#### Tool: **`open_nodes`**
+Open specific nodes in the knowledge graph by their names
 Parameters|Type|Description
 -|-|-
 `names`|`array`|An array of entity names to retrieve
 
 ---
-#### Tool: `read_graph`
-|Description|
-|-|
-|Read the entire knowledge graph|
-
-#### Tool: `search_nodes`
-|Description|
-|-|
-|Search for nodes in the knowledge graph based on a query|
-
+#### Tool: **`read_graph`**
+Read the entire knowledge graph
+#### Tool: **`search_nodes`**
+Search for nodes in the knowledge graph based on a query
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query to match against entity names, types, and observation content

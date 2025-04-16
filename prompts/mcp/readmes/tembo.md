@@ -31,21 +31,15 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `ask_tembo`
-|Description|
-|-|
-|Ask a question to Tembo Docs|
-
+#### Tool: **`ask_tembo`**
+Ask a question to Tembo Docs
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The ask query. For example, "how to create a Tembo instance"
 
 ---
-#### Tool: `create_instance`
-|Description|
-|-|
-|Create a new Tembo instance|
-
+#### Tool: **`create_instance`**
+Create a new Tembo instance
 Parameters|Type|Description
 -|-|-
 `cpu`|`string`|
@@ -59,63 +53,42 @@ Parameters|Type|Description
 `spot`|`boolean` *optional*|
 
 ---
-#### Tool: `delete_instance`
-|Description|
-|-|
-|Delete an existing Tembo instance|
-
+#### Tool: **`delete_instance`**
+Delete an existing Tembo instance
 Parameters|Type|Description
 -|-|-
 `instance_id`|`string`|Delete this instance id
 `org_id`|`string`|Organization id of the instance to delete
 
 ---
-#### Tool: `get_all_apps`
-|Description|
-|-|
-|Get attributes for all apps|
-
-#### Tool: `get_all_instances`
-|Description|
-|-|
-|Get all Tembo instances in an organization|
-
+#### Tool: **`get_all_apps`**
+Get attributes for all apps
+#### Tool: **`get_all_instances`**
+Get all Tembo instances in an organization
 Parameters|Type|Description
 -|-|-
 `org_id`|`string`|Organization id for the request
 
 ---
-#### Tool: `get_app`
-|Description|
-|-|
-|Get the attributes of a single App|
-
+#### Tool: **`get_app`**
+Get the attributes of a single App
 Parameters|Type|Description
 -|-|-
 `type`|`string`|The app type to get details for
 
 ---
-#### Tool: `get_instance`
-|Description|
-|-|
-|Get an existing Tembo instance|
-
+#### Tool: **`get_instance`**
+Get an existing Tembo instance
 Parameters|Type|Description
 -|-|-
 `instance_id`|`string`|
 `org_id`|`string`|Organization ID that owns the instance
 
 ---
-#### Tool: `get_instance_schema`
-|Description|
-|-|
-|Get the json-schema for an instance|
-
-#### Tool: `patch_instance`
-|Description|
-|-|
-|Update attributes on an existing Tembo instance|
-
+#### Tool: **`get_instance_schema`**
+Get the json-schema for an instance
+#### Tool: **`patch_instance`**
+Update attributes on an existing Tembo instance
 Parameters|Type|Description
 -|-|-
 `instance_id`|`string`|
@@ -129,11 +102,8 @@ Parameters|Type|Description
 `storage`|`string` *optional*|
 
 ---
-#### Tool: `restore_instance`
-|Description|
-|-|
-|Restore a Tembo instance|
-
+#### Tool: **`restore_instance`**
+Restore a Tembo instance
 Parameters|Type|Description
 -|-|-
 `instance_name`|`string`|

@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `send-email`
-|Description|
-|-|
-|Send an email using Resend|
-
+#### Tool: **`send-email`**
+Send an email using Resend
 Parameters|Type|Description
 -|-|-
 `subject`|`string`|Email subject line

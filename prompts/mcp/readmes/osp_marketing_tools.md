@@ -27,36 +27,18 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_editing_codes`
-|Description|
-|-|
-|Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.|
-
-#### Tool: `get_meta_guide`
-|Description|
-|-|
-|Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).|
-
-#### Tool: `get_on_page_seo_guide`
-|Description|
-|-|
-|Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.|
-
-#### Tool: `get_value_map_positioning_guide`
-|Description|
-|-|
-|Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).|
-
-#### Tool: `get_writing_guide`
-|Description|
-|-|
-|Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.|
-
-#### Tool: `health_check`
-|Description|
-|-|
-|Check if the server is running and can access its resources|
-
+#### Tool: **`get_editing_codes`**
+Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.
+#### Tool: **`get_meta_guide`**
+Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).
+#### Tool: **`get_on_page_seo_guide`**
+Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.
+#### Tool: **`get_value_map_positioning_guide`**
+Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).
+#### Tool: **`get_writing_guide`**
+Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.
+#### Tool: **`health_check`**
+Check if the server is running and can access its resources
 ## Use this MCP Server
 
 ```json

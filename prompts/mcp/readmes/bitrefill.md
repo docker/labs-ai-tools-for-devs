@@ -33,16 +33,10 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `categories`
-|Description|
-|-|
-|Get the full product type/categories map. It's suggested to use this tool to get the categories and then use the `search` tool to search for products in a specific category.|
-
-#### Tool: `create_invoice`
-|Description|
-|-|
-|Create a new invoice for purchasing products with various payment methods|
-
+#### Tool: **`categories`**
+Get the full product type/categories map. It's suggested to use this tool to get the categories and then use the `search` tool to search for products in a specific category.
+#### Tool: **`create_invoice`**
+Create a new invoice for purchasing products with various payment methods
 Parameters|Type|Description
 -|-|-
 `payment_method`|`string`|Required payment method. Available methods: balance, lightning, bitcoin, eth_base, usdc_base
@@ -51,36 +45,24 @@ Parameters|Type|Description
 `webhook_url`|`string` *optional*|Optional: URL for webhook notifications
 
 ---
-#### Tool: `detail`
-|Description|
-|-|
-|Get detailed information about a product|
-
+#### Tool: **`detail`**
+Get detailed information about a product
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique identifier of the product
 
 ---
-#### Tool: `get_account_balance`
-|Description|
-|-|
-|Retrieve your account balance|
-
-#### Tool: `get_invoice`
-|Description|
-|-|
-|Retrieve details for a specific invoice by ID|
-
+#### Tool: **`get_account_balance`**
+Retrieve your account balance
+#### Tool: **`get_invoice`**
+Retrieve details for a specific invoice by ID
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique invoice identifier
 
 ---
-#### Tool: `get_invoices`
-|Description|
-|-|
-|Retrieve a list of invoices with optional filtering|
-
+#### Tool: **`get_invoices`**
+Retrieve a list of invoices with optional filtering
 Parameters|Type|Description
 -|-|-
 `after`|`string` *optional*|Start date for limiting results (Inclusive). Format: YYYY-MM-DD HH:MM:SS
@@ -89,21 +71,15 @@ Parameters|Type|Description
 `start`|`integer` *optional*|Start index. Default: 0
 
 ---
-#### Tool: `get_order`
-|Description|
-|-|
-|Retrieve details for a specific order by ID|
-
+#### Tool: **`get_order`**
+Retrieve details for a specific order by ID
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique order identifier
 
 ---
-#### Tool: `get_orders`
-|Description|
-|-|
-|Retrieve a list of orders with optional filtering|
-
+#### Tool: **`get_orders`**
+Retrieve a list of orders with optional filtering
 Parameters|Type|Description
 -|-|-
 `after`|`string` *optional*|Start date for limiting results (Inclusive). Format: YYYY-MM-DD HH:MM:SS
@@ -112,26 +88,17 @@ Parameters|Type|Description
 `start`|`integer` *optional*|Start index. Default: 0
 
 ---
-#### Tool: `pay_invoice`
-|Description|
-|-|
-|Pay an unpaid invoice (only works with 'balance' payment method)|
-
+#### Tool: **`pay_invoice`**
+Pay an unpaid invoice (only works with 'balance' payment method)
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique invoice identifier
 
 ---
-#### Tool: `ping`
-|Description|
-|-|
-|Check if the Bitrefill API is available|
-
-#### Tool: `search`
-|Description|
-|-|
-|Search for gift cards, esims, mobile topups and more. It's suggested to use the `categories` tool before searching for products, to have a better understanding of what's available.|
-
+#### Tool: **`ping`**
+Check if the Bitrefill API is available
+#### Tool: **`search`**
+Search for gift cards, esims, mobile topups and more. It's suggested to use the `categories` tool before searching for products, to have a better understanding of what's available.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query (e.g., 'Amazon', 'Netflix', 'AT&T' or '*' for all the available products)
@@ -150,11 +117,8 @@ Parameters|Type|Description
 `src`|`string` *optional*|Source of the request
 
 ---
-#### Tool: `unseal_order`
-|Description|
-|-|
-|Reveal codes and PINs for a specific order by ID|
-
+#### Tool: **`unseal_order`**
+Reveal codes and PINs for a specific order by ID
 Parameters|Type|Description
 -|-|-
 `id`|`string`|Unique order identifier

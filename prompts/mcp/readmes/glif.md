@@ -35,21 +35,15 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `glif_info`
-|Description|
-|-|
-|Get detailed information about a glif including input fields|
-
+#### Tool: **`glif_info`**
+Get detailed information about a glif including input fields
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the glif to show details for
 
 ---
-#### Tool: `list_bots`
-|Description|
-|-|
-|Get a list of bots and sim templates with optional filtering and sorting. Supports sort={new,popular,featured} (defaults to popular), username filtering, and text search.|
-
+#### Tool: **`list_bots`**
+Get a list of bots and sim templates with optional filtering and sorting. Supports sort={new,popular,featured} (defaults to popular), username filtering, and text search.
 Parameters|Type|Description
 -|-|-
 `searchQuery`|`string` *optional*|Optional search query to filter bots by name or description
@@ -57,78 +51,48 @@ Parameters|Type|Description
 `username`|`string` *optional*|Optional filter for bots by creator username
 
 ---
-#### Tool: `list_featured_glifs`
-|Description|
-|-|
-|Get a curated list of featured glifs|
-
-#### Tool: `list_saved_glif_tools`
-|Description|
-|-|
-|List all saved glif tools|
-
-#### Tool: `load_bot`
-|Description|
-|-|
-|Get detailed information about a specific bot|
-
+#### Tool: **`list_featured_glifs`**
+Get a curated list of featured glifs
+#### Tool: **`list_saved_glif_tools`**
+List all saved glif tools
+#### Tool: **`load_bot`**
+Get detailed information about a specific bot
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the bot to load
 
 ---
-#### Tool: `my_glif_user_info`
-|Description|
-|-|
-|Get detailed information about your user account, recent glifs, and recent runs|
-
-#### Tool: `my_glifs`
-|Description|
-|-|
-|Get a list of your glifs|
-
-#### Tool: `remove_all_glif_tools`
-|Description|
-|-|
-|Remove all saved glif tools and return to a pristine state|
-
-#### Tool: `remove_glif_tool`
-|Description|
-|-|
-|Remove a saved glif tool|
-
+#### Tool: **`my_glif_user_info`**
+Get detailed information about your user account, recent glifs, and recent runs
+#### Tool: **`my_glifs`**
+Get a list of your glifs
+#### Tool: **`remove_all_glif_tools`**
+Remove all saved glif tools and return to a pristine state
+#### Tool: **`remove_glif_tool`**
+Remove a saved glif tool
 Parameters|Type|Description
 -|-|-
 `toolName`|`string`|The tool name of the saved glif to remove
 
 ---
-#### Tool: `run_glif`
-|Description|
-|-|
-|Run a glif with the specified ID and inputs|
-
+#### Tool: **`run_glif`**
+Run a glif with the specified ID and inputs
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the glif to run
 `inputs`|`array`|Array of input values for the glif
 
 ---
-#### Tool: `save_bot_skills_as_tools`
-|Description|
-|-|
-|Save all skills from a bot as individual tools|
-
+#### Tool: **`save_bot_skills_as_tools`**
+Save all skills from a bot as individual tools
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the bot whose skills to save
 `prefix`|`string` *optional*|Optional prefix to add to tool names (e.g., 'tshirt_')
 
 ---
-#### Tool: `save_glif_as_tool`
-|Description|
-|-|
-|Save a glif as a custom tool|
-
+#### Tool: **`save_glif_as_tool`**
+Save a glif as a custom tool
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the glif to save
@@ -137,21 +101,15 @@ Parameters|Type|Description
 `name`|`string` *optional*|Optional custom name for the tool (defaults to glif name)
 
 ---
-#### Tool: `search_glifs`
-|Description|
-|-|
-|Search for glifs by query string|
-
+#### Tool: **`search_glifs`**
+Search for glifs by query string
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query string
 
 ---
-#### Tool: `show_bot_info`
-|Description|
-|-|
-|Get detailed information about a specific bot (alias for load_bot)|
-
+#### Tool: **`show_bot_info`**
+Get detailed information about a specific bot (alias for load_bot)
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the bot to show details for

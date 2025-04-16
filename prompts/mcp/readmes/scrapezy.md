@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `extract-structured-data`
-|Description|
-|-|
-|Extract structured data from a website.|
-
+#### Tool: **`extract-structured-data`**
+Extract structured data from a website.
 Parameters|Type|Description
 -|-|-
 `prompt`|`string`|Prompt to extract data from the website
