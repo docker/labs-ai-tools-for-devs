@@ -167,7 +167,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                                     <FormControlLabel control={<Switch checked={showMine} onChange={(e) => {
                                         setShowMine(e.target.checked)
                                         localStorage.setItem('showMine', e.target.checked.toString())
-                                    }} />} label="Show only my tools" />
+                                    }} />} label="Show only enabled tools" />
                                 </Stack>
                             </FormGroup>
 
