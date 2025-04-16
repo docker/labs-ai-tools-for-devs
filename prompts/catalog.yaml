@@ -1982,3 +1982,17 @@ registry:
         properties:
           url:
             type: string
+  pulumi:
+    description: Pulumi MCP Server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/pulumi.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/pulumi.md
+    source: https://github.com/pulumi/mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/21992475?s=200&v=4
+    tools:
+      - name: pulumi-cli-preview
+      - name: pulumi-cli-stack-output
+      - name: pulumi-cli-up
+      - name: pulumi-registry-get-resource
+      - name: pulumi-registry-list-resources
+    prompts: 0
+    resources: {}
