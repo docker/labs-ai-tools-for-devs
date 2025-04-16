@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server
 **Dockerfile**|https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/handwriting-ocr)
 **Licence**|
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/Kong/mcp-konnect
 **Dockerfile**|https://github.com/Kong/mcp-konnect/blob/refs/pull/7/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/kong)
 **Licence**|Apache License 2.0
 
 ## Available Tools

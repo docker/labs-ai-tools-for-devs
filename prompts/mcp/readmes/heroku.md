@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/heroku/heroku-mcp-server
 **Dockerfile**|https://github.com/heroku/heroku-mcp-server/blob/refs/pull/24/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/heroku)
 **Licence**|Apache License 2.0
 
 ## Available Tools

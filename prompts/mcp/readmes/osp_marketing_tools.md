@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/open-strategy-partners/osp_marketing_tools
 **Dockerfile**|https://github.com/open-strategy-partners/osp_marketing_tools/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/osp_marketing_tools)
 **Licence**|Creative Commons Attribution Share Alike 4.0 International
 
 ## Available Tools

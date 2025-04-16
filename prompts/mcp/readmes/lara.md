@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/translated/lara-mcp
 **Dockerfile**|https://github.com/translated/lara-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/lara)
 **Licence**|MIT License
 
 ## Available Tools

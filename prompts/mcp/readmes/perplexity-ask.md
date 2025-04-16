@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/ppl-ai/modelcontextprotocol
 **Dockerfile**|https://github.com/ppl-ai/modelcontextprotocol/blob/main/perplexity-ask/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/perplexity-ask)
 **Licence**|MIT License
 
 ## Available Tools

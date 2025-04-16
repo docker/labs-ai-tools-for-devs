@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/DMontgomery40/mcp-3D-printer-server
 **Dockerfile**|https://github.com/DMontgomery40/mcp-3D-printer-server/blob/refs/pull/3/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/3d-printer)
 **Licence**|GNU General Public License v2.0
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/chroma-core/chroma-mcp
 **Dockerfile**|https://github.com/chroma-core/chroma-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/chroma)
 **Licence**|Apache License 2.0
 
 ## Available Tools

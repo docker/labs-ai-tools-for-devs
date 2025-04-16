@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/github/github-mcp-server
 **Dockerfile**|https://github.com/docker/labs-ai-tools-for-devs/blob/main/functions/github-mcp-server/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/github-mcp-server)
 **Licence**|MIT License
 
 ## Available Tools

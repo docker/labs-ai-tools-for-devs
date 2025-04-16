@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/databutton/databutton-mcp
 **Dockerfile**|https://github.com/databutton/databutton-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/databutton)
 **Licence**|MIT License
 
 ## Available Tools

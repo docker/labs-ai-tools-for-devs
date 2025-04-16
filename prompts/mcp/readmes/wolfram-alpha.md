@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/SecretiveShell/MCP-wolfram-alpha
 **Dockerfile**|https://github.com/SecretiveShell/MCP-wolfram-alpha/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/wolfram-alpha)
 **Licence**|MIT License
 
 ## Available Tools

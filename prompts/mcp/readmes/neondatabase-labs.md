@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/neondatabase-labs/mcp-server-neon
 **Dockerfile**|https://github.com/neondatabase-labs/mcp-server-neon/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/neondatabase-labs)
 **Licence**|MIT License
 
 ## Available Tools

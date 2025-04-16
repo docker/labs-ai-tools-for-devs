@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/CircleCI-Public/mcp-server-circleci
 **Dockerfile**|https://github.com/CircleCI-Public/mcp-server-circleci/blob/refs/pull/22/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/circleci)
 **Licence**|Apache License 2.0
 
 ## Available Tools

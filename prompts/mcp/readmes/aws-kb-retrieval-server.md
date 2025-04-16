@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/aws-kb-retrieval-server/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/aws-kb-retrieval-server)
 **Licence**|MIT License
 
 ## Available Tools

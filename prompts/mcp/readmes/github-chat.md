@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/AsyncFuncAI/github-chat-mcp
 **Dockerfile**|https://github.com/AsyncFuncAI/github-chat-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/github-chat)
 **Licence**|MIT License
 
 ## Available Tools

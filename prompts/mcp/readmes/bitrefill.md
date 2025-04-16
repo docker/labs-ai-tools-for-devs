@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/bitrefill/bitrefill-mcp-server
 **Dockerfile**|https://github.com/bitrefill/bitrefill-mcp-server/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/bitrefill)
 **Licence**|MIT License
 
 ## Available Tools

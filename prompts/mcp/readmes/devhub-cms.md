@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/devhub/devhub-cms-mcp
 **Dockerfile**|https://github.com/devhub/devhub-cms-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/devhub-cms)
 **Licence**|
 
 ## Available Tools

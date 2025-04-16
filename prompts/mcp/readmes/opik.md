@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/comet-ml/opik-mcp
 **Dockerfile**|https://github.com/comet-ml/opik-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/opik)
 **Licence**|Apache License 2.0
 
 ## Available Tools

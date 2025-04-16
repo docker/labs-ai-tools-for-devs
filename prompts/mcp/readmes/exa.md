@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/exa-labs/exa-mcp-server
 **Dockerfile**|https://github.com/exa-labs/exa-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/exa)
 **Licence**|MIT License
 
 ## Available Tools

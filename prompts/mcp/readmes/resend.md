@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/resend/mcp-send-email
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-send-email/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/resend)
 **Licence**|
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/VeyraX/veyrax-mcp
 **Dockerfile**|https://github.com/VeyraX/veyrax-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/veyrax)
 **Licence**|
 
 ## Available Tools
