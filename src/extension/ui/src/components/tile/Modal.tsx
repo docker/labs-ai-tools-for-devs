@@ -10,7 +10,7 @@ import { deepFlattenObject, deepGet, deepSet, mergeDeep } from "../../MergeDeep"
 import { DeepObject } from "../../types/utils";
 import { Parameter, ParameterArray, ParameterObject, Parameters, ParsedParameters, Config } from "../../types/config";
 import { Ref } from "../../Refs";
-import { CATALOG_LAYOUT_SX } from "../../Constants";
+import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
 import JsonSchemaLibrary from "json-schema-library";
 import ConfigEditor from "./ConfigEditor";
 
@@ -57,8 +57,6 @@ interface ConfigurationModalProps {
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
 }
 
-const ASSIGNED_SECRET_PLACEHOLDER = '********';
-const UNASSIGNED_SECRET_PLACEHOLDER = '';
 
 const ConfigurationModal = ({
     open,
@@ -71,7 +69,7 @@ const ConfigurationModal = ({
 }: ConfigurationModalProps) => {
 
     const { startPull, registryItems, secrets } = useCatalogContext();
-    const { config, configLoading, saveConfig } = useConfigContext();
+    const { config, configLoading } = useConfigContext();
     const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
     const [localConfig, setLocalConfig] = useState<{ [key: string]: any }>({});
     const [configTemplate, setConfigTemplate] = useState<Record<string, any>>({});
@@ -257,65 +255,6 @@ const ConfigurationModal = ({
         return '';
     };
 
-    // Validate the entire configuration against schema conditions
-    const validateFullSchema = (config: { [key: string]: any }, schema: any): { [key: string]: string } => {
-        const errors: { [key: string]: string } = {};
-
-        // Check basic parameter validations
-        if (schema && schema.parameters) {
-            Object.entries(schema.parameters).forEach(([key, paramSchema]: [string, any]) => {
-                if (config[key]) {
-                    if (paramSchema.type === 'object' && paramSchema.properties) {
-                        Object.entries(paramSchema.properties).forEach(([propKey, propSchema]: [string, any]) => {
-                            const propPath = `${key}.${propKey}`;
-                            const propValue = deepGet(config, propPath);
-
-                            if (propValue !== undefined) {
-                                const error = validateConfigValue(propKey, propValue, propSchema);
-                                if (error) {
-                                    errors[propPath] = error;
-                                }
-                            }
-                        });
-                    } else {
-                        const error = validateConfigValue(key, config[key], paramSchema);
-                        if (error) {
-                            errors[key] = error;
-                        }
-                    }
-                }
-            });
-        }
-
-        // Check anyOf condition validations
-        if (schema && schema.anyOf) {
-            let anyConditionMet = false;
-
-            schema.anyOf.forEach((condition: any) => {
-                if (condition.required) {
-                    const allRequiredPresent = condition.required.every((requiredField: string) =>
-                        config[requiredField] && Object.keys(config[requiredField]).length > 0
-                    );
-
-                    if (allRequiredPresent) {
-                        anyConditionMet = true;
-                    }
-                }
-            });
-
-            if (!anyConditionMet) {
-                const requiredOptions = schema.anyOf
-                    .map((condition: any) => condition.required?.join(' or '))
-                    .filter(Boolean)
-                    .join(' or ');
-
-                errors['_schema'] = `At least one of the following must be configured: ${requiredOptions}`;
-            }
-        }
-
-        return errors;
-    };
-
     // Determine if we should show the secrets tab and config tab
     const hasSecrets = assignedSecrets.length > 0;
     const hasConfig = catalogItem.config && catalogItem.config.length > 0;
@@ -416,6 +355,7 @@ const ConfigurationModal = ({
                                                 }} type='password' />
                                                 {!secretEdited && <IconButton size="small" color="error" onClick={() => {
                                                     setLocalSecrets({ ...localSecrets, [secret.name]: UNASSIGNED_SECRET_PLACEHOLDER });
+                                                    onSecretChange({ name: secret.name, value: UNASSIGNED_SECRET_PLACEHOLDER });
                                                 }}>
                                                     <DeleteOutlined />
                                                 </IconButton>}

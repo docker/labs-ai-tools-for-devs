@@ -94,6 +94,9 @@ func DeleteSecret(ctx context.Context) *cobra.Command {
 			return runDeleteSecret(ctx, *opts)
 		},
 	}
+	flags := cmd.Flags()
+	flags.StringVarP(&opts.Name, "name", "n", "", "Name of the secret")
+	_ = cmd.MarkFlagRequired("name")
 	return cmd
 }
 

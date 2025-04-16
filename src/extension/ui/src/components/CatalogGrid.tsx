@@ -40,7 +40,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         canRegister,
         registerCatalogItem,
         unregisterCatalogItem,
-        tryLoadSecrets,
+        tryUpdateSecrets,
         secrets
     } = useCatalogContext();
 
@@ -222,7 +222,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             canRegister={canRegister}
                             register={registerCatalogItem}
                             unregister={unregisterCatalogItem}
-                            onSecretChange={tryLoadSecrets}
+                            onSecretChange={tryUpdateSecrets}
                             secrets={secrets}
                             setConfiguringItem={setConfiguringItem}
                             config={config || {}}
