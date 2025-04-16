@@ -12,12 +12,12 @@ Attribute|Details|
 **Repository**|https://github.com/sooperset/mcp-atlassian
 **Dockerfile**|https://github.com/sooperset/mcp-atlassian/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/atlassian)
 **Licence**|MIT License
 
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`confluence_attach_content`|Attach content to a Confluence page|
 `confluence_create_page`|Create a new Confluence page|
 `confluence_delete_page`|Delete an existing Confluence page|
 `confluence_get_comments`|Get comments for a specific Confluence page|
@@ -51,16 +51,6 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: **`confluence_attach_content`**
-Attach content to a Confluence page
-Parameters|Type|Description
--|-|-
-`content`|`string`|The content to attach (bytes)
-`name`|`string`|The name of the attachment
-`page_id`|`string`|The ID of the page to attach the content to
-`content_type`|`string` *optional*|Optional: The MIME type of the content (e.g., 'image/png', 'application/pdf'). If omitted, it will be guessed from the filename.
-
----
 #### Tool: **`confluence_create_page`**
 Create a new Confluence page
 Parameters|Type|Description
@@ -115,10 +105,12 @@ Parameters|Type|Description
 Search Confluence content using simple terms or CQL
 Parameters|Type|Description
 -|-|-
-`query`|`string`|Search query - can be either a simple text (e.g. 'project documentation') or a CQL query string. Examples of CQL:
+`query`|`string`|Search query - can be either a simple text (e.g. 'project documentation') or a CQL query string. Simple queries use 'siteSearch' by default, to mimic the WebUI search, with an automatic fallback to 'text' search if not supported. Examples of CQL:
 - Basic search: 'type=page AND space=DEV'
 - Personal space search: 'space="~username"' (note: personal space keys starting with ~ must be quoted)
 - Search by title: 'title~"Meeting Notes"'
+- Use siteSearch: 'siteSearch ~ "important concept"'
+- Use text search: 'text ~ "important concept"'
 - Recent content: 'created >= "2023-01-01"'
 - Content with specific label: 'label=documentation'
 - Recently modified content: 'lastModified > startOfMonth("-1M")'

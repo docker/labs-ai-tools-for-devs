@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/webflow/mcp-server
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-server/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/webflow)
 **Licence**|MIT License
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/stripe/agent-toolkit
 **Dockerfile**|https://github.com/stripe/agent-toolkit/blob/main/modelcontextprotocol/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/stripe)
 **Licence**|MIT License
 
 ## Available Tools

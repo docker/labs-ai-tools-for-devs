@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/armorwallet/armor-crypto-mcp
 **Dockerfile**|https://github.com/armorwallet/armor-crypto-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/armor-crypto)
 **Licence**|GNU General Public License v3.0
 
 ## Available Tools
@@ -33,7 +34,7 @@ Tools provided by this Server|Short Description
 `get_armor_mcp_version`|Get the current Armor Wallet version|
 `get_current_time`|Gets the current time and date|
 `get_stake_balances`|Get the balance of staked SOL (jupSOL).|
-`get_token_candle_data`|Get the candle sticks.|
+`get_token_candle_data`|Get candle data about any token for analysis.|
 `get_token_details`|Retrieve token details.|
 `get_top_trending_tokens`|Get the top trending tokens in a particular time frame.|
 `get_wallet_token_balance`|Get the balance for a list of wallet/token pairs.|
@@ -187,7 +188,7 @@ Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
 #### Tool: **`get_token_candle_data`**
-Get the candle sticks.
+Get candle data about any token for analysis.
 
     Expects a CandleStickRequest, returns a list of candle sticks.
 Parameters|Type|Description

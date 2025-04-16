@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/basicmachines-co/basic-memory
 **Dockerfile**|https://github.com/basicmachines-co/basic-memory/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/basic-memory)
 **Licence**|GNU Affero General Public License v3.0
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/grafana/mcp-grafana
 **Dockerfile**|https://github.com/grafana/mcp-grafana/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/grafana)
 **Licence**|Apache License 2.0
 
 ## Available Tools

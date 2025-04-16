@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/box-community/mcp-server-box
 **Dockerfile**|https://github.com/box-community/mcp-server-box/blob/refs/pull/4/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/box)
 **Licence**|
 
 ## Available Tools

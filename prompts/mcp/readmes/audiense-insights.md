@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/AudienseCo/mcp-audiense-insights
 **Dockerfile**|https://github.com/AudienseCo/mcp-audiense-insights/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/audiense-insights)
 **Licence**|Apache License 2.0
 
 ## Available Tools

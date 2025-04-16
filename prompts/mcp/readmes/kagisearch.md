@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/kagisearch/kagimcp
 **Dockerfile**|https://github.com/kagisearch/kagimcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/kagisearch)
 **Licence**|MIT License
 
 ## Available Tools

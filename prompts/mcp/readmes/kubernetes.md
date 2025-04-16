@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/Flux159/mcp-server-kubernetes
 **Dockerfile**|https://github.com/Flux159/mcp-server-kubernetes/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/kubernetes)
 **Licence**|MIT License
 
 ## Available Tools

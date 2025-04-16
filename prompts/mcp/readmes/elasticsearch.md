@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/elastic/mcp-server-elasticsearch
 **Dockerfile**|https://github.com/elastic/mcp-server-elasticsearch/blob/refs/pull/37/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/elasticsearch)
 **Licence**|Apache License 2.0
 
 ## Available Tools

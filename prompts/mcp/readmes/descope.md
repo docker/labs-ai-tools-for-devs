@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/descope-sample-apps/descope-mcp-server
 **Dockerfile**|https://github.com/descope-sample-apps/descope-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/descope)
 **Licence**|MIT License
 
 ## Available Tools

@@ -12,6 +12,7 @@ Attribute|Details|
 **Repository**|https://github.com/Shopify/dev-mcp
 **Dockerfile**|https://github.com/Shopify/dev-mcp/blob/refs/pull/7/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/shopify)
 **Licence**|ISC License
 
 ## Available Tools
