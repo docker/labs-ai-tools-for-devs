@@ -312,6 +312,9 @@ registry:
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools: []
+    prompts: 0
+    resources: {}
     config:
       - name: filesystem
         description: The MCP server is allowed to access these paths
@@ -319,12 +322,10 @@ registry:
         properties:
           paths:
             type: array
-            items: {type: string}
+            items:
+              type: string
         required:
           - paths
-    tools: []
-    prompts: 0
-    resources: {}
   youtube_transcript:
     description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
@@ -1061,20 +1062,20 @@ registry:
         description: Configure the connection to Firecrawl
         type: object
         properties:
-          url:
-            type: string
-          retry_max:
-            type: integer
-          retry_delay:
-            type: integer
-          retry_max_delay:
-            type: integer
-          retry_backoff_factor:
+          credit_critical_threshold:
             type: integer
           credit_warning_threshold:
             type: integer
-          credit_critical_threshold:
+          retry_backoff_factor:
             type: integer
+          retry_delay:
+            type: integer
+          retry_max:
+            type: integer
+          retry_max_delay:
+            type: integer
+          url:
+            type: string
   github-chat:
     description: A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-chat.md
@@ -1187,10 +1188,10 @@ registry:
         description: Configure the connection to Hyperspell
         type: object
         properties:
-          use_resources:
-            type: boolean
           collection:
             type: string
+          use_resources:
+            type: boolean
   iaptic:
     description: Model Context Protocol server for interacting with iaptic
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
