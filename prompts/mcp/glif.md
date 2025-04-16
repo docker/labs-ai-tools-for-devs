@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/glif:latest
+      workdir: /app
       secrets:
         glif.api_token: GLIF_API_TOKEN
       environment:

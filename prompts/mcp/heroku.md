@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/heroku:latest
+      workdir: /app
       secrets:
         heroku.api_key: HEROKU_API_KEY
     source:

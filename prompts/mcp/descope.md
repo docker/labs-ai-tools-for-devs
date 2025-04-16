@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/descope:latest
+      workdir: /usr/src/app
       secrets:
         descope.management_key: DESCOPE_MANAGEMENT_KEY
       environment:

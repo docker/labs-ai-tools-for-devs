@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/chroma:latest
+      workdir: /app
       secrets:
         chroma.api_key: CHROMA_API_KEY
     source:

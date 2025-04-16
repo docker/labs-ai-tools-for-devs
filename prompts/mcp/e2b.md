@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/e2b:latest
+      workdir: /app
       secrets:
         e2b.api_key: E2B_API_KEY
     source:

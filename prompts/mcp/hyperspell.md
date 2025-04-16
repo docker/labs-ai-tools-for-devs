@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/hyperspell:latest
+      workdir: /app
       secrets:
         hyperspell.token: HYPERSPELL_TOKEN
       environment:

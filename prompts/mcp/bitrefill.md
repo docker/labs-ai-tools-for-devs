@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/bitrefill:latest
+      workdir: /app
       secrets:
         bitrefill.api_secret: BITREFILL_API_SECRET
       environment:
