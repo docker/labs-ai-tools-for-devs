@@ -1,10 +1,11 @@
-# github MCP Server
+# Github MCP Server
 
 Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,60 +14,71 @@ Tools for interacting with the GitHub API, enabling file operations, repository 
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `add_issue_comment` Add a comment to an existing issue
-1. `create_branch` Create a new branch in a GitHub repository
-1. `create_issue` Create a new issue in a GitHub repository
-1. `create_or_update_file` Create or update a single file in a GitHub repository
-1. `create_pull_request` Create a new pull request in a GitHub repository
-1. `create_pull_request_review` Create a review on a pull request
-1. `create_repository` Create a new GitHub repository in your account
-1. `fork_repository` Fork a GitHub repository to your account or specified organization
-1. `get_file_contents` Get the contents of a file or directory from a GitHub repository
-1. `get_issue` Get details of a specific issue in a GitHub repository.
-1. `get_pull_request` Get details of a specific pull request
-1. `get_pull_request_comments` Get the review comments on a pull request
-1. `get_pull_request_files` Get the list of files changed in a pull request
-1. `get_pull_request_reviews` Get the reviews on a pull request
-1. `get_pull_request_status` Get the combined status of all status checks for a pull request
-1. `list_commits` Get list of commits of a branch in a GitHub repository
-1. `list_issues` List issues in a GitHub repository with filtering options
-1. `list_pull_requests` List and filter repository pull requests
-1. `merge_pull_request` Merge a pull request
-1. `push_files` Push multiple files to a GitHub repository in a single commit
-1. `search_code` Search for code across GitHub repositories
-1. `search_issues` Search for issues and pull requests across GitHub repositories
-1. `search_repositories` Search for GitHub repositories
-1. `search_users` Search for users on GitHub
-1. `update_issue` Update an existing issue in a GitHub repository
-1. `update_pull_request_branch` Update a pull request branch with the latest changes from the base branch
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`add_issue_comment`|Add a comment to an existing issue|
+`create_branch`|Create a new branch in a GitHub repository|
+`create_issue`|Create a new issue in a GitHub repository|
+`create_or_update_file`|Create or update a single file in a GitHub repository|
+`create_pull_request`|Create a new pull request in a GitHub repository|
+`create_pull_request_review`|Create a review on a pull request|
+`create_repository`|Create a new GitHub repository in your account|
+`fork_repository`|Fork a GitHub repository to your account or specified organization|
+`get_file_contents`|Get the contents of a file or directory from a GitHub repository|
+`get_issue`|Get details of a specific issue in a GitHub repository.|
+`get_pull_request`|Get details of a specific pull request|
+`get_pull_request_comments`|Get the review comments on a pull request|
+`get_pull_request_files`|Get the list of files changed in a pull request|
+`get_pull_request_reviews`|Get the reviews on a pull request|
+`get_pull_request_status`|Get the combined status of all status checks for a pull request|
+`list_commits`|Get list of commits of a branch in a GitHub repository|
+`list_issues`|List issues in a GitHub repository with filtering options|
+`list_pull_requests`|List and filter repository pull requests|
+`merge_pull_request`|Merge a pull request|
+`push_files`|Push multiple files to a GitHub repository in a single commit|
+`search_code`|Search for code across GitHub repositories|
+`search_issues`|Search for issues and pull requests across GitHub repositories|
+`search_repositories`|Search for GitHub repositories|
+`search_users`|Search for users on GitHub|
+`update_issue`|Update an existing issue in a GitHub repository|
+`update_pull_request_branch`|Update a pull request branch with the latest changes from the base branch|
 
-## Tools
+---
+## Tools Details
 
-### Tool `add_issue_comment`
-Add a comment to an existing issue
+#### Tool: `add_issue_comment`
+|Description|
+|-|
+|Add a comment to an existing issue|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `body`|`string`|
 `issue_number`|`number`|
 `owner`|`string`|
 `repo`|`string`|
 
-### Tool `create_branch`
-Create a new branch in a GitHub repository
+---
+#### Tool: `create_branch`
+|Description|
+|-|
+|Create a new branch in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `branch`|`string`|Name for the new branch
 `owner`|`string`|Repository owner (username or organization)
 `repo`|`string`|Repository name
 `from_branch`|`string` *optional*|Optional: source branch to create from (defaults to the repository's default branch)
 
-### Tool `create_issue`
-Create a new issue in a GitHub repository
+---
+#### Tool: `create_issue`
+|Description|
+|-|
+|Create a new issue in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|
 `repo`|`string`|
@@ -76,10 +88,13 @@ Parameter|Type|Description
 `labels`|`array` *optional*|
 `milestone`|`number` *optional*|
 
-### Tool `create_or_update_file`
-Create or update a single file in a GitHub repository
+---
+#### Tool: `create_or_update_file`
+|Description|
+|-|
+|Create or update a single file in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `branch`|`string`|Branch to create/update the file in
 `content`|`string`|Content of the file
@@ -89,10 +104,13 @@ Parameter|Type|Description
 `repo`|`string`|Repository name
 `sha`|`string` *optional*|SHA of the file being replaced (required when updating existing files)
 
-### Tool `create_pull_request`
-Create a new pull request in a GitHub repository
+---
+#### Tool: `create_pull_request`
+|Description|
+|-|
+|Create a new pull request in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `base`|`string`|The name of the branch you want the changes pulled into
 `head`|`string`|The name of the branch where your changes are implemented
@@ -103,10 +121,13 @@ Parameter|Type|Description
 `draft`|`boolean` *optional*|Whether to create the pull request as a draft
 `maintainer_can_modify`|`boolean` *optional*|Whether maintainers can modify the pull request
 
-### Tool `create_pull_request_review`
-Create a review on a pull request
+---
+#### Tool: `create_pull_request_review`
+|Description|
+|-|
+|Create a review on a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `body`|`string`|The body text of the review
 `event`|`string`|The review action to perform
@@ -116,93 +137,123 @@ Parameter|Type|Description
 `comments`|`array` *optional*|Comments to post as part of the review
 `commit_id`|`string` *optional*|The SHA of the commit that needs a review
 
-### Tool `create_repository`
-Create a new GitHub repository in your account
+---
+#### Tool: `create_repository`
+|Description|
+|-|
+|Create a new GitHub repository in your account|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Repository name
 `autoInit`|`boolean` *optional*|Initialize with README.md
 `description`|`string` *optional*|Repository description
 `private`|`boolean` *optional*|Whether the repository should be private
 
-### Tool `fork_repository`
-Fork a GitHub repository to your account or specified organization
+---
+#### Tool: `fork_repository`
+|Description|
+|-|
+|Fork a GitHub repository to your account or specified organization|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `repo`|`string`|Repository name
 `organization`|`string` *optional*|Optional: organization to fork to (defaults to your personal account)
 
-### Tool `get_file_contents`
-Get the contents of a file or directory from a GitHub repository
+---
+#### Tool: `get_file_contents`
+|Description|
+|-|
+|Get the contents of a file or directory from a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `path`|`string`|Path to the file or directory
 `repo`|`string`|Repository name
 `branch`|`string` *optional*|Branch to get contents from
 
-### Tool `get_issue`
-Get details of a specific issue in a GitHub repository.
+---
+#### Tool: `get_issue`
+|Description|
+|-|
+|Get details of a specific issue in a GitHub repository.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `issue_number`|`number`|
 `owner`|`string`|
 `repo`|`string`|
 
-### Tool `get_pull_request`
-Get details of a specific pull request
+---
+#### Tool: `get_pull_request`
+|Description|
+|-|
+|Get details of a specific pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 
-### Tool `get_pull_request_comments`
-Get the review comments on a pull request
+---
+#### Tool: `get_pull_request_comments`
+|Description|
+|-|
+|Get the review comments on a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 
-### Tool `get_pull_request_files`
-Get the list of files changed in a pull request
+---
+#### Tool: `get_pull_request_files`
+|Description|
+|-|
+|Get the list of files changed in a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 
-### Tool `get_pull_request_reviews`
-Get the reviews on a pull request
+---
+#### Tool: `get_pull_request_reviews`
+|Description|
+|-|
+|Get the reviews on a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 
-### Tool `get_pull_request_status`
-Get the combined status of all status checks for a pull request
+---
+#### Tool: `get_pull_request_status`
+|Description|
+|-|
+|Get the combined status of all status checks for a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 
-### Tool `list_commits`
-Get list of commits of a branch in a GitHub repository
+---
+#### Tool: `list_commits`
+|Description|
+|-|
+|Get list of commits of a branch in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|
 `repo`|`string`|
@@ -210,10 +261,13 @@ Parameter|Type|Description
 `perPage`|`number` *optional*|
 `sha`|`string` *optional*|
 
-### Tool `list_issues`
-List issues in a GitHub repository with filtering options
+---
+#### Tool: `list_issues`
+|Description|
+|-|
+|List issues in a GitHub repository with filtering options|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|
 `repo`|`string`|
@@ -225,10 +279,13 @@ Parameter|Type|Description
 `sort`|`string` *optional*|
 `state`|`string` *optional*|
 
-### Tool `list_pull_requests`
-List and filter repository pull requests
+---
+#### Tool: `list_pull_requests`
+|Description|
+|-|
+|List and filter repository pull requests|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `repo`|`string`|Repository name
@@ -240,10 +297,13 @@ Parameter|Type|Description
 `sort`|`string` *optional*|What to sort results by
 `state`|`string` *optional*|State of the pull requests to return
 
-### Tool `merge_pull_request`
-Merge a pull request
+---
+#### Tool: `merge_pull_request`
+|Description|
+|-|
+|Merge a pull request|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
@@ -252,10 +312,13 @@ Parameter|Type|Description
 `commit_title`|`string` *optional*|Title for the automatic commit message
 `merge_method`|`string` *optional*|Merge method to use
 
-### Tool `push_files`
-Push multiple files to a GitHub repository in a single commit
+---
+#### Tool: `push_files`
+|Description|
+|-|
+|Push multiple files to a GitHub repository in a single commit|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `branch`|`string`|Branch to push to (e.g., 'main' or 'master')
 `files`|`array`|Array of files to push
@@ -263,20 +326,26 @@ Parameter|Type|Description
 `owner`|`string`|Repository owner (username or organization)
 `repo`|`string`|Repository name
 
-### Tool `search_code`
-Search for code across GitHub repositories
+---
+#### Tool: `search_code`
+|Description|
+|-|
+|Search for code across GitHub repositories|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `q`|`string`|
 `order`|`string` *optional*|
 `page`|`number` *optional*|
 `per_page`|`number` *optional*|
 
-### Tool `search_issues`
-Search for issues and pull requests across GitHub repositories
+---
+#### Tool: `search_issues`
+|Description|
+|-|
+|Search for issues and pull requests across GitHub repositories|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `q`|`string`|
 `order`|`string` *optional*|
@@ -284,19 +353,25 @@ Parameter|Type|Description
 `per_page`|`number` *optional*|
 `sort`|`string` *optional*|
 
-### Tool `search_repositories`
-Search for GitHub repositories
+---
+#### Tool: `search_repositories`
+|Description|
+|-|
+|Search for GitHub repositories|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query (see GitHub search syntax)
 `page`|`number` *optional*|Page number for pagination (default: 1)
 `perPage`|`number` *optional*|Number of results per page (default: 30, max: 100)
 
-### Tool `search_users`
-Search for users on GitHub
+---
+#### Tool: `search_users`
+|Description|
+|-|
+|Search for users on GitHub|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `q`|`string`|
 `order`|`string` *optional*|
@@ -304,10 +379,13 @@ Parameter|Type|Description
 `per_page`|`number` *optional*|
 `sort`|`string` *optional*|
 
-### Tool `update_issue`
-Update an existing issue in a GitHub repository
+---
+#### Tool: `update_issue`
+|Description|
+|-|
+|Update an existing issue in a GitHub repository|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `issue_number`|`number`|
 `owner`|`string`|
@@ -319,16 +397,20 @@ Parameter|Type|Description
 `state`|`string` *optional*|
 `title`|`string` *optional*|
 
-### Tool `update_pull_request_branch`
-Update a pull request branch with the latest changes from the base branch
+---
+#### Tool: `update_pull_request_branch`
+|Description|
+|-|
+|Update a pull request branch with the latest changes from the base branch|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner (username or organization)
 `pull_number`|`number`|Pull request number
 `repo`|`string`|Repository name
 `expected_head_sha`|`string` *optional*|The expected SHA of the pull request's HEAD ref
 
+---
 ## Use this MCP Server
 
 ```json

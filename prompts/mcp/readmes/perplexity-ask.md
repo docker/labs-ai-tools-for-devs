@@ -1,10 +1,11 @@
-# perplexity-ask MCP Server
+# Perplexity-ask MCP Server
 
 Connector for Perplexity API, to enable real-time, web-wide research.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[ppl-ai](https://github.com/ppl-ai)
@@ -13,34 +14,46 @@ Connector for Perplexity API, to enable real-time, web-wide research.
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `perplexity_ask` Engages in a conversation using the Sonar API.
-1. `perplexity_reason` Performs reasoning tasks using the Perplexity API.
-1. `perplexity_research` Performs deep research using the Perplexity API.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`perplexity_ask`|Engages in a conversation using the Sonar API.|
+`perplexity_reason`|Performs reasoning tasks using the Perplexity API.|
+`perplexity_research`|Performs deep research using the Perplexity API.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `perplexity_ask`
-Engages in a conversation using the Sonar API. Accepts an array of messages (each with a role and content) and returns a ask completion response from the Perplexity model.
+#### Tool: `perplexity_ask`
+|Description|
+|-|
+|Engages in a conversation using the Sonar API. Accepts an array of messages (each with a role and content) and returns a ask completion response from the Perplexity model.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages
 
-### Tool `perplexity_reason`
-Performs reasoning tasks using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a well-reasoned response using the sonar-reasoning-pro model.
+---
+#### Tool: `perplexity_reason`
+|Description|
+|-|
+|Performs reasoning tasks using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a well-reasoned response using the sonar-reasoning-pro model.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages
 
-### Tool `perplexity_research`
-Performs deep research using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a comprehensive research response with citations.
+---
+#### Tool: `perplexity_research`
+|Description|
+|-|
+|Performs deep research using the Perplexity API. Accepts an array of messages (each with a role and content) and returns a comprehensive research response with citations.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `messages`|`array`|Array of conversation messages
 
+---
 ## Use this MCP Server
 
 ```json

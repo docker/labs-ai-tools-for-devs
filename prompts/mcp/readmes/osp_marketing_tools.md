@@ -1,10 +1,11 @@
-# osp_marketing_tools MCP Server
+# Osp_marketing_tools MCP Server
 
 A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[open-strategy-partners](https://github.com/open-strategy-partners)
@@ -13,33 +14,48 @@ A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Sra
 **Docker Image built by**|Docker Inc.
 **Licence**|Creative Commons Attribution Share Alike 4.0 International
 
-## Summary
-1. `get_editing_codes` Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.
-1. `get_meta_guide` Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).
-1. `get_on_page_seo_guide` Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.
-1. `get_value_map_positioning_guide` Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).
-1. `get_writing_guide` Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.
-1. `health_check` Check if the server is running and can access its resources
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`get_editing_codes`|Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.|
+`get_meta_guide`|Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).|
+`get_on_page_seo_guide`|Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.|
+`get_value_map_positioning_guide`|Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).|
+`get_writing_guide`|Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.|
+`health_check`|Check if the server is running and can access its resources|
 
-## Tools
+---
+## Tools Details
 
-### Tool `get_editing_codes`
-Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.
+#### Tool: `get_editing_codes`
+|Description|
+|-|
+|Get the Open Strategy Partners (OSP) editing codes documentation and usage protocol for editing texts.|
 
-### Tool `get_meta_guide`
-Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).
+#### Tool: `get_meta_guide`
+|Description|
+|-|
+|Get the Open Strategy Partners (OSP) Web Content Meta Information Generation System (titles, meta-titles, slugs).|
 
-### Tool `get_on_page_seo_guide`
-Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.
+#### Tool: `get_on_page_seo_guide`
+|Description|
+|-|
+|Get the Open Strategy Partners (OSP) On-Page SEO Optimization Guide.|
 
-### Tool `get_value_map_positioning_guide`
-Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).
+#### Tool: `get_value_map_positioning_guide`
+|Description|
+|-|
+|Get the Open Strategy Partners (OSP) Product Communications Value Map Generation System for Product Positioning (value cases, feature extraction, taglines).|
 
-### Tool `get_writing_guide`
-Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.
+#### Tool: `get_writing_guide`
+|Description|
+|-|
+|Get the Open Strategy Partners (OSP) writing guide and usage protocol for editing texts.|
 
-### Tool `health_check`
-Check if the server is running and can access its resources
+#### Tool: `health_check`
+|Description|
+|-|
+|Check if the server is running and can access its resources|
 
 ## Use this MCP Server
 

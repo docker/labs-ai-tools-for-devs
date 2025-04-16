@@ -1,10 +1,11 @@
-# memory MCP Server
+# Memory MCP Server
 
 Knowledge graph-based persistent memory system
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,78 +14,107 @@ Knowledge graph-based persistent memory system
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `add_observations` Add new observations to existing entities in the knowledge graph
-1. `create_entities` Create multiple new entities in the knowledge graph
-1. `create_relations` Create multiple new relations between entities in the knowledge graph.
-1. `delete_entities` Delete multiple entities and their associated relations from the knowledge graph
-1. `delete_observations` Delete specific observations from entities in the knowledge graph
-1. `delete_relations` Delete multiple relations from the knowledge graph
-1. `open_nodes` Open specific nodes in the knowledge graph by their names
-1. `read_graph` Read the entire knowledge graph
-1. `search_nodes` Search for nodes in the knowledge graph based on a query
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`add_observations`|Add new observations to existing entities in the knowledge graph|
+`create_entities`|Create multiple new entities in the knowledge graph|
+`create_relations`|Create multiple new relations between entities in the knowledge graph.|
+`delete_entities`|Delete multiple entities and their associated relations from the knowledge graph|
+`delete_observations`|Delete specific observations from entities in the knowledge graph|
+`delete_relations`|Delete multiple relations from the knowledge graph|
+`open_nodes`|Open specific nodes in the knowledge graph by their names|
+`read_graph`|Read the entire knowledge graph|
+`search_nodes`|Search for nodes in the knowledge graph based on a query|
 
-## Tools
+---
+## Tools Details
 
-### Tool `add_observations`
-Add new observations to existing entities in the knowledge graph
+#### Tool: `add_observations`
+|Description|
+|-|
+|Add new observations to existing entities in the knowledge graph|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `observations`|`array`|
 
-### Tool `create_entities`
-Create multiple new entities in the knowledge graph
+---
+#### Tool: `create_entities`
+|Description|
+|-|
+|Create multiple new entities in the knowledge graph|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `entities`|`array`|
 
-### Tool `create_relations`
-Create multiple new relations between entities in the knowledge graph. Relations should be in active voice
+---
+#### Tool: `create_relations`
+|Description|
+|-|
+|Create multiple new relations between entities in the knowledge graph. Relations should be in active voice|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `relations`|`array`|
 
-### Tool `delete_entities`
-Delete multiple entities and their associated relations from the knowledge graph
+---
+#### Tool: `delete_entities`
+|Description|
+|-|
+|Delete multiple entities and their associated relations from the knowledge graph|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `entityNames`|`array`|An array of entity names to delete
 
-### Tool `delete_observations`
-Delete specific observations from entities in the knowledge graph
+---
+#### Tool: `delete_observations`
+|Description|
+|-|
+|Delete specific observations from entities in the knowledge graph|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `deletions`|`array`|
 
-### Tool `delete_relations`
-Delete multiple relations from the knowledge graph
+---
+#### Tool: `delete_relations`
+|Description|
+|-|
+|Delete multiple relations from the knowledge graph|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `relations`|`array`|An array of relations to delete
 
-### Tool `open_nodes`
-Open specific nodes in the knowledge graph by their names
+---
+#### Tool: `open_nodes`
+|Description|
+|-|
+|Open specific nodes in the knowledge graph by their names|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `names`|`array`|An array of entity names to retrieve
 
-### Tool `read_graph`
-Read the entire knowledge graph
+---
+#### Tool: `read_graph`
+|Description|
+|-|
+|Read the entire knowledge graph|
 
-### Tool `search_nodes`
-Search for nodes in the knowledge graph based on a query
+#### Tool: `search_nodes`
+|Description|
+|-|
+|Search for nodes in the knowledge graph based on a query|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query to match against entity names, types, and observation content
 
+---
 ## Use this MCP Server
 
 ```json

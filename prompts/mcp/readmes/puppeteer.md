@@ -1,4 +1,4 @@
-# puppeteer MCP Server
+# Puppeteer MCP Server
 
 UNDER CONSTRUCTION (support long running browser cache)
 Browser automation and web scraping using Puppeteer.
@@ -6,7 +6,8 @@ Browser automation and web scraping using Puppeteer.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -15,73 +16,97 @@ Browser automation and web scraping using Puppeteer.
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `puppeteer_click` Click an element on the page
-1. `puppeteer_evaluate` Execute JavaScript in the browser console
-1. `puppeteer_fill` Fill out an input field
-1. `puppeteer_hover` Hover an element on the page
-1. `puppeteer_navigate` Navigate to a URL
-1. `puppeteer_screenshot` Take a screenshot of the current page or a specific element
-1. `puppeteer_select` Select an element on the page with Select tag
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`puppeteer_click`|Click an element on the page|
+`puppeteer_evaluate`|Execute JavaScript in the browser console|
+`puppeteer_fill`|Fill out an input field|
+`puppeteer_hover`|Hover an element on the page|
+`puppeteer_navigate`|Navigate to a URL|
+`puppeteer_screenshot`|Take a screenshot of the current page or a specific element|
+`puppeteer_select`|Select an element on the page with Select tag|
 
-## Tools
+---
+## Tools Details
 
-### Tool `puppeteer_click`
-Click an element on the page
+#### Tool: `puppeteer_click`
+|Description|
+|-|
+|Click an element on the page|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to click
 
-### Tool `puppeteer_evaluate`
-Execute JavaScript in the browser console
+---
+#### Tool: `puppeteer_evaluate`
+|Description|
+|-|
+|Execute JavaScript in the browser console|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `script`|`string`|JavaScript code to execute
 
-### Tool `puppeteer_fill`
-Fill out an input field
+---
+#### Tool: `puppeteer_fill`
+|Description|
+|-|
+|Fill out an input field|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for input field
 `value`|`string`|Value to fill
 
-### Tool `puppeteer_hover`
-Hover an element on the page
+---
+#### Tool: `puppeteer_hover`
+|Description|
+|-|
+|Hover an element on the page|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to hover
 
-### Tool `puppeteer_navigate`
-Navigate to a URL
+---
+#### Tool: `puppeteer_navigate`
+|Description|
+|-|
+|Navigate to a URL|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|URL to navigate to
 `allowDangerous`|`boolean` *optional*|Allow dangerous LaunchOptions that reduce security. When false, dangerous args like --no-sandbox will throw errors. Default false.
 `launchOptions`|`object` *optional*|PuppeteerJS LaunchOptions. Default null. If changed and not null, browser restarts. Example: { headless: true, args: ['--no-sandbox'] }
 
-### Tool `puppeteer_screenshot`
-Take a screenshot of the current page or a specific element
+---
+#### Tool: `puppeteer_screenshot`
+|Description|
+|-|
+|Take a screenshot of the current page or a specific element|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Name for the screenshot
 `height`|`number` *optional*|Height in pixels (default: 600)
 `selector`|`string` *optional*|CSS selector for element to screenshot
 `width`|`number` *optional*|Width in pixels (default: 800)
 
-### Tool `puppeteer_select`
-Select an element on the page with Select tag
+---
+#### Tool: `puppeteer_select`
+|Description|
+|-|
+|Select an element on the page with Select tag|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to select
 `value`|`string`|Value to select
 
+---
 ## Use this MCP Server
 
 ```json

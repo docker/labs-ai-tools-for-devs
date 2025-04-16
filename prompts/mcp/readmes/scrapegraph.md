@@ -1,10 +1,11 @@
-# scrapegraph MCP Server
+# Scrapegraph MCP Server
 
 ScapeGraph MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[ScrapeGraphAI](https://github.com/ScrapeGraphAI)
@@ -13,35 +14,47 @@ ScapeGraph MCP Server
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `markdownify` Convert a webpage into clean, formatted markdown.
-1. `searchscraper` Perform AI-powered web searches with structured results.
-1. `smartscraper` Extract structured data from a webpage using AI.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`markdownify`|Convert a webpage into clean, formatted markdown.|
+`searchscraper`|Perform AI-powered web searches with structured results.|
+`smartscraper`|Extract structured data from a webpage using AI.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `markdownify`
-Convert a webpage into clean, formatted markdown.
+#### Tool: `markdownify`
+|Description|
+|-|
+|Convert a webpage into clean, formatted markdown.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `website_url`|`string`|URL of the webpage to convert
 
-### Tool `searchscraper`
-Perform AI-powered web searches with structured results.
+---
+#### Tool: `searchscraper`
+|Description|
+|-|
+|Perform AI-powered web searches with structured results.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Search query or instructions
 
-### Tool `smartscraper`
-Extract structured data from a webpage using AI.
+---
+#### Tool: `smartscraper`
+|Description|
+|-|
+|Extract structured data from a webpage using AI.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Instructions for what data to extract
 `website_url`|`string`|URL of the webpage to scrape
 
+---
 ## Use this MCP Server
 
 ```json

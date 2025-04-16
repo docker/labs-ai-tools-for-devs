@@ -1,10 +1,11 @@
-# postgres MCP Server
+# Postgres MCP Server
 
 Provides PostgreSQL database management capabilities. This server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,18 +14,24 @@ Provides PostgreSQL database management capabilities. This server assists with a
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `query` Run a read-only SQL query
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`query`|Run a read-only SQL query|
 
-## Tools
+---
+## Tools Details
 
-### Tool `query`
-Run a read-only SQL query
+#### Tool: `query`
+|Description|
+|-|
+|Run a read-only SQL query|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `sql`|`string` *optional*|
 
+---
 ## Use this MCP Server
 
 ```json

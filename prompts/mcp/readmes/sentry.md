@@ -1,10 +1,11 @@
-# sentry MCP Server
+# Sentry MCP Server
 
 A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,23 +14,29 @@ A Model Context Protocol server for retrieving and analyzing issues from Sentry.
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `get_sentry_issue` Retrieve and analyze a Sentry issue by ID or URL.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`get_sentry_issue`|Retrieve and analyze a Sentry issue by ID or URL.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `get_sentry_issue`
-Retrieve and analyze a Sentry issue by ID or URL. Use this tool when you need to:
+#### Tool: `get_sentry_issue`
+|Description|
+|-|
+|Retrieve and analyze a Sentry issue by ID or URL. Use this tool when you need to:
                 - Investigate production errors and crashes
                 - Access detailed stacktraces from Sentry
                 - Analyze error patterns and frequencies
                 - Get information about when issues first/last occurred
-                - Review error counts and status
+                - Review error counts and status|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `issue_id_or_url`|`string`|Sentry issue ID or URL to analyze
 
+---
 ## Use this MCP Server
 
 ```json

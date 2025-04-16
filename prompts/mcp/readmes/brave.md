@@ -1,10 +1,11 @@
-# brave MCP Server
+# Brave MCP Server
 
 Web and local search using Brave's Search API
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
@@ -13,33 +14,42 @@ Web and local search using Brave's Search API
 **Docker Image built by**|Docker Inc.
 **Licence**|MIT License
 
-## Summary
-1. `brave_local_search` Searches for local businesses and places using Brave's Local Search API.
-1. `brave_web_search` Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`brave_local_search`|Searches for local businesses and places using Brave's Local Search API.|
+`brave_web_search`|Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `brave_local_search`
-Searches for local businesses and places using Brave's Local Search API. Best for queries related to physical locations, businesses, restaurants, services, etc. Returns detailed information including:
+#### Tool: `brave_local_search`
+|Description|
+|-|
+|Searches for local businesses and places using Brave's Local Search API. Best for queries related to physical locations, businesses, restaurants, services, etc. Returns detailed information including:
 - Business names and addresses
 - Ratings and review counts
 - Phone numbers and opening hours
-Use this when the query implies 'near me' or mentions specific locations. Automatically falls back to web search if no local results are found.
+Use this when the query implies 'near me' or mentions specific locations. Automatically falls back to web search if no local results are found.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Local search query (e.g. 'pizza near Central Park')
 `count`|`number` *optional*|Number of results (1-20, default 5)
 
-### Tool `brave_web_search`
-Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content. Use this for broad information gathering, recent events, or when you need diverse web sources. Supports pagination, content filtering, and freshness controls. Maximum 20 results per request, with offset for pagination.
+---
+#### Tool: `brave_web_search`
+|Description|
+|-|
+|Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content. Use this for broad information gathering, recent events, or when you need diverse web sources. Supports pagination, content filtering, and freshness controls. Maximum 20 results per request, with offset for pagination.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query (max 400 chars, 50 words)
 `count`|`number` *optional*|Number of results (1-20, default 10)
 `offset`|`number` *optional*|Pagination offset (max 9, default 0)
 
+---
 ## Use this MCP Server
 
 ```json

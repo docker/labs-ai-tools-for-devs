@@ -1,10 +1,11 @@
-# e2b MCP Server
+# E2b MCP Server
 
 Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[e2b-dev](https://github.com/e2b-dev)
@@ -13,18 +14,24 @@ Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
 **Docker Image built by**|Docker Inc.
 **Licence**|Apache License 2.0
 
-## Summary
-1. `run_code` Run python code in a secure sandbox by E2B.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`run_code`|Run python code in a secure sandbox by E2B.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `run_code`
-Run python code in a secure sandbox by E2B. Using the Jupyter Notebook syntax.
+#### Tool: `run_code`
+|Description|
+|-|
+|Run python code in a secure sandbox by E2B. Using the Jupyter Notebook syntax.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `code`|`string`|
 
+---
 ## Use this MCP Server
 
 ```json

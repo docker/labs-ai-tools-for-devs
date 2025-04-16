@@ -1,10 +1,11 @@
-# chroma MCP Server
+# Chroma MCP Server
 
 A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[chroma-core](https://github.com/chroma-core)
@@ -13,36 +14,44 @@ A Model Context Protocol (MCP) server implementation that provides database capa
 **Docker Image built by**|Docker Inc.
 **Licence**|Apache License 2.0
 
-## Summary
-1. `chroma_add_documents` Add documents to a Chroma collection.
-1. `chroma_create_collection` Create a new Chroma collection with configurable HNSW parameters.
-1. `chroma_delete_collection` Delete a Chroma collection.
-1. `chroma_delete_documents` Delete documents from a Chroma collection.
-1. `chroma_get_collection_count` Get the number of documents in a Chroma collection.
-1. `chroma_get_collection_info` Get information about a Chroma collection.
-1. `chroma_get_documents` Get documents from a Chroma collection with optional filtering.
-1. `chroma_list_collections` List all collection names in the Chroma database with pagination support.
-1. `chroma_modify_collection` Modify a Chroma collection's name or metadata.
-1. `chroma_peek_collection` Peek at documents in a Chroma collection.
-1. `chroma_query_documents` Query documents from a Chroma collection with advanced filtering.
-1. `chroma_update_documents` Update documents in a Chroma collection.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`chroma_add_documents`|Add documents to a Chroma collection.|
+`chroma_create_collection`|Create a new Chroma collection with configurable HNSW parameters.|
+`chroma_delete_collection`|Delete a Chroma collection.|
+`chroma_delete_documents`|Delete documents from a Chroma collection.|
+`chroma_get_collection_count`|Get the number of documents in a Chroma collection.|
+`chroma_get_collection_info`|Get information about a Chroma collection.|
+`chroma_get_documents`|Get documents from a Chroma collection with optional filtering.|
+`chroma_list_collections`|List all collection names in the Chroma database with pagination support.|
+`chroma_modify_collection`|Modify a Chroma collection's name or metadata.|
+`chroma_peek_collection`|Peek at documents in a Chroma collection.|
+`chroma_query_documents`|Query documents from a Chroma collection with advanced filtering.|
+`chroma_update_documents`|Update documents in a Chroma collection.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `chroma_add_documents`
-Add documents to a Chroma collection.
+#### Tool: `chroma_add_documents`
+|Description|
+|-|
+|Add documents to a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to add documents to
 `documents`|`array`|List of text documents to add
 `ids`|`string` *optional*|Optional list of IDs for the documents
 `metadatas`|`string` *optional*|Optional list of metadata dictionaries for each document
 
-### Tool `chroma_create_collection`
-Create a new Chroma collection with configurable HNSW parameters.
+---
+#### Tool: `chroma_create_collection`
+|Description|
+|-|
+|Create a new Chroma collection with configurable HNSW parameters.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to create
 `batch_size`|`string` *optional*|Number of elements to batch together during index construction
@@ -56,39 +65,54 @@ Parameter|Type|Description
 `space`|`string` *optional*|Distance function used in HNSW index. Options: 'l2', 'ip', 'cosine'
 `sync_threshold`|`string` *optional*|Number of elements to process before syncing index to disk
 
-### Tool `chroma_delete_collection`
-Delete a Chroma collection.
+---
+#### Tool: `chroma_delete_collection`
+|Description|
+|-|
+|Delete a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to delete
 
-### Tool `chroma_delete_documents`
-Delete documents from a Chroma collection.
+---
+#### Tool: `chroma_delete_documents`
+|Description|
+|-|
+|Delete documents from a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to delete documents from
 `ids`|`array`|List of document IDs to delete
 
-### Tool `chroma_get_collection_count`
-Get the number of documents in a Chroma collection.
+---
+#### Tool: `chroma_get_collection_count`
+|Description|
+|-|
+|Get the number of documents in a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to count
 
-### Tool `chroma_get_collection_info`
-Get information about a Chroma collection.
+---
+#### Tool: `chroma_get_collection_info`
+|Description|
+|-|
+|Get information about a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to get info about
 
-### Tool `chroma_get_documents`
-Get documents from a Chroma collection with optional filtering.
+---
+#### Tool: `chroma_get_documents`
+|Description|
+|-|
+|Get documents from a Chroma collection with optional filtering.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to get documents from
 `ids`|`string` *optional*|Optional list of document IDs to retrieve
@@ -98,18 +122,24 @@ Parameter|Type|Description
 `where`|`string` *optional*|Optional metadata filters using Chroma's query operators
 `where_document`|`string` *optional*|Optional document content filters
 
-### Tool `chroma_list_collections`
-List all collection names in the Chroma database with pagination support.
+---
+#### Tool: `chroma_list_collections`
+|Description|
+|-|
+|List all collection names in the Chroma database with pagination support.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`string` *optional*|Optional maximum number of collections to return
 `offset`|`string` *optional*|Optional number of collections to skip before returning results
 
-### Tool `chroma_modify_collection`
-Modify a Chroma collection's name or metadata.
+---
+#### Tool: `chroma_modify_collection`
+|Description|
+|-|
+|Modify a Chroma collection's name or metadata.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to modify
 `batch_size`|`string` *optional*|Number of elements to batch together during index construction
@@ -120,18 +150,24 @@ Parameter|Type|Description
 `resize_factor`|`string` *optional*|Factor to resize the index by when it's full
 `sync_threshold`|`string` *optional*|Number of elements to process before syncing index to disk
 
-### Tool `chroma_peek_collection`
-Peek at documents in a Chroma collection.
+---
+#### Tool: `chroma_peek_collection`
+|Description|
+|-|
+|Peek at documents in a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to peek into
 `limit`|`integer` *optional*|Number of documents to peek at
 
-### Tool `chroma_query_documents`
-Query documents from a Chroma collection with advanced filtering.
+---
+#### Tool: `chroma_query_documents`
+|Description|
+|-|
+|Query documents from a Chroma collection with advanced filtering.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to query
 `query_texts`|`array`|List of query texts to search for
@@ -140,10 +176,13 @@ Parameter|Type|Description
 `where`|`string` *optional*|Optional metadata filters using Chroma's query operators
 `where_document`|`string` *optional*|Optional document content filters
 
-### Tool `chroma_update_documents`
-Update documents in a Chroma collection.
+---
+#### Tool: `chroma_update_documents`
+|Description|
+|-|
+|Update documents in a Chroma collection.|
 
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to update documents in
 `ids`|`array`|List of document IDs to update (required)
@@ -151,6 +190,7 @@ Parameter|Type|Description
 `embeddings`|`string` *optional*|Optional list of new embeddings for the documents.
 `metadatas`|`string` *optional*|Optional list of new metadata dictionaries for the documents.
 
+---
 ## Use this MCP Server
 
 ```json
