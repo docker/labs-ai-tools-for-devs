@@ -10,11 +10,10 @@ type BottomProps = {
 const Bottom = ({ item, needsConfiguration }: BottomProps) => {
     return (
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            {<Chip label={
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ fontSize: '1.2em' }}>
-                    <Hardware sx={{ fontSize: '1.2em' }} />
-                    {`${(item.tools || []).length || 1} tool` + ((item.tools || []).length || 1 !== 1 ? 's' : '')}
-
+            {<Chip sx={{ fontSize: '1.2em', p: '4px 8px' }} label={
+                <Stack direction="row" alignItems="center" sx={{ fontSize: '1.2em' }}>
+                    <Hardware sx={{ fontSize: '1.2em', mr: '2px' }} />
+                    {item.tools?.length || 1}
                 </Stack>
             } color="primary" />}
             {!item.tools?.length && !!item.prompts && <Chip label={`${item.prompts} prompt` + (item.prompts !== 1 ? 's' : '')} color="secondary" />}

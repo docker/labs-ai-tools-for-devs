@@ -55,6 +55,7 @@ interface ConfigurationModalProps {
     onToggleRegister: (checked: boolean) => void;
     registered: boolean;
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
+    unAssignedSecrets: { name: string, assigned: boolean }[];
 }
 
 
@@ -66,60 +67,13 @@ const ConfigurationModal = ({
     onToggleRegister,
     registered,
     onSecretChange,
+    unAssignedSecrets,
 }: ConfigurationModalProps) => {
 
-    const { startPull, registryItems, secrets } = useCatalogContext();
+    const { registryItems, secrets } = useCatalogContext();
     const { config, configLoading } = useConfigContext();
     const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
-    const [localConfig, setLocalConfig] = useState<{ [key: string]: any }>({});
-    const [configTemplate, setConfigTemplate] = useState<Record<string, any>>({});
-    const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
     const theme = useTheme();
-
-    // Generate config template from schema
-    const generateConfigTemplate = (schemaConfig: any) => {
-        if (!schemaConfig) return {};
-
-        try {
-            const template: Record<string, any> = {};
-            // Process the schema configuration
-            if (Array.isArray(schemaConfig) && schemaConfig.length > 0) {
-                const configItem = schemaConfig[0]; // Get the first config item
-
-                if (configItem && configItem.parameters) {
-                    Object.entries(configItem.parameters).forEach(([key, paramSchema]: [string, any]) => {
-                        if (paramSchema.type === 'object' && paramSchema.properties) {
-                            const objTemplate: Record<string, any> = {};
-                            Object.entries(paramSchema.properties).forEach(([propKey, propSchema]: [string, any]) => {
-                                objTemplate[propKey] = getDefaultValue(propSchema);
-                            });
-                            template[key] = objTemplate;
-                        } else {
-                            template[key] = getDefaultValue(paramSchema);
-                        }
-                    });
-                }
-
-                // Handle required fields from anyOf
-                if (configItem.anyOf) {
-                    configItem.anyOf.forEach((condition: any) => {
-                        if (condition.required) {
-                            condition.required.forEach((requiredField: string) => {
-                                if (!template[requiredField]) {
-                                    template[requiredField] = {};
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-
-            return template;
-        } catch (error) {
-            console.error('Error generating template from schema:', error);
-            return {};
-        }
-    };
 
     // Helper function to get default values based on type
     const getDefaultValue = (schema: any) => {
@@ -172,17 +126,6 @@ const ConfigurationModal = ({
     // State for secrets
     const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([]);
 
-    // State for config
-    const [loadedConfig, setLoadedConfig] = useState<{ [key: string]: any }>({});
-
-    // Generate template when catalog item changes
-    useEffect(() => {
-        if (catalogItem?.config) {
-            const template = generateConfigTemplate(catalogItem.config);
-            setConfigTemplate(template);
-        }
-    }, [catalogItem]);
-
     // Load assigned secrets
     useEffect(() => {
         const loadedSecrets = Secrets.getAssignedSecrets(catalogItem, secrets);
@@ -193,66 +136,10 @@ const ConfigurationModal = ({
         }, {} as { [key: string]: string | undefined }));
     }, [catalogItem, secrets]);
 
-    // Load config
-    useEffect(() => {
-        try {
-            const item = config?.[catalogItem.name] || {};
-            setLoadedConfig(item);
-
-            // Initialize local config with merged template and loaded config
-            if (Object.keys(configTemplate).length > 0) {
-                const mergedConfig = mergeDeep({}, configTemplate, item);
-                setLocalConfig(mergedConfig);
-            } else {
-                setLocalConfig(item);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }, [catalogItem, config, configTemplate]);
 
     // Handle tab change
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
-    };
-
-    // Validate configuration value
-    const validateConfigValue = (key: string, value: any, schema: any): string => {
-        if (!schema) return '';
-
-        // Basic type validation
-        if (schema.type === 'string' && typeof value !== 'string') {
-            return 'Value must be a string';
-        } else if ((schema.type === 'number' || schema.type === 'integer') && typeof value !== 'number') {
-            return 'Value must be a number';
-        } else if (schema.type === 'boolean' && typeof value !== 'boolean') {
-            return 'Value must be a boolean';
-        }
-
-        // String validations
-        if (schema.type === 'string') {
-            if (schema.minLength !== undefined && value.length < schema.minLength) {
-                return `Minimum length is ${schema.minLength}`;
-            }
-            if (schema.maxLength !== undefined && value.length > schema.maxLength) {
-                return `Maximum length is ${schema.maxLength}`;
-            }
-            if (schema.pattern && !new RegExp(schema.pattern).test(value)) {
-                return 'Value does not match required pattern';
-            }
-        }
-
-        // Number validations
-        if (schema.type === 'number' || schema.type === 'integer') {
-            if (schema.minimum !== undefined && value < schema.minimum) {
-                return `Minimum value is ${schema.minimum}`;
-            }
-            if (schema.maximum !== undefined && value > schema.maximum) {
-                return `Maximum value is ${schema.maximum}`;
-            }
-        }
-
-        return '';
     };
 
     // Determine if we should show the secrets tab and config tab
@@ -265,6 +152,15 @@ const ConfigurationModal = ({
             setTabValue(0); // Config tab
         }
     }, [hasSecrets, hasConfig]);
+
+    const hasAllSecrets = unAssignedSecrets.length === 0
+    const emptyConfig = catalogItem.config && (!config?.[catalogItem.name] || Object.keys(config?.[catalogItem.name] || {}).length === 0)
+
+    useEffect(() => {
+        if (!hasAllSecrets || emptyConfig) {
+            setTabValue(1);
+        }
+    }, [hasAllSecrets, emptyConfig]);
 
 
     if (!registryItems) {
@@ -285,7 +181,10 @@ const ConfigurationModal = ({
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                height: '70vh',
+                height: '80vh',
+                width: '80vw',
+                maxWidth: '1000px',
+                minWidth: '400px',
                 p: 4,
                 outline: 'none'
             }}>
@@ -298,10 +197,12 @@ const ConfigurationModal = ({
                         <Close />
                     </IconButton>
                 </Stack>
-                <Typography sx={{ mt: 2 }} color="text.secondary">
+                <Typography sx={{ mt: 2, maxHeight: '5em', overflow: 'auto' }} color="text.secondary">
                     {catalogItem.description}
                 </Typography>
-                <FormControlLabel control={<Switch checked={registered} onChange={(e) => onToggleRegister(e.target.checked)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
+                <Tooltip placement="right" title={!hasAllSecrets || emptyConfig ? 'You must assign all secrets and configure the item before it can be used.' : ''}>
+                    <FormControlLabel control={<Switch disabled={!hasAllSecrets || emptyConfig} checked={registered} onChange={(e) => onToggleRegister(e.target.checked)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
+                </Tooltip>
                 <Divider sx={{ mt: 2 }} />
                 <Typography variant="caption" sx={{ mt: 2, color: 'text.secondary' }}>
                     Repository: <Link onClick={() => client.host.openExternal(catalogItem.source || '')} href={catalogItem.source || ''} target="_blank">{catalogItem.source || ''}⤴</Link>
@@ -319,19 +220,19 @@ const ConfigurationModal = ({
                             <Tabs value={tabValue} onChange={handleTabChange}>
                                 <Tab label="Tools" />
                                 {/* <Tab label="Prompts" /> */}
-                                <Tab disabled={!hasSecrets && !hasConfig} label="Config & Secrets" />
+                                <Tab disabled={!hasSecrets && !hasConfig} label={<Badge invisible={hasAllSecrets && !emptyConfig} sx={{ pl: 1, pr: 1 }} variant="dot" badgeContent={hasSecrets ? 'Secrets' : 'Config'} color="error">Config & Secrets</Badge>} />
                             </Tabs>
                         </Box>
 
-                        <TabPanel value={tabValue} index={0}>
+                        <TabPanel value={tabValue} index={0} >
                             {!catalogItem?.tools?.length && (
                                 <Typography>
                                     No tools available for this item.
                                 </Typography>
                             )}
-                            <Grid2 container spacing={2} alignItems="flex-start" sx={{ overflow: 'auto', maxHeight: 350 }}>
+                            <Grid2 container spacing={2} alignItems="flex-start" sx={{ mt: 1, overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 {(catalogItem.tools || []).map((tool) => (
-                                    <Grid2 key={tool.name} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                                    <Grid2 key={tool.name} size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
                                         <Tooltip title={tool.name}>
                                             <Typography component="span" key={tool.name} sx={toolChipStyle}>
                                                 {tool.name.slice(0, 30) + (tool.name.length > 30 ? '...' : '')}
@@ -342,7 +243,7 @@ const ConfigurationModal = ({
                             </Grid2>
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
-                            <Stack direction="column" spacing={1} sx={{ overflow: 'auto', maxHeight: 350 }}>
+                            <Stack direction="column" spacing={1} sx={{ overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 <Stack direction="column" spacing={2} sx={{ border: '2px solid', borderColor: theme.palette.warning.contrastText, borderRadius: 2, p: 2, mt: 2 }}>
                                     <ConfigEditor catalogItem={catalogItem} />
                                     <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
