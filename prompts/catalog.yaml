@@ -216,7 +216,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/time.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/time
-    icon: https://img.icons8.com/ios/50/time_2.png
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: convert_time
       - name: get_current_time
@@ -227,7 +227,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/fetch.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/fetch
-    icon: https://img.icons8.com/ios/50/fetch-rewards.png
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: fetch
     prompts: 0
@@ -501,7 +501,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/everart.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://10web.io/wp-content/uploads/2024/07/EverArt.png
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: generate_image
     secrets:
@@ -596,7 +596,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/resend.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/resend.md
     source: https://github.com/slimslenderslacks/mcp-send-email/tree/slim/docker
-    icon: https://img.icons8.com/ios/50/new-post--v1.png
+    icon: https://avatars.githubusercontent.com/u/109384852?s=200&v=4
     tools:
       - name: send-email
     secrets:
@@ -660,7 +660,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/armor-crypto.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/armor-crypto.md
     source: https://github.com/armorwallet/armor-crypto-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/168436604?s=200&v=4
     tools:
       - name: add_wallets_to_group
       - name: archive_wallet_group
@@ -747,7 +747,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlas-docs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/atlas-docs.md
     source: https://github.com/CartographAI/atlas-docs-mcp/tree/master
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/184709581?s=200&v=4
     tools:
       - name: get_docs_full
       - name: get_docs_index
@@ -768,7 +768,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/audiense-insights.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/audiense-insights.md
     source: https://github.com/AudienseCo/mcp-audiense-insights/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/2454008?s=200&v=4
     tools:
       - name: compare-audience-influencers
       - name: get-audience-content
@@ -797,7 +797,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/basic-memory.md
     source: https://github.com/basicmachines-co/basic-memory/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/88632318?s=200&v=4
     tools:
       - name: build_context
       - name: canvas
@@ -815,7 +815,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/bitrefill.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/bitrefill.md
     source: https://github.com/bitrefill/bitrefill-mcp-server/tree/master
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/10897174?s=200&v=4
     tools:
       - name: categories
       - name: create_invoice
@@ -871,7 +871,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/chroma.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/chroma.md
     source: https://github.com/chroma-core/chroma-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/105881770?s=200&v=4
     tools:
       - name: chroma_add_documents
       - name: chroma_create_collection
@@ -894,7 +894,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/cyreslab-ai-shodan.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/cyreslab-ai-shodan.md
     source: https://github.com/Cyreslab-AI/shodan-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/178556137?s=200&v=4
     tools:
       - name: get_host_info
       - name: get_ssl_info
@@ -910,7 +910,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/dart.md
     source: https://github.com/its-dart/dart-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/92822028?s=200&v=4
     tools:
       - name: create_doc
       - name: create_task
@@ -949,7 +949,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/descope.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/descope.md
     source: https://github.com/descope-sample-apps/descope-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/119703169?s=200&v=4
     tools:
       - name: create-user
       - name: invite-user
@@ -973,7 +973,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/devhub-cms.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/devhub-cms.md
     source: https://github.com/devhub/devhub-cms-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/602719?s=200&v=4
     tools:
       - name: create_blog_post
       - name: get_blog_post
@@ -1004,7 +1004,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/e2b.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/e2b.md
     source: https://github.com/e2b-dev/mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/129434473?s=200&v=4
     tools:
       - name: run_code
     secrets:
@@ -1040,7 +1040,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/firecrawl.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/firecrawl.md
     source: https://github.com/mendableai/firecrawl-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/135057108?s=200&v=4
     tools:
       - name: firecrawl_batch_scrape
       - name: firecrawl_check_batch_status
@@ -1080,7 +1080,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-chat.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-chat.md
     source: https://github.com/AsyncFuncAI/github-chat-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/194295535?s=200&v=4
     tools:
       - name: index_repository
       - name: query_repository
@@ -1093,7 +1093,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/handwriting-ocr.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/handwriting-ocr.md
     source: https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/202432073?s=200&v=4
     tools:
       - name: check_status
       - name: get_text
@@ -1152,7 +1152,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperbrowser.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperbrowser.md
     source: https://github.com/hyperbrowserai/mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/189776885?s=200&v=4
     tools:
       - name: browser_use_agent
       - name: claude_computer_use_agent
@@ -1173,7 +1173,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperspell.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperspell.md
     source: https://github.com/hyperspell/hyperspell-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/170754924?s=200&v=4
     tools:
       - name: Add File
       - name: Add Memory
@@ -1196,7 +1196,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/iaptic.md
     source: https://github.com/iaptic/mcp-server-iaptic/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/72789805?s=200&v=4
     tools:
       - name: customer_add_purchase
       - name: customer_get
@@ -1252,7 +1252,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/multiversx-mx.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/multiversx-mx.md
     source: https://github.com/multiversx/mx-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/114073177?s=200&v=4
     tools:
       - name: create-sft-nft-mesdt-tokens
       - name: create-wallet
@@ -1287,7 +1287,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neon.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neon.md
     source: https://github.com/neondatabase/mcp-server-neon/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/183852044?s=200&v=4
     tools:
       - name: __node_version
       - name: complete_database_migration
@@ -1314,7 +1314,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neondatabase-labs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neondatabase-labs.md
     source: https://github.com/neondatabase-labs/mcp-server-neon/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/183852044?s=200&v=4
     tools:
       - name: __node_version
       - name: complete_database_migration
@@ -1341,7 +1341,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/opik.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/opik.md
     source: https://github.com/comet-ml/opik-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/31487821?s=200&v=4
     tools:
       - name: create-project
       - name: create-prompt
@@ -1380,7 +1380,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/osp_marketing_tools.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/osp_marketing_tools.md
     source: https://github.com/open-strategy-partners/osp_marketing_tools/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/47528973?s=200&v=4
     tools:
       - name: get_editing_codes
       - name: get_meta_guide
@@ -1395,7 +1395,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/oxylabs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/oxylabs.md
     source: https://github.com/oxylabs/oxylabs-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/43960873?s=200&v=4
     tools:
       - name: oxylabs_amazon_product_scraper
       - name: oxylabs_amazon_search_scraper
@@ -1462,7 +1462,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapegraph.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/scrapegraph.md
     source: https://github.com/ScrapeGraphAI/scrapegraph-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/171017415?s=200&v=4
     tools:
       - name: markdownify
       - name: searchscraper
@@ -1476,7 +1476,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapezy.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/scrapezy.md
     source: https://github.com/Scrapezy/mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/196929482?s=200&v=4
     tools:
       - name: extract-structured-data
     secrets:
@@ -1499,7 +1499,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tavily.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tavily.md
     source: https://github.com/tavily-ai/tavily-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/170207473?s=200&v=4
     tools:
       - name: tavily-extract
       - name: tavily-search
@@ -1512,7 +1512,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tembo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tembo.md
     source: https://github.com/tembo-io/mcp-server-tembo/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/113815875?s=200&v=4
     tools:
       - name: ask_tembo
       - name: create_instance
@@ -1533,7 +1533,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/triplewhale.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/triplewhale.md
     source: https://github.com/Triple-Whale/mcp-server-triplewhale/tree/master
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/79388081?s=200&v=4
     tools:
       - name: moby
     secrets:
@@ -1545,7 +1545,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tweetbinder.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tweetbinder.md
     source: https://github.com/audienseco/mcp-tweetbinder/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/2454008?s=200&v=4
     tools:
       - name: create-twitter-count
       - name: create-twitter-report
@@ -1563,7 +1563,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/veyrax.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/veyrax.md
     source: https://github.com/VeyraX/veyrax-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/201344226?s=200&v=4
     tools:
       - name: get_flow
       - name: get_tools
@@ -1617,7 +1617,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/edubase.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/edubase.md
     source: https://github.com/EduBase/MCP/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/33938028?s=200&v=4
     tools:
       - name: edubase_delete_class_members
       - name: edubase_delete_class_permission
@@ -1764,7 +1764,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/lara.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/lara.md
     source: https://github.com/translated/lara-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/10272138?s=200&v=4
     tools:
       - name: add_translation
       - name: check_import_status
@@ -1798,7 +1798,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
     source: https://github.com/glifxyz/glif-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/119348676?s=200&v=4
     tools:
       - name: glif_info
       - name: list_bots
@@ -1832,7 +1832,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
     source: https://github.com/exa-labs/exa-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/77906174?s=200&v=4
     tools:
       - name: web_search
     secrets:
