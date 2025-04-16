@@ -44,22 +44,16 @@ Error Responses:
 ---
 ## Tools Details
 
-#### Tool: `API-create-a-comment`
-|Description|
-|-|
-|Create comment|
-
+#### Tool: **`API-create-a-comment`**
+Create comment
 Parameters|Type|Description
 -|-|-
 `parent`|`object`|The page that contains the comment
 `rich_text`|`array`|
 
 ---
-#### Tool: `API-create-a-database`
-|Description|
-|-|
-|Create a database|
-
+#### Tool: **`API-create-a-database`**
+Create a database
 Parameters|Type|Description
 -|-|-
 `parent`|`object`|
@@ -67,21 +61,15 @@ Parameters|Type|Description
 `title`|`array` *optional*|
 
 ---
-#### Tool: `API-delete-a-block`
-|Description|
-|-|
-|Delete a block|
-
+#### Tool: **`API-delete-a-block`**
+Delete a block
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a Notion block
 
 ---
-#### Tool: `API-get-block-children`
-|Description|
-|-|
-|Retrieve block children|
-
+#### Tool: **`API-get-block-children`**
+Retrieve block children
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a [block](ref:block)
@@ -89,41 +77,29 @@ Parameters|Type|Description
 `start_cursor`|`string` *optional*|If supplied, this endpoint will return a page of results starting after the cursor provided. If not supplied, this endpoint will return the first page of results.
 
 ---
-#### Tool: `API-get-self`
-|Description|
-|-|
-|Retrieve your token's bot user|
-
-#### Tool: `API-get-user`
-|Description|
-|-|
-|Retrieve a user
+#### Tool: **`API-get-self`**
+Retrieve your token's bot user
+#### Tool: **`API-get-user`**
+Retrieve a user
 Error Responses:
-400: 400|
-
+400: 400
 Parameters|Type|Description
 -|-|-
 `user_id`|`string`|
 
 ---
-#### Tool: `API-get-users`
-|Description|
-|-|
-|List all users
+#### Tool: **`API-get-users`**
+List all users
 Error Responses:
-400: 400|
-
+400: 400
 Parameters|Type|Description
 -|-|-
 `page_size`|`integer` *optional*|The number of items from the full list desired in the response. Maximum: 100
 `start_cursor`|`string` *optional*|If supplied, this endpoint will return a page of results starting after the cursor provided. If not supplied, this endpoint will return the first page of results.
 
 ---
-#### Tool: `API-patch-block-children`
-|Description|
-|-|
-|Append block children|
-
+#### Tool: **`API-patch-block-children`**
+Append block children
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a [block](ref:block). Also accepts a [page](ref:page) ID.
@@ -131,11 +107,8 @@ Parameters|Type|Description
 `after`|`string` *optional*|The ID of the existing block that the new block should be appended after.
 
 ---
-#### Tool: `API-patch-page`
-|Description|
-|-|
-|Update page properties|
-
+#### Tool: **`API-patch-page`**
+Update page properties
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The identifier for the Notion page to be updated.
@@ -146,11 +119,8 @@ Parameters|Type|Description
 `properties`|`object` *optional*|The property values to update for the page. The keys are the names or IDs of the property and the values are property values. If a page property ID is not included, then it is not changed.
 
 ---
-#### Tool: `API-post-database-query`
-|Description|
-|-|
-|Query a database|
-
+#### Tool: **`API-post-database-query`**
+Query a database
 Parameters|Type|Description
 -|-|-
 `database_id`|`string`|Identifier for a Notion database.
@@ -163,11 +133,8 @@ Parameters|Type|Description
 `start_cursor`|`string` *optional*|When supplied, returns a page of results starting after the cursor provided. If not supplied, this endpoint will return the first page of results.
 
 ---
-#### Tool: `API-post-page`
-|Description|
-|-|
-|Create a page|
-
+#### Tool: **`API-post-page`**
+Create a page
 Parameters|Type|Description
 -|-|-
 `parent`|`object`|
@@ -177,11 +144,8 @@ Parameters|Type|Description
 `icon`|`string` *optional*|The icon of the new page. Either an [emoji object](https://developers.notion.com/reference/emoji-object) or an [external file object](https://developers.notion.com/reference/file-object)..
 
 ---
-#### Tool: `API-post-search`
-|Description|
-|-|
-|Search by title|
-
+#### Tool: **`API-post-search`**
+Search by title
 Parameters|Type|Description
 -|-|-
 `filter`|`object` *optional*|A set of criteria, `value` and `property` keys, that limits the results to either only pages or only databases. Possible `value` values are `"page"` or `"database"`. The only supported `property` value is `"object"`.
@@ -191,21 +155,15 @@ Parameters|Type|Description
 `start_cursor`|`string` *optional*|A `cursor` value returned in a previous response that If supplied, limits the response to results starting after the `cursor`. If not supplied, then the first page of results is returned. Refer to [pagination](https://developers.notion.com/reference/intro#pagination) for more details.
 
 ---
-#### Tool: `API-retrieve-a-block`
-|Description|
-|-|
-|Retrieve a block|
-
+#### Tool: **`API-retrieve-a-block`**
+Retrieve a block
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a Notion block
 
 ---
-#### Tool: `API-retrieve-a-comment`
-|Description|
-|-|
-|Retrieve comments|
-
+#### Tool: **`API-retrieve-a-comment`**
+Retrieve comments
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a Notion block or page
@@ -213,32 +171,23 @@ Parameters|Type|Description
 `start_cursor`|`string` *optional*|If supplied, this endpoint will return a page of results starting after the cursor provided. If not supplied, this endpoint will return the first page of results.
 
 ---
-#### Tool: `API-retrieve-a-database`
-|Description|
-|-|
-|Retrieve a database|
-
+#### Tool: **`API-retrieve-a-database`**
+Retrieve a database
 Parameters|Type|Description
 -|-|-
 `database_id`|`string`|An identifier for the Notion database.
 
 ---
-#### Tool: `API-retrieve-a-page`
-|Description|
-|-|
-|Retrieve a page|
-
+#### Tool: **`API-retrieve-a-page`**
+Retrieve a page
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Identifier for a Notion page
 `filter_properties`|`string` *optional*|A list of page property value IDs associated with the page. Use this param to limit the response to a specific page property value or values. To retrieve multiple properties, specify each page property ID. For example: `?filter_properties=iAk8&filter_properties=b7dh`.
 
 ---
-#### Tool: `API-retrieve-a-page-property`
-|Description|
-|-|
-|Retrieve a page property item|
-
+#### Tool: **`API-retrieve-a-page-property`**
+Retrieve a page property item
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Identifier for a Notion page
@@ -247,11 +196,8 @@ Parameters|Type|Description
 `start_cursor`|`string` *optional*|For paginated properties.
 
 ---
-#### Tool: `API-update-a-block`
-|Description|
-|-|
-|Update a block|
-
+#### Tool: **`API-update-a-block`**
+Update a block
 Parameters|Type|Description
 -|-|-
 `block_id`|`string`|Identifier for a Notion block
@@ -259,11 +205,8 @@ Parameters|Type|Description
 `type`|`object` *optional*|The [block object `type`](ref:block#block-object-keys) value with the properties to be updated. Currently only `text` (for supported block types) and `checked` (for `to_do` blocks) fields can be updated.
 
 ---
-#### Tool: `API-update-a-database`
-|Description|
-|-|
-|Update a database|
-
+#### Tool: **`API-update-a-database`**
+Update a database
 Parameters|Type|Description
 -|-|-
 `database_id`|`string`|identifier for a Notion database

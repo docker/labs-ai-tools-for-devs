@@ -26,22 +26,16 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `pulumi-cli-preview`
-|Description|
-|-|
-|Run pulumi preview for a given project and stack|
-
+#### Tool: **`pulumi-cli-preview`**
+Run pulumi preview for a given project and stack
 Parameters|Type|Description
 -|-|-
 `workDir`|`string`|The working directory of the program.
 `stackName`|`string` *optional*|The associated stack name. Defaults to 'dev'.
 
 ---
-#### Tool: `pulumi-cli-stack-output`
-|Description|
-|-|
-|Get the output value(s) of a given stack|
-
+#### Tool: **`pulumi-cli-stack-output`**
+Get the output value(s) of a given stack
 Parameters|Type|Description
 -|-|-
 `workDir`|`string`|The working directory of the program.
@@ -49,22 +43,16 @@ Parameters|Type|Description
 `stackName`|`string` *optional*|The associated stack name. Defaults to 'dev'.
 
 ---
-#### Tool: `pulumi-cli-up`
-|Description|
-|-|
-|Run pulumi up for a given project and stack|
-
+#### Tool: **`pulumi-cli-up`**
+Run pulumi up for a given project and stack
 Parameters|Type|Description
 -|-|-
 `workDir`|`string`|The working directory of the program.
 `stackName`|`string` *optional*|The associated stack name. Defaults to 'dev'.
 
 ---
-#### Tool: `pulumi-registry-get-resource`
-|Description|
-|-|
-|Get information about a specific resource from the Pulumi Registry|
-
+#### Tool: **`pulumi-registry-get-resource`**
+Get information about a specific resource from the Pulumi Registry
 Parameters|Type|Description
 -|-|-
 `provider`|`string`|The cloud provider (e.g., 'aws', 'azure', 'gcp', 'random') or github.com/org/repo for Git-hosted components
@@ -72,11 +60,8 @@ Parameters|Type|Description
 `module`|`string` *optional*|The module to query (e.g., 's3', 'ec2', 'lambda'). Optional for smaller providers, will be 'index by default.
 
 ---
-#### Tool: `pulumi-registry-list-resources`
-|Description|
-|-|
-|List all resource types for a given provider and module|
-
+#### Tool: **`pulumi-registry-list-resources`**
+List all resource types for a given provider and module
 Parameters|Type|Description
 -|-|-
 `provider`|`string`|The cloud provider (e.g., 'aws', 'azure', 'gcp', 'random') or github.com/org/repo for Git-hosted components

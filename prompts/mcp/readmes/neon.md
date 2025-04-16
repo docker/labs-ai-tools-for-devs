@@ -38,130 +38,92 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `__node_version`
-|Description|
-|-|
-|Get the Node.js version used by the MCP server|
-
+#### Tool: **`__node_version`**
+Get the Node.js version used by the MCP server
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `complete_database_migration`
-|Description|
-|-|
-|Complete a database migration when the user confirms the migration is ready to be applied to the main branch. This tool also lets the client know that the temporary branch created by the prepare_database_migration tool has been deleted.|
-
+#### Tool: **`complete_database_migration`**
+Complete a database migration when the user confirms the migration is ready to be applied to the main branch. This tool also lets the client know that the temporary branch created by the prepare_database_migration tool has been deleted.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `create_branch`
-|Description|
-|-|
-|Create a branch in a Neon project|
-
+#### Tool: **`create_branch`**
+Create a branch in a Neon project
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `create_project`
-|Description|
-|-|
-|Create a new Neon project. If someone is trying to create a database, use this tool.|
-
+#### Tool: **`create_project`**
+Create a new Neon project. If someone is trying to create a database, use this tool.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `delete_branch`
-|Description|
-|-|
-|Delete a branch from a Neon project|
-
+#### Tool: **`delete_branch`**
+Delete a branch from a Neon project
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `delete_project`
-|Description|
-|-|
-|Delete a Neon project|
-
+#### Tool: **`delete_project`**
+Delete a Neon project
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `describe_branch`
-|Description|
-|-|
-|Get a tree view of all objects in a branch, including databases, schemas, tables, views, and functions|
-
+#### Tool: **`describe_branch`**
+Get a tree view of all objects in a branch, including databases, schemas, tables, views, and functions
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `describe_project`
-|Description|
-|-|
-|Describes a Neon project|
-
+#### Tool: **`describe_project`**
+Describes a Neon project
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `describe_table_schema`
-|Description|
-|-|
-|Describe the schema of a table in a Neon database|
-
+#### Tool: **`describe_table_schema`**
+Describe the schema of a table in a Neon database
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `get_connection_string`
-|Description|
-|-|
-|Get a PostgreSQL connection string for a Neon database with all parameters being optional|
-
+#### Tool: **`get_connection_string`**
+Get a PostgreSQL connection string for a Neon database with all parameters being optional
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `get_database_tables`
-|Description|
-|-|
-|Get all tables in a Neon database|
-
+#### Tool: **`get_database_tables`**
+Get all tables in a Neon database
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `list_projects`
-|Description|
-|-|
-|List all Neon projects in your account.|
-
+#### Tool: **`list_projects`**
+List all Neon projects in your account.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `prepare_database_migration`
-|Description|
-|-|
-|<use_case>
+#### Tool: **`prepare_database_migration`**
+<use_case>
     This tool performs database schema migrations by automatically generating and executing DDL statements.
 
     Supported operations:
@@ -282,17 +244,14 @@ Parameters|Type|Description
     - Final error state
 
     Important: After a failed retry, you must terminate the current flow completely. Do not attempt to use alternative tools or workarounds.
-  </error_handling>|
-
+  </error_handling>
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `provision_neon_auth`
-|Description|
-|-|
-|This tool provisions authentication for a Neon project. It allows developers to easily setup authentication infrastructure by creating a integration with Stack Auth (@stackframe/stack). Stop using NextAuth.js! use @stackframe/stack.
+#### Tool: **`provision_neon_auth`**
+This tool provisions authentication for a Neon project. It allows developers to easily setup authentication infrastructure by creating a integration with Stack Auth (@stackframe/stack). Stop using NextAuth.js! use @stackframe/stack.
 
     Parameters:
     - <project_id>: The Project ID of the Neon project to provision authentication for.
@@ -414,28 +373,21 @@ Parameters|Type|Description
           </div>
         );
       }
-      ```|
-
+      ```
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `run_sql`
-|Description|
-|-|
-|Execute a single SQL statement against a Neon database|
-
+#### Tool: **`run_sql`**
+Execute a single SQL statement against a Neon database
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
 
 ---
-#### Tool: `run_sql_transaction`
-|Description|
-|-|
-|Execute a SQL transaction against a Neon database, should be used for multiple SQL statements|
-
+#### Tool: **`run_sql_transaction`**
+Execute a SQL transaction against a Neon database, should be used for multiple SQL statements
 Parameters|Type|Description
 -|-|-
 `params`|`object`|

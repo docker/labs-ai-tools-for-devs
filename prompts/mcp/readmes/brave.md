@@ -23,26 +23,20 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `brave_local_search`
-|Description|
-|-|
-|Searches for local businesses and places using Brave's Local Search API. Best for queries related to physical locations, businesses, restaurants, services, etc. Returns detailed information including:
+#### Tool: **`brave_local_search`**
+Searches for local businesses and places using Brave's Local Search API. Best for queries related to physical locations, businesses, restaurants, services, etc. Returns detailed information including:
 - Business names and addresses
 - Ratings and review counts
 - Phone numbers and opening hours
-Use this when the query implies 'near me' or mentions specific locations. Automatically falls back to web search if no local results are found.|
-
+Use this when the query implies 'near me' or mentions specific locations. Automatically falls back to web search if no local results are found.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Local search query (e.g. 'pizza near Central Park')
 `count`|`number` *optional*|Number of results (1-20, default 5)
 
 ---
-#### Tool: `brave_web_search`
-|Description|
-|-|
-|Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content. Use this for broad information gathering, recent events, or when you need diverse web sources. Supports pagination, content filtering, and freshness controls. Maximum 20 results per request, with offset for pagination.|
-
+#### Tool: **`brave_web_search`**
+Performs a web search using the Brave Search API, ideal for general queries, news, articles, and online content. Use this for broad information gathering, recent events, or when you need diverse web sources. Supports pagination, content filtering, and freshness controls. Maximum 20 results per request, with offset for pagination.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query (max 400 chars, 50 words)

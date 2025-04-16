@@ -47,11 +47,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `add_activity_to_incident`
-|Description|
-|-|
-|Add a note to an incident's timeline. The note will appear in the incident's activity feed. Use this if there is a request to add context to an incident with a note.|
-
+#### Tool: **`add_activity_to_incident`**
+Add a note to an incident's timeline. The note will appear in the incident's activity feed. Use this if there is a request to add context to an incident with a note.
 Parameters|Type|Description
 -|-|-
 `body`|`string` *optional*|The body of the activity. URLs will be parsed and attached as context
@@ -59,11 +56,8 @@ Parameters|Type|Description
 `incidentId`|`string` *optional*|The ID of the incident to add the activity to
 
 ---
-#### Tool: `create_incident`
-|Description|
-|-|
-|Create an incident|
-
+#### Tool: **`create_incident`**
+Create an incident
 Parameters|Type|Description
 -|-|-
 `attachCaption`|`string` *optional*|The caption of the attachment
@@ -76,81 +70,57 @@ Parameters|Type|Description
 `title`|`string` *optional*|The title of the incident
 
 ---
-#### Tool: `get_alert_rule_by_uid`
-|Description|
-|-|
-|Retrieves detailed information about a specific alert rule by its UID.|
-
+#### Tool: **`get_alert_rule_by_uid`**
+Retrieves detailed information about a specific alert rule by its UID.
 Parameters|Type|Description
 -|-|-
 `uid`|`string`|The uid of the alert rule
 
 ---
-#### Tool: `get_current_oncall_users`
-|Description|
-|-|
-|Get users currently on-call for a specific schedule. A schedule is a calendar-based system defining when team members are on-call. This tool will return info about all users currently on-call for the schedule, regardless of team.|
-
+#### Tool: **`get_current_oncall_users`**
+Get users currently on-call for a specific schedule. A schedule is a calendar-based system defining when team members are on-call. This tool will return info about all users currently on-call for the schedule, regardless of team.
 Parameters|Type|Description
 -|-|-
 `scheduleId`|`string`|The ID of the schedule to get current on-call users for
 
 ---
-#### Tool: `get_dashboard_by_uid`
-|Description|
-|-|
-|Get dashboard by uid|
-
+#### Tool: **`get_dashboard_by_uid`**
+Get dashboard by uid
 Parameters|Type|Description
 -|-|-
 `uid`|`string`|The UID of the dashboard
 
 ---
-#### Tool: `get_datasource_by_name`
-|Description|
-|-|
-|Get datasource by name|
-
+#### Tool: **`get_datasource_by_name`**
+Get datasource by name
 Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the datasource
 
 ---
-#### Tool: `get_datasource_by_uid`
-|Description|
-|-|
-|Get datasource by uid|
-
+#### Tool: **`get_datasource_by_uid`**
+Get datasource by uid
 Parameters|Type|Description
 -|-|-
 `uid`|`string`|The uid of the datasource
 
 ---
-#### Tool: `get_incident`
-|Description|
-|-|
-|Get a single incident by ID. Returns the full incident details including title, status, severity, and other metadata.|
-
+#### Tool: **`get_incident`**
+Get a single incident by ID. Returns the full incident details including title, status, severity, and other metadata.
 Parameters|Type|Description
 -|-|-
 `id`|`string` *optional*|The ID of the incident to retrieve
 
 ---
-#### Tool: `get_oncall_shift`
-|Description|
-|-|
-|Get details for a specific OnCall shift. A shift represents a designated time period within a rotation when a team or individual is actively on-call|
-
+#### Tool: **`get_oncall_shift`**
+Get details for a specific OnCall shift. A shift represents a designated time period within a rotation when a team or individual is actively on-call
 Parameters|Type|Description
 -|-|-
 `shiftId`|`string`|The ID of the shift to get details for
 
 ---
-#### Tool: `list_alert_rules`
-|Description|
-|-|
-|Lists alert rules with their current states (pending, firing, error, recovering, inactive) and labels. Inactive state means the alert state is normal, not firing.|
-
+#### Tool: **`list_alert_rules`**
+Lists alert rules with their current states (pending, firing, error, recovering, inactive) and labels. Inactive state means the alert state is normal, not firing.
 Parameters|Type|Description
 -|-|-
 `label_selectors`|`array` *optional*|Optionally
@@ -158,32 +128,23 @@ Parameters|Type|Description
 `page`|`integer` *optional*|The page number to return.
 
 ---
-#### Tool: `list_contact_points`
-|Description|
-|-|
-|Lists notification contact points with their type, name, and configuration.|
-
+#### Tool: **`list_contact_points`**
+Lists notification contact points with their type, name, and configuration.
 Parameters|Type|Description
 -|-|-
 `limit`|`integer` *optional*|The maximum number of results to return. Default is 100.
 `name`|`string` *optional*|Filter contact points by name
 
 ---
-#### Tool: `list_datasources`
-|Description|
-|-|
-|List datasources|
-
+#### Tool: **`list_datasources`**
+List datasources
 Parameters|Type|Description
 -|-|-
 `type`|`string` *optional*|The type of datasources to search for. For example
 
 ---
-#### Tool: `list_incidents`
-|Description|
-|-|
-|List incidents|
-
+#### Tool: **`list_incidents`**
+List incidents
 Parameters|Type|Description
 -|-|-
 `drill`|`boolean` *optional*|Whether to include drill incidents
@@ -191,11 +152,8 @@ Parameters|Type|Description
 `status`|`string` *optional*|The status of the incidents to include. Valid values: 'active'
 
 ---
-#### Tool: `list_loki_label_names`
-|Description|
-|-|
-|List all available label names in a Loki datasource for the given time range. Returns the set of unique label keys found in the logs.|
-
+#### Tool: **`list_loki_label_names`**
+List all available label names in a Loki datasource for the given time range. Returns the set of unique label keys found in the logs.
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -203,11 +161,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `list_loki_label_values`
-|Description|
-|-|
-|Retrieve all possible values for a specific label in Loki within the given time range. Useful for exploring available options for filtering logs.|
-
+#### Tool: **`list_loki_label_values`**
+Retrieve all possible values for a specific label in Loki within the given time range. Useful for exploring available options for filtering logs.
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -216,11 +171,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `list_oncall_schedules`
-|Description|
-|-|
-|List OnCall schedules. A schedule is a calendar-based system defining when team members are on-call. Optionally provide a scheduleId to get details for a specific schedule|
-
+#### Tool: **`list_oncall_schedules`**
+List OnCall schedules. A schedule is a calendar-based system defining when team members are on-call. Optionally provide a scheduleId to get details for a specific schedule
 Parameters|Type|Description
 -|-|-
 `page`|`integer` *optional*|The page number to return (1-based)
@@ -228,21 +180,15 @@ Parameters|Type|Description
 `teamId`|`string` *optional*|The ID of the team to list schedules for
 
 ---
-#### Tool: `list_oncall_teams`
-|Description|
-|-|
-|List teams from Grafana OnCall|
-
+#### Tool: **`list_oncall_teams`**
+List teams from Grafana OnCall
 Parameters|Type|Description
 -|-|-
 `page`|`integer` *optional*|The page number to return
 
 ---
-#### Tool: `list_oncall_users`
-|Description|
-|-|
-|List users from Grafana OnCall. If user ID is provided, returns details for that specific user. If username is provided, returns the user matching that username|
-
+#### Tool: **`list_oncall_users`**
+List users from Grafana OnCall. If user ID is provided, returns details for that specific user. If username is provided, returns the user matching that username
 Parameters|Type|Description
 -|-|-
 `page`|`integer` *optional*|The page number to return
@@ -250,11 +196,8 @@ Parameters|Type|Description
 `username`|`string` *optional*|The username to filter users by. If provided
 
 ---
-#### Tool: `list_prometheus_label_names`
-|Description|
-|-|
-|List the label names in a Prometheus datasource|
-
+#### Tool: **`list_prometheus_label_names`**
+List the label names in a Prometheus datasource
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -264,11 +207,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `list_prometheus_label_values`
-|Description|
-|-|
-|Get the values of a label in Prometheus|
-
+#### Tool: **`list_prometheus_label_values`**
+Get the values of a label in Prometheus
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -279,11 +219,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `list_prometheus_metric_metadata`
-|Description|
-|-|
-|List Prometheus metric metadata|
-
+#### Tool: **`list_prometheus_metric_metadata`**
+List Prometheus metric metadata
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -292,11 +229,8 @@ Parameters|Type|Description
 `metric`|`string` *optional*|The metric to query
 
 ---
-#### Tool: `list_prometheus_metric_names`
-|Description|
-|-|
-|List metric names in a Prometheus datasource that match the given regex|
-
+#### Tool: **`list_prometheus_metric_names`**
+List metric names in a Prometheus datasource that match the given regex
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -305,11 +239,8 @@ Parameters|Type|Description
 `regex`|`string` *optional*|The regex to match against the metric names
 
 ---
-#### Tool: `query_loki_logs`
-|Description|
-|-|
-|Query and retrieve log entries or metric values from a Loki datasource using LogQL. Returns either log lines or numeric values with timestamps and labels. Use `query_loki_stats` first to check stream size, then `list_loki_label_names` and `list_loki_label_values` to verify labels exist. Supports full LogQL syntax including both log queries and metric queries (e.g., rate, count_over_time).|
-
+#### Tool: **`query_loki_logs`**
+Query and retrieve log entries or metric values from a Loki datasource using LogQL. Returns either log lines or numeric values with timestamps and labels. Use `query_loki_stats` first to check stream size, then `list_loki_label_names` and `list_loki_label_values` to verify labels exist. Supports full LogQL syntax including both log queries and metric queries (e.g., rate, count_over_time).
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -320,11 +251,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `query_loki_stats`
-|Description|
-|-|
-|Query statistics about log streams in a Loki datasource, using LogQL selectors to select streams|
-
+#### Tool: **`query_loki_stats`**
+Query statistics about log streams in a Loki datasource, using LogQL selectors to select streams
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -333,11 +261,8 @@ Parameters|Type|Description
 `startRfc3339`|`string` *optional*|Optionally
 
 ---
-#### Tool: `query_prometheus`
-|Description|
-|-|
-|Query Prometheus using a range or instant request|
-
+#### Tool: **`query_prometheus`**
+Query Prometheus using a range or instant request
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
@@ -348,11 +273,8 @@ Parameters|Type|Description
 `stepSeconds`|`integer` *optional*|The time series step size in seconds. Required if queryType is 'range'
 
 ---
-#### Tool: `search_dashboards`
-|Description|
-|-|
-|Search for dashboards|
-
+#### Tool: **`search_dashboards`**
+Search for dashboards
 Parameters|Type|Description
 -|-|-
 `query`|`string` *optional*|The query to search for

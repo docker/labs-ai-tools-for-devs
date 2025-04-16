@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `retrieve_from_aws_kb`
-|Description|
-|-|
-|Performs retrieval from the AWS Knowledge Base using the provided query and Knowledge Base ID.|
-
+#### Tool: **`retrieve_from_aws_kb`**
+Performs retrieval from the AWS Knowledge Base using the provided query and Knowledge Base ID.
 Parameters|Type|Description
 -|-|-
 `knowledgeBaseId`|`string`|The ID of the AWS Knowledge Base

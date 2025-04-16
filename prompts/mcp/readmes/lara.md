@@ -31,11 +31,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `add_translation`
-|Description|
-|-|
-|Adds a translation to a translation memory in your Lara Translate account.|
-
+#### Tool: **`add_translation`**
+Adds a translation to a translation memory in your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`array`|The ID or list of IDs where to save the translation unit. Format: mem_xyz123
@@ -48,42 +45,30 @@ Parameters|Type|Description
 `tuid`|`string` *optional*|Translation Unit unique identifier
 
 ---
-#### Tool: `check_import_status`
-|Description|
-|-|
-|Checks the status of a TMX file import job in your Lara Translate account.|
-
+#### Tool: **`check_import_status`**
+Checks the status of a TMX file import job in your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the import job
 
 ---
-#### Tool: `create_memory`
-|Description|
-|-|
-|Create a translation memory with a custom name in your Lara Translate account. Translation memories store pairs of source and target text segments (translation units) for reuse in future translations.|
-
+#### Tool: **`create_memory`**
+Create a translation memory with a custom name in your Lara Translate account. Translation memories store pairs of source and target text segments (translation units) for reuse in future translations.
 Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the new memory, it should be short and generic, like 'catch_phrases' or 'brand_names'
 `external_id`|`string` *optional*|The ID of the memory to be imported from MyMemory. Use this to initialize the memory with external content. Format: ext_my_[MyMemory ID]
 
 ---
-#### Tool: `delete_memory`
-|Description|
-|-|
-|Deletes a translation memory from your Lara Translate account.|
-
+#### Tool: **`delete_memory`**
+Deletes a translation memory from your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The unique identifier of the memory to update. Format: mem_xyz123
 
 ---
-#### Tool: `delete_translation`
-|Description|
-|-|
-|Deletes a translation from a translation memory from your Lara Translate account.|
-
+#### Tool: **`delete_translation`**
+Deletes a translation from a translation memory from your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`array`|The ID or list of IDs where to delete the translation unit from. Format: mem_xyz123
@@ -96,11 +81,8 @@ Parameters|Type|Description
 `tuid`|`string` *optional*|Translation Unit unique identifier
 
 ---
-#### Tool: `import_tmx`
-|Description|
-|-|
-|Imports a TMX file into a translation memory in your Lara Translate account.|
-
+#### Tool: **`import_tmx`**
+Imports a TMX file into a translation memory in your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the memory to update. Format: mem_xyz123.
@@ -109,21 +91,12 @@ Parameters|Type|Description
 `tmx_url`|`string` *optional*|A URL to the tmx file to upload. Don't provide this if you choose to use tmx_content.
 
 ---
-#### Tool: `list_languages`
-|Description|
-|-|
-|Lists all supported languages in your Lara Translate account.|
-
-#### Tool: `list_memories`
-|Description|
-|-|
-|Lists all translation memories in your Lara Translate account.|
-
-#### Tool: `translate`
-|Description|
-|-|
-|Translate text between languages with support for language detection, context-aware translations and translation memories using Lara Translate.|
-
+#### Tool: **`list_languages`**
+Lists all supported languages in your Lara Translate account.
+#### Tool: **`list_memories`**
+Lists all translation memories in your Lara Translate account.
+#### Tool: **`translate`**
+Translate text between languages with support for language detection, context-aware translations and translation memories using Lara Translate.
 Parameters|Type|Description
 -|-|-
 `target`|`string`|The target language code (e.g., 'it-IT' for Italian). This specifies the language you want the text translated into.
@@ -135,11 +108,8 @@ Parameters|Type|Description
 `source_hint`|`string` *optional*|Used to guide language detection. Specify this when the source language is uncertain to improve detection accuracy.
 
 ---
-#### Tool: `update_memory`
-|Description|
-|-|
-|Updates a translation memory in your Lara Translate account.|
-
+#### Tool: **`update_memory`**
+Updates a translation memory in your Lara Translate account.
 Parameters|Type|Description
 -|-|-
 `id`|`string`|The unique identifier of the memory to update. Format: mem_xyz123

@@ -33,11 +33,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `chroma_add_documents`
-|Description|
-|-|
-|Add documents to a Chroma collection.|
-
+#### Tool: **`chroma_add_documents`**
+Add documents to a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to add documents to
@@ -46,11 +43,8 @@ Parameters|Type|Description
 `metadatas`|`string` *optional*|Optional list of metadata dictionaries for each document
 
 ---
-#### Tool: `chroma_create_collection`
-|Description|
-|-|
-|Create a new Chroma collection with configurable HNSW parameters.|
-
+#### Tool: **`chroma_create_collection`**
+Create a new Chroma collection with configurable HNSW parameters.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to create
@@ -66,52 +60,37 @@ Parameters|Type|Description
 `sync_threshold`|`string` *optional*|Number of elements to process before syncing index to disk
 
 ---
-#### Tool: `chroma_delete_collection`
-|Description|
-|-|
-|Delete a Chroma collection.|
-
+#### Tool: **`chroma_delete_collection`**
+Delete a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to delete
 
 ---
-#### Tool: `chroma_delete_documents`
-|Description|
-|-|
-|Delete documents from a Chroma collection.|
-
+#### Tool: **`chroma_delete_documents`**
+Delete documents from a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to delete documents from
 `ids`|`array`|List of document IDs to delete
 
 ---
-#### Tool: `chroma_get_collection_count`
-|Description|
-|-|
-|Get the number of documents in a Chroma collection.|
-
+#### Tool: **`chroma_get_collection_count`**
+Get the number of documents in a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to count
 
 ---
-#### Tool: `chroma_get_collection_info`
-|Description|
-|-|
-|Get information about a Chroma collection.|
-
+#### Tool: **`chroma_get_collection_info`**
+Get information about a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to get info about
 
 ---
-#### Tool: `chroma_get_documents`
-|Description|
-|-|
-|Get documents from a Chroma collection with optional filtering.|
-
+#### Tool: **`chroma_get_documents`**
+Get documents from a Chroma collection with optional filtering.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to get documents from
@@ -123,22 +102,16 @@ Parameters|Type|Description
 `where_document`|`string` *optional*|Optional document content filters
 
 ---
-#### Tool: `chroma_list_collections`
-|Description|
-|-|
-|List all collection names in the Chroma database with pagination support.|
-
+#### Tool: **`chroma_list_collections`**
+List all collection names in the Chroma database with pagination support.
 Parameters|Type|Description
 -|-|-
 `limit`|`string` *optional*|Optional maximum number of collections to return
 `offset`|`string` *optional*|Optional number of collections to skip before returning results
 
 ---
-#### Tool: `chroma_modify_collection`
-|Description|
-|-|
-|Modify a Chroma collection's name or metadata.|
-
+#### Tool: **`chroma_modify_collection`**
+Modify a Chroma collection's name or metadata.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to modify
@@ -151,22 +124,16 @@ Parameters|Type|Description
 `sync_threshold`|`string` *optional*|Number of elements to process before syncing index to disk
 
 ---
-#### Tool: `chroma_peek_collection`
-|Description|
-|-|
-|Peek at documents in a Chroma collection.|
-
+#### Tool: **`chroma_peek_collection`**
+Peek at documents in a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to peek into
 `limit`|`integer` *optional*|Number of documents to peek at
 
 ---
-#### Tool: `chroma_query_documents`
-|Description|
-|-|
-|Query documents from a Chroma collection with advanced filtering.|
-
+#### Tool: **`chroma_query_documents`**
+Query documents from a Chroma collection with advanced filtering.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to query
@@ -177,11 +144,8 @@ Parameters|Type|Description
 `where_document`|`string` *optional*|Optional document content filters
 
 ---
-#### Tool: `chroma_update_documents`
-|Description|
-|-|
-|Update documents in a Chroma collection.|
-
+#### Tool: **`chroma_update_documents`**
+Update documents in a Chroma collection.
 Parameters|Type|Description
 -|-|-
 `collection_name`|`string`|Name of the collection to update documents in

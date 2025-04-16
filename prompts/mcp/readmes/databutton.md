@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `submit_app_requirements`
-|Description|
-|-|
-|Submit app requirements|
-
+#### Tool: **`submit_app_requirements`**
+Submit app requirements
 Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the app

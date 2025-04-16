@@ -42,10 +42,7 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `collection_fields_create_option`
-|Description|
-|-|
-||
+#### Tool: **`collection_fields_create_option`**
 
 Parameters|Type|Description
 -|-|-
@@ -53,10 +50,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collection_fields_create_reference`
-|Description|
-|-|
-||
+#### Tool: **`collection_fields_create_reference`**
 
 Parameters|Type|Description
 -|-|-
@@ -64,10 +58,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collection_fields_create_static`
-|Description|
-|-|
-||
+#### Tool: **`collection_fields_create_static`**
 
 Parameters|Type|Description
 -|-|-
@@ -75,10 +66,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collection_fields_update`
-|Description|
-|-|
-||
+#### Tool: **`collection_fields_update`**
 
 Parameters|Type|Description
 -|-|-
@@ -87,10 +75,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collections_create`
-|Description|
-|-|
-||
+#### Tool: **`collections_create`**
 
 Parameters|Type|Description
 -|-|-
@@ -98,20 +83,14 @@ Parameters|Type|Description
 `site_id`|`string`|
 
 ---
-#### Tool: `collections_get`
-|Description|
-|-|
-||
+#### Tool: **`collections_get`**
 
 Parameters|Type|Description
 -|-|-
 `collection_id`|`string`|
 
 ---
-#### Tool: `collections_items_create_item`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_create_item`**
 
 Parameters|Type|Description
 -|-|-
@@ -119,10 +98,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collections_items_create_item_live`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_create_item_live`**
 
 Parameters|Type|Description
 -|-|-
@@ -130,10 +106,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collections_items_list_items`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_list_items`**
 
 Parameters|Type|Description
 -|-|-
@@ -147,10 +120,7 @@ Parameters|Type|Description
 `sortOrder`|`string` *optional*|
 
 ---
-#### Tool: `collections_items_publish_items`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_publish_items`**
 
 Parameters|Type|Description
 -|-|-
@@ -158,10 +128,7 @@ Parameters|Type|Description
 `itemIds`|`array`|
 
 ---
-#### Tool: `collections_items_update_items`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_update_items`**
 
 Parameters|Type|Description
 -|-|-
@@ -169,10 +136,7 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collections_items_update_items_live`
-|Description|
-|-|
-||
+#### Tool: **`collections_items_update_items_live`**
 
 Parameters|Type|Description
 -|-|-
@@ -180,20 +144,14 @@ Parameters|Type|Description
 `request`|`object`|
 
 ---
-#### Tool: `collections_list`
-|Description|
-|-|
-||
+#### Tool: **`collections_list`**
 
 Parameters|Type|Description
 -|-|-
 `site_id`|`string`|
 
 ---
-#### Tool: `pages_get_content`
-|Description|
-|-|
-||
+#### Tool: **`pages_get_content`**
 
 Parameters|Type|Description
 -|-|-
@@ -203,10 +161,7 @@ Parameters|Type|Description
 `offset`|`number` *optional*|
 
 ---
-#### Tool: `pages_get_metadata`
-|Description|
-|-|
-||
+#### Tool: **`pages_get_metadata`**
 
 Parameters|Type|Description
 -|-|-
@@ -214,10 +169,7 @@ Parameters|Type|Description
 `localeId`|`string` *optional*|
 
 ---
-#### Tool: `pages_list`
-|Description|
-|-|
-||
+#### Tool: **`pages_list`**
 
 Parameters|Type|Description
 -|-|-
@@ -227,10 +179,7 @@ Parameters|Type|Description
 `offset`|`number` *optional*|
 
 ---
-#### Tool: `pages_update_page_settings`
-|Description|
-|-|
-||
+#### Tool: **`pages_update_page_settings`**
 
 Parameters|Type|Description
 -|-|-
@@ -239,10 +188,7 @@ Parameters|Type|Description
 `localeId`|`string` *optional*|
 
 ---
-#### Tool: `pages_update_static_content`
-|Description|
-|-|
-||
+#### Tool: **`pages_update_static_content`**
 
 Parameters|Type|Description
 -|-|-
@@ -251,25 +197,16 @@ Parameters|Type|Description
 `page_id`|`string`|
 
 ---
-#### Tool: `sites_get`
-|Description|
-|-|
-||
+#### Tool: **`sites_get`**
 
 Parameters|Type|Description
 -|-|-
 `site_id`|`string`|
 
 ---
-#### Tool: `sites_list`
-|Description|
-|-|
-||
+#### Tool: **`sites_list`**
 
-#### Tool: `sites_publish`
-|Description|
-|-|
-||
+#### Tool: **`sites_publish`**
 
 Parameters|Type|Description
 -|-|-

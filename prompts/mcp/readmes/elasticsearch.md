@@ -25,36 +25,24 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `get_mappings`
-|Description|
-|-|
-|Get field mappings for a specific Elasticsearch index|
-
+#### Tool: **`get_mappings`**
+Get field mappings for a specific Elasticsearch index
 Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to get mappings for
 
 ---
-#### Tool: `get_shards`
-|Description|
-|-|
-|Get shard information for all or specific indices|
-
+#### Tool: **`get_shards`**
+Get shard information for all or specific indices
 Parameters|Type|Description
 -|-|-
 `index`|`string` *optional*|Optional index name to get shard information for
 
 ---
-#### Tool: `list_indices`
-|Description|
-|-|
-|List all available Elasticsearch indices|
-
-#### Tool: `search`
-|Description|
-|-|
-|Perform an Elasticsearch search with the provided query DSL. Highlights are always enabled.|
-
+#### Tool: **`list_indices`**
+List all available Elasticsearch indices
+#### Tool: **`search`**
+Perform an Elasticsearch search with the provided query DSL. Highlights are always enabled.
 Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to search

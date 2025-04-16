@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `query-wolfram-alpha`
-|Description|
-|-|
-|Use Wolfram Alpha to answer a question. This tool should be used when you need complex math or symbolic intelligence.|
-
+#### Tool: **`query-wolfram-alpha`**
+Use Wolfram Alpha to answer a question. This tool should be used when you need complex math or symbolic intelligence.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|

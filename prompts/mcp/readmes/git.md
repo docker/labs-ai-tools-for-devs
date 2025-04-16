@@ -33,44 +33,32 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `git_add`
-|Description|
-|-|
-|Adds file contents to the staging area|
-
+#### Tool: **`git_add`**
+Adds file contents to the staging area
 Parameters|Type|Description
 -|-|-
 `files`|`array`|
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_checkout`
-|Description|
-|-|
-|Switches branches|
-
+#### Tool: **`git_checkout`**
+Switches branches
 Parameters|Type|Description
 -|-|-
 `branch_name`|`string`|
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_commit`
-|Description|
-|-|
-|Records changes to the repository|
-
+#### Tool: **`git_commit`**
+Records changes to the repository
 Parameters|Type|Description
 -|-|-
 `message`|`string`|
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_create_branch`
-|Description|
-|-|
-|Creates a new branch from an optional base branch|
-
+#### Tool: **`git_create_branch`**
+Creates a new branch from an optional base branch
 Parameters|Type|Description
 -|-|-
 `branch_name`|`string`|
@@ -78,84 +66,60 @@ Parameters|Type|Description
 `base_branch`|`string` *optional*|
 
 ---
-#### Tool: `git_diff`
-|Description|
-|-|
-|Shows differences between branches or commits|
-
+#### Tool: **`git_diff`**
+Shows differences between branches or commits
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `target`|`string`|
 
 ---
-#### Tool: `git_diff_staged`
-|Description|
-|-|
-|Shows changes that are staged for commit|
-
+#### Tool: **`git_diff_staged`**
+Shows changes that are staged for commit
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_diff_unstaged`
-|Description|
-|-|
-|Shows changes in the working directory that are not yet staged|
-
+#### Tool: **`git_diff_unstaged`**
+Shows changes in the working directory that are not yet staged
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_init`
-|Description|
-|-|
-|Initialize a new Git repository|
-
+#### Tool: **`git_init`**
+Initialize a new Git repository
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_log`
-|Description|
-|-|
-|Shows the commit logs|
-
+#### Tool: **`git_log`**
+Shows the commit logs
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `max_count`|`integer` *optional*|
 
 ---
-#### Tool: `git_reset`
-|Description|
-|-|
-|Unstages all staged changes|
-
+#### Tool: **`git_reset`**
+Unstages all staged changes
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 
 ---
-#### Tool: `git_show`
-|Description|
-|-|
-|Shows the contents of a commit|
-
+#### Tool: **`git_show`**
+Shows the contents of a commit
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|
 `revision`|`string`|
 
 ---
-#### Tool: `git_status`
-|Description|
-|-|
-|Shows the working tree status|
-
+#### Tool: **`git_status`**
+Shows the working tree status
 Parameters|Type|Description
 -|-|-
 `repo_path`|`string`|

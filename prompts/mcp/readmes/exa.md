@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `web_search`
-|Description|
-|-|
-|Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.|
-
+#### Tool: **`web_search`**
+Search the web using Exa AI - performs real-time web searches and can scrape content from specific URLs. Supports configurable result counts and returns the content from the most relevant websites.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query

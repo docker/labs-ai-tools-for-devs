@@ -28,11 +28,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `maps_directions`
-|Description|
-|-|
-|Get directions between two points|
-
+#### Tool: **`maps_directions`**
+Get directions between two points
 Parameters|Type|Description
 -|-|-
 `destination`|`string`|Ending point address or coordinates
@@ -40,11 +37,8 @@ Parameters|Type|Description
 `mode`|`string` *optional*|Travel mode (driving, walking, bicycling, transit)
 
 ---
-#### Tool: `maps_distance_matrix`
-|Description|
-|-|
-|Calculate travel distance and time for multiple origins and destinations|
-
+#### Tool: **`maps_distance_matrix`**
+Calculate travel distance and time for multiple origins and destinations
 Parameters|Type|Description
 -|-|-
 `destinations`|`array`|Array of destination addresses or coordinates
@@ -52,52 +46,37 @@ Parameters|Type|Description
 `mode`|`string` *optional*|Travel mode (driving, walking, bicycling, transit)
 
 ---
-#### Tool: `maps_elevation`
-|Description|
-|-|
-|Get elevation data for locations on the earth|
-
+#### Tool: **`maps_elevation`**
+Get elevation data for locations on the earth
 Parameters|Type|Description
 -|-|-
 `locations`|`array`|Array of locations to get elevation for
 
 ---
-#### Tool: `maps_geocode`
-|Description|
-|-|
-|Convert an address into geographic coordinates|
-
+#### Tool: **`maps_geocode`**
+Convert an address into geographic coordinates
 Parameters|Type|Description
 -|-|-
 `address`|`string`|The address to geocode
 
 ---
-#### Tool: `maps_place_details`
-|Description|
-|-|
-|Get detailed information about a specific place|
-
+#### Tool: **`maps_place_details`**
+Get detailed information about a specific place
 Parameters|Type|Description
 -|-|-
 `place_id`|`string`|The place ID to get details for
 
 ---
-#### Tool: `maps_reverse_geocode`
-|Description|
-|-|
-|Convert coordinates into an address|
-
+#### Tool: **`maps_reverse_geocode`**
+Convert coordinates into an address
 Parameters|Type|Description
 -|-|-
 `latitude`|`number`|Latitude coordinate
 `longitude`|`number`|Longitude coordinate
 
 ---
-#### Tool: `maps_search_places`
-|Description|
-|-|
-|Search for places using Google Places API|
-
+#### Tool: **`maps_search_places`**
+Search for places using Google Places API
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query

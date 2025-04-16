@@ -23,21 +23,15 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `fetch_content`
-|Description|
-|-|
-|Fetch and parse content from a webpage URL.|
-
+#### Tool: **`fetch_content`**
+Fetch and parse content from a webpage URL.
 Parameters|Type|Description
 -|-|-
 `url`|`string`|The webpage URL to fetch content from
 
 ---
-#### Tool: `search`
-|Description|
-|-|
-|Search DuckDuckGo and return formatted results.|
-
+#### Tool: **`search`**
+Search DuckDuckGo and return formatted results.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query string

@@ -22,11 +22,8 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `run_code`
-|Description|
-|-|
-|Run python code in a secure sandbox by E2B. Using the Jupyter Notebook syntax.|
-
+#### Tool: **`run_code`**
+Run python code in a secure sandbox by E2B. Using the Jupyter Notebook syntax.
 Parameters|Type|Description
 -|-|-
 `code`|`string`|

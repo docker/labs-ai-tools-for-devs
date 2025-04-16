@@ -30,52 +30,37 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: `puppeteer_click`
-|Description|
-|-|
-|Click an element on the page|
-
+#### Tool: **`puppeteer_click`**
+Click an element on the page
 Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to click
 
 ---
-#### Tool: `puppeteer_evaluate`
-|Description|
-|-|
-|Execute JavaScript in the browser console|
-
+#### Tool: **`puppeteer_evaluate`**
+Execute JavaScript in the browser console
 Parameters|Type|Description
 -|-|-
 `script`|`string`|JavaScript code to execute
 
 ---
-#### Tool: `puppeteer_fill`
-|Description|
-|-|
-|Fill out an input field|
-
+#### Tool: **`puppeteer_fill`**
+Fill out an input field
 Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for input field
 `value`|`string`|Value to fill
 
 ---
-#### Tool: `puppeteer_hover`
-|Description|
-|-|
-|Hover an element on the page|
-
+#### Tool: **`puppeteer_hover`**
+Hover an element on the page
 Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to hover
 
 ---
-#### Tool: `puppeteer_navigate`
-|Description|
-|-|
-|Navigate to a URL|
-
+#### Tool: **`puppeteer_navigate`**
+Navigate to a URL
 Parameters|Type|Description
 -|-|-
 `url`|`string`|URL to navigate to
@@ -83,11 +68,8 @@ Parameters|Type|Description
 `launchOptions`|`object` *optional*|PuppeteerJS LaunchOptions. Default null. If changed and not null, browser restarts. Example: { headless: true, args: ['--no-sandbox'] }
 
 ---
-#### Tool: `puppeteer_screenshot`
-|Description|
-|-|
-|Take a screenshot of the current page or a specific element|
-
+#### Tool: **`puppeteer_screenshot`**
+Take a screenshot of the current page or a specific element
 Parameters|Type|Description
 -|-|-
 `name`|`string`|Name for the screenshot
@@ -96,11 +78,8 @@ Parameters|Type|Description
 `width`|`number` *optional*|Width in pixels (default: 800)
 
 ---
-#### Tool: `puppeteer_select`
-|Description|
-|-|
-|Select an element on the page with Select tag|
-
+#### Tool: **`puppeteer_select`**
+Select an element on the page with Select tag
 Parameters|Type|Description
 -|-|-
 `selector`|`string`|CSS selector for element to select
