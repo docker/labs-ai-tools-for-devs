@@ -16,10 +16,9 @@ export default function Top({ item, unAssignedConfig, onToggleRegister, unAssign
 
     const hasAllSecrets = unAssignedSecrets.length === 0
 
-
     const { config } = useConfigContext()
 
-    const missingConfig = !config?.[item.name]
+    const missingConfig = !config?.[item.name] || Object.keys(config?.[item.name] || {}).length === 0
 
     const getActionButton = () => {
         if (!hasAllSecrets || missingConfig) {

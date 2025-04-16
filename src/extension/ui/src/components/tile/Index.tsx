@@ -11,6 +11,7 @@ import Center from "./Center";
 import Bottom from "./Bottom";
 import { Secret } from "../../types";
 import { v1 } from "@docker/extension-api-client-types";
+import { useConfigContext } from "../../context/ConfigContext";
 
 
 type TileProps = {
@@ -33,8 +34,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
     const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
     const [secretLoading, setSecretLoading] = useState(false)
 
-    const { registryLoading } = useCatalogContext()
-    const { registerCatalogItem, unregisterCatalogItem } = useCatalogContext();
+    const { registryLoading, registerCatalogItem, unregisterCatalogItem } = useCatalogContext()
     const [showConfigModal, setShowConfigModal] = useState(false)
 
     useEffect(() => {
@@ -104,6 +104,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                     }
                 }}
                 onSecretChange={onSecretChange}
+                unAssignedSecrets={unAssignedSecrets}
             />
             <Card onClick={(e) => {
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {
