@@ -154,11 +154,11 @@ const ConfigurationModal = ({
     }, [hasSecrets, hasConfig]);
 
     const hasAllSecrets = unAssignedSecrets.length === 0
-    const emptyConfig = !config?.[catalogItem.name] || Object.keys(config?.[catalogItem.name] || {}).length === 0
+    const emptyConfig = catalogItem.config && (!config?.[catalogItem.name] || Object.keys(config?.[catalogItem.name] || {}).length === 0)
 
     useEffect(() => {
         if (!hasAllSecrets || emptyConfig) {
-            setTabValue(1); // Secrets tab
+            setTabValue(1);
         }
     }, [hasAllSecrets, emptyConfig]);
 
@@ -182,6 +182,9 @@ const ConfigurationModal = ({
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 height: '80vh',
+                width: '80vw',
+                maxWidth: '1000px',
+                minWidth: '400px',
                 p: 4,
                 outline: 'none'
             }}>
@@ -194,7 +197,7 @@ const ConfigurationModal = ({
                         <Close />
                     </IconButton>
                 </Stack>
-                <Typography sx={{ mt: 2 }} color="text.secondary">
+                <Typography sx={{ mt: 2, maxHeight: '5em', overflow: 'auto' }} color="text.secondary">
                     {catalogItem.description}
                 </Typography>
                 <Tooltip placement="right" title={!hasAllSecrets || emptyConfig ? 'You must assign all secrets and configure the item before it can be used.' : ''}>
@@ -240,7 +243,7 @@ const ConfigurationModal = ({
                             </Grid2>
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
-                            <Stack direction="column" spacing={1} sx={{ overflow: 'auto', maxHeight: 350 }}>
+                            <Stack direction="column" spacing={1} sx={{ overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 <Stack direction="column" spacing={2} sx={{ border: '2px solid', borderColor: theme.palette.warning.contrastText, borderRadius: 2, p: 2, mt: 2 }}>
                                     <ConfigEditor catalogItem={catalogItem} />
                                     <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
