@@ -425,11 +425,40 @@ registry:
     prompts: 0
     resources: {}
   atlassian:
-    description: |
-      Tools for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/atlassian.md
+    description: Tools for Atlassian products (Confluence and Jira). This integration supports both Atlassian Cloud and Jira Server/Data Center deployments.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlassian.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/atlassian.md
+    source: https://github.com/sooperset/mcp-atlassian/tree/main
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
-    tools: []
+    tools:
+      - name: confluence_attach_content
+      - name: confluence_create_page
+      - name: confluence_delete_page
+      - name: confluence_get_comments
+      - name: confluence_get_page
+      - name: confluence_get_page_ancestors
+      - name: confluence_get_page_children
+      - name: confluence_search
+      - name: confluence_update_page
+      - name: jira_add_comment
+      - name: jira_add_worklog
+      - name: jira_batch_create_issues
+      - name: jira_create_issue
+      - name: jira_delete_issue
+      - name: jira_download_attachments
+      - name: jira_get_agile_boards
+      - name: jira_get_board_issues
+      - name: jira_get_epic_issues
+      - name: jira_get_issue
+      - name: jira_get_project_issues
+      - name: jira_get_sprint_issues
+      - name: jira_get_sprints_from_board
+      - name: jira_get_transitions
+      - name: jira_get_worklog
+      - name: jira_link_to_epic
+      - name: jira_search
+      - name: jira_transition_issue
+      - name: jira_update_issue
     secrets:
       - name: atlassian.jira.token
       - name: atlassian.confluence.token
