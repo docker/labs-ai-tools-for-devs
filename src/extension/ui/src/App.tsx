@@ -8,7 +8,9 @@ import { POLL_INTERVAL } from './Constants';
 import { CatalogProvider, useCatalogContext } from './context/CatalogContext';
 import { ConfigProvider } from './context/ConfigContext';
 import { MCPClientProvider, useMCPClientContext } from './context/MCPClientContext';
+import { RequiredImagesProvider, useRequiredImagesContext } from './context/RequiredImageContext';
 import ConfigurationModal from './components/tile/Modal';
+import LoadingState from './components/LoadingState';
 
 export const client = createDockerDesktopClient();
 
@@ -23,16 +25,18 @@ export function App() {
   // Wrap the entire application with our providers
   return (
     <ConfigProvider client={client}>
-      <CatalogProvider client={client}>
-        <MCPClientProvider client={client}>
-          <AppContent
-            settings={settings}
-            setSettings={setSettings}
-            configuringItem={configuringItem}
-            setConfiguringItem={setConfiguringItem}
-          />
-        </MCPClientProvider>
-      </CatalogProvider>
+      <RequiredImagesProvider client={client}>
+        <CatalogProvider client={client}>
+          <MCPClientProvider client={client}>
+            <AppContent
+              settings={settings}
+              setSettings={setSettings}
+              configuringItem={configuringItem}
+              setConfiguringItem={setConfiguringItem}
+            />
+          </MCPClientProvider>
+        </CatalogProvider>
+      </RequiredImagesProvider>
     </ConfigProvider>
   );
 }
@@ -44,53 +48,22 @@ interface AppContentProps {
   setConfiguringItem: React.Dispatch<React.SetStateAction<CatalogItemWithName | null>>;
 }
 
-function AppContent({ settings, setSettings, configuringItem, setConfiguringItem }: AppContentProps) {
-  const {
-    imagesLoadingResults,
-    loadImagesIfNeeded,
-    catalogItems,
-  } = useCatalogContext();
+function AppContent({ settings, setSettings, setConfiguringItem }: AppContentProps) {
+  const { secretsLoading, catalogLoading, registryLoading } = useCatalogContext();
+  const { isLoading: imagesLoading } = useRequiredImagesContext();
 
-  // Instead of showing full-page loading states for each resource, let's implement a more unified approach
-  // Only show full-page loading during initial load, not during background refetching
-  const isInitialLoading = !catalogItems;
+  const isLoading = secretsLoading || catalogLoading || registryLoading || imagesLoading;
 
-  // Critical error check - only for images as they're required for the app to function
-  if (imagesLoadingResults?.stderr) {
-    return (
-      <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <Alert
-          sx={{ fontSize: '1.5em' }}
-          action={
-            <Button variant='outlined' color='secondary' onClick={() => loadImagesIfNeeded()}>
-              Retry
-            </Button>
-          }
-          title="Error loading images"
-          severity="error"
-        >
-          {imagesLoadingResults.stderr}
-        </Alert>
-        <Typography>{imagesLoadingResults?.stdout}</Typography>
-      </Paper>
-    );
-  }
-
-  // Show one unified loading screen during initial load
-  if (isInitialLoading) {
-    return (
-      <Paper sx={{ padding: 2, height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <CircularProgress sx={{ marginBottom: 2 }} />
-        <Typography>Loading application...</Typography>
-      </Paper>
-    );
-  }
   return (
     <>
-      <CatalogGrid
-        setConfiguringItem={setConfiguringItem}
-        showSettings={() => setSettings({ ...settings, showModal: true })}
-      />
+      {isLoading ? (
+        <LoadingState />
+      ) : (
+        <CatalogGrid
+          setConfiguringItem={setConfiguringItem}
+          showSettings={() => setSettings({ ...settings, showModal: true })}
+        />
+      )}
     </>
   );
 }

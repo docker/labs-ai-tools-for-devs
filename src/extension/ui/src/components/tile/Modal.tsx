@@ -156,8 +156,6 @@ const ConfigurationModal = ({
     const hasAllSecrets = unAssignedSecrets.length === 0
     const emptyConfig = !config?.[catalogItem.name] || Object.keys(config?.[catalogItem.name] || {}).length === 0
 
-    console.log(hasAllSecrets, emptyConfig)
-
     useEffect(() => {
         if (!hasAllSecrets || emptyConfig) {
             setTabValue(1); // Secrets tab
@@ -183,7 +181,7 @@ const ConfigurationModal = ({
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                height: '70vh',
+                height: '80vh',
                 p: 4,
                 outline: 'none'
             }}>
@@ -223,15 +221,15 @@ const ConfigurationModal = ({
                             </Tabs>
                         </Box>
 
-                        <TabPanel value={tabValue} index={0}>
+                        <TabPanel value={tabValue} index={0} >
                             {!catalogItem?.tools?.length && (
                                 <Typography>
                                     No tools available for this item.
                                 </Typography>
                             )}
-                            <Grid2 container spacing={2} alignItems="flex-start" sx={{ overflow: 'auto', maxHeight: 350 }}>
+                            <Grid2 container spacing={2} alignItems="flex-start" sx={{ mt: 1, overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 {(catalogItem.tools || []).map((tool) => (
-                                    <Grid2 key={tool.name} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                                    <Grid2 key={tool.name} size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
                                         <Tooltip title={tool.name}>
                                             <Typography component="span" key={tool.name} sx={toolChipStyle}>
                                                 {tool.name.slice(0, 30) + (tool.name.length > 30 ? '...' : '')}
