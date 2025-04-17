@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/firecrawl:latest
+      workdir: /app
       secrets:
         firecrawl.api_key: FIRECRAWL_API_KEY
       environment:

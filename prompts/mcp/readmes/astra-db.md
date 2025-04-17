@@ -1,157 +1,160 @@
-# astra-db MCP Server
+# Astra-db MCP Server
 
 An MCP server for Astra DB workloads
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[datastax](https://github.com/datastax)
 **Repository**|https://github.com/datastax/astra-db-mcp
 **Dockerfile**|https://github.com/datastax/astra-db-mcp/blob/refs/pull/14/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/astra-db)
 **Licence**|Apache License 2.0
 
-## Summary
-1. `BulkCreateRecords` Create multiple records in a collection at once
-1. `BulkDeleteRecords` Delete multiple records from a collection at once
-1. `BulkUpdateRecords` Update multiple records in a collection at once
-1. `CreateCollection` Create a new collection in the database
-1. `CreateRecord` Create a new record in a collection
-1. `DeleteCollection` Delete a collection from the database
-1. `DeleteRecord` Delete a record from a collection
-1. `EstimateDocumentCount` Estimate the number of documents in a collection using a fast, approximate count method
-1. `FindRecord` Find records in a collection by field value
-1. `GetCollections` Get all collections in the Astra DB database
-1. `GetRecord` Get a specific record from a collection by ID
-1. `HelpAddToClient` Help the user add the Astra DB client to their MCP client
-1. `ListRecords` List records from a collection in the database
-1. `OpenBrowser` Open a web browser to a specific URL
-1. `UpdateCollection` Update an existing collection in the database
-1. `UpdateRecord` Update an existing record in a collection
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`BulkCreateRecords`|Create multiple records in a collection at once|
+`BulkDeleteRecords`|Delete multiple records from a collection at once|
+`BulkUpdateRecords`|Update multiple records in a collection at once|
+`CreateCollection`|Create a new collection in the database|
+`CreateRecord`|Create a new record in a collection|
+`DeleteCollection`|Delete a collection from the database|
+`DeleteRecord`|Delete a record from a collection|
+`EstimateDocumentCount`|Estimate the number of documents in a collection using a fast, approximate count method|
+`FindRecord`|Find records in a collection by field value|
+`GetCollections`|Get all collections in the Astra DB database|
+`GetRecord`|Get a specific record from a collection by ID|
+`HelpAddToClient`|Help the user add the Astra DB client to their MCP client|
+`ListRecords`|List records from a collection in the database|
+`OpenBrowser`|Open a web browser to a specific URL|
+`UpdateCollection`|Update an existing collection in the database|
+`UpdateRecord`|Update an existing record in a collection|
 
-## Tools
+---
+## Tools Details
 
-### Tool `BulkCreateRecords`
+#### Tool: **`BulkCreateRecords`**
 Create multiple records in a collection at once
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to create the records in
 `records`|`array`|Array of records to insert
 
-### Tool `BulkDeleteRecords`
+---
+#### Tool: **`BulkDeleteRecords`**
 Delete multiple records from a collection at once
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection containing the records
 `recordIds`|`array`|Array of record IDs to delete
 
-### Tool `BulkUpdateRecords`
+---
+#### Tool: **`BulkUpdateRecords`**
 Update multiple records in a collection at once
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection containing the records
 `records`|`array`|Array of records to update with their IDs
 
-### Tool `CreateCollection`
+---
+#### Tool: **`CreateCollection`**
 Create a new collection in the database
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to create
 `dimension`|`number` *optional*|The dimensions of the vector collection, if vector is true
 `vector`|`boolean` *optional*|Whether to create a vector collection
 
-### Tool `CreateRecord`
+---
+#### Tool: **`CreateRecord`**
 Create a new record in a collection
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to create the record in
 `record`|`object`|The record data to insert
 
-### Tool `DeleteCollection`
+---
+#### Tool: **`DeleteCollection`**
 Delete a collection from the database
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to delete
 
-### Tool `DeleteRecord`
+---
+#### Tool: **`DeleteRecord`**
 Delete a record from a collection
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection containing the record
 `recordId`|`string`|ID of the record to delete
 
-### Tool `EstimateDocumentCount`
+---
+#### Tool: **`EstimateDocumentCount`**
 Estimate the number of documents in a collection using a fast, approximate count method
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to estimate document count for
 
-### Tool `FindRecord`
+---
+#### Tool: **`FindRecord`**
 Find records in a collection by field value
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to search in
 `field`|`string`|Field name to search by (e.g., 'title', '_id', or any property)
 `value`|`string`|Value to search for in the specified field
 `limit`|`number` *optional*|Maximum number of records to return
 
-### Tool `GetCollections`
+---
+#### Tool: **`GetCollections`**
 Get all collections in the Astra DB database
-
-### Tool `GetRecord`
+#### Tool: **`GetRecord`**
 Get a specific record from a collection by ID
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to get the record from
 `recordId`|`string`|ID of the record to retrieve
 
-### Tool `HelpAddToClient`
+---
+#### Tool: **`HelpAddToClient`**
 Help the user add the Astra DB client to their MCP client
-
-### Tool `ListRecords`
+#### Tool: **`ListRecords`**
 List records from a collection in the database
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to list records from
 `limit`|`number` *optional*|Maximum number of records to return
 
-### Tool `OpenBrowser`
+---
+#### Tool: **`OpenBrowser`**
 Open a web browser to a specific URL
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|The URL to open in the browser
 
-### Tool `UpdateCollection`
+---
+#### Tool: **`UpdateCollection`**
 Update an existing collection in the database
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection to update
 `newName`|`string`|New name for the collection
 
-### Tool `UpdateRecord`
+---
+#### Tool: **`UpdateRecord`**
 Update an existing record in a collection
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `collectionName`|`string`|Name of the collection containing the record
 `record`|`object`|The updated record data
 `recordId`|`string`|ID of the record to update
 
+---
 ## Use this MCP Server
 
 ```json

@@ -1,31 +1,35 @@
-# oxylabs MCP Server
+# Oxylabs MCP Server
 
 A Model Context Protocol (MCP) server that enables AI assistants like Claude to seamlessly access web data through Oxylabs' powerful web scraping technology.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[oxylabs](https://github.com/oxylabs)
 **Repository**|https://github.com/oxylabs/oxylabs-mcp
 **Dockerfile**|https://github.com/oxylabs/oxylabs-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/oxylabs)
 **Licence**|MIT License
 
-## Summary
-1. `oxylabs_amazon_product_scraper` Scrape Amazon Products using Oxylabs Web API
-1. `oxylabs_amazon_search_scraper` Scrape Amazon Search results using Oxylabs Web API
-1. `oxylabs_google_search_scraper` Scrape Google Search results using Oxylabs Web API
-1. `oxylabs_universal_scraper` Scrape url using Oxylabs Web API with universal scraper
-1. `oxylabs_web_unblocker` Scrape url using Oxylabs Web Unblocker
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`oxylabs_amazon_product_scraper`|Scrape Amazon Products using Oxylabs Web API|
+`oxylabs_amazon_search_scraper`|Scrape Amazon Search results using Oxylabs Web API|
+`oxylabs_google_search_scraper`|Scrape Google Search results using Oxylabs Web API|
+`oxylabs_universal_scraper`|Scrape url using Oxylabs Web API with universal scraper|
+`oxylabs_web_unblocker`|Scrape url using Oxylabs Web Unblocker|
 
-## Tools
+---
+## Tools Details
 
-### Tool `oxylabs_amazon_product_scraper`
+#### Tool: **`oxylabs_amazon_product_scraper`**
 Scrape Amazon Products using Oxylabs Web API
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
 `autoselect_variant`|`boolean` *optional*|To get accurate pricing/buybox data, set this parameter to true (which tells us to append the th=1&psc=1 URL parameters to the end of the product URL).
@@ -37,10 +41,10 @@ Parameter|Type|Description
 `render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
-### Tool `oxylabs_amazon_search_scraper`
+---
+#### Tool: **`oxylabs_amazon_search_scraper`**
 Scrape Amazon Search results using Oxylabs Web API
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
 `category_id`|`string` *optional*|Search for items in a particular browse node (product category).
@@ -55,10 +59,10 @@ Parameter|Type|Description
 `start_page`|`integer` *optional*|Starting page number.
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
-### Tool `oxylabs_google_search_scraper`
+---
+#### Tool: **`oxylabs_google_search_scraper`**
 Scrape Google Search results using Oxylabs Web API
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|URL-encoded keyword to search for.
 `ad_mode`|`boolean` *optional*|If true will use the Google Ads source optimized for the paid ads. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/google/ads
@@ -72,23 +76,24 @@ Parameter|Type|Description
 `start_page`|`integer` *optional*|Starting page number.
 `user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
 
-### Tool `oxylabs_universal_scraper`
+---
+#### Tool: **`oxylabs_universal_scraper`**
 Scrape url using Oxylabs Web API with universal scraper
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|Url to scrape with web scraper.
 `parse`|`boolean` *optional*|Should result be parsed. If result should not be parsed then html will be stripped and converted to markdown file.
 `render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
 
-### Tool `oxylabs_web_unblocker`
+---
+#### Tool: **`oxylabs_web_unblocker`**
 Scrape url using Oxylabs Web Unblocker
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|Url to scrape with web scraper.
 `render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
 
+---
 ## Use this MCP Server
 
 ```json

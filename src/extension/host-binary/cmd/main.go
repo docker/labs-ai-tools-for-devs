@@ -89,11 +89,14 @@ func DeleteSecret(ctx context.Context) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",	
 		Short: "Delete a secret",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.NoArgs,
 		RunE: func(*cobra.Command, []string) error {
 			return runDeleteSecret(ctx, *opts)
 		},
 	}
+	flags := cmd.Flags()
+	flags.StringVarP(&opts.Name, "name", "n", "", "Name of the secret")
+	_ = cmd.MarkFlagRequired("name")
 	return cmd
 }
 

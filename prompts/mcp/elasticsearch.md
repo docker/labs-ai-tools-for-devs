@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/elasticsearch:latest
+      workdir: /app
       secrets:
         elasticsearch.api_key: ES_API_KEY
       environment:

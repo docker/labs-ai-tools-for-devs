@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/devhub-cms:latest
+      workdir: /app
       secrets:
         devhub-cms.api_key: DEVHUB_API_KEY
         devhub-cms.api_secret: DEVHUB_API_SECRET

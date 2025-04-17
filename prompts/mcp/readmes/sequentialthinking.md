@@ -1,24 +1,29 @@
-# sequentialthinking MCP Server
+# Sequentialthinking MCP Server
 
 A tool for dynamic and reflective problem-solving through a structured thinking process.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sequentialthinking/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/sequentialthinking)
 **Licence**|MIT License
 
-## Summary
-1. `sequentialthinking` A detailed tool for dynamic and reflective problem-solving through thoughts.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`sequentialthinking`|A detailed tool for dynamic and reflective problem-solving through thoughts.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `sequentialthinking`
+#### Tool: **`sequentialthinking`**
 A detailed tool for dynamic and reflective problem-solving through thoughts.
 This tool helps analyze problems through a flexible thinking process that can adapt and evolve.
 Each thought can build on, question, or revise previous insights as understanding deepens.
@@ -73,8 +78,7 @@ You should:
 9. Repeat the process until satisfied with the solution
 10. Provide a single, ideally correct answer as the final output
 11. Only set next_thought_needed to false when truly done and a satisfactory answer is reached
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `nextThoughtNeeded`|`boolean`|Whether another thought step is needed
 `thought`|`string`|Your current thinking step
@@ -86,6 +90,7 @@ Parameter|Type|Description
 `needsMoreThoughts`|`boolean` *optional*|If more thoughts are needed
 `revisesThought`|`integer` *optional*|Which thought is being reconsidered
 
+---
 ## Use this MCP Server
 
 ```json

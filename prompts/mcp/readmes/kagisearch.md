@@ -1,40 +1,45 @@
-# kagisearch MCP Server
+# Kagisearch MCP Server
 
 A Model Context Protocol (MCP) server for Kagi search & other tools.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[kagisearch](https://github.com/kagisearch)
 **Repository**|https://github.com/kagisearch/kagimcp
 **Dockerfile**|https://github.com/kagisearch/kagimcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/kagisearch)
 **Licence**|MIT License
 
-## Summary
-1. `kagi_search_fetch` Fetch web results based on one or more queries using the Kagi Search API.
-1. `kagi_summarizer` Summarize content from a URL using the Kagi Summarizer API.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`kagi_search_fetch`|Fetch web results based on one or more queries using the Kagi Search API.|
+`kagi_summarizer`|Summarize content from a URL using the Kagi Summarizer API.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `kagi_search_fetch`
+#### Tool: **`kagi_search_fetch`**
 Fetch web results based on one or more queries using the Kagi Search API. Use for general search and when the user explicitly tells you to 'fetch' results/information. Results are from all queries given. They are numbered continuously, so that a user may be able to refer to a result by a specific number.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `queries`|`array`|One or more concise, keyword-focused search queries. Include essential context within each query for standalone use.
 
-### Tool `kagi_summarizer`
+---
+#### Tool: **`kagi_summarizer`**
 Summarize content from a URL using the Kagi Summarizer API. The Summarizer can summarize any document type (text webpage, video, audio, etc.)
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|A URL to a document to summarize.
 `summary_type`|`string` *optional*|Type of summary to produce. Options are 'summary' for paragraph prose and 'takeaway' for a bulleted list of key points.
 `target_language`|`string` *optional*|Desired output language using language codes (e.g., 'EN' for English). If not specified, the document's original language influences the output.
 
+---
 ## Use this MCP Server
 
 ```json

@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/astra-db:latest
+      workdir: /app
       secrets:
         astra-db.applicatin_token: ASTRA_DB_APPLICATION_TOKEN
       environment:

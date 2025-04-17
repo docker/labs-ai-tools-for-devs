@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/opik:latest
+      workdir: /app
       secrets:
         opik.api_key: OPIK_API_KEY
       environment:

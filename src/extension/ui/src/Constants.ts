@@ -10,9 +10,13 @@ export const DOCKER_MCP_IMAGE = 'alpine/socat'
 export const DOCKER_MCP_CONTAINER_ARGS = 'STDIO TCP:host.docker.internal:8811'
 export const DOCKER_MCP_COMMAND = `docker run -i --rm ${DOCKER_MCP_IMAGE} ${DOCKER_MCP_CONTAINER_ARGS}`
 
-export const TILE_DESCRIPTION_MAX_LENGTH = 180;
+export const TILE_DESCRIPTION_MAX_LENGTH = 120;
 
 export const CATALOG_LAYOUT_SX = {
     width: '90vw',
     maxWidth: '1200px',
 }
+
+
+export const ASSIGNED_SECRET_PLACEHOLDER = '********';
+export const UNASSIGNED_SECRET_PLACEHOLDER = 'UNASSIGNED';

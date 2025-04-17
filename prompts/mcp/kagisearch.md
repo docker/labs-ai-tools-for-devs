@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/kagisearch:latest
+      workdir: /app
       secrets:
         kagisearch.api_key: KAGI_API_KEY
       environment:

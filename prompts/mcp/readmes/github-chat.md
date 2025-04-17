@@ -1,40 +1,45 @@
-# github-chat MCP Server
+# Github-chat MCP Server
 
 A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[AsyncFuncAI](https://github.com/AsyncFuncAI)
 **Repository**|https://github.com/AsyncFuncAI/github-chat-mcp
 **Dockerfile**|https://github.com/AsyncFuncAI/github-chat-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/github-chat)
 **Licence**|MIT License
 
-## Summary
-1. `index_repository` Index a GitHub repository to analyze its codebase.
-1. `query_repository` Ask questions about a GitHub repository and receive detailed AI responses.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`index_repository`|Index a GitHub repository to analyze its codebase.|
+`query_repository`|Ask questions about a GitHub repository and receive detailed AI responses.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `index_repository`
+#### Tool: **`index_repository`**
 Index a GitHub repository to analyze its codebase. This must be done before asking questions about the repository.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `repo_url`|`string`|The GitHub repository URL to index (format: https://github.com/username/repo).
 
-### Tool `query_repository`
+---
+#### Tool: **`query_repository`**
 Ask questions about a GitHub repository and receive detailed AI responses. The repository must be indexed first.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `question`|`string`|The question to ask about the repository.
 `repo_url`|`string`|The GitHub repository URL to query (format: https://github.com/username/repo).
 `conversation_history`|`string` *optional*|Previous conversation history for multi-turn conversations.
 
+---
 ## Use this MCP Server
 
 ```json

@@ -1,47 +1,52 @@
-# scrapegraph MCP Server
+# Scrapegraph MCP Server
 
 ScapeGraph MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[ScrapeGraphAI](https://github.com/ScrapeGraphAI)
 **Repository**|https://github.com/ScrapeGraphAI/scrapegraph-mcp
 **Dockerfile**|https://github.com/ScrapeGraphAI/scrapegraph-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/scrapegraph)
 **Licence**|MIT License
 
-## Summary
-1. `markdownify` Convert a webpage into clean, formatted markdown.
-1. `searchscraper` Perform AI-powered web searches with structured results.
-1. `smartscraper` Extract structured data from a webpage using AI.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`markdownify`|Convert a webpage into clean, formatted markdown.|
+`searchscraper`|Perform AI-powered web searches with structured results.|
+`smartscraper`|Extract structured data from a webpage using AI.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `markdownify`
+#### Tool: **`markdownify`**
 Convert a webpage into clean, formatted markdown.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `website_url`|`string`|URL of the webpage to convert
 
-### Tool `searchscraper`
+---
+#### Tool: **`searchscraper`**
 Perform AI-powered web searches with structured results.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Search query or instructions
 
-### Tool `smartscraper`
+---
+#### Tool: **`smartscraper`**
 Extract structured data from a webpage using AI.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `user_prompt`|`string`|Instructions for what data to extract
 `website_url`|`string`|URL of the webpage to scrape
 
+---
 ## Use this MCP Server
 
 ```json

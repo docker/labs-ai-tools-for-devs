@@ -1,51 +1,55 @@
-# elasticsearch MCP Server
+# Elasticsearch MCP Server
 
 Interact with your Elasticsearch indices through natural language conversations.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[elastic](https://github.com/elastic)
 **Repository**|https://github.com/elastic/mcp-server-elasticsearch
 **Dockerfile**|https://github.com/elastic/mcp-server-elasticsearch/blob/refs/pull/37/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/elasticsearch)
 **Licence**|Apache License 2.0
 
-## Summary
-1. `get_mappings` Get field mappings for a specific Elasticsearch index
-1. `get_shards` Get shard information for all or specific indices
-1. `list_indices` List all available Elasticsearch indices
-1. `search` Perform an Elasticsearch search with the provided query DSL.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`get_mappings`|Get field mappings for a specific Elasticsearch index|
+`get_shards`|Get shard information for all or specific indices|
+`list_indices`|List all available Elasticsearch indices|
+`search`|Perform an Elasticsearch search with the provided query DSL.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `get_mappings`
+#### Tool: **`get_mappings`**
 Get field mappings for a specific Elasticsearch index
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to get mappings for
 
-### Tool `get_shards`
+---
+#### Tool: **`get_shards`**
 Get shard information for all or specific indices
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string` *optional*|Optional index name to get shard information for
 
-### Tool `list_indices`
+---
+#### Tool: **`list_indices`**
 List all available Elasticsearch indices
-
-### Tool `search`
+#### Tool: **`search`**
 Perform an Elasticsearch search with the provided query DSL. Highlights are always enabled.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `index`|`string`|Name of the Elasticsearch index to search
 `queryBody`|`object`|Complete Elasticsearch query DSL object that can include query, size, from, sort, etc.
 
+---
 ## Use this MCP Server
 
 ```json

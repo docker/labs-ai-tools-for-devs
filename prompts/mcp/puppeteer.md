@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/puppeteer:latest
+      workdir: /project
       environment:
         DOCKER_CONTAINER: "true"
     source:

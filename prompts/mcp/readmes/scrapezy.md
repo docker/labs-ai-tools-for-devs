@@ -1,31 +1,36 @@
-# scrapezy MCP Server
+# Scrapezy MCP Server
 
 A Model Context Protocol server for Scrapezy that enables AI models to extract structured data from websites.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[Scrapezy](https://github.com/Scrapezy)
 **Repository**|https://github.com/Scrapezy/mcp
 **Dockerfile**|https://github.com/Scrapezy/mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/scrapezy)
 **Licence**|MIT License
 
-## Summary
-1. `extract-structured-data` Extract structured data from a website.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`extract-structured-data`|Extract structured data from a website.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `extract-structured-data`
+#### Tool: **`extract-structured-data`**
 Extract structured data from a website.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `prompt`|`string`|Prompt to extract data from the website
 `url`|`string`|URL of the website to extract data from
 
+---
 ## Use this MCP Server
 
 ```json

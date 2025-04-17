@@ -1,36 +1,40 @@
-# lara MCP Server
+# Lara MCP Server
 
 Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[translated](https://github.com/translated)
 **Repository**|https://github.com/translated/lara-mcp
 **Dockerfile**|https://github.com/translated/lara-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/lara)
 **Licence**|MIT License
 
-## Summary
-1. `add_translation` Adds a translation to a translation memory in your Lara Translate account.
-1. `check_import_status` Checks the status of a TMX file import job in your Lara Translate account.
-1. `create_memory` Create a translation memory with a custom name in your Lara Translate account.
-1. `delete_memory` Deletes a translation memory from your Lara Translate account.
-1. `delete_translation` Deletes a translation from a translation memory from your Lara Translate account.
-1. `import_tmx` Imports a TMX file into a translation memory in your Lara Translate account.
-1. `list_languages` Lists all supported languages in your Lara Translate account.
-1. `list_memories` Lists all translation memories in your Lara Translate account.
-1. `translate` Translate text between languages with support for language detection, context-aware translations, and translation memories using Lara Translate.
-1. `update_memory` Updates a translation memory in your Lara Translate account.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`add_translation`|Adds a translation to a translation memory in your Lara Translate account.|
+`check_import_status`|Checks the status of a TMX file import job in your Lara Translate account.|
+`create_memory`|Create a translation memory with a custom name in your Lara Translate account.|
+`delete_memory`|Deletes a translation memory from your Lara Translate account.|
+`delete_translation`|Deletes a translation from a translation memory from your Lara Translate account.|
+`import_tmx`|Imports a TMX file into a translation memory in your Lara Translate account.|
+`list_languages`|Lists all supported languages in your Lara Translate account.|
+`list_memories`|Lists all translation memories in your Lara Translate account.|
+`translate`|Translate text between languages with support for language detection, context-aware translations and translation memories using Lara Translate.|
+`update_memory`|Updates a translation memory in your Lara Translate account.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `add_translation`
+#### Tool: **`add_translation`**
 Adds a translation to a translation memory in your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`array`|The ID or list of IDs where to save the translation unit. Format: mem_xyz123
 `sentence`|`string`|The source sentence
@@ -41,32 +45,32 @@ Parameter|Type|Description
 `sentence_before`|`string` *optional*|The sentence before the source sentence to specify the context of the translation unit
 `tuid`|`string` *optional*|Translation Unit unique identifier
 
-### Tool `check_import_status`
+---
+#### Tool: **`check_import_status`**
 Checks the status of a TMX file import job in your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the import job
 
-### Tool `create_memory`
+---
+#### Tool: **`create_memory`**
 Create a translation memory with a custom name in your Lara Translate account. Translation memories store pairs of source and target text segments (translation units) for reuse in future translations.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the new memory, it should be short and generic, like 'catch_phrases' or 'brand_names'
 `external_id`|`string` *optional*|The ID of the memory to be imported from MyMemory. Use this to initialize the memory with external content. Format: ext_my_[MyMemory ID]
 
-### Tool `delete_memory`
+---
+#### Tool: **`delete_memory`**
 Deletes a translation memory from your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The unique identifier of the memory to update. Format: mem_xyz123
 
-### Tool `delete_translation`
+---
+#### Tool: **`delete_translation`**
 Deletes a translation from a translation memory from your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`array`|The ID or list of IDs where to delete the translation unit from. Format: mem_xyz123
 `sentence`|`string`|The source sentence
@@ -77,26 +81,24 @@ Parameter|Type|Description
 `sentence_before`|`string` *optional*|The sentence before the source sentence to specify the context of the translation unit
 `tuid`|`string` *optional*|Translation Unit unique identifier
 
-### Tool `import_tmx`
+---
+#### Tool: **`import_tmx`**
 Imports a TMX file into a translation memory in your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The ID of the memory to update. Format: mem_xyz123.
 `gzip`|`boolean` *optional*|Indicates if the file is a compressed .gz file
 `tmx_content`|`string` *optional*|The content of the tmx file to upload. Don't provide this if you choose to use tmx_url.
 `tmx_url`|`string` *optional*|A URL to the tmx file to upload. Don't provide this if you choose to use tmx_content.
 
-### Tool `list_languages`
+---
+#### Tool: **`list_languages`**
 Lists all supported languages in your Lara Translate account.
-
-### Tool `list_memories`
+#### Tool: **`list_memories`**
 Lists all translation memories in your Lara Translate account.
-
-### Tool `translate`
-Translate text between languages with support for language detection, context-aware translations, and translation memories using Lara Translate.
-
-Parameter|Type|Description
+#### Tool: **`translate`**
+Translate text between languages with support for language detection, context-aware translations and translation memories using Lara Translate.
+Parameters|Type|Description
 -|-|-
 `target`|`string`|The target language code (e.g., 'it-IT' for Italian). This specifies the language you want the text translated into.
 `text`|`array`|An array of text blocks to translate. Each block contains a text string and a boolean indicating whether it should be translated. This allows for selective translation where some text blocks can be preserved in their original form while others are translated.
@@ -106,14 +108,15 @@ Parameter|Type|Description
 `source`|`string` *optional*|The source language code (e.g., 'en-EN' for English). If not specified, the system will attempt to detect it automatically. If you have a hint about the source language, you should specify it in the source_hint field.
 `source_hint`|`string` *optional*|Used to guide language detection. Specify this when the source language is uncertain to improve detection accuracy.
 
-### Tool `update_memory`
+---
+#### Tool: **`update_memory`**
 Updates a translation memory in your Lara Translate account.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The unique identifier of the memory to update. Format: mem_xyz123
 `name`|`string`|The new name for the memory
 
+---
 ## Use this MCP Server
 
 ```json

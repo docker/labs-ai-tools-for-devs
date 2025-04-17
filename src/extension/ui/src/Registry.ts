@@ -79,7 +79,7 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
         const configInConfigFile = config[registryItemName]
         if (configInConfigFile) {
             const mergedConfig = mergeDeep(configInConfigFile, configInRegistry)
-            config[registryItemName] = mergedConfig
+            config[registryItemName][registryItemName] = mergedConfig
         }
     }
     const newConfigString = JSON.stringify({ config })

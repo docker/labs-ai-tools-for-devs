@@ -59,7 +59,7 @@ class CursorDesktopClient implements MCPClient {
                     `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
                     '--workdir',
                     '/cursor_config', 'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] }, client.host.platform)
+                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)
                 ]
             )
         } catch (e) {
@@ -99,7 +99,7 @@ class CursorDesktopClient implements MCPClient {
                     `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
                     '--workdir',
                     '/cursor_config', 'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload) }] }, client.host.platform)
+                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)
                 ]
             )
         } catch (e) {

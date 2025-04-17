@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/edubase:latest
+      workdir: /app
       secrets:
         edubase.api_key: EDUBASE_API_KEY
       environment:

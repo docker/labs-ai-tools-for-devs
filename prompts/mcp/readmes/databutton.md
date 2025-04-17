@@ -1,32 +1,37 @@
-# databutton MCP Server
+# Databutton MCP Server
 
 Databutton MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[databutton](https://github.com/databutton)
 **Repository**|https://github.com/databutton/databutton-mcp
 **Dockerfile**|https://github.com/databutton/databutton-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/databutton)
 **Licence**|MIT License
 
-## Summary
-1. `submit_app_requirements` Submit app requirements
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`submit_app_requirements`|Submit app requirements|
 
-## Tools
+---
+## Tools Details
 
-### Tool `submit_app_requirements`
+#### Tool: **`submit_app_requirements`**
 Submit app requirements
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the app
 `pitch`|`string`|The pitch for the app
 `spec`|`object`|
 
+---
 ## Use this MCP Server
 
 ```json

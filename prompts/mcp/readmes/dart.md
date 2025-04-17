@@ -1,46 +1,50 @@
-# dart MCP Server
+# Dart MCP Server
 
 Dart AI Model Context Protocol (MCP) server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[its-dart](https://github.com/its-dart)
 **Repository**|https://github.com/its-dart/dart-mcp-server
 **Dockerfile**|https://github.com/its-dart/dart-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/dart)
 **Licence**|MIT License
 
-## Summary
-1. `create_doc` Create a new doc in Dart.
-1. `create_task` Create a new task in Dart.
-1. `delete_doc` Move an existing doc to the trash, where it can be recovered if needed.
-1. `delete_task` Move an existing task to the trash, where it can be recovered if needed.
-1. `get_config` Get information about the user's space, including all of the possible values that can be provided to other endpoints.
-1. `get_doc` Retrieve an existing doc by its ID.
-1. `get_task` Retrieve an existing task by its ID.
-1. `list_docs` List docs from Dart with optional filtering parameters.
-1. `list_tasks` List tasks from Dart with optional filtering parameters.
-1. `update_doc` Update an existing doc.
-1. `update_task` Update an existing task.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`create_doc`|Create a new doc in Dart.|
+`create_task`|Create a new task in Dart.|
+`delete_doc`|Move an existing doc to the trash, where it can be recovered if needed.|
+`delete_task`|Move an existing task to the trash, where it can be recovered if needed.|
+`get_config`|Get information about the user's space, including all of the possible values that can be provided to other endpoints.|
+`get_doc`|Retrieve an existing doc by its ID.|
+`get_task`|Retrieve an existing task by its ID.|
+`list_docs`|List docs from Dart with optional filtering parameters.|
+`list_tasks`|List tasks from Dart with optional filtering parameters.|
+`update_doc`|Update an existing doc.|
+`update_task`|Update an existing task.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `create_doc`
+#### Tool: **`create_doc`**
 Create a new doc in Dart. You can specify title, text content, and folder.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `title`|`string`|The title of the doc (required)
 `folder`|`string` *optional*|The title of the folder to place the doc in
 `text`|`string` *optional*|The text content of the doc, which can include markdown formatting
 
-### Tool `create_task`
+---
+#### Tool: **`create_task`**
 Create a new task in Dart. You can specify title, description, status, priority, size, dates, dartboard, assignees, tags, and parent task.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `title`|`string`|The title of the task (required)
 `assignee`|`string` *optional*|Single assignee name or email (if workspace doesn't allow multiple assignees)
@@ -55,41 +59,40 @@ Parameter|Type|Description
 `status`|`string` *optional*|The status from the list of available statuses
 `tags`|`array` *optional*|Array of tags to apply to the task
 
-### Tool `delete_doc`
+---
+#### Tool: **`delete_doc`**
 Move an existing doc to the trash, where it can be recovered if needed. Nothing else about the doc will be changed.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
 
-### Tool `delete_task`
+---
+#### Tool: **`delete_task`**
 Move an existing task to the trash, where it can be recovered if needed. Nothing else about the task will be changed.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task
 
-### Tool `get_config`
+---
+#### Tool: **`get_config`**
 Get information about the user's space, including all of the possible values that can be provided to other endpoints. This includes available assignees, dartboards, folders, statuses, tags, priorities, and sizes.
-
-### Tool `get_doc`
+#### Tool: **`get_doc`**
 Retrieve an existing doc by its ID. Returns the doc's information including title, text content, folder, and more.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
 
-### Tool `get_task`
+---
+#### Tool: **`get_task`**
 Retrieve an existing task by its ID. Returns the task's information including title, description, status, priority, dates, and more.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task
 
-### Tool `list_docs`
+---
+#### Tool: **`list_docs`**
 List docs from Dart with optional filtering parameters. You can filter by folder, title, text content, and more.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `duids`|`string` *optional*|Filter by IDs
 `folder`|`string` *optional*|Filter by folder title
@@ -102,10 +105,10 @@ Parameter|Type|Description
 `text`|`string` *optional*|Filter by text content
 `title`|`string` *optional*|Filter by title
 
-### Tool `list_tasks`
+---
+#### Tool: **`list_tasks`**
 List tasks from Dart with optional filtering parameters. You can filter by assignee, status, dartboard, priority, due date, and more.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `assignee`|`string` *optional*|Filter by assignee name or email
 `assignee_duid`|`string` *optional*|Filter by assignee ID
@@ -130,20 +133,20 @@ Parameter|Type|Description
 `tag`|`string` *optional*|Filter by tag
 `title`|`string` *optional*|Filter by title
 
-### Tool `update_doc`
+---
+#### Tool: **`update_doc`**
 Update an existing doc. You can modify its title, text content, and folder.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the doc
 `folder`|`string` *optional*|The title of the folder to place the doc in
 `text`|`string` *optional*|The text content of the doc, which can include markdown formatting
 `title`|`string` *optional*|The title of the doc
 
-### Tool `update_task`
+---
+#### Tool: **`update_task`**
 Update an existing task. You can modify any of its properties including title, description, status, priority, dates, assignees, and more.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `id`|`string`|The 12-character alphanumeric ID of the task
 `assignee`|`string` *optional*|Single assignee name or email (if workspace doesn't allow multiple assignees)
@@ -159,6 +162,7 @@ Parameter|Type|Description
 `tags`|`array` *optional*|Array of tags to apply to the task
 `title`|`string` *optional*|The title of the task
 
+---
 ## Use this MCP Server
 
 ```json

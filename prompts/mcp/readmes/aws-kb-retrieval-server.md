@@ -1,32 +1,37 @@
-# aws-kb-retrieval-server MCP Server
+# Aws-kb-retrieval-server MCP Server
 
 An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/aws-kb-retrieval-server/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/aws-kb-retrieval-server)
 **Licence**|MIT License
 
-## Summary
-1. `retrieve_from_aws_kb` Performs retrieval from the AWS Knowledge Base using the provided query and Knowledge Base ID.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`retrieve_from_aws_kb`|Performs retrieval from the AWS Knowledge Base using the provided query and Knowledge Base ID.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `retrieve_from_aws_kb`
+#### Tool: **`retrieve_from_aws_kb`**
 Performs retrieval from the AWS Knowledge Base using the provided query and Knowledge Base ID.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `knowledgeBaseId`|`string`|The ID of the AWS Knowledge Base
 `query`|`string`|The query to perform retrieval on
 `n`|`number` *optional*|Number of results to retrieve
 
+---
 ## Use this MCP Server
 
 ```json

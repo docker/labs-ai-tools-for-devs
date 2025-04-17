@@ -1,85 +1,89 @@
-# opik MCP Server
+# Opik MCP Server
 
 Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics. 
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[comet-ml](https://github.com/comet-ml)
 **Repository**|https://github.com/comet-ml/opik-mcp
 **Dockerfile**|https://github.com/comet-ml/opik-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/opik)
 **Licence**|Apache License 2.0
 
-## Summary
-1. `create-project` Create a new project/workspace
-1. `create-prompt` Create a new prompt
-1. `create-prompt-version` Create a new version of a prompt
-1. `delete-project` Delete a project
-1. `delete-prompt` Delete a prompt
-1. `get-metrics` Get metrics data
-1. `get-opik-examples` Get examples of how to use Opik Comet's API for specific tasks
-1. `get-opik-help` Get contextual help about Opik Comet's capabilities
-1. `get-opik-tracing-info` Get information about Opik's tracing capabilities and how to use them
-1. `get-project-by-id` Get a single project by ID
-1. `get-prompt-by-id` Get a single prompt by ID
-1. `get-server-info` Get information about the Opik server configuration
-1. `get-trace-by-id` Get a single trace by ID
-1. `get-trace-stats` Get statistics for traces
-1. `list-projects` Get a list of projects/workspaces
-1. `list-prompts` Get a list of Opik prompts
-1. `list-traces` Get a list of traces
-1. `update-project` Update a project
-1. `update-prompt` Update a prompt
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`create-project`|Create a new project/workspace|
+`create-prompt`|Create a new prompt|
+`create-prompt-version`|Create a new version of a prompt|
+`delete-project`|Delete a project|
+`delete-prompt`|Delete a prompt|
+`get-metrics`|Get metrics data|
+`get-opik-examples`|Get examples of how to use Opik Comet's API for specific tasks|
+`get-opik-help`|Get contextual help about Opik Comet's capabilities|
+`get-opik-tracing-info`|Get information about Opik's tracing capabilities and how to use them|
+`get-project-by-id`|Get a single project by ID|
+`get-prompt-by-id`|Get a single prompt by ID|
+`get-server-info`|Get information about the Opik server configuration|
+`get-trace-by-id`|Get a single trace by ID|
+`get-trace-stats`|Get statistics for traces|
+`list-projects`|Get a list of projects/workspaces|
+`list-prompts`|Get a list of Opik prompts|
+`list-traces`|Get a list of traces|
+`update-project`|Update a project|
+`update-prompt`|Update a prompt|
 
-## Tools
+---
+## Tools Details
 
-### Tool `create-project`
+#### Tool: **`create-project`**
 Create a new project/workspace
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Name of the project
 `description`|`string` *optional*|Description of the project
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `create-prompt`
+---
+#### Tool: **`create-prompt`**
 Create a new prompt
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|Name of the prompt
 
-### Tool `create-prompt-version`
+---
+#### Tool: **`create-prompt-version`**
 Create a new version of a prompt
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `commit_message`|`string`|Commit message for the prompt version
 `name`|`string`|Name of the original prompt
 `template`|`string`|Template content for the prompt version
 
-### Tool `delete-project`
+---
+#### Tool: **`delete-project`**
 Delete a project
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `projectId`|`string`|ID of the project to delete
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `delete-prompt`
+---
+#### Tool: **`delete-prompt`**
 Delete a prompt
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `promptId`|`string`|ID of the prompt to delete
 
-### Tool `get-metrics`
+---
+#### Tool: **`get-metrics`**
 Get metrics data
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `endDate`|`string` *optional*|End date in ISO format (YYYY-MM-DD)
 `metricName`|`string` *optional*|Optional metric name to filter
@@ -87,62 +91,62 @@ Parameter|Type|Description
 `projectName`|`string` *optional*|Optional project name to filter metrics
 `startDate`|`string` *optional*|Start date in ISO format (YYYY-MM-DD)
 
-### Tool `get-opik-examples`
+---
+#### Tool: **`get-opik-examples`**
 Get examples of how to use Opik Comet's API for specific tasks
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to get examples for (e.g., 'create prompt', 'analyze traces', 'monitor costs')
 
-### Tool `get-opik-help`
+---
+#### Tool: **`get-opik-help`**
 Get contextual help about Opik Comet's capabilities
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `topic`|`string`|The topic to get help about (prompts, projects, traces, metrics, or general)
 `subtopic`|`string` *optional*|Optional subtopic for more specific help
 
-### Tool `get-opik-tracing-info`
+---
+#### Tool: **`get-opik-tracing-info`**
 Get information about Opik's tracing capabilities and how to use them
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `topic`|`string` *optional*|Optional specific tracing topic to get information about (e.g., 'spans', 'distributed', 'multimodal', 'annotations')
 
-### Tool `get-project-by-id`
+---
+#### Tool: **`get-project-by-id`**
 Get a single project by ID
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `projectId`|`string`|ID of the project to fetch
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `get-prompt-by-id`
+---
+#### Tool: **`get-prompt-by-id`**
 Get a single prompt by ID
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `promptId`|`string`|ID of the prompt to fetch
 
-### Tool `get-server-info`
+---
+#### Tool: **`get-server-info`**
 Get information about the Opik server configuration
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `random_string`|`string` *optional*|Dummy parameter for no-parameter tools
 
-### Tool `get-trace-by-id`
+---
+#### Tool: **`get-trace-by-id`**
 Get a single trace by ID
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `traceId`|`string`|ID of the trace to fetch
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `get-trace-stats`
+---
+#### Tool: **`get-trace-stats`**
 Get statistics for traces
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `endDate`|`string` *optional*|End date in ISO format (YYYY-MM-DD)
 `projectId`|`string` *optional*|Project ID to filter traces
@@ -150,10 +154,10 @@ Parameter|Type|Description
 `startDate`|`string` *optional*|Start date in ISO format (YYYY-MM-DD)
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `list-projects`
+---
+#### Tool: **`list-projects`**
 Get a list of projects/workspaces
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `page`|`number`|Page number for pagination
 `size`|`number`|Number of items per page
@@ -161,18 +165,18 @@ Parameter|Type|Description
 `sortOrder`|`string` *optional*|Sort order (asc or desc)
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `list-prompts`
+---
+#### Tool: **`list-prompts`**
 Get a list of Opik prompts
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `page`|`number`|Page number for pagination
 `size`|`number`|Number of items per page
 
-### Tool `list-traces`
+---
+#### Tool: **`list-traces`**
 Get a list of traces
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `page`|`number`|Page number for pagination
 `size`|`number`|Number of items per page
@@ -180,24 +184,25 @@ Parameter|Type|Description
 `projectName`|`string` *optional*|Project name to filter traces
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `update-project`
+---
+#### Tool: **`update-project`**
 Update a project
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `projectId`|`string`|ID of the project to update
 `description`|`string` *optional*|New project description
 `name`|`string` *optional*|New project name
 `workspaceName`|`string` *optional*|Workspace name to use instead of the default
 
-### Tool `update-prompt`
+---
+#### Tool: **`update-prompt`**
 Update a prompt
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `name`|`string`|New name for the prompt
 `promptId`|`string`|ID of the prompt to update
 
+---
 ## Use this MCP Server
 
 ```json

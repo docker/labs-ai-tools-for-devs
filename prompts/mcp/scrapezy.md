@@ -2,6 +2,7 @@
 mcp:
   - container:
       image: mcp/scrapezy:latest
+      workdir: /app
       secrets:
         scrapezy.auth_token: SCRAPEZY_API_KEY
     source:

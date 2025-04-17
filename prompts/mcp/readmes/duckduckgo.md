@@ -1,39 +1,44 @@
-# duckduckgo MCP Server
+# Duckduckgo MCP Server
 
 A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[nickclyde](https://github.com/nickclyde)
 **Repository**|https://github.com/nickclyde/duckduckgo-mcp-server
 **Dockerfile**|https://github.com/nickclyde/duckduckgo-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/duckduckgo)
 **Licence**|MIT License
 
-## Summary
-1. `fetch_content` Fetch and parse content from a webpage URL.
-1. `search` Search DuckDuckGo and return formatted results.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`fetch_content`|Fetch and parse content from a webpage URL.|
+`search`|Search DuckDuckGo and return formatted results.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `fetch_content`
+#### Tool: **`fetch_content`**
 Fetch and parse content from a webpage URL.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|The webpage URL to fetch content from
 
-### Tool `search`
+---
+#### Tool: **`search`**
 Search DuckDuckGo and return formatted results.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query string
 `max_results`|`integer` *optional*|Maximum number of results to return (default: 10)
 
+---
 ## Use this MCP Server
 
 ```json

@@ -1,47 +1,52 @@
-# hyperspell MCP Server
+# Hyperspell MCP Server
 
 Hyperspell MCP Server
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[hyperspell](https://github.com/hyperspell)
 **Repository**|https://github.com/hyperspell/hyperspell-mcp
 **Dockerfile**|https://github.com/hyperspell/hyperspell-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/hyperspell)
 **Licence**|
 
-## Summary
-1. `Add File` Add a file or website from a URL to Hyperspell.
-1. `Add Memory` Add a plain text document or memory to Hyperspell.
-1. `Search Hyperspell` Search Hyperspell for documents and data.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`Add File`|Add a file or website from a URL to Hyperspell.|
+`Add Memory`|Add a plain text document or memory to Hyperspell.|
+`Search Hyperspell`|Search Hyperspell for documents and data.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `Add File`
+#### Tool: **`Add File`**
 Add a file or website from a URL to Hyperspell.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `url`|`string`|
 
-### Tool `Add Memory`
+---
+#### Tool: **`Add Memory`**
 Add a plain text document or memory to Hyperspell.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `text`|`string`|
 `title`|`string` *optional*|
 
-### Tool `Search Hyperspell`
+---
+#### Tool: **`Search Hyperspell`**
 Search Hyperspell for documents and data.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|
 
+---
 ## Use this MCP Server
 
 ```json

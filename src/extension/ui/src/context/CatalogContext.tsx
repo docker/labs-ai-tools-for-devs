@@ -4,19 +4,18 @@ import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
-import { CATALOG_URL, POLL_INTERVAL } from '../Constants';
+import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
-import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConfigContext } from './ConfigContext';
+import { useRequiredImagesContext } from './RequiredImageContext';
 import { Secret } from '../types/secrets';
 // Storage keys for each query type
 const STORAGE_KEYS = {
     secrets: 'docker-catalog-secrets',
     catalog: 'docker-catalog-catalog',
     registry: 'docker-catalog-registry',
-    images: 'docker-catalog-images',
 };
 
 interface CatalogContextType {
@@ -25,12 +24,9 @@ interface CatalogContextType {
     catalogItems: CatalogItemWithName[];
     registryItems: { [key: string]: { ref: string; config: any } } | undefined;
     canRegister: boolean;
-    imagesLoadingResults: ExecResult | null;
     secretsLoading: boolean;
     catalogLoading: boolean;
     registryLoading: boolean;
-    imagesLoading: boolean;
-    imagesIsFetching: boolean;
 
     // Actions
     tryLoadSecrets: () => Promise<void>;
@@ -38,7 +34,6 @@ interface CatalogContextType {
     tryLoadRegistry: () => Promise<void>;
     registerCatalogItem: (item: CatalogItemWithName, showNotification?: boolean) => Promise<void>;
     unregisterCatalogItem: (item: CatalogItemWithName) => Promise<void>;
-    loadImagesIfNeeded: () => Promise<void>;
     startPull: () => Promise<void>;
     tryUpdateSecrets: (secret: { name: string, value: string }) => Promise<void>;
 }
@@ -65,6 +60,9 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
 
     // Get config context
     const { config, tryLoadConfig, syncConfigWithRegistry: syncConfigWithRegistryFromContext } = useConfigContext();
+
+    // Get the required images context
+    const { loadAllImages } = useRequiredImagesContext();
 
     // Load secrets with React Query
     const {
@@ -206,42 +204,27 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         }
     }, [queryClient, registryItems]);
 
-    // Load Docker images with React Query
-    const {
-        data: imagesLoadingResults = null,
-        refetch: refetchImages,
-        isLoading: imagesLoading,
-        isFetching: imagesIsFetching
-    } = useQuery({
-        queryKey: ['images'],
-        queryFn: async () => {
-            try {
-                const result = await client.docker.cli.exec('pull', ['vonwig/function_write_files:latest']);
-                await client.docker.cli.exec('pull', ['alpine:latest']);
-                return result;
-            } catch (error) {
-                client.desktopUI.toast.error('Failed to pull images: ' + error);
-                throw error;
-            }
-        },
-        staleTime: Infinity, // Only load images when explicitly requested
-        refetchOnWindowFocus: false,
-        refetchOnMount: false
-    });
-
     // Update secrets mutation
     const updateSecretsMutation = useMutation({
         mutationFn: async (secret: { name: string, value: string }) => {
             try {
-                await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
-                return secret;
-            } catch (error) {
+                if (secret.value === UNASSIGNED_SECRET_PLACEHOLDER) {
+                    await Secrets.deleteSecret(client, secret.name);
+                } else {
+                    await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
+                }
+            }
+            catch (error) {
                 client.desktopUI.toast.error('Failed to update secret: ' + error);
                 throw error;
             }
         },
         onSuccess: () => {
             refetchSecrets();
+        },
+        onError: (error) => {
+            client.desktopUI.toast.error('Failed to update secret: ' + error);
+            throw error;
         }
     });
 
@@ -275,7 +258,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
                         }
                     }
 
-                    newRegistry[item.name] = { ref: item.ref, config: itemConfig };
+                    newRegistry[item.name] = { ref: item.ref, config: { [item.name]: itemConfig } };
                 }
 
                 const payload = escapeJSONForPlatformShell({
@@ -394,7 +377,7 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         // Perform deep comparison to prevent unnecessary syncs
         const needsSync = Object.keys(registryItems).some(key => {
             return registryItems[key].config &&
-                (!config[key] || JSON.stringify(registryItems[key].config) !== JSON.stringify(config[key]));
+                (!config[key] || JSON.stringify(registryItems[key].config[key]) !== JSON.stringify(config[key]));
         });
 
         if (needsSync) {
@@ -436,20 +419,17 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         await unregisterCatalogItemMutation.mutateAsync(item);
     };
 
-    const loadImagesIfNeeded = async () => {
-        await refetchImages();
-    };
-
     const tryUpdateSecrets = async (secret: { name: string, value: string }) => {
         await updateSecretsMutation.mutateAsync(secret);
     };
 
     const startPull = async () => {
         await Promise.all([
+            loadAllImages(),
             tryLoadRegistry(),
             tryLoadConfig(),
             tryLoadCatalog(false),
-            tryLoadSecrets()
+            tryLoadSecrets(),
         ]);
     };
 
@@ -458,18 +438,14 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         catalogItems,
         registryItems,
         canRegister,
-        imagesLoadingResults,
         secretsLoading,
         catalogLoading,
         registryLoading,
-        imagesLoading,
-        imagesIsFetching,
         tryLoadSecrets,
         tryLoadCatalog,
         tryLoadRegistry,
         registerCatalogItem,
         unregisterCatalogItem,
-        loadImagesIfNeeded,
         startPull,
         tryUpdateSecrets
     };

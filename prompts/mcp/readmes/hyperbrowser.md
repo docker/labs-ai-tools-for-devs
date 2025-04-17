@@ -1,33 +1,38 @@
-# hyperbrowser MCP Server
+# Hyperbrowser MCP Server
 
 A MCP server implementation for hyperbrowser
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
-|<!-- -->|<!-- -->|
+## Characteristics
+Attribute|Details|
 |-|-|
 **Image Source**|Official Image
 |**Author**|[hyperbrowserai](https://github.com/hyperbrowserai)
 **Repository**|https://github.com/hyperbrowserai/mcp
 **Dockerfile**|https://github.com/hyperbrowserai/mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
+**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/hyperbrowser)
 **Licence**|MIT License
 
-## Summary
-1. `browser_use_agent` This tool employs an open-source browser automation agent optimized specifically for fast, efficient, and cost-effective browser tasks using a cloud browser.
-1. `claude_computer_use_agent` This tool leverages Anthropic's Claude model to autonomously execute complex browser tasks with sophisticated reasoning capabilities using a cloud browser.
-1. `crawl_webpages` Crawl a website starting from a URL and explore linked pages.
-1. `create_profile` Creates a new persistent Hyperbrowser profile.
-1. `delete_profile` Deletes an existing persistent Hyperbrowser profile.
-1. `extract_structured_data` Extract structured data from a webpage.
-1. `list_profiles` Lists existing persistent Hyperbrowser profiles, with optional pagination.
-1. `openai_computer_use_agent` This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser.
-1. `scrape_webpage` Scrape a webpage and extract its content in various formats.
-1. `search_with_bing` Search the web using Bing.
+## Available Tools
+Tools provided by this Server|Short Description
+-|-
+`browser_use_agent`|This tool employs an open-source browser automation agent optimized specifically for fast, efficient, and cost-effective browser tasks using a cloud browser.|
+`claude_computer_use_agent`|This tool leverages Anthropic's Claude model to autonomously execute complex browser tasks with sophisticated reasoning capabilities using a cloud browser.|
+`crawl_webpages`|Crawl a website starting from a URL and explore linked pages.|
+`create_profile`|Creates a new persistent Hyperbrowser profile.|
+`delete_profile`|Deletes an existing persistent Hyperbrowser profile.|
+`extract_structured_data`|Extract structured data from a webpage.|
+`list_profiles`|Lists existing persistent Hyperbrowser profiles, with optional pagination.|
+`openai_computer_use_agent`|This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser.|
+`scrape_webpage`|Scrape a webpage and extract its content in various formats.|
+`search_with_bing`|Search the web using Bing.|
 
-## Tools
+---
+## Tools Details
 
-### Tool `browser_use_agent`
+#### Tool: **`browser_use_agent`**
 This tool employs an open-source browser automation agent optimized specifically for fast, efficient, and cost-effective browser tasks using a cloud browser. It requires explicit, detailed instructions to perform highly specific interactions quickly.
 
 Optimal for tasks requiring:
@@ -44,15 +49,15 @@ Best suited use cases include:
 You must provide extremely detailed step-by-step instructions, including exact elements, actions, and explicit context. Clearly define the desired outcome for optimal results. Returns the completed result or an error message if issues arise.
 
 Note: This agent trades off flexibility for significantly faster performance and lower costs compared to Claude and OpenAI agents.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
 `maxSteps`|`integer` *optional*|
 `returnStepInfo`|`boolean` *optional*|Whether to return step-by-step information about the task.Should be false by default. May contain excessive information, so we strongly recommend setting this to false.
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `claude_computer_use_agent`
+---
+#### Tool: **`claude_computer_use_agent`**
 This tool leverages Anthropic's Claude model to autonomously execute complex browser tasks with sophisticated reasoning capabilities using a cloud browser. It specializes in handling intricate, nuanced, or highly context-sensitive web interactions.
 
 Optimal for tasks requiring:
@@ -67,18 +72,17 @@ Best suited use cases include:
 - Extracting information from dynamic or interactive websites
 
 Provide detailed task instructions, relevant context, and clearly specify the desired outcome for best results. Returns the completed result or an error message if issues arise.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
 `maxSteps`|`integer` *optional*|
 `returnStepInfo`|`boolean` *optional*|Whether to return step-by-step information about the task.Should be false by default. May contain excessive information, so we strongly recommend setting this to false.
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `crawl_webpages`
+---
+#### Tool: **`crawl_webpages`**
 Crawl a website starting from a URL and explore linked pages. This tool allows systematic collection of content from multiple pages within a domain. Use this for larger data collection tasks, content indexing, or site mapping.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `followLinks`|`boolean`|Whether to follow links on the crawled webpages
 `outputFormat`|`array`|The format of the output
@@ -87,35 +91,35 @@ Parameter|Type|Description
 `maxPages`|`integer` *optional*|
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `create_profile`
+---
+#### Tool: **`create_profile`**
 Creates a new persistent Hyperbrowser profile.
-
-### Tool `delete_profile`
+#### Tool: **`delete_profile`**
 Deletes an existing persistent Hyperbrowser profile.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `profileId`|`string`|ID of the profile to delete
 
-### Tool `extract_structured_data`
+---
+#### Tool: **`extract_structured_data`**
 Extract structured data from a webpage. This tool allows you to extract structured data from a webpage using a schema.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `prompt`|`string`|The prompt to use for the extraction
 `urls`|`array`|The list of URLs of the webpages to extract structured information from. Can include wildcards (e.g. https://example.com/*)
 `schema`|`string` *optional*|The json schema to use for the extraction. Must provide an object describing a spec compliant json schema, any other types are invalid.
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `list_profiles`
+---
+#### Tool: **`list_profiles`**
 Lists existing persistent Hyperbrowser profiles, with optional pagination.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `limit`|`integer` *optional*|Number of profiles per page (optional)
 `page`|`integer` *optional*|Page number for pagination (optional)
 
-### Tool `openai_computer_use_agent`
+---
+#### Tool: **`openai_computer_use_agent`**
 This tool utilizes OpenAI's model to autonomously execute general-purpose browser-based tasks with balanced performance and reliability using a cloud browser. It handles complex interactions effectively with practical reasoning and clear execution.
 
 Optimal for tasks requiring:
@@ -130,32 +134,32 @@ Best suited use cases include:
 - Extracting data through interactive web processes
 
 Provide a clear step-by-step description, necessary context, and expected outcomes. Returns the completed result or an error message if issues arise.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `task`|`string`|The task to perform inside the browser
 `maxSteps`|`integer` *optional*|
 `returnStepInfo`|`boolean` *optional*|Whether to return step-by-step information about the task.Should be false by default. May contain excessive information, so we strongly recommend setting this to false.
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `scrape_webpage`
+---
+#### Tool: **`scrape_webpage`**
 Scrape a webpage and extract its content in various formats. This tool allows fetching content from a single URL with configurable browser behavior options. Use this for extracting text content, HTML structure, collecting links, or capturing screenshots of webpages.
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `outputFormat`|`array`|The format of the output
 `url`|`string`|The URL of the webpage to scrape
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
-### Tool `search_with_bing`
+---
+#### Tool: **`search_with_bing`**
 Search the web using Bing. This tool allows you to search the web using bing.com
-
-Parameter|Type|Description
+Parameters|Type|Description
 -|-|-
 `query`|`string`|The search query to submit to Bing
 `numResults`|`integer` *optional*|Number of search results to return
 `sessionOptions`|`object` *optional*|Options for the browser session. Avoid setting these if not mentioned explicitly
 
+---
 ## Use this MCP Server
 
 ```json
