@@ -2069,3 +2069,58 @@ registry:
         properties:
           url:
             type: string
+  302_sandbox:
+    description: 302 Sandbox MCP
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/302_sandbox.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/302_sandbox.md
+    source: https://github.com/302ai/302_sandbox_mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/179190197?s=200&v=4
+    tools:
+      - name: createSandbox
+      - name: directRunCode
+      - name: downloadSandboxFiles
+      - name: killSandbox
+      - name: listSandboxFiles
+      - name: listSandboxes
+      - name: runCode
+      - name: runCommand
+      - name: writeSandboxFiles
+    secrets:
+      - name: 302_sandbox.api_key
+    prompts: 0
+    resources: {}
+  smithery-cli:
+    description: Official MCP server for Smithery CLI
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/smithery-cli.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/smithery-cli.md
+    source: https://github.com/smithery-ai/smithery-cli-mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/190488992?s=200&v=4
+    tools:
+      - name: collect_config
+      - name: find_mcp
+      - name: install_mcp
+    secrets:
+      - name: smithery-cli.api_key
+    prompts: 0
+    resources: {}
+  doit:
+    description: DoiT official MCP Server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/doit.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/doit.md
+    source: https://github.com/doitintl/doit-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/8424863?s=200&v=4
+    tools:
+      - name: get_anomalies
+      - name: get_anomaly
+      - name: get_cloud_incident
+      - name: get_cloud_incidents
+      - name: get_dimension
+      - name: get_report_results
+      - name: list_dimensions
+      - name: list_reports
+      - name: run_query
+      - name: validate_user
+    secrets:
+      - name: doit.api_key
+    prompts: 0
+    resources: {}
