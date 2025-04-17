@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef, useCallback } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
@@ -8,7 +8,7 @@ import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Co
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useConfigContext } from './ConfigContext';
+import { getTemplateForItem, useConfigContext } from './ConfigContext';
 import { useRequiredImagesContext } from './RequiredImageContext';
 import { Secret } from '../types/secrets';
 // Storage keys for each query type
@@ -36,6 +36,7 @@ interface CatalogContextType {
     unregisterCatalogItem: (item: CatalogItemWithName) => Promise<void>;
     startPull: () => Promise<void>;
     tryUpdateSecrets: (secret: { name: string, value: string }) => Promise<void>;
+    getCanRegisterCatalogItem: (item: CatalogItemWithName) => boolean;
 }
 
 const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
@@ -423,6 +424,26 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         await updateSecretsMutation.mutateAsync(secret);
     };
 
+    const getCanRegisterCatalogItem = useCallback((item: CatalogItemWithName) => {
+        if (!canRegister) return false;
+
+        const itemDeclaresConfig = item.config && item.config.length > 0;
+        const itemDeclaresSecrets = item.secrets && item.secrets.length > 0;
+
+        if (!itemDeclaresConfig && !itemDeclaresSecrets) return true;
+
+        const emptyTemplate = getTemplateForItem(item);
+        const filledTemplate = getTemplateForItem(item, config?.[item.name]);
+
+        const unChangedConfig = !itemDeclaresConfig || JSON.stringify(emptyTemplate) === JSON.stringify(filledTemplate);
+        const assignedSecrets = Secrets.getSecretsWithAssignment(item, secrets);
+        const unAssignedSecrets = !itemDeclaresSecrets || assignedSecrets.filter(secret => !secret.assigned).length > 0;
+        if (item.name === 'atlassian') {
+            console.log(unChangedConfig, unAssignedSecrets);
+        }
+        return !unChangedConfig && !unAssignedSecrets;
+    }, [canRegister, config, secrets]);
+
     const startPull = async () => {
         await Promise.all([
             loadAllImages(),
@@ -447,7 +468,8 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         registerCatalogItem,
         unregisterCatalogItem,
         startPull,
-        tryUpdateSecrets
+        tryUpdateSecrets,
+        getCanRegisterCatalogItem,
     };
 
     return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

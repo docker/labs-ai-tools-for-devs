@@ -25,7 +25,7 @@ type TileProps = {
 
 const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedConfig }: TileProps) => {
     const loadAssignedSecrets = () => {
-        const assignedSecrets = Secrets.getAssignedSecrets(item, secrets);
+        const assignedSecrets = Secrets.getSecretsWithAssignment(item, secrets);
         setAssignedSecrets(assignedSecrets)
     }
 
@@ -104,7 +104,6 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                     }
                 }}
                 onSecretChange={onSecretChange}
-                unAssignedSecrets={unAssignedSecrets}
             />
             <Card onClick={(e) => {
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {
