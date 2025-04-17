@@ -78,8 +78,8 @@ registry:
   sequentialthinking:
     description: A tool for dynamic and reflective problem-solving through a structured thinking process
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
-    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/sequentialthinking.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sequentialthinking.md
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/sequentialthinking.md
     icon: https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/2454513/2454513-1570719639731-bfdf3620a4e0d.jpg
     tools:
       - name: sequentialthinking
@@ -211,10 +211,8 @@ registry:
   gdrive:
     description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/gdrive
-    secrets:
-      - name: google.gcp-oauth.keys.json
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
     tools:
       - name: gdrive_auth
     secrets:
@@ -449,7 +447,6 @@ registry:
     source: https://github.com/sooperset/mcp-atlassian/tree/main
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
     tools:
-      - name: confluence_attach_content
       - name: confluence_create_page
       - name: confluence_delete_page
       - name: confluence_get_comments
@@ -480,16 +477,10 @@ registry:
       - name: jira_transition_issue
       - name: jira_update_issue
     secrets:
+      - name: atlassian.jira.token
+      - name: atlassian.confluence.token
     prompts: 0
     resources: {}
-      - name: atlassian.jira.api_token
-        required: false
-      - name: atlassian.confluence.api_token
-        required: false
-      - name: atlassian.jira.personal_token
-        required: false
-      - name: atlassian.confluence.personal_token
-        required: false
     config:
       - name: atlassian
         description: The MCP server is allowed to access these paths
@@ -674,8 +665,8 @@ registry:
     description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/github-official.md
-    source: https://github.com/github/github-mcp-server
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/github.svg
+    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
+    icon: https://avatars.githubusercontent.com/u/9919?s=200&v=4
     tools:
       - name: add_issue_comment
       - name: create_branch
