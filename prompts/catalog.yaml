@@ -2115,3 +2115,33 @@ registry:
       - name: doit.api_key
     prompts: 0
     resources: {}
+  elevenlabs:
+    description: The official ElevenLabs MCP server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elevenlabs.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elevenlabs.md
+    source: https://github.com/elevenlabs/elevenlabs-mcp/tree/refs/pull/17/merge
+    icon: https://avatars.githubusercontent.com/u/94471909?s=200&v=4
+    tools:
+      - name: add_knowledge_base_to_agent
+      - name: check_subscription
+      - name: create_agent
+      - name: create_voice_from_preview
+      - name: get_agent
+      - name: get_voice
+      - name: isolate_audio
+      - name: list_agents
+      - name: list_phone_numbers
+      - name: make_outbound_call
+      - name: play_audio
+      - name: search_voice_library
+      - name: search_voices
+      - name: speech_to_speech
+      - name: speech_to_text
+      - name: text_to_sound_effects
+      - name: text_to_speech
+      - name: text_to_voice
+      - name: voice_clone
+    secrets:
+      - name: elevenlabs.api_key
+    prompts: 0
+    resources: {}
