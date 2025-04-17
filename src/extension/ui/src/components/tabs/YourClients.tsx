@@ -7,6 +7,7 @@ import ClaudeIcon from '../../assets/claude-ai-icon.svg'
 import GordonIcon from '../../assets/gordon-icon.png'
 import CursorIcon from '../../assets/cursor.svg'
 import ChatGPTIcon from '../../assets/chatgpt.svg'
+import WindsurfIcon from '../../assets/windsurf.svg'
 import { useMCPClientContext } from "../../context/MCPClientContext";
 import { useState } from "react";
 
@@ -23,6 +24,7 @@ const iconMap = {
     'Claude Desktop': ClaudeIcon,
     'Gordon': GordonIcon,
     'Cursor': CursorIcon,
+    'Windsurf': WindsurfIcon,
 }
 
 const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
