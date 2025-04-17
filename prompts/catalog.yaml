@@ -2145,3 +2145,16 @@ registry:
       - name: elevenlabs.api_key
     prompts: 0
     resources: {}
+  dappier:
+    description: Dappier MCP server connects any AI to proprietary, real-time data — including web search, news, sports, stock market data, and premium publisher content.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dappier.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/dappier.md
+    source: https://github.com/dappierai/dappier-mcp/tree/staging
+    icon: https://avatars.githubusercontent.com/u/152645347?s=200&v=4
+    tools:
+      - name: dappier_ai_recommendations
+      - name: dappier_real_time_search
+    secrets:
+      - name: dappier.api_key
+    prompts: 0
+    resources: {}
