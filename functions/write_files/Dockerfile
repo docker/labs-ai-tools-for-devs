@@ -20,10 +20,6 @@ RUN --mount=type=cache,target=/nix,from=nixos/nix:2.21.1,source=/nix \
     --log-format raw \
     build . --out-link /tmp/output/result
   cp -R $(nix-store -qR /tmp/output/result) /tmp/nix-store-closure
-  ## compute SBOM for the entire runtime graph
-  #nix \
-    #--extra-experimental-features "nix-command flakes" \
-    #run github:tiiuae/sbomnix#sbomnix -- /tmp/output/result --spdx /tmp/sbom.spdx.json
 EOF
 
 FROM scratch

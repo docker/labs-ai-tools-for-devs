@@ -4,7 +4,7 @@ services:
     volumes:
       - "data:/data"
   mcp_docker:
-    image: mcp/docker:0.0.10
+    image: mcp/docker:0.0.11
     ports:
       - 8811:8811
     volumes:
