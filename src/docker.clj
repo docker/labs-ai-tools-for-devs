@@ -320,6 +320,7 @@
 
 (defn check-then-pull [container-definition]
   (when (not (has-image? (:image container-definition)))
+    (logger/info "pulling image " (:image container-definition))
     (-pull container-definition)))
 
 (defn injected-entrypoint [secrets environment s]
@@ -531,13 +532,13 @@
                 ;;;;;;;;;;
             (= 8 (+ offset result))
             (do
-              (.flip ^ByteBuffer header-buf)
               (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
                     stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
                                   0 :stdin
                                   1 :stdout
                                   2 :stderr)
                     buf (ByteBuffer/allocate size)]
+                (.clear ^ByteBuffer header-buf)
                 (loop [offset 0]
                   (let [result (.read ^SocketChannel in buf)]
                     (cond
@@ -547,7 +548,7 @@
 
                         ;;;;;;;;;;
                       (= size (+ offset result))
-                      (async/>!! c {stream-type (String. ^bytes (.array buf))})
+                      (async/put! c {stream-type (String. ^bytes (.array buf))})
 
                         ;;;;;;;;;;
                       :else
@@ -558,9 +559,7 @@
 
                 ;;;;;;;;;;
             :else
-            (do
-              (.clear ^ByteBuffer header-buf)
-              (recur (+ offset result)))))))
+            (recur (+ offset result))))))
     (catch Throwable t
       (logger/error "streaming exception " t)
       (async/close! c))))
@@ -583,8 +582,11 @@
       ;; TODO if successful, we should get a 101 UPGRADED response that will be exactly 117 bytes
       (let [buf (ByteBuffer/allocate 117)]
         ;; TODO read the HTTP upgrade message
-        (.read client buf)
-        (.read client buf))
+        (loop [size 0]
+          (let [result (.read client buf)
+                bytes-read (+ size result)]
+            (when (not (= 117 bytes-read))
+              (recur bytes-read)))))
       (catch Throwable _
         client))
     client))
@@ -629,7 +631,7 @@
      [block (async/<! c)]
       (cond
         (#{:stopped :timeout} block)
-        (async/put! output-channel block) 
+        (async/put! output-channel block)
         (nil? block)
         (async/put! output-channel :closed)
         :else
@@ -708,9 +710,9 @@
      - deletes the container"
   [m]
   (let [x (docker/function-call-with-stdin
-           (assoc m :content (or 
-                             (-> m :stdin :content) 
-                             (slurp (-> m :stdin :file)))))]
+           (assoc m :content (or
+                              (-> m :stdin :content)
+                              (slurp (-> m :stdin :file)))))]
     (async/<!! (async/thread
                  (Thread/sleep 10)
                  (docker/finish-call x)))))
