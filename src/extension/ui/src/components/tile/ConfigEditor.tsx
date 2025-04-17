@@ -3,7 +3,7 @@ import { Alert, Stack } from "@mui/material";
 import { CatalogItemWithName } from "../../types/catalog";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import * as JsonSchema from "json-schema-library";
-import { useConfigContext } from "../../context/ConfigContext";
+import { getTemplateForItem, useConfigContext } from "../../context/ConfigContext";
 import { deepFlattenObject, deepSet } from "../../MergeDeep";
 import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
 
@@ -52,8 +52,7 @@ const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => 
         if (!configSchema) return;
 
         try {
-            const schema = new JsonSchema.Draft2019(configSchema[0]);
-            const template = schema.getTemplate(existingConfigForItem);
+            const template = getTemplateForItem(catalogItem, existingConfigForItem);
             setConfig(template);
             setLocalConfig(deepFlattenObject(template));
         } catch (error) {

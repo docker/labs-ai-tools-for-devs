@@ -26,8 +26,12 @@ interface ToolCatalogProps {
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems, client, onSecretChange, secrets, registryItems, showMine }) => {
 
+    const { getCanRegisterCatalogItem } = useCatalogContext();
+
+    const tileIsRegistered = (item: CatalogItemWithName) => registryItems[item.name]?.ref !== undefined && getCanRegisterCatalogItem(item);
+
     const filteredCatalogItems = catalogItems.filter(item => {
-        const isRegistered = registryItems[item.name]?.ref !== undefined;
+        const isRegistered = tileIsRegistered(item);
         const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
         const hideBecauseItsNotMine = showMine && !isRegistered;
         return matchesSearch && !hideBecauseItsNotMine;
@@ -42,7 +46,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems,
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                         <Tile
                             item={catalogItem}
-                            registered={registryItems[catalogItem.name]?.ref !== undefined}
+                            registered={tileIsRegistered(catalogItem)}
                             onSecretChange={onSecretChange}
                             secrets={secrets}
                             unAssignedConfig={unAssignedConfig}

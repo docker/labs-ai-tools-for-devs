@@ -6,6 +6,8 @@ import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
 import { ParsedParameters } from '../types/config';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { CatalogItemWithName } from '../types/catalog';
+import * as JsonSchemaLibrary from 'json-schema-library';
 
 interface ConfigContextType {
     // State
@@ -19,6 +21,14 @@ interface ConfigContextType {
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
+
+export const getTemplateForItem = (item: CatalogItemWithName, existingConfigForItem: { [key: string]: any } = {}) => {
+    const config = item.config;
+    if (!config) return {};
+    const schema = new JsonSchemaLibrary.Draft2019(config[0]);
+    const template = schema.getTemplate(existingConfigForItem);
+    return template;
+};
 
 export function useConfigContext() {
     const context = useContext(ConfigContext);
@@ -58,7 +68,7 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         },
         refetchInterval: POLL_INTERVAL,
         staleTime: 30000, // Data remains fresh for 30 seconds
-        gcTime: 300000
+        gcTime: 300000,
     });
 
     // Save config mutation
@@ -128,6 +138,10 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
                 console.error('Failed to sync config with registry:', error);
                 throw error;
             }
+        },
+        onSuccess: async () => {
+            // Refetch config to ensure UI is in sync after registry sync
+            await refetchConfig();
         }
     });
 
@@ -137,7 +151,7 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
 
     const saveConfig = async (itemName: string, newConfig: { [key: string]: any }) => {
         try {
-            await saveConfigMutation.mutateAsync({ itemName, newConfig });
+            saveConfigMutation.mutate({ itemName, newConfig });
             // Force a direct refetch from the data source to ensure we have the latest data
             await refetchConfig();
         } catch (error) {

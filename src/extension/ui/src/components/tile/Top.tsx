@@ -3,6 +3,7 @@ import { Badge, CardMedia, IconButton, Stack, Switch, Tooltip, Typography } from
 import { getUnsupportedSecretMessage } from "../../Constants";
 import { CatalogItemWithName } from "../../types/catalog";
 import { useConfigContext } from "../../context/ConfigContext";
+import { useCatalogContext } from "../../context/CatalogContext";
 
 type TopProps = {
     unAssignedConfig: { name: string, assigned: boolean }[],
@@ -12,16 +13,13 @@ type TopProps = {
     item: CatalogItemWithName
 }
 
-export default function Top({ item, unAssignedConfig, onToggleRegister, unAssignedSecrets, registered }: TopProps) {
+export default function Top({ item, onToggleRegister, registered }: TopProps) {
+    const { getCanRegisterCatalogItem } = useCatalogContext();
 
-    const hasAllSecrets = unAssignedSecrets.length === 0
-
-    const { config } = useConfigContext()
-
-    const missingConfig = !config?.[item.name] || Object.keys(config?.[item.name] || {}).length === 0
+    const canRegister = getCanRegisterCatalogItem(item);
 
     const getActionButton = () => {
-        if (!hasAllSecrets || missingConfig) {
+        if (!canRegister) {
             return <Stack direction="row" spacing={0} alignItems="center">
                 <Tooltip title="This tile needs configuration before it can be used.">
                     <span>

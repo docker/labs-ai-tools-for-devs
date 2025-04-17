@@ -60,7 +60,7 @@ namespace Secrets {
     }
 
     // Whether or not each secret has been assigned for a given catalog item
-    export function getAssignedSecrets(catalogItem: CatalogItemWithName, secrets: Secret[]): { name: string, assigned: boolean }[] {
+    export function getSecretsWithAssignment(catalogItem: CatalogItemWithName, secrets: Secret[]): { name: string, assigned: boolean }[] {
         return catalogItem.secrets?.map((secret) => ({ name: secret.name, assigned: secrets.some((s) => s.name === secret.name) })) || [];
     }
 }
