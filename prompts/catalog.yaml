@@ -2180,3 +2180,35 @@ registry:
         properties:
           risken.url:
             type: string
+  azure:
+    description: This repository is for development of the Azure MCP Server, bringing the power of Azure to your agents.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/azure.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/azure.md
+    source: https://github.com/Azure/azure-mcp/tree/refs/pull/16/merge
+    icon: https://avatars.githubusercontent.com/u/6844498?s=200&v=4
+    tools:
+      - name: azmcp-appconfig-account-list
+      - name: azmcp-appconfig-kv-delete
+      - name: azmcp-appconfig-kv-list
+      - name: azmcp-appconfig-kv-lock
+      - name: azmcp-appconfig-kv-set
+      - name: azmcp-appconfig-kv-show
+      - name: azmcp-appconfig-kv-unlock
+      - name: azmcp-cosmos-account-list
+      - name: azmcp-cosmos-database-container-item-query
+      - name: azmcp-cosmos-database-container-list
+      - name: azmcp-cosmos-database-list
+      - name: azmcp-extension-az
+      - name: azmcp-extension-azd
+      - name: azmcp-group-list
+      - name: azmcp-monitor-log-query
+      - name: azmcp-monitor-table-list
+      - name: azmcp-monitor-workspace-list
+      - name: azmcp-storage-account-list
+      - name: azmcp-storage-blob-container-details
+      - name: azmcp-storage-blob-container-list
+      - name: azmcp-storage-blob-list
+      - name: azmcp-storage-table-list
+      - name: azmcp-subscription-list
+    prompts: 0
+    resources: {}
