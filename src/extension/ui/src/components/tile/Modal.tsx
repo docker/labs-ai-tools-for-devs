@@ -1,5 +1,5 @@
-import { Alert, Badge, Box, ButtonGroup, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormHelperText, Grid2, IconButton, Link, ListItem, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
-import { CheckOutlined, Close, CloseOutlined, Code, Delete, DeleteOutline, DeleteOutlined, LockReset, Save, SaveOutlined } from "@mui/icons-material";
+import { Alert, Badge, Box, ButtonGroup, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
+import { CheckOutlined, Close, CloseOutlined, DeleteOutlined } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import { CatalogItemWithName } from "../../types/catalog";
 import Secrets from "../../Secrets";

@@ -1,8 +1,6 @@
 import { Settings } from "@mui/icons-material";
 import { Badge, CardMedia, IconButton, Stack, Switch, Tooltip, Typography } from "@mui/material";
-import { getUnsupportedSecretMessage } from "../../Constants";
 import { CatalogItemWithName } from "../../types/catalog";
-import { useConfigContext } from "../../context/ConfigContext";
 import { useCatalogContext } from "../../context/CatalogContext";
 
 type TopProps = {
