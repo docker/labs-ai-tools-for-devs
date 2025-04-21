@@ -6,10 +6,8 @@ import { parse } from 'yaml';
 import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTemplateForItem } from './useConfig';
-import { Secret } from '../types/secrets';
 import { useState } from 'react';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
-import { stringify } from 'yaml';
 import { useConfig } from './useConfig';
 import { useRequiredImages } from './useRequiredImages';
 

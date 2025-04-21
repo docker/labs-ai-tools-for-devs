@@ -7,7 +7,6 @@ import * as JsonSchemaLibrary from 'json-schema-library';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
 import { stringify } from 'yaml';
 import { useRef } from 'react';
-import { ParsedParameters } from '../types/config';
 
 export const getTemplateForItem = (item: CatalogItemWithName, existingConfigForItem: { [key: string]: any } = {}) => {
     const config = item.config;

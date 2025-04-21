@@ -5,7 +5,6 @@ import AddIcon from '@mui/icons-material/Add';
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
-import { useCatalogContext } from '../../context/CatalogContext';
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 
 interface ToolCatalogProps {
@@ -26,9 +25,7 @@ interface ToolCatalogProps {
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems, client, onSecretChange, secrets, registryItems, showMine }) => {
 
-    const { getCanRegisterCatalogItem } = useCatalogContext();
-
-    const tileIsRegistered = (item: CatalogItemWithName) => registryItems[item.name]?.ref !== undefined && getCanRegisterCatalogItem(item);
+    const tileIsRegistered = (item: CatalogItemWithName) => registryItems[item.name]?.ref !== undefined;
 
     const filteredCatalogItems = catalogItems.filter(item => {
         const isRegistered = tileIsRegistered(item);

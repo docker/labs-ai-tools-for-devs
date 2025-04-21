@@ -5,14 +5,11 @@ import { CatalogItemWithName } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
 import Secrets from "../../Secrets";
 import ConfigurationModal from "./Modal";
-import { useCatalogContext } from "../../context/CatalogContext";
 import Top from "./Top";
 import Center from "./Center";
 import Bottom from "./Bottom";
 import { Secret } from "../../types";
 import { v1 } from "@docker/extension-api-client-types";
-import { useConfigContext } from "../../context/ConfigContext";
-
 
 type TileProps = {
     item: CatalogItemWithName;

@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { CatalogItemWithName } from "../../types/catalog";
 import Secrets from "../../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
-import { useCatalogContext } from "../../context/CatalogContext";
-import { useConfigContext } from "../../context/ConfigContext";
 import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
 import ConfigEditor from "./ConfigEditor";
 
@@ -57,9 +55,6 @@ const ConfigurationModal = ({
     registered,
     onSecretChange,
 }: ConfigurationModalProps) => {
-
-    const { registryItems, secrets, getCanRegisterCatalogItem } = useCatalogContext();
-    const { configLoading, config } = useConfigContext();
     const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
     const theme = useTheme();
 

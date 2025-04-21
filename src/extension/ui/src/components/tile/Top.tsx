@@ -1,7 +1,6 @@
 import { Settings } from "@mui/icons-material";
-import { Badge, CardMedia, IconButton, Stack, Switch, Tooltip, Typography } from "@mui/material";
+import { CardMedia, Stack, Switch, Tooltip, Typography } from "@mui/material";
 import { CatalogItemWithName } from "../../types/catalog";
-import { useCatalogContext } from "../../context/CatalogContext";
 
 type TopProps = {
     unAssignedConfig: { name: string, assigned: boolean }[],
@@ -12,9 +11,6 @@ type TopProps = {
 }
 
 export default function Top({ item, onToggleRegister, registered }: TopProps) {
-    const { getCanRegisterCatalogItem } = useCatalogContext();
-
-    const canRegister = getCanRegisterCatalogItem(item);
 
     const getActionButton = () => {
         if (!canRegister) {
