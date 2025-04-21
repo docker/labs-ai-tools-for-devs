@@ -19,6 +19,10 @@ export interface CatalogItem {
 /**
  * Interface for a catalog item with a name
  */
-export interface CatalogItemWithName extends CatalogItem {
+export interface CatalogItemRichened extends CatalogItem {
     name: string;
+    secrets: Secret[];
+    config: { [key: string]: any };
+    registered: boolean;
+    canRegister: boolean;
 }

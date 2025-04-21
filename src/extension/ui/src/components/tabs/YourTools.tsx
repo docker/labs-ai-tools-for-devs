@@ -5,7 +5,7 @@ import { CATALOG_LAYOUT_SX, MCP_POLICY_NAME } from '../../Constants';
 import TileActions from '../tile/Bottom';
 import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { CatalogItemWithName } from '../../types/catalog';
+import { CatalogItemRichened } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -15,10 +15,10 @@ interface YourToolsProps {
     registryItems: { [key: string]: { ref: string, config: any } };
     config: { [key: string]: { [key: string]: any } };
     canRegister: boolean;
-    unregister: (item: CatalogItemWithName) => Promise<void>;
-    setConfiguringItem: (item: CatalogItemWithName) => void;
+    unregister: (item: CatalogItemRichened) => Promise<void>;
+    setConfiguringItem: (item: CatalogItemRichened) => void;
     secrets: Secret[];
-    catalogItems: CatalogItemWithName[];
+    catalogItems: CatalogItemRichened[];
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
     ddVersion: { version: string, build: number };
 }
@@ -52,9 +52,6 @@ const YourTools: React.FC<YourToolsProps> = ({
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
                         <Tile
                             item={catalogItem}
-                            registered={true}
-                            onSecretChange={onSecretChange}
-                            secrets={secrets}
                             client={client}
                             unAssignedConfig={unassignedConfig}
                         />

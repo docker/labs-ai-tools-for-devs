@@ -1,44 +1,36 @@
 import { CircularProgress, Dialog, DialogContent, DialogTitle, Divider, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { Card, CardContent } from "@mui/material";
 import { useEffect, useState } from "react";
-import { CatalogItemWithName } from "../../types/catalog";
+import { CatalogItemRichened } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
 import Secrets from "../../Secrets";
 import ConfigurationModal from "./Modal";
 import Top from "./Top";
 import Center from "./Center";
 import Bottom from "./Bottom";
-import { Secret } from "../../types";
 import { v1 } from "@docker/extension-api-client-types";
+import { useSecrets } from "../../hooks/useSecrets";
+import { useCatalog, useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
+import { MCP_POLICY_NAME } from "../../Constants";
 
 type TileProps = {
-    item: CatalogItemWithName;
-    registered: boolean;
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
-    secrets: Secret[];
+    item: CatalogItemRichened;
     client: v1.DockerDesktopClient;
     unAssignedConfig: { name: string; assigned: boolean }[];
 }
 
-const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedConfig }: TileProps) => {
-    const loadAssignedSecrets = () => {
-        const assignedSecrets = Secrets.getSecretsWithAssignment(item, secrets);
-        setAssignedSecrets(assignedSecrets)
-    }
+const Tile = ({ item, client, unAssignedConfig }: TileProps) => {
 
     const [showSecretDialog, setShowSecretDialog] = useState(false)
-    const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
+    const [assignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
     const [changedSecrets, setChangedSecrets] = useState<{ [key: string]: string | undefined }>({})
     const [secretLoading, setSecretLoading] = useState(false)
-
-    const { registryLoading, registerCatalogItem, unregisterCatalogItem } = useCatalogContext()
     const [showConfigModal, setShowConfigModal] = useState(false)
+    const { isLoading: secretsLoading, mutate: mutateSecret } = useSecrets(client)
+    const { registryLoading } = useRegistry(client)
+    const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
 
-    useEffect(() => {
-        loadAssignedSecrets()
-    }, [secrets])
-
-    if (registryLoading) {
+    if (registryLoading || secretsLoading) {
         return <>
             <CircularProgress size={20} />
             <Typography>Loading registry...</Typography>
@@ -46,10 +38,6 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
     }
 
     const unAssignedSecrets = assignedSecrets.filter(s => !s.assigned)
-
-    useEffect(() => {
-        loadAssignedSecrets()
-    }, [secrets])
 
     return (
         <>
@@ -72,7 +60,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                                     </IconButton>}
                                     {changedSecrets[secret.name] && <IconButton onClick={() => {
                                         setSecretLoading(true)
-                                        onSecretChange({ name: secret.name, value: changedSecrets[secret.name] || '' }).then(() => {
+                                        mutateSecret.mutateAsync({ name: secret.name, value: changedSecrets[secret.name] || '', policies: [MCP_POLICY_NAME] }).then(() => {
                                             setSecretLoading(false)
                                             const newChangedSecrets = { ...changedSecrets }
                                             delete newChangedSecrets[secret.name]
@@ -92,15 +80,6 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                 onClose={() => setShowConfigModal(false)}
                 catalogItem={item}
                 client={client}
-                registered={registered}
-                onToggleRegister={(checked) => {
-                    if (checked) {
-                        registerCatalogItem(item)
-                    } else {
-                        unregisterCatalogItem(item)
-                    }
-                }}
-                onSecretChange={onSecretChange}
             />
             <Card onClick={(e) => {
                 if ((e.target as HTMLElement).tagName !== 'INPUT') {
@@ -115,7 +94,7 @@ const Tile = ({ item, registered, onSecretChange, secrets, client, unAssignedCon
                             } else {
                                 unregisterCatalogItem(item)
                             }
-                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={registered} />
+                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={true} />
                         <Center item={item} />
                         <Divider sx={{ marginBottom: 1 }} />
                         <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length || unAssignedConfig.length)} />

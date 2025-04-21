@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { escapeJSONForPlatformShell, getUser } from "../FileWatcher";
+import { escapeJSONForPlatformShell, getUser } from "../FileUtils";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 import { DOCKER_MCP_COMMAND } from "../Constants";
 import { mergeDeep } from "../MergeDeep";

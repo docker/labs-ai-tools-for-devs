@@ -1,7 +1,7 @@
 // From secrets.yaml
 
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from "./types/catalog";
+import { CatalogItemRichened } from "./types/catalog";
 import { Secret, StoredSecret, Policy } from "./types/secrets";
 
 namespace Secrets {
@@ -55,12 +55,12 @@ namespace Secrets {
     }
 
     // Get all relevant secrets for a given set of catalog items
-    export function getAllSecretNames(catalogItems: CatalogItemWithName[]): string[] {
+    export function getAllSecretNames(catalogItems: CatalogItemRichened[]): string[] {
         return catalogItems.map((item) => item.secrets || []).flat().map((secret) => secret.name);
     }
 
     // Whether or not each secret has been assigned for a given catalog item
-    export function getSecretsWithAssignment(catalogItem: CatalogItemWithName, secrets: Secret[]): { name: string, assigned: boolean }[] {
+    export function getSecretsWithAssignment(catalogItem: CatalogItemRichened, secrets: Secret[]): { name: string, assigned: boolean }[] {
         return catalogItem.secrets?.map((secret) => ({ name: secret.name, assigned: secrets.some((s) => s.name === secret.name) })) || [];
     }
 }

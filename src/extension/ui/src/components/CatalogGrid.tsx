@@ -4,7 +4,7 @@ import { SwapVert, FolderOpenRounded } from '@mui/icons-material';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import YourClients from './tabs/YourClients';
-import { CatalogItemWithName } from '../types/catalog';
+import { CatalogItemRichened } from '../types/catalog';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
 
@@ -17,7 +17,7 @@ const client = createDockerDesktopClient();
 interface CatalogGridProps {
     appProps: any; // We'll use this to pass all our hook data
     showSettings: () => void;
-    setConfiguringItem: (item: CatalogItemWithName) => void;
+    setConfiguringItem: (item: CatalogItemRichened) => void;
 }
 
 const parseDDVersion = (ddVersion: string) => {
@@ -86,7 +86,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
-        catalogItems.some((c: CatalogItemWithName) => c.name === i)
+        catalogItems.some((c: CatalogItemRichened) => c.name === i)
     )
 
     const sortedCatalogItems = sort !== 'date-desc' ? [...catalogItems].sort((a, b) => {

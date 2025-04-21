@@ -1,16 +1,18 @@
 import { Settings } from "@mui/icons-material";
 import { CardMedia, Stack, Switch, Tooltip, Typography } from "@mui/material";
-import { CatalogItemWithName } from "../../types/catalog";
+import { CatalogItemRichened } from "../../types/catalog";
 
 type TopProps = {
     unAssignedConfig: { name: string, assigned: boolean }[],
     onToggleRegister: (checked: boolean) => void,
     unAssignedSecrets: { name: string, assigned: boolean }[],
     registered: boolean
-    item: CatalogItemWithName
+    item: CatalogItemRichened
 }
 
 export default function Top({ item, onToggleRegister, registered }: TopProps) {
+
+    const canRegister = true; // TODO: remove this
 
     const getActionButton = () => {
         if (!canRegister) {

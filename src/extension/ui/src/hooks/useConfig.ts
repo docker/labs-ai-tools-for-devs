@@ -2,13 +2,13 @@ import { v1 } from "@docker/extension-api-client-types";
 import { getStoredConfig, syncRegistryWithConfig } from '../Registry';
 import { POLL_INTERVAL } from '../Constants';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { CatalogItemWithName } from '../types/catalog';
+import { CatalogItemRichened } from '../types/catalog';
 import * as JsonSchemaLibrary from 'json-schema-library';
-import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
+import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
 import { stringify } from 'yaml';
 import { useRef } from 'react';
 
-export const getTemplateForItem = (item: CatalogItemWithName, existingConfigForItem: { [key: string]: any } = {}) => {
+export const getTemplateForItem = (item: CatalogItemRichened, existingConfigForItem: { [key: string]: any } = {}) => {
     const config = item.config;
     if (!config) return {};
     const schema = new JsonSchemaLibrary.Draft2019(config[0]);

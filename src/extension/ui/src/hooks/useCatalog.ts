@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from '../types/catalog';
+import { CatalogItemRichened } from '../types/catalog';
 import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
@@ -7,106 +7,15 @@ import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Co
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTemplateForItem } from './useConfig';
 import { useState } from 'react';
-import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
+import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
 import { useConfig } from './useConfig';
 import { useRequiredImages } from './useRequiredImages';
 
 // Storage keys for each query type
 const STORAGE_KEYS = {
-    secrets: 'docker-catalog-secrets',
     catalog: 'docker-catalog-catalog',
     registry: 'docker-catalog-registry',
 };
-
-export function useSecrets(client: v1.DockerDesktopClient) {
-    const queryClient = useQueryClient();
-
-    const {
-        data: secrets = [],
-        refetch: refetchSecrets,
-        isLoading: secretsLoading
-    } = useQuery({
-        queryKey: ['secrets'],
-        queryFn: async () => {
-            try {
-                const response = await Secrets.getSecrets(client);
-                return response || [];
-            } catch (error) {
-                if (error instanceof Error) {
-                    client.desktopUI.toast.error('Failed to get secrets: ' + error.message);
-                } else {
-                    client.desktopUI.toast.error('Failed to get secrets: ' + JSON.stringify(error));
-                }
-                throw error;
-            }
-        },
-        refetchInterval: POLL_INTERVAL,
-        staleTime: 30000,
-        gcTime: 300000
-    });
-
-    // Load initial secrets from localStorage on mount
-    useQuery({
-        queryKey: ['secrets', 'init'],
-        queryFn: async () => {
-            const cachedSecrets = localStorage.getItem(STORAGE_KEYS.secrets);
-            if (cachedSecrets && queryClient && !secrets.length) {
-                try {
-                    const parsedSecrets = JSON.parse(cachedSecrets);
-                    queryClient.setQueryData(['secrets'], parsedSecrets);
-                } catch (e) {
-                    console.error('Failed to parse cached secrets:', e);
-                }
-            }
-            return null;
-        },
-        staleTime: Infinity,
-        gcTime: 0
-    });
-
-    // Persist secrets to localStorage when they change
-    useQuery({
-        queryKey: ['secrets', 'persist', secrets],
-        queryFn: async () => {
-            if (secrets && secrets.length > 0) {
-                localStorage.setItem(STORAGE_KEYS.secrets, JSON.stringify(secrets));
-            }
-            return null;
-        },
-        staleTime: Infinity,
-        gcTime: 0
-    });
-
-    const updateSecretsMutation = useMutation({
-        mutationFn: async (secret: { name: string, value: string }) => {
-            try {
-                if (secret.value === UNASSIGNED_SECRET_PLACEHOLDER) {
-                    await Secrets.deleteSecret(client, secret.name);
-                } else {
-                    await Secrets.addSecret(client, { name: secret.name, value: secret.value, policies: [] });
-                }
-            }
-            catch (error) {
-                client.desktopUI.toast.error('Failed to update secret: ' + error);
-                throw error;
-            }
-        },
-        onSuccess: () => {
-            refetchSecrets();
-        },
-        onError: (error) => {
-            client.desktopUI.toast.error('Failed to update secret: ' + error);
-            throw error;
-        }
-    });
-
-    return {
-        secrets,
-        secretsLoading,
-        tryLoadSecrets: refetchSecrets,
-        tryUpdateSecrets: (secret: { name: string, value: string }) => updateSecretsMutation.mutateAsync(secret)
-    };
-}
 
 // Type for query context with custom meta data
 interface QueryContextWithMeta {
@@ -135,7 +44,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
                 if (showNotification) {
                     client.desktopUI.toast.success('Catalog updated successfully.');
                 }
-                return itemsWithName.reverse() as CatalogItemWithName[];
+                return itemsWithName.reverse() as CatalogItemRichened[];
             } catch (error) {
                 client.desktopUI.toast.error('Failed to get latest catalog.' + error);
                 throw error;
@@ -153,7 +62,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
             const cachedCatalog = localStorage.getItem(STORAGE_KEYS.catalog);
             if (cachedCatalog && queryClient && !catalogItems.length) {
                 try {
-                    const parsedCatalog = JSON.parse(cachedCatalog) as CatalogItemWithName[];
+                    const parsedCatalog = JSON.parse(cachedCatalog) as CatalogItemRichened[];
                     queryClient.setQueryData(['catalog'], parsedCatalog);
                 } catch (e) {
                     console.error('Failed to parse cached catalog:', e);
@@ -257,11 +166,25 @@ export function useRegistry(client: v1.DockerDesktopClient) {
         gcTime: 0
     });
 
+    const mutateRegistry = useMutation({
+        mutationFn: async (newRegistry: { [key: string]: { ref: string; config?: any } }) => {
+            const payload = escapeJSONForPlatformShell(
+                { registry: newRegistry },
+                client.host.platform
+            );
+
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
+
+            return newRegistry;
+        }
+    });
+
     return {
         registryItems,
         registryLoading,
         canRegister,
-        tryLoadRegistry: refetchRegistry
+        tryLoadRegistry: refetchRegistry,
+        mutateRegistry
     };
 }
 
@@ -273,7 +196,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
     // Register catalog item mutation
     const registerItemMutation = useMutation({
-        mutationFn: async ({ item, showNotification }: { item: CatalogItemWithName, showNotification: boolean }) => {
+        mutationFn: async ({ item, showNotification }: { item: CatalogItemRichened, showNotification: boolean }) => {
             try {
                 const currentRegistry = registryItems || {};
                 // Type the new registry appropriately
@@ -350,7 +273,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
     // Unregister catalog item mutation
     const unregisterItemMutation = useMutation({
-        mutationFn: async (item: CatalogItemWithName) => {
+        mutationFn: async (item: CatalogItemRichened) => {
             try {
                 // Get current registry
                 const currentRegistry = { ...(registryItems || {}) };
@@ -400,16 +323,16 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         }
     });
 
-    const getCanRegisterCatalogItem = (item: CatalogItemWithName): boolean => {
+    const getCanRegisterCatalogItem = (item: CatalogItemRichened): boolean => {
         if (!registryItems) return false;
         const isRegistered = !!registryItems[item.name];
         return !isRegistered && canRegister;
     };
 
     return {
-        registerCatalogItem: (item: CatalogItemWithName, showNotification = true) =>
+        registerCatalogItem: (item: CatalogItemRichened, showNotification = true) =>
             registerItemMutation.mutateAsync({ item, showNotification }),
-        unregisterCatalogItem: (item: CatalogItemWithName) =>
+        unregisterCatalogItem: (item: CatalogItemRichened) =>
             unregisterItemMutation.mutateAsync(item),
         startPull: () => startPullMutation.mutateAsync(),
         getCanRegisterCatalogItem
@@ -417,7 +340,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 }
 
 export function useCatalogAll(client: v1.DockerDesktopClient) {
-    const { secrets, secretsLoading, tryLoadSecrets, tryUpdateSecrets } = useSecrets(client);
     const { catalogItems, catalogLoading, tryLoadCatalog } = useCatalog(client);
     const { registryItems, registryLoading, canRegister, tryLoadRegistry } = useRegistry(client);
     const {
@@ -429,22 +351,18 @@ export function useCatalogAll(client: v1.DockerDesktopClient) {
 
     return {
         // State
-        secrets,
         catalogItems,
         registryItems,
         canRegister,
-        secretsLoading,
         catalogLoading,
         registryLoading,
 
         // Actions
-        tryLoadSecrets,
         tryLoadCatalog,
         tryLoadRegistry,
         registerCatalogItem,
         unregisterCatalogItem,
         startPull,
-        tryUpdateSecrets,
         getCanRegisterCatalogItem
     };
 } 

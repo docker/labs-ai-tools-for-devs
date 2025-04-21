@@ -1,11 +1,12 @@
 import { Button, CircularProgress, IconButton, TextField, Typography } from "@mui/material";
 import { Alert, Stack } from "@mui/material";
-import { CatalogItemWithName } from "../../types/catalog";
+import { CatalogItemRichened } from "../../types/catalog";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import * as JsonSchema from "json-schema-library";
-import { getTemplateForItem, useConfigContext } from "../../context/ConfigContext";
+import { getTemplateForItem, useConfig } from "../../hooks/useConfig";
 import { deepFlattenObject, deepSet } from "../../MergeDeep";
 import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
+import { v1 } from "@docker/extension-api-client-types";
 
 JsonSchema.settings.GET_TEMPLATE_RECURSION_LIMIT = 1000;
 JsonSchema.settings.templateDefaultOptions.addOptionalProps = true;
@@ -25,10 +26,10 @@ const LoadingState = () => {
     )
 }
 
-const ConfigEditor = ({ catalogItem }: { catalogItem: CatalogItemWithName }) => {
+const ConfigEditor = ({ catalogItem, client }: { catalogItem: CatalogItemRichened, client: v1.DockerDesktopClient }) => {
     const configSchema = catalogItem.config;
 
-    const { config: existingConfig, saveConfig: updateExistingConfig, configLoading, tryLoadConfig } = useConfigContext();
+    const { config: existingConfig, saveConfig: updateExistingConfig, configLoading, tryLoadConfig } = useConfig(client);
 
     const existingConfigForItem = existingConfig?.[catalogItem.name];
 

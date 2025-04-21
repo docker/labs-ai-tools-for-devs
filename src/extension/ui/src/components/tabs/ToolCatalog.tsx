@@ -3,34 +3,31 @@ import { Card, CardContent, Grid2, IconButton } from '@mui/material';
 import Tile from '../tile/Index';
 import AddIcon from '@mui/icons-material/Add';
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemWithName } from '../../types/catalog';
+import { CatalogItemRichened } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 
 interface ToolCatalogProps {
     search: string;
-    catalogItems: CatalogItemWithName[];
+    catalogItems: CatalogItemRichened[];
     client: v1.DockerDesktopClient;
     ddVersion: { version: string, build: number };
     canRegister: boolean;
-    register: (item: CatalogItemWithName) => Promise<void>;
-    unregister: (item: CatalogItemWithName) => Promise<void>;
+    register: (item: CatalogItemRichened) => Promise<void>;
+    unregister: (item: CatalogItemRichened) => Promise<void>;
     onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
     secrets: Secret[];
     registryItems: { [key: string]: { ref: string, config: any } };
-    setConfiguringItem: (item: CatalogItemWithName) => void;
+    setConfiguringItem: (item: CatalogItemRichened) => void;
     config: { [key: string]: { [key: string]: any } };
     showMine: boolean;
 }
 
-const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems, client, onSecretChange, secrets, registryItems, showMine }) => {
-
-    const tileIsRegistered = (item: CatalogItemWithName) => registryItems[item.name]?.ref !== undefined;
+const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems, client, registryItems, showMine }) => {
 
     const filteredCatalogItems = catalogItems.filter(item => {
-        const isRegistered = tileIsRegistered(item);
         const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-        const hideBecauseItsNotMine = showMine && !isRegistered;
+        const hideBecauseItsNotMine = showMine && !item.registered;
         return matchesSearch && !hideBecauseItsNotMine;
     });
 
@@ -43,9 +40,6 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ config, search, catalogItems,
                     <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                         <Tile
                             item={catalogItem}
-                            registered={tileIsRegistered(catalogItem)}
-                            onSecretChange={onSecretChange}
-                            secrets={secrets}
                             unAssignedConfig={unAssignedConfig}
                             client={client}
                         />

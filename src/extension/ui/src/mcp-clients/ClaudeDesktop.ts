@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getUser, escapeJSONForPlatformShell } from "../FileWatcher";
+import { getUser, escapeJSONForPlatformShell } from "../FileUtils";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class ClaudeDesktopClient implements MCPClient {
