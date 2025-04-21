@@ -71,7 +71,7 @@
     s))
 
 (defn- get-backend-socket []
-  (let [coll [(or (System/getenv "DOCKER_DESKTOP_SOCKET_PATH") "")
+  (let [coll [(or (System/getenv "DOCKER_DESKTOP_SOCKET_PATH") "/backend.sock")
               (format "%s/Library/Containers/com.docker.docker/Data/backend.sock" (System/getenv "HOME"))]]
     (some unix-socket-file coll)))
 

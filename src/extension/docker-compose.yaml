@@ -4,11 +4,12 @@ services:
     volumes:
       - "data:/data"
   mcp_docker:
-    image: mcp/docker:0.0.11
+    image: mcp/docker:0.0.12
     ports:
       - 8811:8811
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/run/host-services/backend.sock:/backend.sock"
       - "docker-prompts:/prompts"
     command:
       - serve
