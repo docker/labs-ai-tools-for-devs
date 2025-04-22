@@ -94,7 +94,7 @@ const Tile = ({ item, client, unAssignedConfig }: TileProps) => {
                             } else {
                                 unregisterCatalogItem(item)
                             }
-                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={true} />
+                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} registered={item.registered} />
                         <Center item={item} />
                         <Divider sx={{ marginBottom: 1 }} />
                         <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length || unAssignedConfig.length)} />

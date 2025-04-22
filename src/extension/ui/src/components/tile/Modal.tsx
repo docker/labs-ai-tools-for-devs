@@ -131,7 +131,7 @@ const ConfigurationModal = ({
                     {catalogItem.description}
                 </Typography>
                 <Tooltip placement="right" title={!canRegister ? 'You must assign all secrets and configure the item before it can be used.' : ''}>
-                    <FormControlLabel control={<Switch disabled={!canRegister} checked={true} onChange={(e) => registerCatalogItem(catalogItem)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
+                    <FormControlLabel control={<Switch disabled={!canRegister} checked={catalogItem.registered} onChange={(e) => registerCatalogItem(catalogItem)} />} label={catalogItem.registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
                 </Tooltip>
                 <Divider sx={{ mt: 2 }} />
                 <Typography variant="caption" sx={{ mt: 2, color: 'text.secondary' }}>

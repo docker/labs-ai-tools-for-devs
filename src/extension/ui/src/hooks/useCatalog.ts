@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemRichened } from '../types/catalog';
+import { CatalogItem, CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
 import { getRegistry } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
 import { useConfig } from './useConfig';
 import { useRequiredImages } from './useRequiredImages';
+import { useSecrets } from "./useSecrets";
 
 // Storage keys for each query type
 const STORAGE_KEYS = {
@@ -26,6 +27,30 @@ interface QueryContextWithMeta {
 
 export function useCatalog(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
+    const { data: secrets } = useSecrets(client);
+    const { registryItems } = useRegistry(client);
+    const { config } = useConfig(client);
+
+    const enrichCatalogItem = (item: CatalogItemWithName): CatalogItemRichened => {
+        const secretsWithAssignment = Secrets.getSecretsWithAssignment(item, secrets || []);
+        const itemConfigValue = config?.[item.name] || {};
+        const unConfigured = Object.keys(itemConfigValue).length === 0;
+        const missingASecret = secretsWithAssignment.some((secret) => !secret.assigned);
+        const enrichedItem = {
+            ...item,
+            secrets: secretsWithAssignment,
+            configValue: itemConfigValue,
+            configSchema: item.config,
+            registered: !!registryItems?.[item.name],
+            canRegister: !registryItems?.[item.name] && !missingASecret && !unConfigured,
+            name: item.name,
+        };
+        delete enrichedItem.config;
+        if (item.name === 'atlassian') {
+            console.log(enrichedItem);
+        }
+        return enrichedItem;
+    };
 
     const {
         data: catalogItems = [],
@@ -40,11 +65,11 @@ export function useCatalog(client: v1.DockerDesktopClient) {
                 const response = await fetch(CATALOG_URL);
                 const catalog = await response.text();
                 const items = parse(catalog)['registry'] as { [key: string]: any };
-                const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item }));
+                const itemsWithName = Object.entries(items).map(([name, item]) => ({ name, ...item })) as CatalogItemWithName[];
                 if (showNotification) {
                     client.desktopUI.toast.success('Catalog updated successfully.');
                 }
-                return itemsWithName.reverse() as CatalogItemRichened[];
+                return itemsWithName.reverse().map(enrichCatalogItem);
             } catch (error) {
                 client.desktopUI.toast.error('Failed to get latest catalog.' + error);
                 throw error;
@@ -323,19 +348,12 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         }
     });
 
-    const getCanRegisterCatalogItem = (item: CatalogItemRichened): boolean => {
-        if (!registryItems) return false;
-        const isRegistered = !!registryItems[item.name];
-        return !isRegistered && canRegister;
-    };
-
     return {
         registerCatalogItem: (item: CatalogItemRichened, showNotification = true) =>
             registerItemMutation.mutateAsync({ item, showNotification }),
         unregisterCatalogItem: (item: CatalogItemRichened) =>
             unregisterItemMutation.mutateAsync(item),
         startPull: () => startPullMutation.mutateAsync(),
-        getCanRegisterCatalogItem
     };
 }
 
@@ -346,7 +364,6 @@ export function useCatalogAll(client: v1.DockerDesktopClient) {
         registerCatalogItem,
         unregisterCatalogItem,
         startPull,
-        getCanRegisterCatalogItem
     } = useCatalogOperations(client);
 
     return {
@@ -363,6 +380,5 @@ export function useCatalogAll(client: v1.DockerDesktopClient) {
         registerCatalogItem,
         unregisterCatalogItem,
         startPull,
-        getCanRegisterCatalogItem
     };
 } 
