@@ -438,9 +438,6 @@ export function CatalogProvider({ children, client }: CatalogProviderProps) {
         const unChangedConfig = !itemDeclaresConfig || JSON.stringify(emptyTemplate) === JSON.stringify(filledTemplate);
         const assignedSecrets = Secrets.getSecretsWithAssignment(item, secrets);
         const unAssignedSecrets = !itemDeclaresSecrets || assignedSecrets.filter(secret => !secret.assigned).length > 0;
-        if (item.name === 'atlassian') {
-            console.log(unChangedConfig, unAssignedSecrets);
-        }
         return !unChangedConfig && !unAssignedSecrets;
     }, [canRegister, config, secrets]);
 
