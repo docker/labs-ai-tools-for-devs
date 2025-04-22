@@ -522,25 +522,51 @@ registry:
           - required:
               - jira
   jetbrains:
-    description: |
-      The server proxies requests from client to JetBrains IDE.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/jetbrains.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/jetbrains.svg
-    tools: []
+    description: 'A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio'
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/jetbrains.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/jetbrains.md
+    source: https://github.com/GannaChernyshova/mcp-jetbrains/tree/main
+    icon: https://avatars.githubusercontent.com/u/878437?s=200&v=4
+    tools:
+      - name: create_new_file_with_text
+      - name: execute_action_by_id
+      - name: execute_terminal_command
+      - name: find_commit_by_message
+      - name: find_files_by_name_substring
+      - name: get_all_open_file_paths
+      - name: get_all_open_file_texts
+      - name: get_debugger_breakpoints
+      - name: get_file_text_by_path
+      - name: get_open_in_editor_file_path
+      - name: get_open_in_editor_file_text
+      - name: get_progress_indicators
+      - name: get_project_dependencies
+      - name: get_project_modules
+      - name: get_project_vcs_status
+      - name: get_run_configurations
+      - name: get_selected_in_editor_text
+      - name: get_terminal_text
+      - name: list_available_actions
+      - name: list_directory_tree_in_folder
+      - name: list_files_in_folder
+      - name: open_file_in_editor
+      - name: replace_current_file_text
+      - name: replace_file_text_by_path
+      - name: replace_selected_text
+      - name: replace_specific_text
+      - name: run_configuration
+      - name: search_in_files_content
+      - name: toggle_debugger_breakpoint
+      - name: wait
     prompts: 0
     resources: {}
     config:
       - name: jetbrains
-        description: The MCP server needs to know about the local JetBrains IDE Config
+        description: Configure the connection to the IDE
         type: object
         properties:
-          server:
-            type: object
-            properties:
-              port:
-                type: integer
-        required:
-          - server
+          port:
+            type: integer
   aws-kb-retrieval-server:
     description: An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
