@@ -98,7 +98,7 @@ Get recent activity from across the knowledge base.
     Or standard formats like "7d"
 Parameters|Type|Description
 -|-|-
-`depth`|`string` *optional*|
+`depth`|`integer` *optional*|
 `max_related`|`integer` *optional*|
 `page`|`integer` *optional*|
 `page_size`|`integer` *optional*|

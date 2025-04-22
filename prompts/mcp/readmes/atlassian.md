@@ -19,13 +19,13 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `confluence_create_page`|Create a new Confluence page|
-`confluence_delete_page`|Delete an existing Confluence page|
+`confluence_delete_page`|Delete an existing Confluence page.|
 `confluence_get_comments`|Get comments for a specific Confluence page|
 `confluence_get_page`|Get content of a specific Confluence page by ID|
-`confluence_get_page_ancestors`|Get ancestor (parent) pages of a specific Confluence page|
-`confluence_get_page_children`|Get child pages of a specific Confluence page|
+`confluence_get_page_ancestors`|Get ancestor (parent) pages of a specific Confluence page.|
+`confluence_get_page_children`|Get child pages of a specific Confluence page.|
 `confluence_search`|Search Confluence content using simple terms or CQL|
-`confluence_update_page`|Update an existing Confluence page|
+`confluence_update_page`|Update an existing Confluence page.|
 `jira_add_comment`|Add a comment to a Jira issue|
 `jira_add_worklog`|Add a worklog entry to a Jira issue|
 `jira_batch_create_issues`|Create multiple Jira issues in a batch|
@@ -45,8 +45,10 @@ Tools provided by this Server|Short Description
 `jira_link_to_epic`|Link an existing issue to an epic|
 `jira_remove_issue_link`|Remove a link between two Jira issues|
 `jira_search`|Search Jira issues using JQL (Jira Query Language)|
+`jira_search_fields`|Search Jira fields by keyword with fuzzy match|
 `jira_transition_issue`|Transition a Jira issue to a new status|
 `jira_update_issue`|Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.|
+`jira_update_sprint`|Update jira sprint|
 
 ---
 ## Tools Details
@@ -62,7 +64,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`confluence_delete_page`**
-Delete an existing Confluence page
+Delete an existing Confluence page.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The ID of the page to delete
@@ -85,20 +87,20 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`confluence_get_page_ancestors`**
-Get ancestor (parent) pages of a specific Confluence page
+Get ancestor (parent) pages of a specific Confluence page.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The ID of the page whose ancestors you want to retrieve
 
 ---
 #### Tool: **`confluence_get_page_children`**
-Get child pages of a specific Confluence page
+Get child pages of a specific Confluence page.
 Parameters|Type|Description
 -|-|-
 `parent_id`|`string`|The ID of the parent page whose children you want to retrieve
 `expand`|`string` *optional*|Fields to expand in the response (e.g., 'version', 'body.storage')
 `include_content`|`boolean` *optional*|Whether to include the page content in the response
-`limit`|`number` *optional*|Maximum number of child pages to return (1-50)
+`limit`|`integer` *optional*|Maximum number of child pages to return (1-50)
 
 ---
 #### Tool: **`confluence_search`**
@@ -120,18 +122,19 @@ Parameters|Type|Description
 - Exact phrase in content: 'text ~ "\"Urgent Review Required\"" AND label = "pending-approval"'
 - Title wildcards: 'title ~ "Minutes*" AND (space = "HR" OR space = "Marketing")'
 Note: Special identifiers need proper quoting in CQL: personal space keys (e.g., "~username"), reserved words, numeric IDs, and identifiers with special characters.
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `spaces_filter`|`string` *optional*|Comma-separated list of space keys to filter results by. Overrides the environment variable CONFLUENCE_SPACES_FILTER if provided.
 
 ---
 #### Tool: **`confluence_update_page`**
-Update an existing Confluence page
+Update an existing Confluence page.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The new content of the page in Markdown format
 `page_id`|`string`|The ID of the page to update
 `title`|`string`|The new title of the page
 `is_minor_edit`|`boolean` *optional*|Whether this is a minor edit
+`parent_id`|`string` *optional*|Optional the new parent page ID
 `version_comment`|`string` *optional*|Optional comment for this version
 
 ---
@@ -197,7 +200,7 @@ Parameters|Type|Description
 `link_type`|`string`|The type of link to create (e.g., 'Duplicate', 'Blocks', 'Relates to')
 `outward_issue_key`|`string`|The key of the outward issue (e.g., 'PROJ-456')
 `comment`|`string` *optional*|Optional comment to add to the link
-`comment_visibility`|`object` *optional*|Optional visibility settings for the comment
+`comment_visibility`|`string` *optional*|Optional visibility settings for the comment
 
 ---
 #### Tool: **`jira_delete_issue`**
@@ -221,9 +224,9 @@ Parameters|Type|Description
 -|-|-
 `board_name`|`string` *optional*|The name of board, support fuzzy search
 `board_type`|`string` *optional*|The type of jira board (e.g., 'scrum', 'kanban')
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `project_key`|`string` *optional*|Jira project key (e.g., 'PROJ-123')
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_board_issues`**
@@ -241,8 +244,8 @@ Parameters|Type|Description
 - Find by priority: "priority = High AND project = PROJ"
 `expand`|`string` *optional*|Fields to expand in the response (e.g., 'version', 'body.storage')
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_epic_issues`**
@@ -250,8 +253,8 @@ Get all issues linked to a specific epic
 Parameters|Type|Description
 -|-|-
 `epic_key`|`string`|The key of the epic (e.g., 'PROJ-123')
-`limit`|`number` *optional*|Maximum number of issues to return (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of issues to return (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_issue`**
@@ -271,8 +274,8 @@ Get all issues for a specific Jira project
 Parameters|Type|Description
 -|-|-
 `project_key`|`string`|The project key
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_sprint_issues`**
@@ -281,17 +284,17 @@ Parameters|Type|Description
 -|-|-
 `sprint_id`|`string`|The id of sprint (e.g., '10001')
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_sprints_from_board`**
 Get jira sprints from board by state
 Parameters|Type|Description
 -|-|-
-`board_id`|`string` *optional*|The id of board (e.g., '1000')
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`board_id`|`string`|The id of board (e.g., '1000')
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 `state`|`string` *optional*|Sprint state (e.g., 'active', 'future', 'closed')
 
 ---
@@ -337,9 +340,18 @@ Parameters|Type|Description
 - Find by label: "labels = frontend AND project = PROJ"
 - Find by priority: "priority = High AND project = PROJ"
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `projects_filter`|`string` *optional*|Comma-separated list of project keys to filter results by. Overrides the environment variable JIRA_PROJECTS_FILTER if provided.
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
+
+---
+#### Tool: **`jira_search_fields`**
+Search Jira fields by keyword with fuzzy match
+Parameters|Type|Description
+-|-|-
+`keyword`|`string` *optional*|Keyword for fuzzy search. If left empty, lists the first 'limit' available fields in their default order.
+`limit`|`integer` *optional*|Maximum number of results
+`refresh`|`boolean` *optional*|Whether to force refresh the field list
 
 ---
 #### Tool: **`jira_transition_issue`**
@@ -360,6 +372,18 @@ Parameters|Type|Description
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `additional_fields`|`string` *optional*|Optional JSON string of additional fields to update. Use this for custom fields or more complex updates.
 `attachments`|`string` *optional*|Optional JSON string or comma-separated list of file paths to attach to the issue. Example: "/path/to/file1.txt,/path/to/file2.txt" or "["/path/to/file1.txt","/path/to/file2.txt"]"
+
+---
+#### Tool: **`jira_update_sprint`**
+Update jira sprint
+Parameters|Type|Description
+-|-|-
+`sprint_id`|`string`|The id of sprint (e.g., '10001')
+`end_date`|`string` *optional*|Optional: New end date for the sprint
+`goal`|`string` *optional*|Optional: New goal for the sprint
+`sprint_name`|`string` *optional*|Optional: New name for the sprint
+`start_date`|`string` *optional*|Optional: New start date for the sprint
+`state`|`string` *optional*|Optional: New state for the sprint (future|active|closed)
 
 ---
 ## Use this MCP Server

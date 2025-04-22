@@ -268,9 +268,12 @@ registry:
       - name: delete_deployment
       - name: delete_namespace
       - name: delete_pod
+      - name: delete_service
       - name: describe_cronjob
       - name: describe_deployment
+      - name: describe_node
       - name: describe_pod
+      - name: describe_service
       - name: explain_resource
       - name: get_current_context
       - name: get_events
@@ -292,6 +295,7 @@ registry:
       - name: stop_port_forward
       - name: uninstall_helm_chart
       - name: update_deployment
+      - name: update_service
       - name: upgrade_helm_chart
     prompts: 0
     resources: {}
@@ -486,8 +490,10 @@ registry:
       - name: jira_link_to_epic
       - name: jira_remove_issue_link
       - name: jira_search
+      - name: jira_search_fields
       - name: jira_transition_issue
       - name: jira_update_issue
+      - name: jira_update_sprint
     secrets:
       - name: atlassian.jira.token
       - name: atlassian.confluence.token
@@ -763,6 +769,7 @@ registry:
       - name: get_armor_mcp_version
       - name: get_current_time
       - name: get_stake_balances
+      - name: get_token_address
       - name: get_token_candle_data
       - name: get_token_details
       - name: get_top_trending_tokens
@@ -1128,8 +1135,6 @@ registry:
     source: https://github.com/mendableai/firecrawl-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/135057108?s=200&v=4
     tools:
-      - name: firecrawl_batch_scrape
-      - name: firecrawl_check_batch_status
       - name: firecrawl_check_crawl_status
       - name: firecrawl_crawl
       - name: firecrawl_deep_research
@@ -1505,7 +1510,7 @@ registry:
     description: Connector for Perplexity API, to enable real-time, web-wide research.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/perplexity-ask.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/perplexity-ask.md
-    source: https://github.com/ppl-ai/modelcontextprotocol/tree/main
+    source: https://github.com/ppl-ai/modelcontextprotocol/tree/f0a927c250e04b389ff5c34f6a2a85ad625668e8
     icon: https://avatars.githubusercontent.com/u/110299016?s=200&v=4
     tools:
       - name: perplexity_ask
@@ -2085,6 +2090,7 @@ registry:
     source: https://github.com/CircleCI-Public/mcp-server-circleci/tree/main
     icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
     tools:
+      - name: config_helper
       - name: find_flaky_tests
       - name: get_build_failure_logs
     secrets:

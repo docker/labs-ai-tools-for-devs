@@ -53,7 +53,7 @@ Add a note to an incident's timeline. The note will appear in the incident's act
 Parameters|Type|Description
 -|-|-
 `body`|`string` *optional*|The body of the activity. URLs will be parsed and attached as context
-`eventTime`|`string` *optional*|The time that the activity occurred. If not provided
+`eventTime`|`string` *optional*|The time that the activity occurred. If not provided, the current time will be used
 `incidentId`|`string` *optional*|The ID of the incident to add the activity to
 
 ---
@@ -124,7 +124,7 @@ Parameters|Type|Description
 Lists alert rules with their current states (pending, firing, error, recovering, inactive) and labels. Inactive state means the alert state is normal, not firing.
 Parameters|Type|Description
 -|-|-
-`label_selectors`|`array` *optional*|Optionally
+`label_selectors`|`array` *optional*|Optionally, a list of matchers to filter alert rules by labels
 `limit`|`integer` *optional*|The maximum number of results to return. Default is 100.
 `page`|`integer` *optional*|The page number to return.
 
@@ -141,7 +141,7 @@ Parameters|Type|Description
 List datasources
 Parameters|Type|Description
 -|-|-
-`type`|`string` *optional*|The type of datasources to search for. For example
+`type`|`string` *optional*|The type of datasources to search for. For example, 'prometheus', 'loki', 'tempo', etc...
 
 ---
 #### Tool: **`list_incidents`**
@@ -150,7 +150,7 @@ Parameters|Type|Description
 -|-|-
 `drill`|`boolean` *optional*|Whether to include drill incidents
 `limit`|`integer` *optional*|The maximum number of incidents to return
-`status`|`string` *optional*|The status of the incidents to include. Valid values: 'active'
+`status`|`string` *optional*|The status of the incidents to include. Valid values: 'active', 'resolved'
 
 ---
 #### Tool: **`list_loki_label_names`**
@@ -158,8 +158,8 @@ List all available label names in a Loki datasource for the given time range. Re
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
-`endRfc3339`|`string` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`endRfc3339`|`string` *optional*|Optionally, the end time of the query in RFC3339 format (defaults to now)
+`startRfc3339`|`string` *optional*|Optionally, the start time of the query in RFC3339 format (defaults to 1 hour ago)
 
 ---
 #### Tool: **`list_loki_label_values`**
@@ -167,9 +167,9 @@ Retrieve all possible values for a specific label in Loki within the given time 
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
-`labelName`|`string`|The name of the label to retrieve values for (e.g. 'app'
-`endRfc3339`|`string` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`labelName`|`string`|The name of the label to retrieve values for (e.g. 'app', 'env', 'pod')
+`endRfc3339`|`string` *optional*|Optionally, the end time of the query in RFC3339 format (defaults to now)
+`startRfc3339`|`string` *optional*|Optionally, the start time of the query in RFC3339 format (defaults to 1 hour ago)
 
 ---
 #### Tool: **`list_oncall_schedules`**
@@ -177,7 +177,7 @@ List OnCall schedules. A schedule is a calendar-based system defining when team 
 Parameters|Type|Description
 -|-|-
 `page`|`integer` *optional*|The page number to return (1-based)
-`scheduleId`|`string` *optional*|The ID of the schedule to get details for. If provided
+`scheduleId`|`string` *optional*|The ID of the schedule to get details for. If provided, returns only that schedule's details
 `teamId`|`string` *optional*|The ID of the team to list schedules for
 
 ---
@@ -193,8 +193,8 @@ List users from Grafana OnCall. If user ID is provided, returns details for that
 Parameters|Type|Description
 -|-|-
 `page`|`integer` *optional*|The page number to return
-`userId`|`string` *optional*|The ID of the user to get details for. If provided
-`username`|`string` *optional*|The username to filter users by. If provided
+`userId`|`string` *optional*|The ID of the user to get details for. If provided, returns only that user's details
+`username`|`string` *optional*|The username to filter users by. If provided, returns only the user matching this username
 
 ---
 #### Tool: **`list_prometheus_label_names`**
@@ -202,10 +202,10 @@ List the label names in a Prometheus datasource
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
-`endRfc3339`|`string` *optional*|Optionally
-`limit`|`integer` *optional*|Optionally
-`matches`|`array` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`endRfc3339`|`string` *optional*|Optionally, the end time of the time range to filter the results by
+`limit`|`integer` *optional*|Optionally, the maximum number of results to return
+`matches`|`array` *optional*|Optionally, a list of label matchers to filter the results by
+`startRfc3339`|`string` *optional*|Optionally, the start time of the time range to filter the results by
 
 ---
 #### Tool: **`list_prometheus_label_values`**
@@ -214,10 +214,10 @@ Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
 `labelName`|`string`|The name of the label to query
-`endRfc3339`|`string` *optional*|Optionally
-`limit`|`integer` *optional*|Optionally
-`matches`|`array` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`endRfc3339`|`string` *optional*|Optionally, the end time of the query
+`limit`|`integer` *optional*|Optionally, the maximum number of results to return
+`matches`|`array` *optional*|Optionally, a list of selectors to filter the results by
+`startRfc3339`|`string` *optional*|Optionally, the start time of the query
 
 ---
 #### Tool: **`list_prometheus_metric_metadata`**
@@ -245,11 +245,11 @@ Query and retrieve log entries or metric values from a Loki datasource using Log
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
-`logql`|`string`|The LogQL query to execute against Loki. This can be a simple label matcher or a complex query with filters
-`direction`|`string` *optional*|Optionally
-`endRfc3339`|`string` *optional*|Optionally
-`limit`|`integer` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`logql`|`string`|The LogQL query to execute against Loki. This can be a simple label matcher or a complex query with filters, parsers, and expressions. Supports full LogQL syntax including label matchers, filter operators, pattern expressions, and pipeline operations.
+`direction`|`string` *optional*|Optionally, the direction of the query: 'forward' (oldest first) or 'backward' (newest first, default)
+`endRfc3339`|`string` *optional*|Optionally, the end time of the query in RFC3339 format
+`limit`|`integer` *optional*|Optionally, the maximum number of log lines to return (default: 10, max: 100)
+`startRfc3339`|`string` *optional*|Optionally, the start time of the query in RFC3339 format
 
 ---
 #### Tool: **`query_loki_stats`**
@@ -257,9 +257,9 @@ Query statistics about log streams in a Loki datasource, using LogQL selectors t
 Parameters|Type|Description
 -|-|-
 `datasourceUid`|`string`|The UID of the datasource to query
-`logql`|`string`|The LogQL matcher expression to execute. This parameter only accepts label matcher expressions and does not support full LogQL queries. Line filters
-`endRfc3339`|`string` *optional*|Optionally
-`startRfc3339`|`string` *optional*|Optionally
+`logql`|`string`|The LogQL matcher expression to execute. This parameter only accepts label matcher expressions and does not support full LogQL queries. Line filters, pattern operations, and metric aggregations are not supported by the stats API endpoint. Only simple label selectors can be used here.
+`endRfc3339`|`string` *optional*|Optionally, the end time of the query in RFC3339 format
+`startRfc3339`|`string` *optional*|Optionally, the start time of the query in RFC3339 format
 
 ---
 #### Tool: **`query_prometheus`**
@@ -269,9 +269,9 @@ Parameters|Type|Description
 `datasourceUid`|`string`|The UID of the datasource to query
 `expr`|`string`|The PromQL expression to query
 `startRfc3339`|`string`|The start time in RFC3339 format
-`endRfc3339`|`string` *optional*|The end time in RFC3339 format. Required if queryType is 'range'
+`endRfc3339`|`string` *optional*|The end time in RFC3339 format. Required if queryType is 'range', ignored if queryType is 'instant'
 `queryType`|`string` *optional*|The type of query to use. Either 'range' or 'instant'
-`stepSeconds`|`integer` *optional*|The time series step size in seconds. Required if queryType is 'range'
+`stepSeconds`|`integer` *optional*|The time series step size in seconds. Required if queryType is 'range', ignored if queryType is 'instant'
 
 ---
 #### Tool: **`search_dashboards`**
