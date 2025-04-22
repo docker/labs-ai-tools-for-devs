@@ -42,4 +42,4 @@ debug-reset: # Reset Chrome-dev tools
 debug-ui: # Set UI hot reload
 	docker extension dev ui-source $(IMAGE):$(TAG) http://localhost:3000
 ui-run:
-	cd ui && npm start
+	cd ui && npm run dev
