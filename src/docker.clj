@@ -58,8 +58,8 @@
      :throw false}
     (when (or creds identity-token)
       {:headers {"X-Registry-Auth"
-                  ;; I don't think we'll be pulling images
-                  ;; from registries that support identity tokens
+                 ;; I don't think we'll be pulling images
+                 ;; from registries that support identity tokens
                  (-> (cond
                        identity-token {:identitytoken identity-token}
                        creds creds)
@@ -309,6 +309,17 @@
                  {:creds {:username (:user m)
                           :password (or (:jwt m) (:pat m))}}))))
 
+(defn -add-token [m]
+  (merge
+   m
+   (try
+     (when (is-logged-in? m)
+       {:jwt (get-token m)
+        :user "jimclark106" #_(:id (get-login-info m))})
+     (catch Throwable t
+       (logger/error t)
+       (logger/warn "user is not logged in to Docker Destkop")))))
+
 (defn has-image? [image]
   (let [[_ digest] (re-find #".*@(.*)" image)]
     (some
@@ -321,7 +332,7 @@
 (defn check-then-pull [container-definition]
   (when (not (has-image? (:image container-definition)))
     (logger/info "pulling image " (:image container-definition))
-    (-pull container-definition)))
+    ((comp -pull -add-token) container-definition)))
 
 (defn injected-entrypoint [secrets environment s]
   (->> (concat
@@ -595,8 +606,7 @@
   "creates and starts container, then writes to stdin process
      returns container map with Id, and socket - socket is open socket to stdin"
   [m]
-  (when (not (has-image? (:image m)))
-    (-pull m))
+  (check-then-pull m)
   (let [x (merge
            m
            (create (assoc m

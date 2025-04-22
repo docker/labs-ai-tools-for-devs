@@ -1,6 +1,9 @@
 (ns docker-t
-  (:require [clojure.test :as t]
-            [docker]))
+  (:require
+   [clojure.test :as t]
+   [docker]
+   [jsonrpc.logger :as logger]
+   repl))
 
 (t/deftest port-parsing-tests
 
@@ -48,3 +51,13 @@
                     {:secrets {:notion.integration_secret "INTEGRATION_SECRET"}
                      :environment {"OPENAPI_MCP_HEADERS" "\"{\\\"Authorization\": \\\"Bearer $INTEGRATION_SECERET\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\""}
                      :image "mcp/notion:latest"})))))
+
+(comment
+  (repl/setup-stdout-logger)
+  (docker/has-image? "alpine:latest")
+  (docker/get-login-info {})
+  (docker/-add-token {:image ""})
+  (try
+    (docker/check-then-pull {:image "alpine:latest"})
+    (catch Throwable t
+      (logger/info t))))
