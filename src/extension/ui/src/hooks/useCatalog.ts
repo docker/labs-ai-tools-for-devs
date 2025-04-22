@@ -37,9 +37,9 @@ export function useCatalog(client: v1.DockerDesktopClient) {
         const neverOnceConfigured = Boolean(item.config && Object.keys(itemConfigValue).length === 0);
         const configTemplate = getTemplateForItem(item, itemConfigValue);
         const baseConfigTemplate = getTemplateForItem(item, {});
-        const unConfigured = neverOnceConfigured || JSON.stringify(itemConfigValue) === JSON.stringify(baseConfigTemplate);
-        if (item.name === 'atlassian') {
-            console.log('atlassian', itemConfigValue, configTemplate, unConfigured)
+        const unConfigured = Boolean(item.config) && (neverOnceConfigured || JSON.stringify(itemConfigValue) === JSON.stringify(baseConfigTemplate));
+        if (item.name === 'elevenlabs') {
+            console.log('elevenlabs', itemConfigValue, configTemplate, unConfigured)
         }
         const missingASecret = secretsWithAssignment.some((secret) => !secret.assigned);
         const enrichedItem: CatalogItemRichened = {
