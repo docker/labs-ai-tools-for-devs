@@ -45,7 +45,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
             missingConfig: unConfigured,
             missingSecrets: missingASecret,
             registered: !!registryItems?.[item.name],
-            canRegister: !registryItems?.[item.name] && !missingASecret && !unConfigured,
+            canRegister: !missingASecret && !unConfigured,
             name: item.name,
         };
         return enrichedItem;

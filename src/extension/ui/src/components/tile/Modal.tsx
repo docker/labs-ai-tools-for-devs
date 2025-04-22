@@ -58,8 +58,6 @@ const ConfigurationModal = ({
     const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
     const { configLoading } = useConfig(client)
 
-    console.log('catalogItem', catalogItem)
-
     useEffect(() => {
         setLocalSecrets(catalogItem.secrets.reduce((acc, secret) => {
             acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '';

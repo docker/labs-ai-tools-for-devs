@@ -46,7 +46,6 @@ const ConfigEditor = ({ catalogItem, client }: { catalogItem: CatalogItemRichene
     // Reset local config when the existing config changes
     useEffect(() => {
         if (!configSchema) return;
-        if (localConfig) return;
         setLocalConfig(flattenedConfig);
     }, [flattenedConfig]);
 
@@ -87,14 +86,21 @@ const ConfigEditor = ({ catalogItem, client }: { catalogItem: CatalogItemRichene
                                 {isSaving ? (
                                     <CircularProgress size={24} />
                                 ) : (
-                                    <IconButton onClick={() => setLocalConfig({
-                                        ...localConfig,
-                                        [key]: flattenedConfig[key]
-                                    })}
-                                        disabled={isSaving}
-                                    >
-                                        <CloseOutlined sx={{ color: 'error.main' }} />
-                                    </IconButton>
+                                    <Stack direction="row" spacing={2}>
+                                        <IconButton onClick={() => updateExistingConfig(catalogItem.name, localConfig)}
+                                            disabled={isSaving}
+                                        >
+                                            <CheckOutlined sx={{ color: 'success.main' }} />
+                                        </IconButton>
+                                        <IconButton onClick={() => setLocalConfig({
+                                            ...localConfig,
+                                            [key]: flattenedConfig[key]
+                                        })}
+                                            disabled={isSaving}
+                                        >
+                                            <CloseOutlined sx={{ color: 'error.main' }} />
+                                        </IconButton>
+                                    </Stack>
                                 )}
                             </Stack>}
                         </Stack>
