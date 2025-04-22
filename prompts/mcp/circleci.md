@@ -8,5 +8,5 @@ mcp:
       environment:
         CIRCLECI_BASE_URL: "{{circleci.url|safe}}"
     source:
-      url: https://github.com/CircleCI-Public/mcp-server-circleci/tree/refs/pull/22/merge
+      url: https://github.com/CircleCI-Public/mcp-server-circleci/tree/main
 ---

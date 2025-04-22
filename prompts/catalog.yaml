@@ -2082,7 +2082,7 @@ registry:
     description: A specialized server implementation for the Model Context Protocol (MCP) designed to integrate with CircleCI's development workflow. This project serves as a bridge between CircleCI's infrastructure and the Model Context Protocol, enabling enhanced AI-powered development experiences.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/circleci.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/circleci.md
-    source: https://github.com/CircleCI-Public/mcp-server-circleci/tree/refs/pull/22/merge
+    source: https://github.com/CircleCI-Public/mcp-server-circleci/tree/main
     icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
     tools:
       - name: find_flaky_tests
