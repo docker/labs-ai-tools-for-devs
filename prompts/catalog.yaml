@@ -352,10 +352,12 @@ registry:
     resources: {}
   postgres readonly:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgres.md
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/postgres.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/postgres.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://img.icons8.com/ios/50/postgreesql.png
-    tools: []
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+      - name: query
     secrets:
       - name: postgres.url
     prompts: 0

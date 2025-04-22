@@ -1,6 +1,6 @@
 # Postgres MCP Server
 
-Provides PostgreSQL database management capabilities. This server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.
+Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
