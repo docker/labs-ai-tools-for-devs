@@ -1,10 +1,7 @@
 {
   "icon": "docker.svg",
   "vm": {
-    "composefile": "docker-compose.yaml",
-    "exposes": {
-      "socket": "backend.sock"
-    }
+    "composefile": "docker-compose.yaml"
   },
   "ui": {
     "dashboard-tab": {
