@@ -1,11 +1,8 @@
-import { Settings } from "@mui/icons-material";
 import { CardMedia, Stack, Switch, Tooltip, Typography } from "@mui/material";
 import { CatalogItemRichened } from "../../types/catalog";
 
 type TopProps = {
-    unAssignedConfig: { name: string, assigned: boolean }[],
     onToggleRegister: (checked: boolean) => void,
-    unAssignedSecrets: { name: string, assigned: boolean }[],
     item: CatalogItemRichened
 }
 

@@ -58,8 +58,6 @@ export function App() {
       ) : (
         <CatalogGrid
           appProps={appProps}
-          setConfiguringItem={setConfiguringItem}
-          showSettings={() => setSettings({ ...settings, showModal: true })}
         />
       )}
     </>

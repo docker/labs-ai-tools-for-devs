@@ -3,23 +3,21 @@ import { Card, CardContent } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CatalogItemRichened } from "../../types/catalog";
 import { Save, LockReset } from "@mui/icons-material";
-import Secrets from "../../Secrets";
 import ConfigurationModal from "./Modal";
 import Top from "./Top";
 import Center from "./Center";
 import Bottom from "./Bottom";
 import { v1 } from "@docker/extension-api-client-types";
 import { useSecrets } from "../../hooks/useSecrets";
-import { useCatalog, useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
+import { useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
 import { MCP_POLICY_NAME } from "../../Constants";
 
 type TileProps = {
     item: CatalogItemRichened;
     client: v1.DockerDesktopClient;
-    unAssignedConfig: { name: string; assigned: boolean }[];
 }
 
-const Tile = ({ item, client, unAssignedConfig }: TileProps) => {
+const Tile = ({ item, client }: TileProps) => {
 
     const [showSecretDialog, setShowSecretDialog] = useState(false)
     const [assignedSecrets] = useState<{ name: string, assigned: boolean }[]>([])
@@ -94,10 +92,10 @@ const Tile = ({ item, client, unAssignedConfig }: TileProps) => {
                             } else {
                                 unregisterCatalogItem(item)
                             }
-                        }} item={item} unAssignedConfig={unAssignedConfig} unAssignedSecrets={unAssignedSecrets} />
+                        }} item={item} />
                         <Center item={item} />
                         <Divider sx={{ marginBottom: 1 }} />
-                        <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length || unAssignedConfig.length)} />
+                        <Bottom item={item} needsConfiguration={Boolean(unAssignedSecrets.length)} />
                     </Stack>
                 </CardContent>
             </Card >

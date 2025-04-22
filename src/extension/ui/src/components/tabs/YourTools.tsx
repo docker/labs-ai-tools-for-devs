@@ -7,53 +7,27 @@ import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { CatalogItemRichened } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
+import { useCatalog } from '../../hooks/useCatalog';
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 
 interface YourToolsProps {
     search: string;
-    registryItems: { [key: string]: { ref: string, config: any } };
-    config: { [key: string]: { [key: string]: any } };
-    canRegister: boolean;
-    unregister: (item: CatalogItemRichened) => Promise<void>;
-    setConfiguringItem: (item: CatalogItemRichened) => void;
-    secrets: Secret[];
-    catalogItems: CatalogItemRichened[];
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
-    ddVersion: { version: string, build: number };
 }
 
 const YourTools: React.FC<YourToolsProps> = ({
     search,
-    registryItems,
-    catalogItems,
-    ddVersion,
-    canRegister,
-    setConfiguringItem,
-    secrets,
-    unregister,
-    onSecretChange,
-    config
 }) => {
+    const { catalogItems } = useCatalog(client)
     return (
         <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
-            {Object.entries(registryItems).map(([name, item]) => {
-                if (!name.toLowerCase().includes(search.toLowerCase())) return null;
-                const catalogItem = catalogItems.find(c => c.name === name);
-                const unassignedConfig = catalogItem?.config?.filter((c: any) => !config[name]?.[c]) || [];
-                const unassignedSecrets = catalogItem?.secrets?.filter((s: any) => !secrets.find((s: any) => s.name === s)) || [];
-                if (!catalogItem) return <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
-                    <Alert severity="error">
-                        <AlertTitle><strong>{name}</strong> not in catalog</AlertTitle>
-                        You have registered a tile named <strong>{name}</strong> but it is not in the catalog. If this is not intentional, the catalog may have changed since.
-                    </Alert>
-                </Grid2>;
+            {catalogItems.map((catalogItem) => {
+                if (!catalogItem.name.toLowerCase().includes(search.toLowerCase())) return null;
                 return (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={name}>
+                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                         <Tile
                             item={catalogItem}
                             client={client}
-                            unAssignedConfig={unassignedConfig}
                         />
                     </Grid2>
                 );

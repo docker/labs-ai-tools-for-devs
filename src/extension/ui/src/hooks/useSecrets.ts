@@ -1,10 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { client } from "../App";
 import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
 import { Secret } from "../types";
 
 export function useSecrets(client: v1.DockerDesktopClient) {
+    const queryClient = useQueryClient();
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['secrets'],
         queryFn: async () => {
@@ -19,6 +21,10 @@ export function useSecrets(client: v1.DockerDesktopClient) {
             }
             return Secrets.addSecret(client, secret);
         },
+        onSuccess: () => {
+            // Invalidate and refetch secrets after mutation
+            queryClient.invalidateQueries({ queryKey: ['secrets'] });
+        }
     });
     return { data, isLoading, error, mutate };
 }   

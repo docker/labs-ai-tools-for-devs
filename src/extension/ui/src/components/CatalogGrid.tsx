@@ -9,15 +9,13 @@ import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
-const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
+const YourTools = React.lazy(() => import('./tabs/YourTools'));
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 
 interface CatalogGridProps {
     appProps: any; // We'll use this to pass all our hook data
-    showSettings: () => void;
-    setConfiguringItem: (item: CatalogItemRichened) => void;
 }
 
 const parseDDVersion = (ddVersion: string) => {
@@ -32,20 +30,13 @@ const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
     appProps,
-    setConfiguringItem,
 }) => {
     // Extract all the values we need from appProps
     const {
         catalogItems,
         registryItems,
-        canRegister,
-        registerCatalogItem,
-        unregisterCatalogItem,
-        tryUpdateSecrets,
-        secrets,
         mcpClientStates,
         isLoading: mcpLoading,
-        config
     } = appProps;
 
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
@@ -88,16 +79,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
         catalogItems.some((c: CatalogItemRichened) => c.name === i)
     )
-
-    const sortedCatalogItems = sort !== 'date-desc' ? [...catalogItems].sort((a, b) => {
-        if (sort === 'name-asc') {
-            return a.name.localeCompare(b.name);
-        }
-        if (sort === 'name-desc') {
-            return b.name.localeCompare(a.name);
-        }
-        return 0;
-    }) : catalogItems;
 
     if (!ddVersion) {
         return <>
@@ -206,19 +187,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
                     {tab === 0 && (
                         <ToolCatalog
-                            registryItems={registryItems}
                             search={search}
-                            catalogItems={sortedCatalogItems}
                             showMine={showMine}
                             client={client}
-                            ddVersion={ddVersion}
-                            canRegister={canRegister}
-                            register={registerCatalogItem}
-                            unregister={unregisterCatalogItem}
-                            onSecretChange={tryUpdateSecrets}
-                            secrets={secrets}
-                            setConfiguringItem={setConfiguringItem}
-                            config={config || {}}
                         />
                     )}
                     {tab === 1 && (
