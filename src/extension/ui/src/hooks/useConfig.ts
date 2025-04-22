@@ -1,26 +1,12 @@
-import React, { createContext, useContext, ReactNode, useRef } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
 import { getStoredConfig, syncRegistryWithConfig } from '../Registry';
 import { POLL_INTERVAL } from '../Constants';
-import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileWatcher';
-import { stringify } from 'yaml';
-import { ParsedParameters } from '../types/config';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { CatalogItemWithName } from '../types/catalog';
+import { CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
 import * as JsonSchemaLibrary from 'json-schema-library';
-
-interface ConfigContextType {
-    // State
-    config: { [key: string]: { [key: string]: ParsedParameters } } | undefined;
-    configLoading: boolean;
-
-    // Actions
-    tryLoadConfig: () => Promise<void>;
-    saveConfig: (itemName: string, newConfig: { [key: string]: any }) => Promise<void>;
-    syncConfigWithRegistry: (registryItems: { [key: string]: { ref: string; config: any } }) => Promise<void>;
-}
-
-const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
+import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
+import { stringify } from 'yaml';
+import { useRef } from 'react';
 
 export const getTemplateForItem = (item: CatalogItemWithName, existingConfigForItem: { [key: string]: any } = {}) => {
     const config = item.config;
@@ -30,20 +16,7 @@ export const getTemplateForItem = (item: CatalogItemWithName, existingConfigForI
     return template;
 };
 
-export function useConfigContext() {
-    const context = useContext(ConfigContext);
-    if (context === undefined) {
-        throw new Error('useConfigContext must be used within a ConfigProvider');
-    }
-    return context;
-}
-
-interface ConfigProviderProps {
-    children: ReactNode;
-    client: v1.DockerDesktopClient;
-}
-
-export function ConfigProvider({ children, client }: ConfigProviderProps) {
+export function useConfig(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const configRef = useRef<any>(null);
 
@@ -127,11 +100,11 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         }
     });
 
-    // Sync config with registry
+    // Sync config with registry - use the exact types from Registry.ts
     const syncRegistryMutation = useMutation({
         mutationFn: async (registryItems: { [key: string]: { ref: string; config: any } }) => {
             try {
-                if (!config) return;
+                if (!config) return { success: false };
                 await syncRegistryWithConfig(client, registryItems, config);
                 return { success: true };
             } catch (error) {
@@ -151,7 +124,7 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
 
     const saveConfig = async (itemName: string, newConfig: { [key: string]: any }) => {
         try {
-            saveConfigMutation.mutate({ itemName, newConfig });
+            await saveConfigMutation.mutateAsync({ itemName, newConfig });
             // Force a direct refetch from the data source to ensure we have the latest data
             await refetchConfig();
         } catch (error) {
@@ -160,18 +133,27 @@ export function ConfigProvider({ children, client }: ConfigProviderProps) {
         }
     };
 
-    const syncConfigWithRegistry = async (registryItems: { [key: string]: { ref: string; config: any } }) => {
-        await syncRegistryMutation.mutateAsync(registryItems);
+    // Make this function handle both with and without config, by ensuring config is present
+    const syncConfigWithRegistry = async (registryItems: { [key: string]: { ref: string; config?: any } }) => {
+        // Convert to the format expected by syncRegistryWithConfig
+        const formattedRegistry: { [key: string]: { ref: string; config: any } } = {};
+
+        // Ensure all registry items have a config property, even if empty
+        for (const [key, item] of Object.entries(registryItems)) {
+            formattedRegistry[key] = {
+                ref: item.ref,
+                config: item.config || {}
+            };
+        }
+
+        await syncRegistryMutation.mutateAsync(formattedRegistry);
     };
 
-    // Ensure we're providing a stable reference to avoid unnecessary rerenders
-    const value = React.useMemo(() => ({
+    return {
         config,
         configLoading,
         tryLoadConfig,
         saveConfig,
         syncConfigWithRegistry
-    }), [config, configLoading]);
-
-    return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
+    };
 } 

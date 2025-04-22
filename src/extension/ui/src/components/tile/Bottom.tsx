@@ -1,13 +1,13 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Chip, Stack } from "@mui/material";
 import { CatalogItem } from "../../types/catalog";
-import { Hardware, WarningAmberOutlined } from "@mui/icons-material";
+import { Hardware } from "@mui/icons-material";
 
 type BottomProps = {
     item: CatalogItem,
     needsConfiguration: boolean
 }
 
-const Bottom = ({ item, needsConfiguration }: BottomProps) => {
+const Bottom = ({ item }: BottomProps) => {
     return (
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
             {<Chip sx={{ fontSize: '1.2em', p: '4px 8px' }} label={

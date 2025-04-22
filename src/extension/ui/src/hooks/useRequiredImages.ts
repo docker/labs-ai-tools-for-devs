@@ -1,6 +1,5 @@
-import React, { createContext, useContext, ReactNode } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 
 // List of required images for the extension
@@ -16,34 +15,7 @@ interface ImageState {
     error?: unknown;
 }
 
-interface RequiredImagesContextType {
-    // State mapping image names to their loading state
-    imageStates: Record<string, ImageState>;
-    // Overall loading state
-    isLoading: boolean;
-    isFetching: boolean;
-    // Actions
-    loadAllImages: () => Promise<void>;
-    loadImage: (imageName: string) => Promise<void>;
-}
-
-const RequiredImagesContext = createContext<RequiredImagesContextType | undefined>(undefined);
-
-export function useRequiredImagesContext() {
-    const context = useContext(RequiredImagesContext);
-    if (context === undefined) {
-        throw new Error('useRequiredImagesContext must be used within a RequiredImagesProvider');
-    }
-    return context;
-}
-
-interface RequiredImagesProviderProps {
-    children: ReactNode;
-    client: v1.DockerDesktopClient;
-}
-
-export function RequiredImagesProvider({ children, client }: RequiredImagesProviderProps) {
-
+export function useRequiredImages(client: v1.DockerDesktopClient) {
     // Create queries for each required image
     const imageQueries = REQUIRED_IMAGES.map(imageName => {
         return useQuery({
@@ -104,13 +76,11 @@ export function RequiredImagesProvider({ children, client }: RequiredImagesProvi
         }
     };
 
-    const value = {
+    return {
         imageStates,
         isLoading,
         isFetching,
         loadAllImages,
         loadImage
     };
-
-    return <RequiredImagesContext.Provider value={value}>{children}</RequiredImagesContext.Provider>;
-}
+} 

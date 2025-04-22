@@ -1,9 +1,9 @@
 import { Tooltip, Typography } from "@mui/material";
-import { CatalogItemWithName } from "../../types"
+import { CatalogItemRichened } from "../../types"
 import { TILE_DESCRIPTION_MAX_LENGTH } from "../../Constants";
 
 type CenterProps = {
-    item: CatalogItemWithName;
+    item: CatalogItemRichened;
 }
 
 export default function Center({ item }: CenterProps) {

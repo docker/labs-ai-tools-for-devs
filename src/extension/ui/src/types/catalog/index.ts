@@ -16,9 +16,21 @@ export interface CatalogItem {
     config?: any; // Configuration type
 }
 
+export interface CatalogItemWithName extends CatalogItem {
+    name: string;
+}
+
 /**
  * Interface for a catalog item with a name
  */
-export interface CatalogItemWithName extends CatalogItem {
+export interface CatalogItemRichened extends CatalogItem {
     name: string;
+    secrets: { name: string, assigned: boolean }[];
+    configValue: { [key: string]: any };
+    configSchema: any;
+    registered: boolean;
+    canRegister: boolean;
+    missingConfig: boolean;
+    missingSecrets: boolean;
+    configTemplate: { [key: string]: any };
 }

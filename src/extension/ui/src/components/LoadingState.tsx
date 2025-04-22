@@ -1,13 +1,26 @@
-import { LinearProgress, LinearProgressProps, Box, Typography, Paper, Stack } from "@mui/material";
-import { useConfigContext } from "../context/ConfigContext";
+import { LinearProgress, Box, Typography, Paper, Stack, Fade, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useCatalogContext } from "../context/CatalogContext";
-import { useRequiredImagesContext } from "../context/RequiredImageContext";
+import { createDockerDesktopClient } from '@docker/extension-api-client';
 
-const LoadingState = () => {
-    const { secretsLoading, catalogLoading, registryLoading } = useCatalogContext();
-    const { imageStates, isLoading: imagesLoading } = useRequiredImagesContext();
-    const { configLoading } = useConfigContext();
+// Initialize the Docker Desktop client
+const client = createDockerDesktopClient();
+
+// Type definition for image state
+interface ImageState {
+    status: 'idle' | 'loading' | 'success' | 'error';
+    result?: any;
+    error?: unknown;
+}
+
+interface LoadingStateProps {
+    appProps: any; // We'll use this to pass all our hook data
+}
+
+const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
+    // Extract the loading states from appProps
+    const { secretsLoading, catalogLoading, registryLoading } = appProps;
+    const { imageStates, isLoading: imagesLoading } = appProps;
+    const { configLoading } = appProps;
 
     // Determine if any loading is happening
     const isLoading = secretsLoading || catalogLoading || registryLoading || imagesLoading || configLoading;
@@ -17,22 +30,21 @@ const LoadingState = () => {
     useEffect(() => {
         const imageProgressTotal = (() => {
             const total = 5;
-            const loaded = Object.values(imageStates).filter(state => state.status === 'success').length;
+            // Type assertion to Record<string, ImageState>
+            const imageStatesMap = imageStates as Record<string, ImageState> || {};
+            const loaded = Object.values(imageStatesMap).filter(state => state.status === 'success').length;
             return Math.round((loaded / total) * 100);
         })()
 
         const configProgressTotal = configLoading ? 100 : 0;
-
         const secretsProgressTotal = secretsLoading ? 100 : 0;
-
         const catalogProgressTotal = catalogLoading ? 100 : 0;
-
         const registryProgressTotal = registryLoading ? 100 : 0;
 
         const totalLoadedProgress = imageProgressTotal + configProgressTotal + secretsProgressTotal + catalogProgressTotal + registryProgressTotal;
         const totalPossibleProgress = 500;
         setProgress(Math.round((totalLoadedProgress / totalPossibleProgress) * 100));
-    }, [isLoading]);
+    }, [imageStates, configLoading, secretsLoading, catalogLoading, registryLoading]);
 
     if (!isLoading) return null;
 
@@ -42,40 +54,149 @@ const LoadingState = () => {
         if (secretsLoading) return 'Loading secrets';
         if (catalogLoading) return 'Loading catalog';
         if (registryLoading) return 'Loading registry';
+        return 'Loading...';
     }
 
-    return (
-        <Box sx={{ maxWidth: '500px', width: '100%', position: 'sticky', zIndex: 1000, border: '1px solid red', left: '50%', transform: 'translateX(-50%)', top: '10vh', p: 2 }}>
-            <Stack direction="column" alignItems="center" width="100%" justifyContent="space-between">
-                <LinearProgress sx={{ width: '100%' }} variant="determinate" value={progress} />
-                <Typography>
-                    {progress}%
-                </Typography>
-            </Stack>
-            {imagesLoading && (
-                <Paper elevation={2} sx={{ m: 2, p: 2, maxWidth: '500px', mx: 'auto' }}>
-                    <Typography variant="subtitle1" gutterBottom>
-                        {getLoadingText()}
-                    </Typography>
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'loading': return '#3498db';
+            case 'success': return '#2ecc71';
+            case 'error': return '#e74c3c';
+            default: return '#95a5a6';
+        }
+    };
 
-                    <Stack spacing={1}>
-                        {Object.entries(imageStates).map(([imageName, state]) => (
-                            <Box key={imageName} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Typography variant="body2">{imageName}:</Typography>
-                                <Typography variant="body2" color={
-                                    state.status === 'loading' ? 'primary' :
-                                        state.status === 'error' ? 'error' :
-                                            state.status === 'success' ? 'success' :
-                                                'text.secondary'
-                                }>
-                                    {state.status}
+    return (
+        <Fade in={isLoading}>
+            <Box sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1200,
+            }}>
+                <Paper
+                    elevation={4}
+                    sx={{
+                        maxWidth: '500px',
+                        width: '90%',
+                        p: 3,
+                        borderRadius: 2,
+                        backgroundColor: 'background.paper',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <Stack spacing={2} alignItems="center" width="100%">
+                        <Typography variant="h6" fontWeight="medium" textAlign="center">
+                            {getLoadingText()}
+                        </Typography>
+
+                        <Box position="relative" display="flex" alignItems="center" justifyContent="center" my={1}>
+                            <CircularProgress
+                                variant="determinate"
+                                value={100}
+                                size={80}
+                                thickness={4}
+                                sx={{ color: 'rgba(0, 0, 0, 0.1)' }}
+                            />
+                            <CircularProgress
+                                variant="determinate"
+                                value={progress}
+                                size={80}
+                                thickness={4}
+                                sx={{
+                                    color: 'primary.main',
+                                    position: 'absolute',
+                                    left: 0,
+                                }}
+                            />
+                            <Typography
+                                variant="h6"
+                                component="div"
+                                sx={{ position: 'absolute' }}
+                            >
+                                {progress}%
+                            </Typography>
+                        </Box>
+
+                        <LinearProgress
+                            sx={{
+                                width: '100%',
+                                height: 8,
+                                borderRadius: 4,
+                                '& .MuiLinearProgress-bar': {
+                                    borderRadius: 4,
+                                    transition: 'transform 0.4s ease'
+                                }
+                            }}
+                            variant="determinate"
+                            value={progress}
+                        />
+
+                        {imagesLoading && imageStates && (
+                            <Box
+                                sx={{
+                                    mt: 2,
+                                    p: 2,
+                                    width: '100%',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                                    borderRadius: 1,
+                                }}
+                            >
+                                <Typography variant="subtitle2" fontWeight="medium" gutterBottom>
+                                    Docker Images
                                 </Typography>
+
+                                <Stack spacing={1.5} mt={1}>
+                                    {/* Type assertion for imageStates */}
+                                    {Object.entries(imageStates as Record<string, ImageState>).map(([imageName, state]) => (
+                                        <Box
+                                            key={imageName}
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                p: 1,
+                                                borderRadius: 1,
+                                                backgroundColor: 'background.paper',
+                                            }}
+                                        >
+                                            <Typography variant="body2" fontWeight="medium">{imageName}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1,
+                                                }}
+                                            >
+                                                {state.status === 'loading' && (
+                                                    <CircularProgress size={14} thickness={4} />
+                                                )}
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        color: getStatusColor(state.status),
+                                                        fontWeight: 'medium',
+                                                        textTransform: 'capitalize'
+                                                    }}
+                                                >
+                                                    {state.status}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </Stack>
                             </Box>
-                        ))}
+                        )}
                     </Stack>
                 </Paper>
-            )}
-        </Box>
+            </Box>
+        </Fade>
     );
 }
 

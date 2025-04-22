@@ -1,6 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from "yaml";
-import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileWatcher";
+import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileUtils";
 import { mergeDeep } from "./MergeDeep";
 import { ParsedParameters } from "./types/config";
 

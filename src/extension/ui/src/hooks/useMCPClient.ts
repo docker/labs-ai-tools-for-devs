@@ -1,40 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { v1 } from "@docker/extension-api-client-types";
+import { useState } from 'react';
 import { getMCPClientStates, MCPClientState } from '../MCPClients';
 import { POLL_INTERVAL } from '../Constants';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface MCPClientContextType {
-    // State
-    mcpClientStates: { [name: string]: MCPClientState } | undefined;
-    buttonsLoading: { [name: string]: boolean };
-    isLoading: boolean;
-    isError: boolean;
-    isFetching: boolean;
-
-    // Actions
-    updateMCPClientStates: () => Promise<void>;
-    setButtonsLoading: (buttonsLoading: { [name: string]: boolean }) => void;
-    disconnectClient: (clientName: string) => Promise<void>;
-    connectClient: (clientName: string) => Promise<void>;
-}
-
-const MCPClientContext = createContext<MCPClientContextType | undefined>(undefined);
-
-export function useMCPClientContext() {
-    const context = useContext(MCPClientContext);
-    if (context === undefined) {
-        throw new Error('useMCPClientContext must be used within a MCPClientProvider');
-    }
-    return context;
-}
-
-interface MCPClientProviderProps {
-    children: ReactNode;
-    client: v1.DockerDesktopClient;
-}
-
-export function MCPClientProvider({ children, client }: MCPClientProviderProps) {
+export function useMCPClient(client: v1.DockerDesktopClient) {
     // State
     const [buttonsLoading, setButtonsLoading] = useState<{ [name: string]: boolean }>({});
     const queryClient = useQueryClient();
@@ -82,9 +52,8 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         },
         refetchInterval: POLL_INTERVAL,
         initialData: undefined,
-        // Add eager loading settings
-        staleTime: 30000, // Data remains fresh for 30 seconds
-        gcTime: 300000 // Cache data for 5 minutes even if unused
+        staleTime: 30000,
+        gcTime: 300000
     });
 
     // Update MCP client states
@@ -176,7 +145,7 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         await connectMutation.mutateAsync(clientName);
     };
 
-    const value = {
+    return {
         mcpClientStates,
         buttonsLoading,
         isLoading,
@@ -187,6 +156,4 @@ export function MCPClientProvider({ children, client }: MCPClientProviderProps) 
         disconnectClient,
         connectClient
     };
-
-    return <MCPClientContext.Provider value={value}>{children}</MCPClientContext.Provider>;
 } 

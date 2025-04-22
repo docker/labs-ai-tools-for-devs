@@ -1,24 +1,21 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, TextField, Tabs, Tab, CircularProgress, Box, Menu, Divider, Switch, MenuItem } from '@mui/material';
 import { SwapVert, FolderOpenRounded } from '@mui/icons-material';
-import { useCatalogContext } from '../context/CatalogContext';
-import { useMCPClientContext } from '../context/MCPClientContext';
-import { useConfigContext } from '../context/ConfigContext';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import YourClients from './tabs/YourClients';
-import { CatalogItemWithName } from '../types/catalog';
+import { CatalogItemRichened } from '../types/catalog';
 import { CATALOG_LAYOUT_SX } from '../Constants';
+import { MCPClientState } from '../MCPClients';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
-const YourEnvironment = React.lazy(() => import('./tabs/YourEnvironment'));
+const YourTools = React.lazy(() => import('./tabs/YourTools'));
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 
 interface CatalogGridProps {
-    showSettings: () => void;
-    setConfiguringItem: (item: CatalogItemWithName) => void;
+    appProps: any; // We'll use this to pass all our hook data
 }
 
 const parseDDVersion = (ddVersion: string) => {
@@ -32,26 +29,15 @@ const parseDDVersion = (ddVersion: string) => {
 const NEVER_SHOW_AGAIN_KEY = 'registry-sync-never-show-again';
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({
-    setConfiguringItem,
+    appProps,
 }) => {
+    // Extract all the values we need from appProps
     const {
         catalogItems,
         registryItems,
-        canRegister,
-        registerCatalogItem,
-        unregisterCatalogItem,
-        tryUpdateSecrets,
-        secrets
-    } = useCatalogContext();
-
-    const {
         mcpClientStates,
-        isLoading: mcpLoading
-    } = useMCPClientContext();
-
-    const {
-        config
-    } = useConfigContext();
+        isLoading: mcpLoading,
+    } = appProps;
 
     const [showReloadModal, setShowReloadModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
@@ -91,18 +77,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     }
 
     const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
-        catalogItems.some((c) => c.name === i)
+        catalogItems.some((c: CatalogItemRichened) => c.name === i)
     )
-
-    const sortedCatalogItems = sort !== 'date-desc' ? [...catalogItems].sort((a, b) => {
-        if (sort === 'name-asc') {
-            return a.name.localeCompare(b.name);
-        }
-        if (sort === 'name-desc') {
-            return b.name.localeCompare(a.name);
-        }
-        return 0;
-    }) : catalogItems;
 
     if (!ddVersion) {
         return <>
@@ -111,7 +87,11 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
         </>
     }
 
-    const noConfiguredClients = !mcpLoading && !Object.values(mcpClientStates || {}).some(state => state.exists && state.configured);
+    // Check if there are any configured clients
+    const noConfiguredClients = !mcpLoading && mcpClientStates ?
+        !Object.values(mcpClientStates as Record<string, MCPClientState>).some(state =>
+            state.exists && state.configured
+        ) : false;
 
     return (
         <>
@@ -186,12 +166,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                                 }} disableRipple>
                                     ⏰ Most Recent
                                 </MenuItem>
-                                {/* <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
-                            ️‍🔥 Trending
-                        </MenuItem>
-                        <MenuItem onClick={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })} disableRipple>
-                            ⬇️ Most Downloads
-                        </MenuItem> */}
                                 <Divider sx={{ my: 0.5 }} />
                                 <MenuItem sx={{ fontWeight: sort === 'name-asc' ? 'bold' : 'normal' }} onClick={() => {
                                     setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
@@ -213,49 +187,19 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}>
                     {tab === 0 && (
                         <ToolCatalog
-                            registryItems={registryItems}
                             search={search}
-                            catalogItems={sortedCatalogItems}
                             showMine={showMine}
                             client={client}
-                            ddVersion={ddVersion}
-                            canRegister={canRegister}
-                            register={registerCatalogItem}
-                            unregister={unregisterCatalogItem}
-                            onSecretChange={tryUpdateSecrets}
-                            secrets={secrets}
-                            setConfiguringItem={setConfiguringItem}
-                            config={config || {}}
-                        />
-                    )}
-                    {/* {tab === 1 && (
-                    <YourTools
-                        registryItems={registryItems}
-                        search={search}
-                        catalogItems={sortedCatalogItems}
-                        unregister={unregisterCatalogItem}
-                        onSecretChange={tryLoadSecrets}
-                        secrets={secrets}
-                        setConfiguringItem={setConfiguringItem}
-                        canRegister={canRegister}
-                        ddVersion={ddVersion}
-                        config={config || {}}
-                    />
-                )} */}
-                    {tab === 2 && ddVersion && (
-                        <YourEnvironment
-                            secrets={secrets}
-                            ddVersion={ddVersion}
-                            config={config || {}}
                         />
                     )}
                     {tab === 1 && (
                         <YourClients
-                            client={client}
+                            appProps={appProps}
+                            ddVersion={ddVersion}
                         />
                     )}
                 </Suspense>
             </Stack>
         </>
     );
-};
+}

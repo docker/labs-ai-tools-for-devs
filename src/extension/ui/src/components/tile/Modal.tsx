@@ -1,15 +1,14 @@
-import { Alert, Badge, Box, ButtonGroup, Chip, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, FormControlLabel, FormHelperText, Grid2, IconButton, Link, ListItem, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
-import { CheckOutlined, Close, CloseOutlined, Code, Delete, DeleteOutline, DeleteOutlined, LockReset, Save, SaveOutlined } from "@mui/icons-material";
+import { Alert, Badge, Box, ButtonGroup, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
+import { CheckOutlined, Close, CloseOutlined, DeleteOutlined } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
-import { CatalogItemWithName } from "../../types/catalog";
-import Secrets from "../../Secrets";
+import { CatalogItemRichened } from "../../types/catalog";
 import { v1 } from "@docker/extension-api-client-types";
-import { useCatalogContext } from "../../context/CatalogContext";
-import { useConfigContext } from "../../context/ConfigContext";
-import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
+import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, MCP_POLICY_NAME, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
 import ConfigEditor from "./ConfigEditor";
+import { useSecrets } from "../../hooks/useSecrets";
+import { useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
+import { useConfig } from "../../hooks/useConfig";
 
-// Styles for the tab panel
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -40,11 +39,8 @@ function TabPanel(props: TabPanelProps) {
 interface ConfigurationModalProps {
     open: boolean;
     onClose: () => void;
-    catalogItem: CatalogItemWithName;
+    catalogItem: CatalogItemRichened;
     client: v1.DockerDesktopClient;
-    onToggleRegister: (checked: boolean) => void;
-    registered: boolean;
-    onSecretChange: (secret: { name: string, value: string }) => Promise<void>;
 }
 
 
@@ -53,15 +49,21 @@ const ConfigurationModal = ({
     onClose,
     catalogItem,
     client,
-    onToggleRegister,
-    registered,
-    onSecretChange,
 }: ConfigurationModalProps) => {
-
-    const { registryItems, secrets, getCanRegisterCatalogItem } = useCatalogContext();
-    const { configLoading, config } = useConfigContext();
-    const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
+    const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined } | undefined>(undefined);
     const theme = useTheme();
+
+    const { isLoading: secretsLoading, mutate: mutateSecret } = useSecrets(client)
+    const { registryLoading } = useRegistry(client)
+    const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
+    const { configLoading } = useConfig(client)
+
+    useEffect(() => {
+        setLocalSecrets(catalogItem.secrets.reduce((acc, secret) => {
+            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '';
+            return acc;
+        }, {} as { [key: string]: string | undefined }));
+    }, [catalogItem.secrets]);
 
     const toolChipStyle = {
         padding: '2px 8px',
@@ -83,41 +85,24 @@ const ConfigurationModal = ({
     // State for tabs
     const [tabValue, setTabValue] = useState(0);
 
-    // State for secrets
-    const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([]);
-
-    // Load assigned secrets
-    useEffect(() => {
-        const loadedSecrets = Secrets.getSecretsWithAssignment(catalogItem, secrets);
-        setAssignedSecrets(loadedSecrets);
-        setLocalSecrets(loadedSecrets.reduce((acc, secret) => {
-            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '';
-            return acc;
-        }, {} as { [key: string]: string | undefined }));
-    }, [catalogItem, secrets]);
-
-
     // Handle tab change
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
-    // Memoize the canRegister value to prevent unnecessary recalculations
-    const canRegister = useMemo(() => getCanRegisterCatalogItem(catalogItem), [getCanRegisterCatalogItem, catalogItem, config]);
+    const contributesNoConfigOrSecrets = (!catalogItem.configSchema || catalogItem.configSchema.length === 0) && (!catalogItem.secrets || catalogItem.secrets.length === 0);
 
-    const contributesNoConfigOrSecrets = (!catalogItem.config || catalogItem.config.length === 0) && (!catalogItem.secrets || catalogItem.secrets.length === 0);
-
-    useEffect(() => {
-        if (!canRegister && !contributesNoConfigOrSecrets) {
-            setTabValue(1); // Config tab
-        }
-    }, [canRegister, contributesNoConfigOrSecrets]);
-
-
-    if (!registryItems) {
+    if (secretsLoading || registryLoading || configLoading) {
         return <>
             <CircularProgress />
             <Typography>Loading registry...</Typography>
+        </>
+    }
+
+    if (!localSecrets) {
+        return <>
+            <CircularProgress />
+            <Typography>Loading secrets...</Typography>
         </>
     }
 
@@ -151,8 +136,8 @@ const ConfigurationModal = ({
                 <Typography sx={{ mt: 2, maxHeight: '5em', overflow: 'auto' }} color="text.secondary">
                     {catalogItem.description}
                 </Typography>
-                <Tooltip placement="right" title={!canRegister ? 'You must assign all secrets and configure the item before it can be used.' : ''}>
-                    <FormControlLabel control={<Switch disabled={!canRegister} checked={registered} onChange={(e) => onToggleRegister(e.target.checked)} />} label={registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
+                <Tooltip placement="right" title={!catalogItem.canRegister ? 'You must assign all secrets and configure the item before it can be used.' : ''}>
+                    <FormControlLabel control={<Switch disabled={!catalogItem.canRegister} checked={catalogItem.registered} onChange={(e) => catalogItem.registered ? unregisterCatalogItem(catalogItem) : registerCatalogItem(catalogItem)} />} label={catalogItem.registered ? 'Disable ' + `${catalogItem.name} tools` : 'Enable ' + `${catalogItem.name} tools`} sx={{ mt: 2 }} />
                 </Tooltip>
                 <Divider sx={{ mt: 2 }} />
                 <Typography variant="caption" sx={{ mt: 2, color: 'text.secondary' }}>
@@ -171,7 +156,7 @@ const ConfigurationModal = ({
                             <Tabs value={tabValue} onChange={handleTabChange}>
                                 <Tab label="Tools" />
                                 {/* <Tab label="Prompts" /> */}
-                                <Tab disabled={contributesNoConfigOrSecrets} label={<Badge invisible={canRegister} sx={{ pl: 1, pr: 1 }} variant="dot" badgeContent={catalogItem.config && catalogItem.config.length > 0 ? 'Secrets' : 'Config'} color="error">Config & Secrets</Badge>} />
+                                <Tab disabled={contributesNoConfigOrSecrets} label={<Badge invisible={catalogItem.canRegister} sx={{ pl: 1, pr: 1 }} variant="dot" badgeContent={catalogItem.config && catalogItem.config.length > 0 ? 'Secrets' : 'Config'} color="error">Config & Secrets</Badge>} />
                             </Tabs>
                         </Box>
                         <TabPanel value={tabValue} index={0} >
@@ -195,26 +180,25 @@ const ConfigurationModal = ({
                         <TabPanel value={tabValue} index={1}>
                             <Stack direction="column" spacing={1} sx={{ overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 <Stack direction="column" spacing={2} sx={{ border: '2px solid', borderColor: theme.palette.warning.contrastText, borderRadius: 2, p: 2, mt: 2 }}>
-                                    <ConfigEditor catalogItem={catalogItem} />
+                                    <ConfigEditor catalogItem={catalogItem} client={client} />
                                     <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
                                     {
                                         catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                                            assignedSecrets?.map(secret => {
-                                                const secretEdited = secret.assigned ? localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER : localSecrets[secret.name] !== '';
+                                            catalogItem.secrets.map(secret => {
+                                                const secretEdited = (secret.assigned && localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER) || (!secret.assigned && localSecrets[secret.name] !== '');
                                                 return (
                                                     <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
                                                         <TextField key={secret.name} label={secret.name} value={localSecrets[secret.name]} fullWidth onChange={(e) => {
                                                             setLocalSecrets({ ...localSecrets, [secret.name]: e.target.value });
                                                         }} type='password' />
                                                         {secret.assigned && !secretEdited && <IconButton size="small" color="error" onClick={() => {
-                                                            setLocalSecrets({ ...localSecrets, [secret.name]: UNASSIGNED_SECRET_PLACEHOLDER });
-                                                            onSecretChange({ name: secret.name, value: UNASSIGNED_SECRET_PLACEHOLDER });
+                                                            mutateSecret.mutateAsync({ name: secret.name, value: undefined, policies: [MCP_POLICY_NAME] });
                                                         }}>
                                                             <DeleteOutlined />
                                                         </IconButton>}
                                                         {secretEdited && <ButtonGroup>
                                                             <IconButton onClick={async () => {
-                                                                await onSecretChange({ name: secret.name, value: localSecrets[secret.name]! });
+                                                                await mutateSecret.mutateAsync({ name: secret.name, value: localSecrets[secret.name]!, policies: [MCP_POLICY_NAME] });
                                                             }}>
                                                                 <CheckOutlined sx={{ color: 'success.main' }} />
                                                             </IconButton>

@@ -7,11 +7,15 @@ import ClaudeIcon from '../../assets/claude-ai-icon.svg'
 import GordonIcon from '../../assets/gordon-icon.png'
 import CursorIcon from '../../assets/cursor.svg'
 import ChatGPTIcon from '../../assets/chatgpt.svg'
-import { useMCPClientContext } from "../../context/MCPClientContext";
 import { useState } from "react";
+import { createDockerDesktopClient } from '@docker/extension-api-client';
+
+// Initialize the Docker Desktop client
+const client = createDockerDesktopClient();
 
 type MCPClientSettingsProps = {
-    client: v1.DockerDesktopClient;
+    appProps: any; // Pass the app props from the parent
+    ddVersion: { version: string, build: number };
 }
 
 const connectionButtonSX = {
@@ -25,14 +29,15 @@ const iconMap = {
     'Cursor': CursorIcon,
 }
 
-const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
+const MCPClientSettings = ({ appProps, ddVersion }: MCPClientSettingsProps) => {
+    // Extract all the values we need from appProps
     const {
         mcpClientStates,
         buttonsLoading,
         setButtonsLoading,
         disconnectClient,
         connectClient
-    } = useMCPClientContext();
+    } = appProps;
 
     if (!mcpClientStates) {
         return <>
@@ -47,7 +52,7 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
         <Box sx={CATALOG_LAYOUT_SX}>
             <Typography>Connect to runtimes for your tools</Typography>
             <Stack direction="column" spacing={1} sx={{ p: 0 }}>
-                {Object.entries(mcpClientStates).map(([name, mcpClientState]) => (
+                {Object.entries(mcpClientStates).map(([name, mcpClientState]: [string, any]) => (
                     <Stack key={name} direction="row" spacing={1} sx={{ marginTop: 2 }}>
                         <Accordion key={name} sx={{ width: '100%', marginRight: 1 }}>
                             <AccordionSummary sx={{ width: '100%', fontSize: '1.5em', display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between' }}>
@@ -76,7 +81,7 @@ const MCPClientSettings = ({ client }: MCPClientSettingsProps) => {
                                         <Typography sx={{ fontWeight: 'bold' }}>Manually Configure:</Typography>
                                     </Stack>
                                     <List sx={{ listStyleType: 'decimal', p: 0, pl: 2, mt: 1 }}>
-                                        {mcpClientState.client.manualConfigSteps.map((step, index) => (
+                                        {mcpClientState.client.manualConfigSteps.map((step: string, index: number) => (
                                             <ListItem sx={{ display: 'list-item', p: 0 }} key={index}>
                                                 <ListItemText primary={<div dangerouslySetInnerHTML={{ __html: step }} />} />
                                             </ListItem>

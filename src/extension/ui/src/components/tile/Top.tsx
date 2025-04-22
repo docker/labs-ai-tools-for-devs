@@ -1,25 +1,15 @@
-import { Settings } from "@mui/icons-material";
-import { Badge, CardMedia, IconButton, Stack, Switch, Tooltip, Typography } from "@mui/material";
-import { getUnsupportedSecretMessage } from "../../Constants";
-import { CatalogItemWithName } from "../../types/catalog";
-import { useConfigContext } from "../../context/ConfigContext";
-import { useCatalogContext } from "../../context/CatalogContext";
+import { CardMedia, Stack, Switch, Tooltip, Typography } from "@mui/material";
+import { CatalogItemRichened } from "../../types/catalog";
 
 type TopProps = {
-    unAssignedConfig: { name: string, assigned: boolean }[],
     onToggleRegister: (checked: boolean) => void,
-    unAssignedSecrets: { name: string, assigned: boolean }[],
-    registered: boolean
-    item: CatalogItemWithName
+    item: CatalogItemRichened
 }
 
-export default function Top({ item, onToggleRegister, registered }: TopProps) {
-    const { getCanRegisterCatalogItem } = useCatalogContext();
-
-    const canRegister = getCanRegisterCatalogItem(item);
+export default function Top({ item, onToggleRegister }: TopProps) {
 
     const getActionButton = () => {
-        if (!canRegister) {
+        if (!item.canRegister) {
             return <Stack direction="row" spacing={0} alignItems="center">
                 <Tooltip title="This tile needs configuration before it can be used.">
                     <span>
@@ -29,9 +19,9 @@ export default function Top({ item, onToggleRegister, registered }: TopProps) {
             </Stack>
         }
         return <Stack direction="row" spacing={0} alignItems="center">
-            <Tooltip title={registered ? "Unregistering this tile will hide it from MCP clients." : "Registering this tile will expose it to MCP clients."}>
+            <Tooltip title={item.registered ? "Unregistering this tile will hide it from MCP clients." : "Registering this tile will expose it to MCP clients."}>
                 <Switch
-                    checked={registered}
+                    checked={item.registered}
                     onChange={(event, checked) => {
                         event.stopPropagation()
                         event.preventDefault()
