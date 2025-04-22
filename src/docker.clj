@@ -315,7 +315,7 @@
    (try
      (when (is-logged-in? m)
        {:jwt (get-token m)
-        :user "jimclark106" #_(:id (get-login-info m))})
+        :user (:id (get-login-info m))})
      (catch Throwable t
        (logger/error t)
        (logger/warn "user is not logged in to Docker Destkop")))))
