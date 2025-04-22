@@ -30,4 +30,7 @@ export interface CatalogItemRichened extends CatalogItem {
     configSchema: any;
     registered: boolean;
     canRegister: boolean;
+    missingConfig: boolean;
+    missingSecrets: boolean;
+    configTemplate: { [key: string]: any };
 }

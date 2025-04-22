@@ -3,7 +3,7 @@
  */
 export type Secret = {
     name: string;
-    value: string;
+    value: string | undefined;
     policies: string[];
 };
 

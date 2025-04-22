@@ -27,27 +27,33 @@ interface QueryContextWithMeta {
 
 export function useCatalog(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
-    const { data: secrets } = useSecrets(client);
-    const { registryItems } = useRegistry(client);
-    const { config } = useConfig(client);
+    const { data: secrets, isLoading: secretsLoading } = useSecrets(client);
+    const { registryItems, registryLoading } = useRegistry(client);
+    const { config, configLoading: configLoading } = useConfig(client);
 
     const enrichCatalogItem = (item: CatalogItemWithName): CatalogItemRichened => {
         const secretsWithAssignment = Secrets.getSecretsWithAssignment(item, secrets || []);
         const itemConfigValue = config?.[item.name] || {};
-        const unConfigured = Object.keys(itemConfigValue).length === 0;
+        const unConfigured = Boolean(item.config && Object.keys(itemConfigValue).length === 0);
         const missingASecret = secretsWithAssignment.some((secret) => !secret.assigned);
-        const enrichedItem = {
+
+        const enrichedItem: CatalogItemRichened = {
             ...item,
             secrets: secretsWithAssignment,
             configValue: itemConfigValue,
             configSchema: item.config,
+            configTemplate: getTemplateForItem(item, itemConfigValue),
+            missingConfig: unConfigured,
+            missingSecrets: missingASecret,
             registered: !!registryItems?.[item.name],
             canRegister: !registryItems?.[item.name] && !missingASecret && !unConfigured,
             name: item.name,
         };
+
         delete enrichedItem.config;
-        if (item.name === 'atlassian') {
-            console.log(enrichedItem);
+        if (item.name === 'atlassian' || item.name === 'mcp-sqlite') {
+            console.log(enrichedItem, unConfigured, missingASecret);
+            console.log('template', getTemplateForItem(item, itemConfigValue));
         }
         return enrichedItem;
     };
@@ -58,6 +64,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
         refetch: refetchCatalog
     } = useQuery({
         queryKey: ['catalog'],
+        enabled: !secretsLoading && !registryLoading && !configLoading,
         queryFn: async (context) => {
             const queryContext = context as unknown as QueryContextWithMeta;
             const showNotification = queryContext.meta?.showNotification ?? false;

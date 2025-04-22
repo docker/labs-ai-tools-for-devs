@@ -52,13 +52,25 @@ const ConfigurationModal = ({
     catalogItem,
     client,
 }: ConfigurationModalProps) => {
-    const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined }>({});
+    const [localSecrets, setLocalSecrets] = useState<{ [key: string]: string | undefined } | undefined>(undefined);
     const theme = useTheme();
 
     const { isLoading: secretsLoading, mutate: mutateSecret } = useSecrets(client)
     const { registryLoading } = useRegistry(client)
     const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
     const { configLoading } = useConfig(client)
+
+    useEffect(() => {
+        if (localSecrets) return;
+        setLocalSecrets(catalogItem.secrets.reduce((acc, secret) => {
+            acc[secret.name] = secret.assigned ? ASSIGNED_SECRET_PLACEHOLDER : '';
+            return acc;
+        }, {} as { [key: string]: string | undefined }));
+    }, [catalogItem.secrets]);
+
+    if (catalogItem.name === 'atlassian') {
+        console.log(localSecrets)
+    }
 
     const toolChipStyle = {
         padding: '2px 8px',
@@ -80,25 +92,28 @@ const ConfigurationModal = ({
     // State for tabs
     const [tabValue, setTabValue] = useState(0);
 
-    // State for secrets
-    const [assignedSecrets, setAssignedSecrets] = useState<{ name: string, assigned: boolean }[]>([]);
-
     // Handle tab change
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
-    const contributesNoConfigOrSecrets = (!catalogItem.config || catalogItem.config.length === 0) && (!catalogItem.secrets || catalogItem.secrets.length === 0);
+    const contributesNoConfigOrSecrets = (!catalogItem.configSchema || catalogItem.configSchema.length === 0) && (!catalogItem.secrets || catalogItem.secrets.length === 0);
 
-    if (secretsLoading || registryLoading) {
+    if (secretsLoading || registryLoading || configLoading) {
         return <>
             <CircularProgress />
             <Typography>Loading registry...</Typography>
         </>
     }
 
+    if (!localSecrets) {
+        return <>
+            <CircularProgress />
+            <Typography>Loading secrets...</Typography>
+        </>
+    }
+
     const canRegister = catalogItem.canRegister;
-    const registered = catalogItem.registered;
 
     return (
         <Modal
@@ -178,16 +193,17 @@ const ConfigurationModal = ({
                                     <Typography variant="h6" sx={{ mb: 1 }}>Secrets</Typography>
                                     {
                                         catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                                            assignedSecrets?.map(secret => {
+                                            catalogItem.secrets.map(secret => {
                                                 const secretEdited = secret.assigned ? localSecrets[secret.name] !== ASSIGNED_SECRET_PLACEHOLDER : localSecrets[secret.name] !== '';
+                                                console.log(secret.name, secretEdited, secret.assigned, localSecrets[secret.name])
                                                 return (
                                                     <Stack key={secret.name} direction="row" spacing={2} alignItems="center">
                                                         <TextField key={secret.name} label={secret.name} value={localSecrets[secret.name]} fullWidth onChange={(e) => {
                                                             setLocalSecrets({ ...localSecrets, [secret.name]: e.target.value });
                                                         }} type='password' />
                                                         {secret.assigned && !secretEdited && <IconButton size="small" color="error" onClick={() => {
-                                                            setLocalSecrets({ ...localSecrets, [secret.name]: UNASSIGNED_SECRET_PLACEHOLDER });
-                                                            mutateSecret.mutateAsync({ name: secret.name, value: UNASSIGNED_SECRET_PLACEHOLDER, policies: [MCP_POLICY_NAME] });
+                                                            setLocalSecrets({ ...localSecrets, [secret.name]: '' });
+                                                            mutateSecret.mutateAsync({ name: secret.name, value: undefined, policies: [MCP_POLICY_NAME] });
                                                         }}>
                                                             <DeleteOutlined />
                                                         </IconButton>}
