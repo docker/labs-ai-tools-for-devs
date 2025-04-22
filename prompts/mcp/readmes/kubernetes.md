@@ -29,9 +29,12 @@ Tools provided by this Server|Short Description
 `delete_deployment`|Delete a Kubernetes deployment|
 `delete_namespace`|Delete a Kubernetes namespace|
 `delete_pod`|Delete a Kubernetes pod|
+`delete_service`|Delete a Kubernetes service|
 `describe_cronjob`|Get detailed information about a Kubernetes CronJob including recent job history|
 `describe_deployment`|Get details about a Kubernetes deployment|
+`describe_node`|Describe a Kubernetes node (read details like status, capacity, conditions, etc.)|
 `describe_pod`|Describe a Kubernetes pod (read details like status, containers, etc.)|
+`describe_service`|Describe a Kubernetes service (read details like status, ports, selectors, etc.)|
 `explain_resource`|Get documentation for a Kubernetes resource or field|
 `get_current_context`|Get the current Kubernetes context|
 `get_events`|Get Kubernetes events from the cluster|
@@ -53,6 +56,7 @@ Tools provided by this Server|Short Description
 `stop_port_forward`|Stop a port-forward process|
 `uninstall_helm_chart`|Uninstall a Helm release|
 `update_deployment`|Update an existing kubernetes deployment in cluster|
+`update_service`|Update an existing kubernetes service in cluster|
 `upgrade_helm_chart`|Upgrade a Helm release|
 
 ---
@@ -156,6 +160,15 @@ Parameters|Type|Description
 `ignoreNotFound`|`boolean` *optional*|
 
 ---
+#### Tool: **`delete_service`**
+Delete a Kubernetes service
+Parameters|Type|Description
+-|-|-
+`name`|`string`|
+`ignoreNotFound`|`boolean` *optional*|
+`namespace`|`string` *optional*|
+
+---
 #### Tool: **`describe_cronjob`**
 Get detailed information about a Kubernetes CronJob including recent job history
 Parameters|Type|Description
@@ -172,12 +185,27 @@ Parameters|Type|Description
 `namespace`|`string`|
 
 ---
+#### Tool: **`describe_node`**
+Describe a Kubernetes node (read details like status, capacity, conditions, etc.)
+Parameters|Type|Description
+-|-|-
+`name`|`string`|
+
+---
 #### Tool: **`describe_pod`**
 Describe a Kubernetes pod (read details like status, containers, etc.)
 Parameters|Type|Description
 -|-|-
 `name`|`string`|
 `namespace`|`string`|
+
+---
+#### Tool: **`describe_service`**
+Describe a Kubernetes service (read details like status, ports, selectors, etc.)
+Parameters|Type|Description
+-|-|-
+`name`|`string`|
+`namespace`|`string` *optional*|
 
 ---
 #### Tool: **`explain_resource`**
@@ -349,6 +377,17 @@ Parameters|Type|Description
 `containerName`|`string` *optional*|Name of the container to update
 `customConfig`|`object` *optional*|
 `replicas`|`number` *optional*|
+
+---
+#### Tool: **`update_service`**
+Update an existing kubernetes service in cluster
+Parameters|Type|Description
+-|-|-
+`name`|`string`|
+`namespace`|`string`|
+`ports`|`array` *optional*|
+`selector`|`object` *optional*|
+`type`|`string` *optional*|
 
 ---
 #### Tool: **`upgrade_helm_chart`**

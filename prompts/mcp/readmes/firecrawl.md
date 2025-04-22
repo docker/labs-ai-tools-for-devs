@@ -18,8 +18,6 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`firecrawl_batch_scrape`|Scrape multiple URLs in batch mode.|
-`firecrawl_check_batch_status`|Check the status of a batch scraping job.|
 `firecrawl_check_crawl_status`|Check the status of a crawl job.|
 `firecrawl_crawl`|Start an asynchronous crawl of multiple pages from a starting URL.|
 `firecrawl_deep_research`|Conduct deep research on a query using web crawling, search, and AI analysis.|
@@ -32,21 +30,6 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
-#### Tool: **`firecrawl_batch_scrape`**
-Scrape multiple URLs in batch mode. Returns a job ID that can be used to check status.
-Parameters|Type|Description
--|-|-
-`urls`|`array`|List of URLs to scrape
-`options`|`object` *optional*|
-
----
-#### Tool: **`firecrawl_check_batch_status`**
-Check the status of a batch scraping job.
-Parameters|Type|Description
--|-|-
-`id`|`string`|Batch job ID to check
-
----
 #### Tool: **`firecrawl_check_crawl_status`**
 Check the status of a crawl job.
 Parameters|Type|Description

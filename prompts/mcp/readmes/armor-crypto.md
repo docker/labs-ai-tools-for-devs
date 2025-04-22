@@ -34,8 +34,9 @@ Tools provided by this Server|Short Description
 `get_armor_mcp_version`|Get the current Armor Wallet version|
 `get_current_time`|Gets the current time and date|
 `get_stake_balances`|Get the balance of staked SOL (jupSOL).|
+`get_token_address`|Get the token address for a token symbol or name.|
 `get_token_candle_data`|Get candle data about any token for analysis.|
-`get_token_details`|Retrieve token details.|
+`get_token_details`|Search and retrieve details about multiple tokens|
 `get_top_trending_tokens`|Get the top trending tokens in a particular time frame.|
 `get_wallet_token_balance`|Get the balance for a list of wallet/token pairs.|
 `list_dca_orders`|List all DCA orders.|
@@ -187,6 +188,13 @@ Gets the current time and date
 Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
+#### Tool: **`get_token_address`**
+Get the token address for a token symbol or name.
+Parameters|Type|Description
+-|-|-
+`token_details_requests`|`string`|
+
+---
 #### Tool: **`get_token_candle_data`**
 Get candle data about any token for analysis.
 
@@ -197,12 +205,12 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_token_details`**
-Retrieve token details.
+Search and retrieve details about multiple tokens
 
     Expects a TokenDetailsRequestContainer, returns a list of TokenDetailsResponse.
 Parameters|Type|Description
 -|-|-
-`token_details_requests`|`string`|
+`token_search_requests`|`string`|
 
 ---
 #### Tool: **`get_top_trending_tokens`**

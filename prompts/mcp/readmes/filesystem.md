@@ -123,7 +123,7 @@ Parameters|Type|Description
         "-i",
         "--rm",
         "mcp/filesystem",
-        "."
+        "{{filesystem.paths|into}}"
       ]
     }
   }
