@@ -7,7 +7,7 @@ mcp:
       environment:
         RISKEN_URL: "{{risken.url|safe}}"
       command:
-        - stdio
+        - "stdio"
     source:
       url: https://github.com/ca-risken/risken-mcp-server/tree/main
 ---

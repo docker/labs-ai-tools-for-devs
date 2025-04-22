@@ -8,7 +8,7 @@ mcp:
       environment:
         GRAFANA_URL: "{{grafana.url|safe}}"
       command:
-        - --transport=stdio
+        - "--transport=stdio"
     source:
       url: https://github.com/grafana/mcp-grafana/tree/main
 ---

@@ -8,10 +8,9 @@ mcp:
       command:
         - "{{filesystem.paths|into}}"
     source:
-      url: https://github.com/modelcontextprotocol/servers
+      url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 parameter-values:
   filesystem:
     paths:
       - /Users/local-test
 ---
-

@@ -115,7 +115,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/12301619?s=200&v=4
     tools:
       - name: brave_local_search
       - name: brave_web_search
@@ -128,7 +128,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/slack.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/6911160?s=200&v=4
     tools:
       - name: slack_add_reaction
       - name: slack_get_channel_history
@@ -308,7 +308,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/puppeteer.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/6906516?s=200&v=4
     tools:
       - name: puppeteer_click
       - name: puppeteer_evaluate
@@ -320,13 +320,23 @@ registry:
     prompts: 0
     resources: {}
   filesystem:
-    description: |
-      Local filesystem access with configurable allowed paths
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
+    description: Local filesystem access with configurable allowed paths
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/filesystem.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools: []
+    tools:
+      - name: create_directory
+      - name: directory_tree
+      - name: edit_file
+      - name: get_file_info
+      - name: list_allowed_directories
+      - name: list_directory
+      - name: move_file
+      - name: read_file
+      - name: read_multiple_files
+      - name: search_files
+      - name: write_file
     prompts: 0
     resources: {}
     config:
@@ -355,7 +365,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/postgres.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/postgres.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/177543?s=200&v=4
     tools:
       - name: query
     secrets:
@@ -447,7 +457,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlassian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/atlassian.md
     source: https://github.com/sooperset/mcp-atlassian/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/atlassian.svg
+    icon: https://avatars.githubusercontent.com/u/43281909?s=200&v=4
     tools:
       - name: confluence_create_page
       - name: confluence_delete_page
@@ -562,7 +572,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sentry.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/sentry
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/1396951?s=200&v=4
     tools:
       - name: get_sentry_issue
     secrets:
@@ -574,7 +584,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gitlab.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gitlab.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/1086321?s=200&v=4
     tools:
       - name: create_branch
       - name: create_issue
@@ -602,7 +612,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/obsidian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/obsidian.md
     source: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/obsidian.svg
+    icon: https://avatars.githubusercontent.com/u/65011256?s=200&v=4
     tools:
       - name: obsidian_append_content
       - name: obsidian_batch_get_file_contents
@@ -763,7 +773,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
     source: https://github.com/datastax/astra-db-mcp/tree/refs/pull/14/merge
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/datastax.svg
+    icon: https://avatars.githubusercontent.com/u/573369?s=200&v=4
     tools:
       - name: BulkCreateRecords
       - name: BulkDeleteRecords
