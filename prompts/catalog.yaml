@@ -320,13 +320,23 @@ registry:
     prompts: 0
     resources: {}
   filesystem:
-    description: |
-      Local filesystem access with configurable allowed paths
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/filesystem.md
+    description: Local filesystem access with configurable allowed paths
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/filesystem.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools: []
+    tools:
+      - name: create_directory
+      - name: directory_tree
+      - name: edit_file
+      - name: get_file_info
+      - name: list_allowed_directories
+      - name: list_directory
+      - name: move_file
+      - name: read_file
+      - name: read_multiple_files
+      - name: search_files
+      - name: write_file
     prompts: 0
     resources: {}
     config:
