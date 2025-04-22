@@ -70,10 +70,12 @@ Available Data Models:
 Retrieve real-time search data from Dappier by processing an AI model that supports two key capabilities:
 
     - Real-Time Web Search:  
-    Access the latest news, weather, travel information, deals, and more using model `am_01j06ytn18ejftedz6dyhz2b15`.
+    Access the latest news, stock market data, weather, travel information, deals, and more using model `am_01j06ytn18ejftedz6dyhz2b15`.  
+    Use this model when no stock ticker symbol is provided.
 
     - Stock Market Data:  
-    Retrieve real-time financial news, stock prices, and trade updates using model `am_01j749h8pbf7ns8r1bq9s2evrh`.
+    Retrieve real-time financial news, stock prices, and trade updates using model `am_01j749h8pbf7ns8r1bq9s2evrh`.  
+    Use this model only when a stock ticker symbol is provided.
 
     Based on the provided `ai_model_id`, the tool selects the appropriate model and returns search results.
 Parameters|Type|Description
@@ -81,8 +83,8 @@ Parameters|Type|Description
 `ai_model_id`|`string`|The AI model ID to use for the query.
 
 Available AI Models:
-- am_01j06ytn18ejftedz6dyhz2b15: (Real Time Data) Access real-time Google web search results, including the latest news, weather, travel, deals, and more.
-- am_01j749h8pbf7ns8r1bq9s2evrh: (Stock Market Data) Access real-time financial news, stock prices, and trades from Polygon.io, with AI-powered insights and up-to-the-minute updates.
+- am_01j06ytn18ejftedz6dyhz2b15: (Real-Time Data) Access real-time Google web search results, including the latest news, stock market data, news, weather, travel, deals, and more. Use this model when no stock ticker symbol is provided.
+- am_01j749h8pbf7ns8r1bq9s2evrh: (Stock Market Data) Access real-time financial news, stock prices, and trades from Polygon.io, with AI-powered insights and up-to-the-minute updates. Use this model only when a stock ticker symbol is provided.
 
 
 `query`|`string`|The search query to retrieve real-time information.
