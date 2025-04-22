@@ -34,14 +34,20 @@ export function useCatalog(client: v1.DockerDesktopClient) {
     const enrichCatalogItem = (item: CatalogItemWithName): CatalogItemRichened => {
         const secretsWithAssignment = Secrets.getSecretsWithAssignment(item, secrets || []);
         const itemConfigValue = config?.[item.name] || {};
-        const unConfigured = Boolean(item.config && Object.keys(itemConfigValue).length === 0);
+        const neverOnceConfigured = Boolean(item.config && Object.keys(itemConfigValue).length === 0);
+        const configTemplate = getTemplateForItem(item, itemConfigValue);
+        const baseConfigTemplate = getTemplateForItem(item, {});
+        const unConfigured = neverOnceConfigured || JSON.stringify(itemConfigValue) === JSON.stringify(baseConfigTemplate);
+        if (item.name === 'atlassian') {
+            console.log('atlassian', itemConfigValue, configTemplate, unConfigured)
+        }
         const missingASecret = secretsWithAssignment.some((secret) => !secret.assigned);
         const enrichedItem: CatalogItemRichened = {
             ...item,
             secrets: secretsWithAssignment,
             configValue: itemConfigValue,
             configSchema: item.config,
-            configTemplate: getTemplateForItem(item, itemConfigValue),
+            configTemplate,
             missingConfig: unConfigured,
             missingSecrets: missingASecret,
             registered: !!registryItems?.[item.name],

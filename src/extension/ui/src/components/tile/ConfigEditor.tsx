@@ -4,7 +4,7 @@ import { CatalogItemRichened } from "../../types/catalog";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import * as JsonSchema from "json-schema-library";
 import { getTemplateForItem, useConfig } from "../../hooks/useConfig";
-import { deepFlattenObject, deepSet } from "../../MergeDeep";
+import { buildObjectFromFlattenedObject, deepFlattenObject, deepSet } from "../../MergeDeep";
 import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
 import { v1 } from "@docker/extension-api-client-types";
 
@@ -87,7 +87,7 @@ const ConfigEditor = ({ catalogItem, client }: { catalogItem: CatalogItemRichene
                                     <CircularProgress size={24} />
                                 ) : (
                                     <Stack direction="row" spacing={2}>
-                                        <IconButton onClick={() => updateExistingConfig(catalogItem.name, localConfig)}
+                                        <IconButton onClick={() => updateExistingConfig(catalogItem.name, buildObjectFromFlattenedObject(localConfig))}
                                             disabled={isSaving}
                                         >
                                             <CheckOutlined sx={{ color: 'success.main' }} />
