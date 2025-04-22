@@ -317,7 +317,6 @@
        {:jwt (get-token m)
         :user (:id (get-login-info m))})
      (catch Throwable t
-       (logger/error t)
        (logger/warn "user is not logged in to Docker Destkop")))))
 
 (defn has-image? [image]
