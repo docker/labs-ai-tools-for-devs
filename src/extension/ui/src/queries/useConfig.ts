@@ -1,5 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getStoredConfig, syncRegistryWithConfig } from '../Registry';
+import { getStoredConfig, syncConfigWithRegistry } from '../Registry';
 import { POLL_INTERVAL } from '../Constants';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
@@ -20,7 +20,25 @@ export function useConfig(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const configRef = useRef<any>(null);
 
-    // Load config with React Query
+
+    // Sync config with registry - use the exact types from Registry.ts
+    const syncConfigWithRegistryMutation = useMutation({
+        mutationFn: async (registryItems: { [key: string]: { ref: string; config: any } }) => {
+            try {
+                if (!config) return { success: false };
+                await syncConfigWithRegistry(client, registryItems, config);
+                return { success: true };
+            } catch (error) {
+                console.error('Failed to sync config with registry:', error);
+                throw error;
+            }
+        },
+        onSuccess: async () => {
+            // Refetch config to ensure UI is in sync after registry sync
+            await refetchConfig();
+        }
+    });
+
     const {
         data: config = undefined,
         refetch: refetchConfig,
@@ -40,11 +58,10 @@ export function useConfig(client: v1.DockerDesktopClient) {
             }
         },
         refetchInterval: POLL_INTERVAL,
-        staleTime: 30000, // Data remains fresh for 30 seconds
+        staleTime: 30000,
         gcTime: 300000,
     });
 
-    // Save config mutation
     const saveConfigMutation = useMutation({
         mutationFn: async ({ itemName, newConfig }: { itemName: string, newConfig: { [key: string]: any } }) => {
             try {
@@ -60,22 +77,17 @@ export function useConfig(client: v1.DockerDesktopClient) {
                 }, client.host.platform);
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
-
-                // Update our ref with the new state after successful save
                 const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
                 configRef.current = updatedConfigRef;
                 return { itemName, updatedConfig: updatedConfigRef };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to update config: ' + error);
-                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
         },
         onMutate: async ({ itemName, newConfig }) => {
-            // Cancel any outgoing refetches
             await queryClient.cancelQueries({ queryKey: ['config'] });
 
-            // Optimistically update to the new value
             const updatedConfig = {
                 ...(queryClient.getQueryData(['config']) as Record<string, any> || {}),
                 [itemName]: newConfig
@@ -85,26 +97,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
         },
         onSuccess: (data) => {
             client.desktopUI.toast.success('Config saved successfully.');
-            // Update the cached data with the new config
             queryClient.setQueryData(['config'], data.updatedConfig);
-        }
-    });
-
-    // Sync config with registry - use the exact types from Registry.ts
-    const syncRegistryMutation = useMutation({
-        mutationFn: async (registryItems: { [key: string]: { ref: string; config: any } }) => {
-            try {
-                if (!config) return { success: false };
-                await syncRegistryWithConfig(client, registryItems, config);
-                return { success: true };
-            } catch (error) {
-                console.error('Failed to sync config with registry:', error);
-                throw error;
-            }
-        },
-        onSuccess: async () => {
-            // Refetch config to ensure UI is in sync after registry sync
-            await refetchConfig();
         }
     });
 
@@ -123,27 +116,11 @@ export function useConfig(client: v1.DockerDesktopClient) {
         }
     };
 
-    // Make this function handle both with and without config, by ensuring config is present
-    const syncConfigWithRegistry = async (registryItems: { [key: string]: { ref: string; config?: any } }) => {
-        // Convert to the format expected by syncRegistryWithConfig
-        const formattedRegistry: { [key: string]: { ref: string; config: any } } = {};
-
-        // Ensure all registry items have a config property, even if empty
-        for (const [key, item] of Object.entries(registryItems)) {
-            formattedRegistry[key] = {
-                ref: item.ref,
-                config: item.config || {}
-            };
-        }
-
-        await syncRegistryMutation.mutateAsync(formattedRegistry);
-    };
-
     return {
         config,
         configLoading,
         tryLoadConfig,
         saveConfig,
-        syncConfigWithRegistry
+        syncConfigWithRegistry: syncConfigWithRegistryMutation.mutateAsync
     };
 } 

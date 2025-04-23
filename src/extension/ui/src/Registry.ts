@@ -103,7 +103,7 @@ export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, reg
         return;
     }
     console.log('SYNC STARTED. CONFIG -> REGISTRY', config, registry)
-    const oldRegString = JSON.stringify({ registry })
+    const oldRegString = JSON.stringify(registry)
     for (const [itemName, itemConfig] of Object.entries(config)) {
         const registryItem = registry[itemName]
         if (registryItem) {

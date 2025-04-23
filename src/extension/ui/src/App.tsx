@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
 import { CatalogItemRichened } from './types/catalog';
@@ -50,6 +50,19 @@ export function App() {
     catalogAll.registryLoading ||
     requiredImages.isLoading ||
     secrets.isLoading;
+
+  useEffect(() => {
+    if (catalogAll.registryItems && config.config) {
+      config.syncConfigWithRegistry(catalogAll.registryItems);
+    }
+  }, [catalogAll.registryItems]);
+
+  useEffect(() => {
+    if (config.config) {
+      console.log('registryItems', catalogAll.registryItems)
+      catalogAll.syncRegistryWithConfig();
+    }
+  }, [config.config]);
 
   return (
     <>
