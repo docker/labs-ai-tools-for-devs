@@ -9,7 +9,6 @@ import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
-const YourTools = React.lazy(() => import('./tabs/YourTools'));
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
