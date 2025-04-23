@@ -1,13 +1,13 @@
-import { Alert, Badge, Box, ButtonGroup, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
-import { CheckOutlined, Close, CloseOutlined, DeleteOutlined } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { CatalogItemRichened } from "../../types/catalog";
 import { v1 } from "@docker/extension-api-client-types";
-import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, MCP_POLICY_NAME, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
-import ConfigEditor from "./ConfigEditor";
-import { useSecrets } from "../../queries/useSecrets";
+import { CheckOutlined, Close, CloseOutlined, DeleteOutlined } from "@mui/icons-material";
+import { Alert, Badge, Box, ButtonGroup, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, Link, Modal, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography, useTheme } from "@mui/material";
+import { useEffect, useState } from "react";
+import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from "../../Constants";
 import { useCatalogAll, useCatalogOperations } from "../../queries/useCatalog";
 import { useConfig } from "../../queries/useConfig";
+import { useSecrets } from "../../queries/useSecrets";
+import { CatalogItemRichened } from "../../types/catalog";
+import ConfigEditor from "./ConfigEditor";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -155,8 +155,7 @@ const ConfigurationModal = ({
                         <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
                             <Tabs value={tabValue} onChange={handleTabChange}>
                                 <Tab label="Tools" />
-                                {/* <Tab label="Prompts" /> */}
-                                <Tab disabled={contributesNoConfigOrSecrets} label={<Badge invisible={catalogItem.canRegister} sx={{ pl: 1, pr: 1 }} variant="dot" badgeContent={catalogItem.config && catalogItem.config.length > 0 ? 'Secrets' : 'Config'} color="error">Config & Secrets</Badge>} />
+                                {!contributesNoConfigOrSecrets && <Tab label={<Badge invisible={catalogItem.canRegister} sx={{ pl: 1, pr: 1 }} variant="dot" badgeContent={catalogItem.config && catalogItem.config.length > 0 ? 'Secrets' : 'Config'} color="error">Config & Secrets</Badge>} />}
                             </Tabs>
                         </Box>
                         <TabPanel value={tabValue} index={0} >
@@ -168,11 +167,9 @@ const ConfigurationModal = ({
                             <Grid2 container spacing={2} alignItems="flex-start" sx={{ mt: 1, overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}>
                                 {(catalogItem.tools || []).map((tool) => (
                                     <Grid2 key={tool.name} size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}>
-                                        <Tooltip title={tool.name}>
-                                            <Typography component="span" key={tool.name} sx={toolChipStyle}>
-                                                {tool.name.slice(0, 30) + (tool.name.length > 30 ? '...' : '')}
-                                            </Typography>
-                                        </Tooltip>
+                                        <Typography component="span" key={tool.name} sx={toolChipStyle}>
+                                            {tool.name.slice(0, 30) + (tool.name.length > 30 ? '...' : '')}
+                                        </Typography>
                                     </Grid2>
                                 ))}
                             </Grid2>
