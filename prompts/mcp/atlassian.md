@@ -4,8 +4,10 @@ mcp:
       image: mcp/atlassian:latest
       workdir: /app
       secrets:
-        atlassian.jira.token: JIRA_API_TOKEN
-        atlassian.confluence.token: CONFLUENCE_API_TOKEN
+        atlassian.jira.api_token: JIRA_API_TOKEN
+        atlassian.confluence.api_token: CONFLUENCE_API_TOKEN
+        atlassian.jira.personal_token: JIRA_PERSONAL_TOKEN
+        atlassian.confluence.personal_token: CONFLUENCE_PERSONAL_TOKEN
       environment:
         CONFLUENCE_URL: "{{atlassian.confluence.url}}"
         CONFLUENCE_USERNAME: "{{atlassian.confluence.username}}"
