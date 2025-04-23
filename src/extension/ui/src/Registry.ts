@@ -10,7 +10,7 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
         if (registry) {
             const value = parse(registry)['registry'] as { [key: string]: { ref: string, config: any } }
             if (!value) {
-                client.desktopUI.toast.error('Failed to get parse registry.yaml.registry: ' + registry)
+                client.desktopUI.toast.error('Failed to parse registry.yaml: ' + registry)
             }
             return value;
         }
