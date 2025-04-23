@@ -145,28 +145,28 @@ const Tile = ({ item, client }: TileProps) => {
         catalogItem={item}
         client={client}
       />
-      <Card sx={{ height: 150 }}>
+      <Card>
         <CardActionArea
+          sx={{ padding: 1.5 }}
           onClick={(e) => {
             if ((e.target as HTMLElement).tagName !== 'INPUT') {
               setShowConfigModal(true);
             }
           }}
         >
-          <CardContent sx={{ paddingBottom: 0, paddingTop: 2 }}>
-            <Stack direction="column" spacing={0}>
-              <Top
-                onToggleRegister={(checked) => {
-                  if (checked) {
-                    registerCatalogItem(item);
-                  } else {
-                    unregisterCatalogItem(item);
-                  }
-                }}
-                item={item}
-              />
+          <Top
+            onToggleRegister={(checked) => {
+              if (checked) {
+                registerCatalogItem(item);
+              } else {
+                unregisterCatalogItem(item);
+              }
+            }}
+            item={item}
+          />
+          <CardContent sx={(th) => ({ padding: th.spacing(2, 0, 0) })}>
+            <Stack spacing={2} sx={{ alignItems: 'flex-start' }}>
               <Center item={item} />
-              <Divider sx={{ marginBottom: 1 }} />
               <Bottom
                 item={item}
                 needsConfiguration={Boolean(unAssignedSecrets.length)}
