@@ -1,5 +1,5 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { useEffect } from 'react';
+import { useEffect, useCallback, memo } from 'react';
 
 import { CatalogGrid } from './components/CatalogGrid';
 import LoadingState from './components/LoadingState';
@@ -12,6 +12,10 @@ import { syncRegistryWithConfig } from './Registry';
 
 export const client = createDockerDesktopClient();
 
+// Memoize the CatalogGrid component to prevent unnecessary re-renders
+const MemoizedCatalogGrid = memo(CatalogGrid);
+const MemoizedLoadingState = memo(LoadingState);
+
 export function App() {
   // Use hooks directly in the component
   const catalogAll = useCatalogAll(client);
@@ -19,6 +23,13 @@ export function App() {
   const mcpClient = useMCPClient(client);
   const config = useConfig(client);
   const secrets = useSecrets(client);
+
+  // Create a memoized callback for syncing registry with config
+  const syncRegistry = useCallback(async () => {
+    if (config.config && catalogAll.registryItems) {
+      await syncRegistryWithConfig(client, catalogAll.registryItems, config.config);
+    }
+  }, [config.config, catalogAll.registryItems]);
 
   // Create a context-like combined props object to pass to children
   const appProps = {
@@ -42,17 +53,15 @@ export function App() {
     secrets.isLoading;
 
   useEffect(() => {
-    if (config.config && catalogAll.registryItems) {
-      syncRegistryWithConfig(client, catalogAll.registryItems, config.config);
-    }
-  }, [config.config]);
+    syncRegistry();
+  }, [syncRegistry]);
 
   return (
     <>
       {isLoading ? (
-        <LoadingState appProps={appProps} />
+        <MemoizedLoadingState appProps={appProps} />
       ) : (
-        <CatalogGrid appProps={appProps} />
+        <MemoizedCatalogGrid appProps={appProps} />
       )}
     </>
   );

@@ -2,7 +2,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import FolderOpenRounded from '@mui/icons-material/FolderOpenRounded';
 import { Alert, AlertTitle, Badge, Box, Button, Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, OutlinedInput, Stack, Switch, Tab, Tabs, Typography } from '@mui/material';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState, useCallback, useMemo } from 'react';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
 import { CatalogItemRichened } from '../types/catalog';
@@ -44,7 +44,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
     const [showMine, setShowMine] = useState<boolean>(localStorage.getItem('showMine') === 'true');
 
-    const loadDDVersion = async () => {
+    const loadDDVersion = useCallback(async () => {
         try {
             const ddVersionResult = await client.docker.cli.exec('version', ['--format', 'json'])
             setDdVersion(parseDDVersion(JSON.parse(ddVersionResult.stdout).Server.Platform.Name));
@@ -56,12 +56,21 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 client.desktopUI.toast.error('Error loading Docker Desktop version: ' + (error as Error).message);
             }
         }
-    }
+    }, []);
 
     useEffect(() => {
         loadDDVersion();
-    }, []);
+    }, [loadDDVersion]);
 
+    // Only calculate hasOutOfCatalog when relevant data changes
+    const hasOutOfCatalog = useMemo(() => {
+        if (!catalogItems.length || !registryItems || !Object.keys(registryItems).length) {
+            return false;
+        }
+        return !Object.keys(registryItems).every((i) =>
+            catalogItems.some((c: CatalogItemRichened) => c.name === i)
+        );
+    }, [catalogItems, registryItems]);
 
     if (!registryItems) {
         return <>
@@ -69,10 +78,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
             <Typography>Loading registry...</Typography>
         </>
     }
-
-    const hasOutOfCatalog = catalogItems.length > 0 && Object.keys(registryItems).length > 0 && !Object.keys(registryItems).every((i) =>
-        catalogItems.some((c: CatalogItemRichened) => c.name === i)
-    )
 
     if (!ddVersion) {
         return <>
