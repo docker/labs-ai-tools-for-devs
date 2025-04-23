@@ -108,6 +108,7 @@ const ConfigurationModal = ({
     fontSize: 12,
     fontStyle: 'normal',
     fontWeight: 400,
+    width: 'fit-content',
   };
 
   // State for tabs
@@ -259,32 +260,24 @@ const ConfigurationModal = ({
               {!catalogItem?.tools?.length && (
                 <Typography>No tools available for this item.</Typography>
               )}
-              <Grid2
-                container
+              <Stack
                 spacing={1}
-                alignItems="flex-start"
                 sx={{
-                  mt: 1,
                   overflow: 'auto',
                   maxHeight: 'calc(80vh - 200px)',
+                  minHeight: '180px',
                 }}
               >
                 {(catalogItem.tools || []).map((tool) => (
-                  <Grid2
+                  <Typography
                     key={tool.name}
-                    size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 6 }}
+                    variant="body2"
+                    sx={toolChipStyle}
                   >
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      key={tool.name}
-                      sx={toolChipStyle}
-                    >
-                      {tool.name}
-                    </Typography>
-                  </Grid2>
+                    {tool.name}
+                  </Typography>
                 ))}
-              </Grid2>
+              </Stack>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
               <Stack
