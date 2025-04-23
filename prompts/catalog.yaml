@@ -676,11 +676,32 @@ registry:
     prompts: 0
     resources: {}
   mcp-discord:
-    description: |
-      A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/barryyip0625-mcp-discord.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
-    tools: []
+    description: Interact with the Discord platform.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/mcp-discord.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/mcp-discord.md
+    source: https://github.com/slimslenderslacks/mcp-discord/tree/slim/docker
+    icon: https://avatars.githubusercontent.com/u/1965106?s=200&v=4
+    tools:
+      - name: discord_add_multiple_reactions
+      - name: discord_add_reaction
+      - name: discord_create_forum_post
+      - name: discord_create_text_channel
+      - name: discord_create_webhook
+      - name: discord_delete_channel
+      - name: discord_delete_forum_post
+      - name: discord_delete_message
+      - name: discord_delete_webhook
+      - name: discord_edit_webhook
+      - name: discord_get_forum_channels
+      - name: discord_get_forum_post
+      - name: discord_get_server_info
+      - name: discord_login
+      - name: discord_read_messages
+      - name: discord_remove_reaction
+      - name: discord_reply_to_forum
+      - name: discord_send
+      - name: discord_send_webhook_message
+      - name: test
     secrets:
       - name: discord.token
     prompts: 0
