@@ -150,7 +150,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                     {tab === 1 && (
                         <YourClients
                             appProps={appProps}
-                            ddVersion={ddVersion}
                         />
                     )}
                 </Suspense>
