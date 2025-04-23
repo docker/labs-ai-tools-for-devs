@@ -8,10 +8,12 @@
 import Cursor from "./Cursor";
 import ClaudeDesktop from "./ClaudeDesktop";
 import Gordon from "./Gordon";
+import Windsurf from "./Windsurf";
 import { MCPClient } from "./MCPTypes";
 
 export const SUPPORTED_MCP_CLIENTS: MCPClient[] = [
     Gordon,
     ClaudeDesktop,
     Cursor,
+    Windsurf,
 ]
