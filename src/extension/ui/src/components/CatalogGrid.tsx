@@ -1,7 +1,7 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
 import { FolderOpenRounded } from '@mui/icons-material';
-import { Alert, AlertTitle, Badge, Box, Button, Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Alert, AlertTitle, Badge, Box, Button, Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, OutlinedInput, Stack, Switch, Tab, Tabs, Typography } from '@mui/material';
 import React, { Suspense, useEffect, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
@@ -128,7 +128,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                         tab === 0 && <Stack direction="row" spacing={1} alignItems='center' sx={{ mt: 1, py: 1, ...CATALOG_LAYOUT_SX }}>
                             <FormGroup>
                                 <Stack direction="row" spacing={1} alignItems='center' justifyContent="space-evenly">
-                                    <TextField label="Search" sx={{ width: 380 }} value={search} onChange={(e) => setSearch(e.target.value)} />
+                                    <OutlinedInput size="small" type="search" placeholder="Search" sx={{ width: 380 }} value={search} onChange={(e) => setSearch(e.target.value)} />
                                     <FormControlLabel control={<Switch checked={showMine} onChange={(e) => {
                                         setShowMine(e.target.checked)
                                         localStorage.setItem('showMine', e.target.checked.toString())
