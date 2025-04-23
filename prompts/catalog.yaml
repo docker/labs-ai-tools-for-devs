@@ -153,25 +153,6 @@ registry:
       - name: redis.port
     prompts: 0
     resources: {}
-  openapi-schema:
-    description: OpenAPI Schema Model Context Protocol Server
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
-    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/openapi-schema.md
-    source: https://github.com/slimslenderslacks/mcp-openapi-schema/tree/master
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-      - name: get-component
-      - name: get-endpoint
-      - name: get-examples
-      - name: get-path-parameters
-      - name: get-request-body
-      - name: get-response-schema
-      - name: list-components
-      - name: list-endpoints
-      - name: list-security-schemes
-      - name: search-schema
-    prompts: 0
-    resources: {}
   github:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
@@ -465,6 +446,25 @@ registry:
       - name: API-update-a-database
     secrets:
       - name: notion.internal_integration_token
+    prompts: 0
+    resources: {}
+  openapi-schema:
+    description: OpenAPI Schema Model Context Protocol Server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/openapi-schema.md
+    source: https://github.com/slimslenderslacks/mcp-openapi-schema/tree/master
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+      - name: get-component
+      - name: get-endpoint
+      - name: get-examples
+      - name: get-path-parameters
+      - name: get-request-body
+      - name: get-response-schema
+      - name: list-components
+      - name: list-endpoints
+      - name: list-security-schemes
+      - name: search-schema
     prompts: 0
     resources: {}
   atlassian:
