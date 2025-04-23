@@ -2280,3 +2280,26 @@ registry:
       - name: azmcp-subscription-list
     prompts: 0
     resources: {}
+  line:
+    description: MCP server that integrates the LINE Messaging API to connect an AI Agent to the LINE Official Account.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/line.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/line.md
+    source: https://github.com/line/line-bot-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/13128444?v=4
+    tools:
+      - name: broadcast_flex_message
+      - name: broadcast_text_message
+      - name: get_profile
+      - name: push_flex_message
+      - name: push_text_message
+    secrets:
+      - name: line.access_token
+    prompts: 0
+    resources: {}
+    config:
+      - name: line
+        description: Configure the connection to LINE
+        type: object
+        properties:
+          user_id:
+            type: string
