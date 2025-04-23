@@ -100,6 +100,12 @@
                          :password pat
                          :serveraddress "https://index.docker.io/v1/"}})))
 
+(defn list-containers [m]
+  (curl/get
+   "http://localhost/containers/json"
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :throw false}))
+
 (defn list-images [m]
   (curl/get
    "http://localhost/images/json"
@@ -153,8 +159,11 @@
 ;; Tty wraps the process in a pseudo terminal
 ;; StdinOnce closes the stdin after the first client detaches
 ;; OpenStdin just opens stdin
-(defn create-container [{:keys [image entrypoint workdir command host-dir environment thread-id opts mounts volumes ports network_mode secrets]
-                         :or {opts {:Tty true}}}]
+(defn create-container [{:keys [image entrypoint workdir command host-dir
+                                environment thread-id opts mounts volumes
+                                ports network_mode secrets labels]
+                         :or {opts {:Tty true}}
+                         :as m}]
   (let [payload (json/generate-string
                  (merge
                   {:Image image}
@@ -163,10 +172,14 @@
                     {:Env (->> environment
                                (map (fn [[k v]] (format "%s=%s" (name k) v)))
                                (into []))})
-                  {:Labels (->> secrets
-                                keys
-                                (map (fn [secret-key] (let [s (name secret-key)] [(format "x-secret:%s" s) (string/trim (format "/secret/%s" s))])))
-                                (into {}))}
+                  {:Labels  (->> (concat
+                                  (->> secrets
+                                       keys
+                                       (map (fn [secret-key]
+                                              (let [s (name secret-key)]
+                                                [(format "x-secret:%s" s) (string/trim (format "/secret/%s" s))]))))
+                                  (seq labels))
+                                 (into {}))}
                   {:HostConfig
                    (merge
                     {:Binds
@@ -185,7 +198,9 @@
                   (when command {:Cmd command})))
         ascii-payload (String. (.getBytes payload "ASCII"))]
     (curl/post
-     "http://localhost/containers/create"
+     (format
+      "http://localhost/containers/create%s"
+      (if (:name m) (format "?name=%s" (:name m)) ""))
      {:raw-args ["--unix-socket" "/var/run/docker.sock"]
       :throw false
       :body ascii-payload
@@ -293,6 +308,7 @@
 (def get-archive (comp (status? 200 "container->archive") container->archive))
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
+(def containers (comp ->json (status? 200 "list-containers") list-containers))
 
 (defn add-latest [image]
   (let [[_ tag] (re-find #".*(:.*)$" image)]
@@ -478,7 +494,8 @@
       (.flip ^ByteBuffer buf)
       (while (.hasRemaining buf)
         (.write client buf))
-      (catch Throwable _
+      (catch Throwable ex
+        (logger/error "write-stdin error " ex)
         client))
     client))
 
@@ -541,31 +558,31 @@
 
                 ;;;;;;;;;;
             (= 8 (+ offset result))
-            (do
-              (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
-                    stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
-                                  0 :stdin
-                                  1 :stdout
-                                  2 :stderr)
-                    buf (ByteBuffer/allocate size)]
-                (.clear ^ByteBuffer header-buf)
-                (loop [offset 0]
-                  (let [result (.read ^SocketChannel in buf)]
-                    (cond
+
+            (let [size (.getInt (ByteBuffer/wrap (Arrays/copyOfRange ^bytes (.array ^ByteBuffer header-buf) 4 8)))
+                  stream-type (case (int (nth (.array ^ByteBuffer header-buf) 0))
+                                0 :stdin
+                                1 :stdout
+                                2 :stderr)
+                  buf (ByteBuffer/allocate size)]
+              (.clear ^ByteBuffer header-buf)
+              (loop [offset 0]
+                (let [result (.read ^SocketChannel in buf)]
+                  (cond
                         ;;;;;;;;;;
-                      (= -1 result)
-                      (async/close! c)
+                    (= -1 result)
+                    (async/close! c)
 
                         ;;;;;;;;;;
-                      (= size (+ offset result))
-                      (async/put! c {stream-type (String. ^bytes (.array buf))})
+                    (= size (+ offset result))
+                    (async/put! c {stream-type (String. ^bytes (.array buf))})
 
                         ;;;;;;;;;;
-                      :else
-                      (recur (+ offset result)))))
+                    :else
+                    (recur (+ offset result)))))
 
-                (.clear ^ByteBuffer buf)
-                (recur 0)))
+              (.clear ^ByteBuffer buf)
+              (recur 0))
 
                 ;;;;;;;;;;
             :else

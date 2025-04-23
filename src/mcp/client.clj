@@ -46,7 +46,6 @@
         socket-channel (docker/attach-socket (:Id x))
         c (async/chan 10)
         dead-channel (async/chan)]
-
     (docker/start x)
 
     ;; process the output-stream of the container
