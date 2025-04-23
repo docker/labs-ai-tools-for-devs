@@ -2237,6 +2237,17 @@ registry:
         properties:
           risken.url:
             type: string
+  context7:
+    description: Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/context7.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/context7.md
+    source: https://github.com/upstash/context7/tree/master
+    icon: https://avatars.githubusercontent.com/u/74989412?s=200&v=4
+    tools:
+      - name: get-library-docs
+      - name: resolve-library-id
+    prompts: 0
+    resources: {}
   azure:
     description: This repository is for development of the Azure MCP Server, bringing the power of Azure to your agents.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/azure.md
