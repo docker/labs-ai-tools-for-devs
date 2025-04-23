@@ -1,6 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItem, CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
-import { getRegistry } from '../Registry';
+import { getRegistry, syncRegistryWithConfig } from '../Registry';
 import Secrets from '../Secrets';
 import { parse } from 'yaml';
 import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
@@ -113,13 +113,14 @@ function useCatalog(client: v1.DockerDesktopClient) {
         catalogItems,
         catalogLoading,
         tryLoadCatalog,
-        refetchCatalog
+        refetchCatalog,
     };
 }
 
 function useRegistry(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const [canRegister, setCanRegister] = useState<boolean>(false);
+    const { config } = useConfig(client);
 
     const {
         data: registryItems = undefined,
@@ -193,19 +194,26 @@ function useRegistry(client: v1.DockerDesktopClient) {
         }
     });
 
+    const syncRegistryWithConfigMutation = useMutation({
+        mutationFn: async () => {
+            if (!config || !registryItems) return { success: false };
+            await syncRegistryWithConfig(client, registryItems, config);
+        }
+    });
+
     return {
         registryItems,
         registryLoading,
         canRegister,
         tryLoadRegistry: refetchRegistry,
-        mutateRegistry
+        mutateRegistry,
+        syncRegistryWithConfig: syncRegistryWithConfigMutation.mutateAsync
     };
 }
 
 export function useCatalogOperations(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const { registryItems } = useRegistry(client);
-    const { config } = useConfig(client);
 
     // Register catalog item mutation
     const registerItemMutation = useMutation({
@@ -217,21 +225,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                     ...currentRegistry,
                     [item.name]: { ref: item.ref }
                 };
-
-                // Handle configuration
-                if (item.config) {
-                    let itemConfig = config?.[item.name] || {};
-
-                    // If there's a JSON schema configuration, validate and generate default values
-                    if (Array.isArray(item.config) && item.config.length > 0) {
-                        // Use JSON schema template for any remaining defaults
-                        const template = getTemplateForItem(item, itemConfig);
-                        itemConfig = { ...template, ...itemConfig };
-                    }
-
-                    // Assign the configuration
-                    newRegistry[item.name].config = itemConfig;
-                }
 
                 const payload = escapeJSONForPlatformShell(
                     { registry: newRegistry },
@@ -257,14 +250,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                 ...currentRegistry,
                 [item.name]: { ref: item.ref }
             };
-
-            // If there's config, add it
-            if (item.config && config && config[item.name]) {
-                newRegistry[item.name] = {
-                    ...newRegistry[item.name],
-                    config: config[item.name]
-                };
-            }
 
             queryClient.setQueryData(['registry'], newRegistry);
         },
@@ -328,7 +313,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
 export function useCatalogAll(client: v1.DockerDesktopClient) {
     const { catalogItems, catalogLoading, tryLoadCatalog } = useCatalog(client);
-    const { registryItems, registryLoading, canRegister, tryLoadRegistry } = useRegistry(client);
+    const { registryItems, registryLoading, canRegister, tryLoadRegistry, syncRegistryWithConfig } = useRegistry(client);
     const {
         registerCatalogItem,
         unregisterCatalogItem,
@@ -347,5 +332,6 @@ export function useCatalogAll(client: v1.DockerDesktopClient) {
         tryLoadRegistry,
         registerCatalogItem,
         unregisterCatalogItem,
+        syncRegistryWithConfig
     };
 } 
