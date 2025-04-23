@@ -6,7 +6,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, MCP_POLICY_NAME, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
 import ConfigEditor from "./ConfigEditor";
 import { useSecrets } from "../../queries/useSecrets";
-import { useCatalogOperations, useRegistry } from "../../queries/useCatalog";
+import { useCatalogAll, useCatalogOperations } from "../../queries/useCatalog";
 import { useConfig } from "../../queries/useConfig";
 
 interface TabPanelProps {
@@ -54,7 +54,7 @@ const ConfigurationModal = ({
     const theme = useTheme();
 
     const { isLoading: secretsLoading, mutate: mutateSecret } = useSecrets(client)
-    const { registryLoading } = useRegistry(client)
+    const { registryLoading } = useCatalogAll(client)
     const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
     const { configLoading } = useConfig(client)
 

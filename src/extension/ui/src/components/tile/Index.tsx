@@ -9,7 +9,7 @@ import Center from "./Center";
 import Bottom from "./Bottom";
 import { v1 } from "@docker/extension-api-client-types";
 import { useSecrets } from "../../queries/useSecrets";
-import { useCatalogOperations, useRegistry } from "../../queries/useCatalog";
+import { useCatalogAll, useCatalogOperations } from "../../queries/useCatalog";
 import { MCP_POLICY_NAME } from "../../Constants";
 
 type TileProps = {
@@ -25,8 +25,8 @@ const Tile = ({ item, client }: TileProps) => {
     const [secretLoading, setSecretLoading] = useState(false)
     const [showConfigModal, setShowConfigModal] = useState(false)
     const { isLoading: secretsLoading, mutate: mutateSecret } = useSecrets(client)
-    const { registryLoading } = useRegistry(client)
     const { registerCatalogItem, unregisterCatalogItem } = useCatalogOperations(client)
+    const { registryLoading } = useCatalogAll(client)
 
     if (registryLoading || secretsLoading) {
         return <>
