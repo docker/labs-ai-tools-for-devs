@@ -274,7 +274,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kubernetes.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kubernetes.md
     source: https://github.com/Flux159/mcp-server-kubernetes/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/kubernetes.svg
+    icon: https://avatars.githubusercontent.com/u/13629408?s=200&v=4
     tools:
       - name: cleanup
       - name: create_configmap
@@ -378,7 +378,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/youtube_transcript.md
     source: https://github.com/slimslenderslacks/mcp-youtube-transcript/tree/slim/docker
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/youtube.svg
+    icon: https://avatars.githubusercontent.com/u/4052902?s=200&v=4
     tools:
       - name: get_transcript
     prompts: 0
@@ -951,7 +951,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
     source: https://github.com/box-community/mcp-server-box/tree/refs/pull/4/merge
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/box.svg
+    icon: https://avatars.githubusercontent.com/u/8659759?s=200&v=4
     tools:
       - name: box_ai_extract_data
       - name: box_ask_ai_tool
@@ -1706,7 +1706,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/duckduckgo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/duckduckgo.md
     source: https://github.com/nickclyde/duckduckgo-mcp-server/tree/main
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/duckduckgo.svg
+    icon: https://avatars.githubusercontent.com/u/342708?s=200&v=4
     tools:
       - name: fetch_content
       - name: search
