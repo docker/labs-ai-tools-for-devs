@@ -54,7 +54,7 @@ const Bottom = ({ item }: BottomProps) => {
 export default Bottom;
 
 function pluralize(noun: string, count: number): string {
-  return Math.abs(count) === 1 ? noun : `${noun}s`;
+  return Math.abs(count) <= 1 ? noun : `${noun}s`;
 }
 
 const StyledSVG = styled(SVG)((props) => {
