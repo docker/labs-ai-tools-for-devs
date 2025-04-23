@@ -2303,3 +2303,18 @@ registry:
         properties:
           user_id:
             type: string
+  gyazo:
+    description: Official Model Context Protocol server for Gyazo
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gyazo.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gyazo.md
+    source: https://github.com/nota/gyazo-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/113151?v=4
+    tools:
+      - name: gyazo_image
+      - name: gyazo_latest_image
+      - name: gyazo_search
+      - name: gyazo_upload
+    secrets:
+      - name: gyazo.access_token
+    prompts: 0
+    resources: {}
