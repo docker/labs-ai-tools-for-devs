@@ -253,8 +253,27 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                 return { success: true, newRegistry };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to register catalog item: ' + error);
+                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
+        },
+        onMutate: async ({ item }) => {
+            // Optimistically update the registry data
+            const currentRegistry = queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {};
+            const newRegistry: { [key: string]: { ref: string; config?: any } } = {
+                ...currentRegistry,
+                [item.name]: { ref: item.ref }
+            };
+
+            // If there's config, add it
+            if (item.config && config && config[item.name]) {
+                newRegistry[item.name] = {
+                    ...newRegistry[item.name],
+                    config: config[item.name]
+                };
+            }
+
+            queryClient.setQueryData(['registry'], newRegistry);
         },
         onSuccess: async (data) => {
             // Update the registry data after successful registration
@@ -285,8 +304,20 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                 return { success: true, newRegistry: currentRegistry };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to unregister catalog item: ' + error);
+                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
+        },
+        onMutate: async (item) => {
+            // Optimistically update the registry data
+            const currentRegistry = { ...(queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {}) };
+
+            // Remove the item
+            if (currentRegistry[item.name]) {
+                delete currentRegistry[item.name];
+            }
+
+            queryClient.setQueryData(['registry'], currentRegistry);
         },
         onSuccess: async (data) => {
             // Update the registry data after successful unregistration

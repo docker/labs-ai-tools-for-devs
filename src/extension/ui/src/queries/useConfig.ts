@@ -67,6 +67,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
                 return { itemName, updatedConfig: updatedConfigRef };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to update config: ' + error);
+                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
         },
@@ -74,24 +75,13 @@ export function useConfig(client: v1.DockerDesktopClient) {
             // Cancel any outgoing refetches
             await queryClient.cancelQueries({ queryKey: ['config'] });
 
-            // Snapshot the previous value
-            const previousConfig = queryClient.getQueryData(['config']);
-
             // Optimistically update to the new value
             const updatedConfig = {
-                ...(previousConfig as Record<string, any> || {}),
+                ...(queryClient.getQueryData(['config']) as Record<string, any> || {}),
                 [itemName]: newConfig
             };
 
             queryClient.setQueryData(['config'], updatedConfig);
-
-            return { previousConfig };
-        },
-        onError: (err, variables, context) => {
-            // If the mutation fails, use the context to roll back
-            if (context?.previousConfig) {
-                queryClient.setQueryData(['config'], context.previousConfig);
-            }
         },
         onSuccess: (data) => {
             client.desktopUI.toast.success('Config saved successfully.');
