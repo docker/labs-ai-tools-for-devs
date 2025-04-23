@@ -7,7 +7,7 @@ import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { CatalogItemRichened } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
-import { useCatalog } from '../../hooks/useCatalog';
+import { useCatalogAll } from '../../queries/useCatalog';
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 
@@ -18,7 +18,7 @@ interface YourToolsProps {
 const YourTools: React.FC<YourToolsProps> = ({
     search,
 }) => {
-    const { catalogItems } = useCatalog(client)
+    const { catalogItems } = useCatalogAll(client)
     return (
         <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
             {catalogItems.map((catalogItem) => {

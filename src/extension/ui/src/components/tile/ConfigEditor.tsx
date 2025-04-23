@@ -3,7 +3,7 @@ import { Alert, Stack } from "@mui/material";
 import { CatalogItemRichened } from "../../types/catalog";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import * as JsonSchema from "json-schema-library";
-import { getTemplateForItem, useConfig } from "../../hooks/useConfig";
+import { getTemplateForItem, useConfig } from "../../queries/useConfig";
 import { buildObjectFromFlattenedObject, deepFlattenObject, deepSet } from "../../MergeDeep";
 import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
 import { v1 } from "@docker/extension-api-client-types";

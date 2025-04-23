@@ -7,11 +7,11 @@ import { CatalogGrid } from './components/CatalogGrid';
 import { POLL_INTERVAL } from './Constants';
 import ConfigurationModal from './components/tile/Modal';
 import LoadingState from './components/LoadingState';
-import { useCatalogAll } from './hooks/useCatalog';
-import { useRequiredImages } from './hooks/useRequiredImages';
-import { useMCPClient } from './hooks/useMCPClient';
-import { useConfig } from './hooks/useConfig';
-import { useSecrets } from './hooks/useSecrets';
+import { useCatalogAll } from './queries/useCatalog';
+import { useRequiredImages } from './queries/useRequiredImages';
+import { useMCPClient } from './queries/useMCPClient';
+import { useConfig } from './queries/useConfig';
+import { useSecrets } from './queries/useSecrets';
 
 export const client = createDockerDesktopClient();
 

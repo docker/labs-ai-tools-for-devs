@@ -9,7 +9,6 @@ import { getTemplateForItem } from './useConfig';
 import { useState, useEffect } from 'react';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
 import { useConfig } from './useConfig';
-import { useRequiredImages } from './useRequiredImages';
 import { useSecrets } from "./useSecrets";
 
 // Storage keys for each query type
@@ -25,7 +24,7 @@ interface QueryContextWithMeta {
     };
 }
 
-export function useCatalog(client: v1.DockerDesktopClient) {
+function useCatalog(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const { data: secrets, isLoading: secretsLoading } = useSecrets(client);
     const { registryItems, registryLoading } = useRegistry(client);
@@ -38,9 +37,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
         const configTemplate = getTemplateForItem(item, itemConfigValue);
         const baseConfigTemplate = getTemplateForItem(item, {});
         const unConfigured = Boolean(item.config) && (neverOnceConfigured || JSON.stringify(itemConfigValue) === JSON.stringify(baseConfigTemplate));
-        if (item.name === 'elevenlabs') {
-            console.log('elevenlabs', itemConfigValue, configTemplate, unConfigured)
-        }
+
         const missingASecret = secretsWithAssignment.some((secret) => !secret.assigned);
         const enrichedItem: CatalogItemRichened = {
             ...item,
@@ -80,10 +77,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
     // without causing a full catalog reload
     useEffect(() => {
         if (catalogItems.length > 0 && !secretsLoading && !configLoading && !registryLoading) {
-            const enrichedItems = catalogItems.map(item => ({
-                ...item,
-                ...enrichCatalogItem(item)
-            }));
+            const enrichedItems = catalogItems.map(enrichCatalogItem);
 
             // Use the same reference if nothing changed to prevent unnecessary re-renders
             const hasChanges = JSON.stringify(enrichedItems) !== JSON.stringify(catalogItems);
@@ -123,7 +117,7 @@ export function useCatalog(client: v1.DockerDesktopClient) {
     };
 }
 
-export function useRegistry(client: v1.DockerDesktopClient) {
+function useRegistry(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const [canRegister, setCanRegister] = useState<boolean>(false);
 
@@ -210,9 +204,8 @@ export function useRegistry(client: v1.DockerDesktopClient) {
 
 export function useCatalogOperations(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
-    const { registryItems, canRegister } = useRegistry(client);
-    const { config, syncConfigWithRegistry } = useConfig(client);
-    const { loadAllImages } = useRequiredImages(client);
+    const { registryItems } = useRegistry(client);
+    const { config } = useConfig(client);
 
     // Register catalog item mutation
     const registerItemMutation = useMutation({
@@ -231,32 +224,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                     // If there's a JSON schema configuration, validate and generate default values
                     if (Array.isArray(item.config) && item.config.length > 0) {
-                        const configSchema = item.config[0];
-
-                        // Check if we have required fields from anyOf conditions
-                        if (configSchema.anyOf) {
-                            configSchema.anyOf.forEach((condition: any) => {
-                                if (condition.required) {
-                                    condition.required.forEach((field: string) => {
-                                        if (!(field in itemConfig)) {
-                                            // Generate a default value if possible
-                                            itemConfig[field] = "";
-                                        }
-                                    });
-                                }
-                            });
-                        }
-
-                        // Handle normal required fields
-                        if (configSchema.required) {
-                            configSchema.required.forEach((field: string) => {
-                                if (!(field in itemConfig)) {
-                                    // Generate a default value if possible
-                                    itemConfig[field] = "";
-                                }
-                            });
-                        }
-
                         // Use JSON schema template for any remaining defaults
                         const template = getTemplateForItem(item, itemConfig);
                         itemConfig = { ...template, ...itemConfig };
@@ -273,17 +240,33 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
 
-                await syncConfigWithRegistry(newRegistry);
-                await loadAllImages();
-
                 if (showNotification) {
                     client.desktopUI.toast.success(`${item.name} registered successfully.`);
                 }
                 return { success: true, newRegistry };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to register catalog item: ' + error);
+                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
+        },
+        onMutate: async ({ item }) => {
+            // Optimistically update the registry data
+            const currentRegistry = queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {};
+            const newRegistry: { [key: string]: { ref: string; config?: any } } = {
+                ...currentRegistry,
+                [item.name]: { ref: item.ref }
+            };
+
+            // If there's config, add it
+            if (item.config && config && config[item.name]) {
+                newRegistry[item.name] = {
+                    ...newRegistry[item.name],
+                    config: config[item.name]
+                };
+            }
+
+            queryClient.setQueryData(['registry'], newRegistry);
         },
         onSuccess: async (data) => {
             // Update the registry data after successful registration
@@ -310,14 +293,24 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
 
-                // Explicitly sync the registry with config
-                await syncConfigWithRegistry(currentRegistry);
                 client.desktopUI.toast.success(`${item.name} unregistered successfully.`);
                 return { success: true, newRegistry: currentRegistry };
             } catch (error) {
                 client.desktopUI.toast.error('Failed to unregister catalog item: ' + error);
+                // Treat YAML file write failures as fatal, no rollback
                 throw error;
             }
+        },
+        onMutate: async (item) => {
+            // Optimistically update the registry data
+            const currentRegistry = { ...(queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {}) };
+
+            // Remove the item
+            if (currentRegistry[item.name]) {
+                delete currentRegistry[item.name];
+            }
+
+            queryClient.setQueryData(['registry'], currentRegistry);
         },
         onSuccess: async (data) => {
             // Update the registry data after successful unregistration

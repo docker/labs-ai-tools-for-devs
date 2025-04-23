@@ -3,7 +3,7 @@ import { Grid2 } from '@mui/material';
 import Tile from '../tile/Index';
 import { v1 } from "@docker/extension-api-client-types";
 import { CATALOG_LAYOUT_SX } from '../../Constants';
-import { useCatalog } from '../../hooks/useCatalog';
+import { useCatalogAll } from '../../queries/useCatalog';
 
 interface ToolCatalogProps {
     search: string;
@@ -12,7 +12,7 @@ interface ToolCatalogProps {
 }
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, showMine }) => {
-    const { catalogItems } = useCatalog(client)
+    const { catalogItems } = useCatalogAll(client)
     const filteredCatalogItems = catalogItems.filter(item => {
         const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
         const hideBecauseItsNotMine = showMine && !item.registered;
