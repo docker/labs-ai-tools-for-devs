@@ -1,11 +1,9 @@
 import { v1 } from '@docker/extension-api-client-types';
-import {
-  CheckOutlined,
-  Close,
-  CloseOutlined,
-  DeleteOutlined,
-  Launch,
-} from '@mui/icons-material';
+import CheckOutlined from '@mui/icons-material/CheckOutlined';
+import Close from '@mui/icons-material/Close';
+import CloseOutlined from '@mui/icons-material/CloseOutlined';
+import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import Launch from '@mui/icons-material/Launch';
 import {
   Alert,
   Avatar,

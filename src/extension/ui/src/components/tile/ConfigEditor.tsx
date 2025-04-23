@@ -1,12 +1,13 @@
-import { Button, CircularProgress, IconButton, TextField, Typography } from "@mui/material";
-import { Alert, Stack } from "@mui/material";
-import { CatalogItemRichened } from "../../types/catalog";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import * as JsonSchema from "json-schema-library";
-import { getTemplateForItem, useConfig } from "../../queries/useConfig";
-import { buildObjectFromFlattenedObject, deepFlattenObject, deepSet } from "../../MergeDeep";
-import { CheckOutlined, CloseOutlined } from "@mui/icons-material";
 import { v1 } from "@docker/extension-api-client-types";
+import CheckOutlined from "@mui/icons-material/CheckOutlined";
+import CloseOutlined from "@mui/icons-material/CloseOutlined";
+import { Alert, CircularProgress, IconButton, Stack, TextField, Typography } from "@mui/material";
+import * as JsonSchema from "json-schema-library";
+import { useEffect, useMemo, useState } from "react";
+
+import { buildObjectFromFlattenedObject, deepFlattenObject } from "../../MergeDeep";
+import { useConfig } from "../../queries/useConfig";
+import { CatalogItemRichened } from "../../types/catalog";
 
 JsonSchema.settings.GET_TEMPLATE_RECURSION_LIMIT = 1000;
 JsonSchema.settings.templateDefaultOptions.addOptionalProps = true;
