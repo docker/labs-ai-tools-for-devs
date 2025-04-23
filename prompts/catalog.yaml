@@ -464,7 +464,7 @@ registry:
       - name: API-update-a-block
       - name: API-update-a-database
     secrets:
-      - name: notion.openai_mcp_headers
+      - name: notion.internal_integration_token
     prompts: 0
     resources: {}
   atlassian:
