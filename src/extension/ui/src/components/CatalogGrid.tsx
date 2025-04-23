@@ -1,12 +1,12 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { IconButton, Alert, AlertTitle, Stack, Button, Typography, FormGroup, FormControlLabel, Dialog, DialogTitle, DialogContent, Checkbox, Badge, TextField, Tabs, Tab, CircularProgress, Box, Menu, Divider, Switch, MenuItem } from '@mui/material';
-import { SwapVert, FolderOpenRounded } from '@mui/icons-material';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
-import YourClients from './tabs/YourClients';
-import { CatalogItemRichened } from '../types/catalog';
+import { FolderOpenRounded } from '@mui/icons-material';
+import { Alert, AlertTitle, Badge, Box, Button, Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import React, { Suspense, useEffect, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { MCPClientState } from '../MCPClients';
+import { CatalogItemRichened } from '../types/catalog';
+import YourClients from './tabs/YourClients';
 
 const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
 
