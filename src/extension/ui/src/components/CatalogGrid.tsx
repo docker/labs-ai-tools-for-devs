@@ -42,11 +42,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
     const [search, setSearch] = useState<string>('');
     const [tab, setTab] = useState<number>(0);
     const [ddVersion, setDdVersion] = useState<{ version: string, build: number } | null>(null);
-    const [openMenus, setOpenMenus] = useState<{ [key: string]: { anchorEl: HTMLElement | null, open: boolean } }>({
-        'demo-customized-menu': { anchorEl: null, open: false }
-    });
-
-    const [sort, setSort] = useState<'name-asc' | 'name-desc' | 'date-asc' | 'date-desc'>('date-desc');
     const [showMine, setShowMine] = useState<boolean>(localStorage.getItem('showMine') === 'true');
 
     const loadDDVersion = async () => {
@@ -134,51 +129,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                             <FormGroup>
                                 <Stack direction="row" spacing={1} alignItems='center' justifyContent="space-evenly">
                                     <TextField label="Search" sx={{ width: 380 }} value={search} onChange={(e) => setSearch(e.target.value)} />
-                                    <IconButton
-                                        id="demo-customized-button"
-                                        aria-controls={openMenus['demo-customized-menu'] ? 'demo-customized-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={openMenus['demo-customized-menu'] ? 'true' : undefined}
-                                        onClick={(e) => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: e.currentTarget, open: !openMenus['demo-customized-menu'].open } })}
-                                    >
-                                        <SwapVert />
-                                    </IconButton>
                                     <FormControlLabel control={<Switch checked={showMine} onChange={(e) => {
                                         setShowMine(e.target.checked)
                                         localStorage.setItem('showMine', e.target.checked.toString())
                                     }} />} label="Show only enabled tools" />
                                 </Stack>
                             </FormGroup>
-
-                            <Menu
-                                id="demo-customized-menu"
-                                MenuListProps={{
-                                    'aria-labelledby': 'demo-customized-button',
-                                }}
-                                anchorEl={openMenus['demo-customized-menu'].anchorEl || undefined}
-                                open={openMenus['demo-customized-menu'].open}
-                                onClose={() => setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })}
-                            >
-                                <MenuItem sx={{ fontWeight: sort === 'date-desc' ? 'bold' : 'normal' }} onClick={() => {
-                                    setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
-                                    setSort('date-desc')
-                                }} disableRipple>
-                                    ⏰ Most Recent
-                                </MenuItem>
-                                <Divider sx={{ my: 0.5 }} />
-                                <MenuItem sx={{ fontWeight: sort === 'name-asc' ? 'bold' : 'normal' }} onClick={() => {
-                                    setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
-                                    setSort('name-asc')
-                                }} disableRipple>
-                                    Name (A-Z)
-                                </MenuItem>
-                                <MenuItem sx={{ fontWeight: sort === 'name-desc' ? 'bold' : 'normal' }} onClick={() => {
-                                    setOpenMenus({ ...openMenus, 'demo-customized-menu': { anchorEl: null, open: false } })
-                                    setSort('name-desc')
-                                }} disableRipple>
-                                    Name (Z-A)
-                                </MenuItem>
-                            </Menu>
                         </Stack>
                     }
 
