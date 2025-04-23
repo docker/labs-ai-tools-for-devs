@@ -2,7 +2,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItem, CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
 import { getRegistry, syncRegistryWithConfig } from '../Registry';
 import Secrets from '../Secrets';
-import { parse } from 'yaml';
+import { parse, stringify } from "yaml";
 import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTemplateForItem } from './useConfig';
@@ -183,12 +183,14 @@ function useRegistry(client: v1.DockerDesktopClient) {
 
     const mutateRegistry = useMutation({
         mutationFn: async (newRegistry: { [key: string]: { ref: string; config?: any } }) => {
-            const payload = escapeJSONForPlatformShell(
-                { registry: newRegistry },
-                client.host.platform
-            );
+            const payload = escapeJSONForPlatformShell({
+                files: [{
+                    path: 'registry.yaml',
+                    content: stringify({ registry: newRegistry })
+                }]
+            }, client.host.platform);
 
-            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
+            await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
 
             return newRegistry;
         }
@@ -226,12 +228,14 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                     [item.name]: { ref: item.ref }
                 };
 
-                const payload = escapeJSONForPlatformShell(
-                    { registry: newRegistry },
-                    client.host.platform
-                );
+                const payload = escapeJSONForPlatformShell({
+                    files: [{
+                        path: "registry.yaml",
+                        content: stringify({ registry: newRegistry })
+                    }]
+                }, client.host.platform);
 
-                await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
+                await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
 
                 if (showNotification) {
                     client.desktopUI.toast.success(`${item.name} registered successfully.`);
@@ -271,12 +275,14 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                     delete currentRegistry[item.name];
                 }
 
-                const payload = escapeJSONForPlatformShell(
-                    { registry: currentRegistry },
-                    client.host.platform
-                );
+                const payload = escapeJSONForPlatformShell({
+                    files: [{
+                        path: "registry.yaml",
+                        content: stringify({ registry: currentRegistry })
+                    }]
+                }, client.host.platform);
 
-                await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
+                await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', payload]);
 
                 client.desktopUI.toast.success(`${item.name} unregistered successfully.`);
                 return { success: true, newRegistry: currentRegistry };
