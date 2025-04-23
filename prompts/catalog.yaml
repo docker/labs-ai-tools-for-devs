@@ -145,14 +145,70 @@ registry:
     resources: {}
   redis:
     description: Access to Redis database operations.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
-    tools: []
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/redis.md
+    source: https://github.com/redis/mcp-redis/tree/main
+    icon: https://avatars.githubusercontent.com/u/1529926?v=4
+    tools:
+      - name: client_list
+      - name: create_vector_index_hash
+      - name: dbsize
+      - name: delete
+      - name: expire
+      - name: get
+      - name: get_index_info
+      - name: get_indexed_keys_number
+      - name: get_indexes
+      - name: get_vector_from_hash
+      - name: hdel
+      - name: hexists
+      - name: hget
+      - name: hgetall
+      - name: hset
+      - name: info
+      - name: json_del
+      - name: json_get
+      - name: json_set
+      - name: llen
+      - name: lpop
+      - name: lpush
+      - name: lrange
+      - name: publish
+      - name: rename
+      - name: rpop
+      - name: rpush
+      - name: sadd
+      - name: set
+      - name: set_vector_in_hash
+      - name: smembers
+      - name: srem
+      - name: subscribe
+      - name: type
+      - name: unsubscribe
+      - name: vector_search_hash
+      - name: xadd
+      - name: xdel
+      - name: xrange
+      - name: zadd
+      - name: zrange
+      - name: zrem
     secrets:
-      - name: redis.host
-      - name: redis.port
+      - name: redis.password
     prompts: 0
     resources: {}
+    config:
+      - name: redis
+        description: Configure the connection to Redis
+        type: object
+        properties:
+          redis.host:
+            type: string
+          redis.port:
+            type: integer
+          redis.ssl:
+            type: boolean
+          redis.username:
+            type: string
   github:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md

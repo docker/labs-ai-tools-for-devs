@@ -4,14 +4,12 @@ mcp:
       image: mcp/redis:latest
       workdir: /app
       secrets:
-        redis.host: REDIS_HOST
-        redis.port: REDIS_PORT
-      command:
-        - "--redis-host"
-        - $REDIS_HOST
-        - "--redis-port"
-        - $REDIS_PORT
+        redis.password: REDIS_PWD
+      environment:
+        REDIS_HOST: "{{redis.host}}"
+        REDIS_PORT: "{{redis.port}}"
+        REDIS_USERNAME: "{{redis.username}}"
+        REDIS_SSL: "{{redis.ssl}}"
     source:
-      url: https://github.com/smithery-ai/redis-mcp/tree/smithery/config-wxbv
+      url: https://github.com/redis/mcp-redis/tree/main
 ---
-
