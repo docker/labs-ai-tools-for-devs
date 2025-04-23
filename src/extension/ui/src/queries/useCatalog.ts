@@ -247,9 +247,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
 
-                await syncConfigWithRegistry(newRegistry);
-                await loadAllImages();
-
                 if (showNotification) {
                     client.desktopUI.toast.success(`${item.name} registered successfully.`);
                 }
@@ -284,8 +281,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                 await tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '--workdir', '/docker-prompts', 'vonwig/function_write_files:latest', 'registry.yaml', payload]);
 
-                // Explicitly sync the registry with config
-                await syncConfigWithRegistry(currentRegistry);
                 client.desktopUI.toast.success(`${item.name} unregistered successfully.`);
                 return { success: true, newRegistry: currentRegistry };
             } catch (error) {
