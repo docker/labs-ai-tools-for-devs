@@ -20,25 +20,6 @@ export function useConfig(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
     const configRef = useRef<any>(null);
 
-
-    // Sync config with registry - use the exact types from Registry.ts
-    const syncConfigWithRegistryMutation = useMutation({
-        mutationFn: async (registryItems: { [key: string]: { ref: string; config: any } }) => {
-            try {
-                if (!config) return { success: false };
-                await syncConfigWithRegistry(client, registryItems, config);
-                return { success: true };
-            } catch (error) {
-                console.error('Failed to sync config with registry:', error);
-                throw error;
-            }
-        },
-        onSuccess: async () => {
-            // Refetch config to ensure UI is in sync after registry sync
-            await refetchConfig();
-        }
-    });
-
     const {
         data: config = undefined,
         refetch: refetchConfig,
@@ -121,6 +102,5 @@ export function useConfig(client: v1.DockerDesktopClient) {
         configLoading,
         tryLoadConfig,
         saveConfig,
-        syncConfigWithRegistry: syncConfigWithRegistryMutation.mutateAsync
     };
 } 

@@ -12,6 +12,7 @@ import { useRequiredImages } from './queries/useRequiredImages';
 import { useMCPClient } from './queries/useMCPClient';
 import { useConfig } from './queries/useConfig';
 import { useSecrets } from './queries/useSecrets';
+import { syncConfigWithRegistry, syncRegistryWithConfig } from './Registry';
 
 export const client = createDockerDesktopClient();
 
@@ -52,15 +53,9 @@ export function App() {
     secrets.isLoading;
 
   useEffect(() => {
-    if (catalogAll.registryItems && config.config) {
-      config.syncConfigWithRegistry(catalogAll.registryItems);
-    }
-  }, [catalogAll.registryItems]);
-
-  useEffect(() => {
-    if (config.config) {
+    if (config.config && catalogAll.registryItems) {
       console.log('registryItems', catalogAll.registryItems)
-      catalogAll.syncRegistryWithConfig();
+      syncRegistryWithConfig(client, catalogAll.registryItems, config.config);
     }
   }, [config.config]);
 
