@@ -1,14 +1,15 @@
-import { Chip, ListItem, ListItemText, List, Button, Tooltip, CircularProgress, Typography, Link, Divider, AccordionSummary, Accordion, AccordionDetails, Stack } from "@mui/material";
-import { Box } from "@mui/material";
-import { DOCKER_MCP_COMMAND, CATALOG_LAYOUT_SX } from "../../Constants";
-import { LinkOff, LinkRounded, SaveOutlined } from "@mui/icons-material";
-import { v1 } from "@docker/extension-api-client-types";
-import ClaudeIcon from '../../assets/claude-ai-icon.svg'
-import GordonIcon from '../../assets/gordon-icon.png'
-import CursorIcon from '../../assets/cursor.svg'
-import ChatGPTIcon from '../../assets/chatgpt.svg'
-import { useState } from "react";
 import { createDockerDesktopClient } from '@docker/extension-api-client';
+import LinkOff from '@mui/icons-material/LinkOff';
+import LinkRounded from '@mui/icons-material/LinkRounded';
+import SaveOutlined from '@mui/icons-material/SaveOutlined';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, CircularProgress, Divider, Link, List, ListItem, ListItemText, Stack, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
+
+import ChatGPTIcon from '../../assets/chatgpt.svg';
+import ClaudeIcon from '../../assets/claude-ai-icon.svg';
+import CursorIcon from '../../assets/cursor.svg';
+import GordonIcon from '../../assets/gordon-icon.png';
+import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from "../../Constants";
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();

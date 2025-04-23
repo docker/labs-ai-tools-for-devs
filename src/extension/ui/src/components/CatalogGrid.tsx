@@ -1,6 +1,6 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
-import { FolderOpenRounded } from '@mui/icons-material';
+import FolderOpenRounded from '@mui/icons-material/FolderOpenRounded';
 import { Alert, AlertTitle, Badge, Box, Button, Checkbox, CircularProgress, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, OutlinedInput, Stack, Switch, Tab, Tabs, Typography } from '@mui/material';
 import React, { Suspense, useEffect, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../Constants';

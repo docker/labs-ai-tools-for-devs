@@ -1,5 +1,6 @@
 import { v1 } from '@docker/extension-api-client-types';
-import { LockReset, Save } from '@mui/icons-material';
+import LockReset from '@mui/icons-material/LockReset';
+import Save from '@mui/icons-material/Save';
 import {
   Card,
   CardActionArea,
