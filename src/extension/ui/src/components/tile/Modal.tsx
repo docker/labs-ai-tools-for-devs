@@ -279,9 +279,12 @@ const ConfigurationModal = ({
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
               <Stack
-                direction="column"
                 spacing={1}
-                sx={{ overflow: 'auto', maxHeight: 'calc(80vh - 350px)' }}
+                sx={{
+                  overflow: 'auto',
+                  maxHeight: 'calc(80vh - 200px)',
+                  minHeight: '180px',
+                }}
               >
                 <Stack
                   direction="column"
