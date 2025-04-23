@@ -6,23 +6,15 @@ import { parse, stringify } from "yaml";
 import { CATALOG_URL, POLL_INTERVAL, UNASSIGNED_SECRET_PLACEHOLDER } from '../Constants';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getTemplateForItem } from './useConfig';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
 import { useConfig } from './useConfig';
 import { useSecrets } from "./useSecrets";
 
-// Storage keys for each query type
 const STORAGE_KEYS = {
     catalog: 'docker-catalog-catalog',
     registry: 'docker-catalog-registry',
 };
-
-// Type for query context with custom meta data
-interface QueryContextWithMeta {
-    meta?: {
-        showNotification?: boolean;
-    };
-}
 
 function useCatalog(client: v1.DockerDesktopClient) {
     const queryClient = useQueryClient();
@@ -30,7 +22,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
     const { registryItems, registryLoading } = useRegistry(client);
     const { config, configLoading: configLoading } = useConfig(client);
 
-    const enrichCatalogItem = (item: CatalogItemWithName): CatalogItemRichened => {
+    const enrichCatalogItem = useCallback((item: CatalogItemWithName): CatalogItemRichened => {
         const secretsWithAssignment = Secrets.getSecretsWithAssignment(item, secrets || []);
         const itemConfigValue = config?.[item.name] || {};
         const neverOnceConfigured = Boolean(item.config && Object.keys(itemConfigValue).length === 0);
@@ -52,7 +44,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
             name: item.name,
         };
         return enrichedItem;
-    };
+    }, [secrets, config, registryItems]);
 
     const {
         data: catalogItems = [],
@@ -79,13 +71,13 @@ function useCatalog(client: v1.DockerDesktopClient) {
         if (catalogItems.length > 0 && !secretsLoading && !configLoading && !registryLoading) {
             const enrichedItems = catalogItems.map(enrichCatalogItem);
 
-            // Use the same reference if nothing changed to prevent unnecessary re-renders
-            const hasChanges = JSON.stringify(enrichedItems) !== JSON.stringify(catalogItems);
-            if (hasChanges) {
-                queryClient.setQueryData(['catalog'], enrichedItems);
+            // Use deep comparison for determining if updates are needed
+            if (JSON.stringify(enrichedItems) !== JSON.stringify(catalogItems)) {
+                // Use a stable reference for query data updates
+                queryClient.setQueryData(['catalog'], [...enrichedItems]);
             }
         }
-    }, [secrets, config, registryItems]);
+    }, [catalogItems, enrichCatalogItem, secretsLoading, configLoading, registryLoading, queryClient]);
 
     // Persist catalog to localStorage when it changes (for fallback only)
     useQuery({
@@ -102,9 +94,6 @@ function useCatalog(client: v1.DockerDesktopClient) {
 
     const tryLoadCatalog = async () => {
         return await refetchCatalog({
-            // Using the type cast for compatibility with the function signature
-            // This is a workaround for the React Query v5 typing limitations
-            throwOnError: false,
             cancelRefetch: false
         });
     };
@@ -149,7 +138,6 @@ function useRegistry(client: v1.DockerDesktopClient) {
         gcTime: 300000
     });
 
-    // Load initial registry from localStorage on mount
     useQuery({
         queryKey: ['registry', 'init'],
         queryFn: async () => {
@@ -168,15 +156,20 @@ function useRegistry(client: v1.DockerDesktopClient) {
         gcTime: 0
     });
 
-    // Persist registry to localStorage when it changes
+    const registryItemsString = useMemo(() =>
+        registryItems ? JSON.stringify(registryItems) : null,
+        [registryItems]
+    );
+
     useQuery({
-        queryKey: ['registry', 'persist', registryItems],
+        queryKey: ['registry', 'persist'],
         queryFn: async () => {
-            if (registryItems) {
-                localStorage.setItem(STORAGE_KEYS.registry, JSON.stringify(registryItems));
+            if (registryItemsString) {
+                localStorage.setItem(STORAGE_KEYS.registry, registryItemsString);
             }
             return null;
         },
+        enabled: !!registryItemsString,
         staleTime: Infinity,
         gcTime: 0
     });
@@ -247,23 +240,17 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                 throw error;
             }
         },
-        onMutate: async ({ item }) => {
-            // Optimistically update the registry data
-            const currentRegistry = queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {};
-            const newRegistry: { [key: string]: { ref: string; config?: any } } = {
-                ...currentRegistry,
-                [item.name]: { ref: item.ref }
-            };
-
-            queryClient.setQueryData(['registry'], newRegistry);
-        },
+        // Only need one update of registry data, not both onMutate and onSuccess
         onSuccess: async (data) => {
             // Update the registry data after successful registration
             queryClient.setQueryData(['registry'], data.newRegistry);
+
+            // Also invalidate catalog to refresh the registered state
+            await queryClient.invalidateQueries({ queryKey: ['catalog'] });
         }
     });
 
-    // Unregister catalog item mutation
+    // Unregister catalog item mutation - similar changes
     const unregisterItemMutation = useMutation({
         mutationFn: async (item: CatalogItemRichened) => {
             try {
@@ -292,20 +279,13 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
                 throw error;
             }
         },
-        onMutate: async (item) => {
-            // Optimistically update the registry data
-            const currentRegistry = { ...(queryClient.getQueryData(['registry']) as { [key: string]: { ref: string; config?: any } } || {}) };
-
-            // Remove the item
-            if (currentRegistry[item.name]) {
-                delete currentRegistry[item.name];
-            }
-
-            queryClient.setQueryData(['registry'], currentRegistry);
-        },
+        // Only need one update of registry data, not both onMutate and onSuccess
         onSuccess: async (data) => {
             // Update the registry data after successful unregistration
             queryClient.setQueryData(['registry'], data.newRegistry);
+
+            // Also invalidate catalog to refresh the registered state
+            await queryClient.invalidateQueries({ queryKey: ['catalog'] });
         }
     });
 
@@ -317,6 +297,8 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
     };
 }
 
+
+// This hook represents the catalog query. The registry is not part of the UI and does not need to be exported.
 export function useCatalogAll(client: v1.DockerDesktopClient) {
     const { catalogItems, catalogLoading, tryLoadCatalog } = useCatalog(client);
     const { registryItems, registryLoading, canRegister, tryLoadRegistry, syncRegistryWithConfig } = useRegistry(client);

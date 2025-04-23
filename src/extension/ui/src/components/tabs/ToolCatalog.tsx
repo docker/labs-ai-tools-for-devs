@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Grid2 } from '@mui/material';
 import Tile from '../tile/Index';
 import { v1 } from "@docker/extension-api-client-types";
@@ -13,11 +13,15 @@ interface ToolCatalogProps {
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, showMine }) => {
     const { catalogItems } = useCatalogAll(client)
-    const filteredCatalogItems = catalogItems.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-        const hideBecauseItsNotMine = showMine && !item.registered;
-        return matchesSearch && !hideBecauseItsNotMine;
-    });
+
+    // Memoize the filtered catalog items to prevent unnecessary recalculations
+    const filteredCatalogItems = useMemo(() => {
+        return catalogItems.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
+            const hideBecauseItsNotMine = showMine && !item.registered;
+            return matchesSearch && !hideBecauseItsNotMine;
+        });
+    }, [catalogItems, search, showMine]);
 
     return (
         <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
@@ -35,4 +39,4 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, showMine }) =
     );
 };
 
-export default ToolCatalog; 
+export default React.memo(ToolCatalog); 
