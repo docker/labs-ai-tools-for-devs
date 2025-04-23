@@ -1,18 +1,27 @@
-import { Tooltip, Typography } from "@mui/material";
-import { CatalogItemRichened } from "../../types"
-import { TILE_DESCRIPTION_MAX_LENGTH } from "../../Constants";
+import { Typography } from '@mui/material';
 
-type CenterProps = {
-    item: CatalogItemRichened;
-}
+import type { CatalogItemRichened } from '../../types';
 
-export default function Center({ item }: CenterProps) {
-    return (
-        <Tooltip title={item.description} sx={{ height: '100%' }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary', height: 50 }}>
-                {item.description?.slice(0, TILE_DESCRIPTION_MAX_LENGTH)}
-                {item.description?.length && item.description.length > TILE_DESCRIPTION_MAX_LENGTH && '...'}
-            </Typography>
-        </Tooltip>
-    )
+/*
+  `Center` displays the description of the item in a truncated format.
+  This should have been renamed to `Description`.
+*/
+export default function Center({ item }: { item: CatalogItemRichened }) {
+  return (
+    <Typography
+      variant="body2"
+      sx={{
+        color: 'text.secondary',
+        // These CSS properties are used to create a multiline ellipsis effect: 3 lines maximum for the description
+        display: '-webkit-box',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        WebkitBoxOrient: 'vertical',
+        WebkitLineClamp: '3',
+        height: 48,
+      }}
+    >
+      {item.description ?? ''}
+    </Typography>
+  );
 }
