@@ -13,8 +13,10 @@
     "@tanstack/react-query": "^5.69.0",
     "ansi-to-html": "^0.7.2",
     "json-schema-library": "^10.0.0-rc7",
+    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-inlinesvg": "^4.2.0",
     "yaml": "^2.3.1"
   },
   "scripts": {
@@ -26,6 +28,7 @@
     "@docker/extension-api-client-types": "0.3.4",
     "@tanstack/react-query-devtools": "^5.69.0",
     "@types/jest": "^29.1.2",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^18.7.18",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
