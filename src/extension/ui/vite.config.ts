@@ -11,9 +11,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom'],
-          'ui-libs': ['@mui/material', '@emotion/react', '@emotion/styled']
-        }
+          vendor: ["react", "react-dom"],
+          "ui-libs": ["@mui/material", "@emotion/react", "@emotion/styled"],
+        },
       },
       onwarn(warning, warn) {
         if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
@@ -26,5 +26,5 @@ export default defineConfig({
   server: {
     port: 3000,
     strictPort: true,
-  }
+  },
 });

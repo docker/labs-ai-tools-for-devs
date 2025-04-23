@@ -90,6 +90,7 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
     else {
         console.log('No registry changes to sync with config.', 'oldConfigString', oldConfigString, 'newConfigString', newConfigString)
     }
+    return config
 }
 
 //  Replace conflicting registry values with config values
@@ -122,4 +123,5 @@ export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, reg
     else {
         console.log('No config changes to sync with registry.', 'oldRegString', oldRegString, 'newRegString', newRegString)
     }
+    return registry
 }
