@@ -3,7 +3,7 @@ import { Grid2 } from '@mui/material';
 import Tile from '../tile/Index';
 import { v1 } from "@docker/extension-api-client-types";
 import { CATALOG_LAYOUT_SX } from '../../Constants';
-import { useCatalog } from '../../hooks/useCatalog';
+import { useCatalog } from '../../queries/useCatalog';
 
 interface ToolCatalogProps {
     search: string;

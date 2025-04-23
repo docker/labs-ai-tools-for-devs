@@ -5,9 +5,9 @@ import { CatalogItemRichened } from "../../types/catalog";
 import { v1 } from "@docker/extension-api-client-types";
 import { ASSIGNED_SECRET_PLACEHOLDER, CATALOG_LAYOUT_SX, MCP_POLICY_NAME, UNASSIGNED_SECRET_PLACEHOLDER } from "../../Constants";
 import ConfigEditor from "./ConfigEditor";
-import { useSecrets } from "../../hooks/useSecrets";
-import { useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
-import { useConfig } from "../../hooks/useConfig";
+import { useSecrets } from "../../queries/useSecrets";
+import { useCatalogOperations, useRegistry } from "../../queries/useCatalog";
+import { useConfig } from "../../queries/useConfig";
 
 interface TabPanelProps {
     children?: React.ReactNode;

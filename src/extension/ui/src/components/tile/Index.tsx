@@ -8,8 +8,8 @@ import Top from "./Top";
 import Center from "./Center";
 import Bottom from "./Bottom";
 import { v1 } from "@docker/extension-api-client-types";
-import { useSecrets } from "../../hooks/useSecrets";
-import { useCatalogOperations, useRegistry } from "../../hooks/useCatalog";
+import { useSecrets } from "../../queries/useSecrets";
+import { useCatalogOperations, useRegistry } from "../../queries/useCatalog";
 import { MCP_POLICY_NAME } from "../../Constants";
 
 type TileProps = {

@@ -7,7 +7,7 @@ import { v1 } from '@docker/extension-api-client-types';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { CatalogItemRichened } from '../../types/catalog';
 import { Secret } from '../../types/secrets';
-import { useCatalog } from '../../hooks/useCatalog';
+import { useCatalog } from '../../queries/useCatalog';
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
 

@@ -231,32 +231,6 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
                     // If there's a JSON schema configuration, validate and generate default values
                     if (Array.isArray(item.config) && item.config.length > 0) {
-                        const configSchema = item.config[0];
-
-                        // Check if we have required fields from anyOf conditions
-                        if (configSchema.anyOf) {
-                            configSchema.anyOf.forEach((condition: any) => {
-                                if (condition.required) {
-                                    condition.required.forEach((field: string) => {
-                                        if (!(field in itemConfig)) {
-                                            // Generate a default value if possible
-                                            itemConfig[field] = "";
-                                        }
-                                    });
-                                }
-                            });
-                        }
-
-                        // Handle normal required fields
-                        if (configSchema.required) {
-                            configSchema.required.forEach((field: string) => {
-                                if (!(field in itemConfig)) {
-                                    // Generate a default value if possible
-                                    itemConfig[field] = "";
-                                }
-                            });
-                        }
-
                         // Use JSON schema template for any remaining defaults
                         const template = getTemplateForItem(item, itemConfig);
                         itemConfig = { ...template, ...itemConfig };
