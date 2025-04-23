@@ -9,7 +9,7 @@ jobs:
   test:
     defaults:
       run:
-        working-directory: src/extension
+        working-directory: src/extension/ui
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
