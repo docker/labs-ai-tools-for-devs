@@ -143,6 +143,16 @@ registry:
       - name: slack.team_id
     prompts: 0
     resources: {}
+  redis:
+    description: Access to Redis database operations.
+    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
+    tools: []
+    secrets:
+      - name: redis.host
+      - name: redis.port
+    prompts: 0
+    resources: {}
   openapi-schema:
     description: OpenAPI Schema Model Context Protocol Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
@@ -160,16 +170,6 @@ registry:
       - name: list-endpoints
       - name: list-security-schemes
       - name: search-schema
-    prompts: 0
-    resources: {}
-  redis:
-    description: Access to Redis database operations.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/redis.svg
-    tools: []
-    secrets:
-      - name: redis.host
-      - name: redis.port
     prompts: 0
     resources: {}
   github:
@@ -506,8 +506,10 @@ registry:
       - name: jira_update_issue
       - name: jira_update_sprint
     secrets:
-      - name: atlassian.jira.token
-      - name: atlassian.confluence.token
+      - name: atlassian.jira.api_token
+      - name: atlassian.confluence.api_token
+      - name: atlassian.jira.personal_token
+      - name: atlassian.confluence.personal_token
     prompts: 0
     resources: {}
     config:
