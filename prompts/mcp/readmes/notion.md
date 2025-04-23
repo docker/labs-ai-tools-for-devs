@@ -228,11 +228,11 @@ Parameters|Type|Description
         "-i",
         "--rm",
         "-e",
-        "OPENAPI_MCP_HEADERS",
+        "INTERNAL_INTEGRATION_TOKEN",
         "mcp/notion"
       ],
       "env": {
-        "OPENAPI_MCP_HEADERS": "{"Authorization": "Bearer ntn_****", "Notion-Version": "2022-06-28" }"
+        "INTERNAL_INTEGRATION_TOKEN": "ntn_****"
       }
     }
   }
