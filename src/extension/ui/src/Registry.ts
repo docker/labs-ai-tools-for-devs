@@ -73,7 +73,7 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
         return;
     }
     console.log('SYNC STARTED. REGISTRY -> CONFIG', registry, config)
-    const oldConfigString = JSON.stringify({ config })
+    const oldConfigString = JSON.stringify(config)
     for (const [registryItemName, registryItem] of Object.entries(registry)) {
         const configInRegistry = registryItem.config
         const configInConfigFile = config[registryItemName]
@@ -82,7 +82,7 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
             config[registryItemName][registryItemName] = mergedConfig
         }
     }
-    const newConfigString = JSON.stringify({ config })
+    const newConfigString = JSON.stringify(config)
     if (oldConfigString !== newConfigString) {
         console.log('Updating config with new registry.', 'oldConfigString', oldConfigString, 'newConfigString', newConfigString)
         await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(config) }] }))
