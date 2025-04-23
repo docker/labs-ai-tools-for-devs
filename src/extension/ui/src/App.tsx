@@ -1,30 +1,18 @@
-import React, { useState, Suspense, useEffect } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Typography, Button, IconButton, Alert, DialogTitle, Dialog, DialogContent, CircularProgress, Paper, Box, SvgIcon, useTheme } from '@mui/material';
-import { CatalogItemRichened } from './types/catalog';
-import { Close } from '@mui/icons-material';
+import { useEffect } from 'react';
+
 import { CatalogGrid } from './components/CatalogGrid';
-import { POLL_INTERVAL } from './Constants';
-import ConfigurationModal from './components/tile/Modal';
 import LoadingState from './components/LoadingState';
 import { useCatalogAll } from './queries/useCatalog';
-import { useRequiredImages } from './queries/useRequiredImages';
-import { useMCPClient } from './queries/useMCPClient';
 import { useConfig } from './queries/useConfig';
+import { useMCPClient } from './queries/useMCPClient';
+import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
-import { syncConfigWithRegistry, syncRegistryWithConfig } from './Registry';
+import { syncRegistryWithConfig } from './Registry';
 
 export const client = createDockerDesktopClient();
 
-const DEFAULT_SETTINGS = {
-  showModal: false,
-  pollIntervalSeconds: POLL_INTERVAL / 1000
-}
-
 export function App() {
-  const [settings, setSettings] = useState<{ showModal: boolean, pollIntervalSeconds: number }>(localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings') || '{}') : DEFAULT_SETTINGS);
-  const [configuringItem, setConfiguringItem] = useState<CatalogItemRichened | null>(null);
-
   // Use hooks directly in the component
   const catalogAll = useCatalogAll(client);
   const requiredImages = useRequiredImages(client);
@@ -44,17 +32,17 @@ export function App() {
     ...mcpClient,
 
     // Config props
-    ...config
+    ...config,
   };
 
-  const isLoading = catalogAll.catalogLoading ||
+  const isLoading =
+    catalogAll.catalogLoading ||
     catalogAll.registryLoading ||
     requiredImages.isLoading ||
     secrets.isLoading;
 
   useEffect(() => {
     if (config.config && catalogAll.registryItems) {
-      console.log('registryItems', catalogAll.registryItems)
       syncRegistryWithConfig(client, catalogAll.registryItems, config.config);
     }
   }, [config.config]);
@@ -64,9 +52,7 @@ export function App() {
       {isLoading ? (
         <LoadingState appProps={appProps} />
       ) : (
-        <CatalogGrid
-          appProps={appProps}
-        />
+        <CatalogGrid appProps={appProps} />
       )}
     </>
   );
