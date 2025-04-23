@@ -54,14 +54,40 @@ Tools provided by this Server|Short Description
 
 #### Tool: **`create_new_file_with_text`**
 Creates a new file at the specified path within the project directory and populates it with the provided text
+Parameters|Type|Description
+-|-|-
+`pathInProject`|`string`|The relative path where the file should be created
+`text`|`string`|The content to write into the new file
+
+---
 #### Tool: **`execute_action_by_id`**
 Executes an action by its ID in JetBrains IDE editor
+Parameters|Type|Description
+-|-|-
+`actionId`|`string`|The ID of the action to execute
+
+---
 #### Tool: **`execute_terminal_command`**
 Executes a specified shell command in the IDE's integrated terminal
+Parameters|Type|Description
+-|-|-
+`command`|`string`|The shell command to execute
+
+---
 #### Tool: **`find_commit_by_message`**
 Searches for a commit based on the provided text or keywords in the project history
+Parameters|Type|Description
+-|-|-
+`query`|`string`|The text or keywords to search for in commit messages
+
+---
 #### Tool: **`find_files_by_name_substring`**
 Searches for all files in the project whose names contain the specified substring
+Parameters|Type|Description
+-|-|-
+`nameSubstring`|`string`|The substring to search for in file names
+
+---
 #### Tool: **`get_all_open_file_paths`**
 Lists full path relative paths to project root of all currently open files
 #### Tool: **`get_all_open_file_texts`**
@@ -70,6 +96,11 @@ Returns text of all currently open files in the JetBrains IDE editor
 Retrieves a list of all line breakpoints currently set in the project
 #### Tool: **`get_file_text_by_path`**
 Retrieves the text content of a file using its path relative to project root
+Parameters|Type|Description
+-|-|-
+`pathInProject`|`string`|The file location from project root
+
+---
 #### Tool: **`get_open_in_editor_file_path`**
 Retrieves the absolute path of the currently active file
 #### Tool: **`get_open_in_editor_file_text`**
@@ -92,26 +123,86 @@ Retrieves the current text content from the first active terminal
 Lists all available actions in JetBrains IDE editor
 #### Tool: **`list_directory_tree_in_folder`**
 Provides a hierarchical tree view of the project directory structure
+Parameters|Type|Description
+-|-|-
+`pathInProject`|`string`|The starting folder path (use '/' for project root)
+`maxDepth`|`integer` *optional*|Maximum recursion depth (default: 5)
+
+---
 #### Tool: **`list_files_in_folder`**
 Lists all files and directories in the specified project folder
+Parameters|Type|Description
+-|-|-
+`pathInProject`|`string`|The folder path (use '/' for project root)
+
+---
 #### Tool: **`open_file_in_editor`**
 Opens the specified file in the JetBrains IDE editor
+Parameters|Type|Description
+-|-|-
+`filePath`|`string`|The path of file to open (can be absolute or relative)
+
+---
 #### Tool: **`replace_current_file_text`**
 Replaces the entire content of the currently active file
+Parameters|Type|Description
+-|-|-
+`text`|`string`|The new content to write
+
+---
 #### Tool: **`replace_file_text_by_path`**
 Replaces the entire content of a specified file with new text
+Parameters|Type|Description
+-|-|-
+`pathInProject`|`string`|The path to the target file, relative to project root
+`text`|`string`|The new content to write
+
+---
 #### Tool: **`replace_selected_text`**
 Replaces the currently selected text in the active editor
+Parameters|Type|Description
+-|-|-
+`text`|`string`|The replacement content
+
+---
 #### Tool: **`replace_specific_text`**
 Replaces specific text occurrences in a file with new text
+Parameters|Type|Description
+-|-|-
+`newText`|`string`|The replacement text
+`oldText`|`string`|The text to be replaced
+`pathInProject`|`string`|The path to the target file, relative to project root
+
+---
 #### Tool: **`run_configuration`**
 Run a specific run configuration in the current project
+Parameters|Type|Description
+-|-|-
+`name`|`string`|The name of the run configuration to execute
+
+---
 #### Tool: **`search_in_files_content`**
 Searches for a text substring within all files in the project
+Parameters|Type|Description
+-|-|-
+`searchText`|`string`|The text to find
+
+---
 #### Tool: **`toggle_debugger_breakpoint`**
 Toggles a debugger breakpoint at the specified line in a project file
+Parameters|Type|Description
+-|-|-
+`filePathInProject`|`string`|The relative path to the file within the project
+`line`|`integer`|The line number where to toggle the breakpoint (1-based)
+
+---
 #### Tool: **`wait`**
 Waits for a specified number of milliseconds
+Parameters|Type|Description
+-|-|-
+`milliseconds`|`integer` *optional*|The duration to wait in milliseconds (default: 5000)
+
+---
 ## Use this MCP Server
 
 ```json
