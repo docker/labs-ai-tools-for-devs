@@ -143,6 +143,25 @@ registry:
       - name: slack.team_id
     prompts: 0
     resources: {}
+  openapi-schema:
+    description: OpenAPI Schema Model Context Protocol Server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/openapi-schema.md
+    source: https://github.com/slimslenderslacks/mcp-openapi-schema/tree/master
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    tools:
+      - name: get-component
+      - name: get-endpoint
+      - name: get-examples
+      - name: get-path-parameters
+      - name: get-request-body
+      - name: get-response-schema
+      - name: list-components
+      - name: list-endpoints
+      - name: list-security-schemes
+      - name: search-schema
+    prompts: 0
+    resources: {}
   redis:
     description: Access to Redis database operations.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/redis.md
@@ -446,14 +465,6 @@ registry:
       - name: API-update-a-database
     secrets:
       - name: notion.openai_mcp_headers
-    prompts: 0
-    resources: {}
-  openapi-schema:
-    description: |
-      Exposes OpenAPI schema information to Large Language Models (LLMs) like Claude. This server allows an LLM to explore and understand OpenAPI specifications through a set of specialized tools.
-    ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/openapi-schema.md
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools: []
     prompts: 0
     resources: {}
   atlassian:
