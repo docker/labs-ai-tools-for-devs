@@ -2415,3 +2415,46 @@ registry:
       - name: hackle.api_key
     prompts: 0
     resources: {}
+  flexprice:
+    description: Official flexprice MCP Server
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/flexprice.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/flexprice.md
+    source: https://github.com/flexprice/mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/168305045?v=4
+    tools:
+      - name: getCustomerById
+      - name: getCustomerByLookupKey
+      - name: getCustomerEntitlements
+      - name: getCustomerSubscriptions
+      - name: getCustomerUsageSummary
+      - name: getCustomers
+      - name: getEventsByCustomer
+      - name: getInvoiceById
+      - name: getInvoiceByNumber
+      - name: getInvoices
+      - name: getInvoicesByCustomerId
+      - name: getPaymentById
+      - name: getPayments
+      - name: getPlanById
+      - name: getPlans
+      - name: getPriceById
+      - name: getPrices
+      - name: getSubscriptionById
+      - name: getSubscriptionPauses
+      - name: getSubscriptionUsage
+      - name: getSubscriptions
+      - name: getWalletBalance
+      - name: getWalletById
+      - name: getWalletTransactions
+      - name: getWalletsByCustomerId
+    secrets:
+      - name: flexprice.api_key
+    prompts: 0
+    resources: {}
+    config:
+      - name: flexprice
+        description: Configure the connection to Redis
+        type: object
+        properties:
+          flexprice.base_url:
+            type: string
