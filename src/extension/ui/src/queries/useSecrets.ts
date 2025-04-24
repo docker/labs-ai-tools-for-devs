@@ -5,26 +5,32 @@ import { v1 } from "@docker/extension-api-client-types";
 import { Secret } from "../types";
 
 export function useSecrets(client: v1.DockerDesktopClient) {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['secrets'],
-        queryFn: async () => {
-            const secrets = await Secrets.getSecrets(client);
-            return secrets;
-        },
-    });
-    const mutate = useMutation({
-        mutationFn: async (secret: Secret) => {
-            if (!secret.value) {
-                return Secrets.deleteSecret(client, secret.name);
-            }
-            return Secrets.addSecret(client, secret);
-        },
-        onSuccess: () => {
-            // Invalidate and refetch secrets after mutation
-            queryClient.invalidateQueries({ queryKey: ['secrets'] });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["secrets"],
+    queryFn: async () => {
+      const secrets = await Secrets.getSecrets(client);
+      return secrets;
+    },
+  });
+  const mutate = useMutation({
+    mutationFn: async (secret: Secret) => {
+      queryClient.setQueryData(["secrets"], (old: Secret[]) => {
+        if (!secret.value) {
+          return old.filter((s) => s.name !== secret.name);
         }
-    });
-    return { data, isLoading, error, mutate };
-}   
+        return [...old, secret];
+      });
+      if (!secret.value) {
+        return Secrets.deleteSecret(client, secret.name);
+      }
+      return Secrets.addSecret(client, secret);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch secrets after mutation
+      queryClient.invalidateQueries({ queryKey: ["secrets"] });
+    },
+  });
+  return { data, isLoading, error, mutate };
+}
