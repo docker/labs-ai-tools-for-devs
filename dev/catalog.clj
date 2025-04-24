@@ -75,8 +75,13 @@
   (generate-updated-catalog)
   ;; parse catalog
   (def catalog (yaml/parse-string (slurp "prompts/catalog.yaml")))
-  (count (:registry catalog))
+  (spit "servers.edn" (pr-str (into [] (map name (keys (:registry catalog))))))
   (string/join "," (->> (:registry catalog) keys (map name)))
+
+  (->> (-> catalog :registry vals) 
+       (map :config )
+       (filter seq)
+       count)
 
   (def prompt-ref-strings
     (->> catalog
@@ -90,19 +95,25 @@
          :registry
          vals
          (map :ref)
-         (map (fn [ref-string] (assoc (git/parse-github-ref ref-string) :ref-string ref-string)))
-         #_(map #(assoc % :ref "slim/cleanup"))
-         #_(map #(format "https://raw.githubusercontent.com/%s/%s/refs/heads/%s/%s" (:owner %) (:repo %) (or (:ref %) "main") (:path %)))))
+         (map (fn [ref-string] (assoc (git/parse-github-ref ref-string) :ref-string ref-string)))))
 
   ;; current git ref files
   (def local-prompt-files
     (->> prompt-refs
          (map (fn [k] {:ref k
-                       :file (git/ref-map->prompt-file k)}))))
+                       :file (if (not (:owner k))
+                               (fs/file (:path k))
+                               (git/ref-map->prompt-file k))}))))
+
+  (f->prompt (fs/file "prompts/mcp/notion.md") )
+  (f->prompt (fs/file "prompts/mcp/multiversx-mx.md") )
+  (f->prompt (fs/file "prompts/mcp/elasticsearch.md") )
 
   ;; parse all of the current git prompts
   (def local-prompt-files-parsed
     (map (fn [m] (-> m (assoc :prompt (f->prompt (:file m))))) local-prompt-files))
+
+  (filter #(= "github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elasticsearch.md" (-> % :ref :ref-string))  local-prompt-files-parsed)
 
   ;; make sure prompts are present - should be empty
   (->> local-prompt-files-parsed
@@ -115,10 +126,17 @@
          (into {})))
 
   ;; secret summary
-  (->> container-summary
-       vals
-       (mapcat #(->> % (map (comp :secrets :container))))
-       (filter seq))
+  (def secrets
+    (->> container-summary
+         vals
+         (mapcat #(->> % (map (comp :secrets :container))))
+         (filter seq)))
+
+  (->> secrets 
+       (mapcat keys)
+       (map name)
+       (string/join ",")
+       )
 
   ;; summary
   (->> container-summary

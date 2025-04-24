@@ -18,6 +18,7 @@
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core.async :as async]
+   [clojure.java.io :as io]
    [clojure.string :as string]
    [creds]
    jsonrpc
@@ -27,6 +28,7 @@
    schema
    shutdown)
   (:import
+   [java.io PipedInputStream PipedOutputStream]
    [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
    [java.nio.channels SocketChannel]
@@ -548,13 +550,21 @@
        c - channel to write multiplexed stdout stderr blocks"
   [in c]
   (try
-    (let [header-buf (ByteBuffer/allocate 8)]
+    (let [header-buf (ByteBuffer/allocate 8)
+          stdout (PipedOutputStream.)
+          stdout-reader (io/reader (PipedInputStream. stdout))]
+      (async/go-loop []
+                     (when-let [line (.readLine stdout-reader)]
+                       (async/put! c {:stdout line})
+                       (recur))) 
       (loop [offset 0]
         (let [result (.read ^SocketChannel in header-buf)]
           (cond
                 ;;;;;;;;;; 
             (= -1 result)
-            (async/close! c)
+            (do
+              (.close stdout)
+              (async/close! c))
 
                 ;;;;;;;;;;
             (= 8 (+ offset result))
@@ -575,7 +585,11 @@
 
                         ;;;;;;;;;;
                     (= size (+ offset result))
-                    (async/put! c {stream-type (String. ^bytes (.array buf))})
+                    (if (= stream-type :stdout)
+                      (do
+                        (.write stdout ^bytes (.array buf))
+                        (.flush stdout))
+                      (async/put! c {stream-type (String. ^bytes (.array buf))}))
 
                         ;;;;;;;;;;
                     :else
