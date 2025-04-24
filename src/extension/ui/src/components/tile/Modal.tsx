@@ -25,7 +25,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { capitalize } from 'lodash-es';
 import { useEffect, useState } from 'react';
+
 import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from '../../Constants';
 import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
@@ -152,7 +154,15 @@ const ConfigurationModal = ({
               borderRadius: 1,
             }}
           />
-          {catalogItem.name}
+          {
+            // Lodash doesn't have a capitalize function that works with strings
+            catalogItem.name
+              .replace(/-/g, ' ')
+              .replace(/_/g, ' ')
+              .split(' ')
+              .map(capitalize)
+              .join(' ')
+          }
 
           <Tooltip
             placement="right"
