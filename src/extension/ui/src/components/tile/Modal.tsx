@@ -16,18 +16,20 @@ import {
   DialogTitle,
   IconButton,
   Link,
+  OutlinedInput,
   Stack,
   Switch,
   Tab,
   Tabs,
-  TextField,
   Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
+import { capitalize } from 'lodash-es';
 import { useEffect, useState } from 'react';
+
 import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from '../../Constants';
-import { useCatalogAll, useCatalogOperations } from '../../queries/useCatalog';
+import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
@@ -61,6 +63,7 @@ interface ConfigurationModalProps {
   onClose: () => void;
   catalogItem: CatalogItemRichened;
   client: v1.DockerDesktopClient;
+  registryLoading: boolean;
 }
 
 const ConfigurationModal = ({
@@ -68,6 +71,7 @@ const ConfigurationModal = ({
   onClose,
   catalogItem,
   client,
+  registryLoading,
 }: ConfigurationModalProps) => {
   const [localSecrets, setLocalSecrets] = useState<
     { [key: string]: string | undefined } | undefined
@@ -76,7 +80,6 @@ const ConfigurationModal = ({
 
   const { isLoading: secretsLoading, mutate: mutateSecret } =
     useSecrets(client);
-  const { registryLoading } = useCatalogAll(client);
   const { registerCatalogItem, unregisterCatalogItem } =
     useCatalogOperations(client);
   const { configLoading } = useConfig(client);
@@ -100,7 +103,7 @@ const ConfigurationModal = ({
     border: 1,
     borderColor: theme.palette.docker.grey[200],
     textAlign: 'center',
-    borderRadius: 4,
+    borderRadius: 1,
     fontFamily: 'Roboto Mono',
     fontSize: 12,
     fontStyle: 'normal',
@@ -120,22 +123,8 @@ const ConfigurationModal = ({
     (!catalogItem.configSchema || catalogItem.configSchema.length === 0) &&
     (!catalogItem.secrets || catalogItem.secrets.length === 0);
 
-  if (secretsLoading || registryLoading || configLoading) {
-    return (
-      <>
-        <CircularProgress />
-        <Typography>Loading registry...</Typography>
-      </>
-    );
-  }
-
-  if (!localSecrets) {
-    return (
-      <>
-        <CircularProgress />
-        <Typography>Loading secrets...</Typography>
-      </>
-    );
+  if (secretsLoading || registryLoading || configLoading || !localSecrets) {
+    return null;
   }
 
   return (
@@ -165,7 +154,15 @@ const ConfigurationModal = ({
               borderRadius: 1,
             }}
           />
-          {catalogItem.name}
+          {
+            // Lodash doesn't have a capitalize function that works with strings
+            catalogItem.name
+              .replace(/-/g, ' ')
+              .replace(/_/g, ' ')
+              .split(' ')
+              .map(capitalize)
+              .join(' ')
+          }
 
           <Tooltip
             placement="right"
@@ -208,16 +205,19 @@ const ConfigurationModal = ({
         >
           {catalogItem.description}
         </Typography>
-        <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-          Repository:{' '}
-          <Link
-            onClick={() => client.host.openExternal(catalogItem.source || '')}
-            href={catalogItem.source || ''}
-            target="_blank"
-          >
-            {catalogItem.source || ''} <Launch />
-          </Link>
-        </Typography>
+        {catalogItem.source !== undefined && (
+          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+            Repository:{' '}
+            <Link
+              onClick={() => client.host.openExternal(catalogItem.source || '')}
+              href={catalogItem.source || ''}
+              target="_blank"
+            >
+              {catalogItem.source || ''}
+              <Launch />
+            </Link>
+          </Typography>
+        )}
 
         {configLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
@@ -246,7 +246,7 @@ const ConfigurationModal = ({
                         }
                         color="error"
                       >
-                        Config & Secrets
+                        Configure
                       </Badge>
                     }
                   />
@@ -285,98 +285,93 @@ const ConfigurationModal = ({
                   minHeight: '180px',
                 }}
               >
-                <Stack
-                  direction="column"
-                  spacing={2}
-                  sx={{
-                    border: '2px solid',
-                    borderColor: theme.palette.warning.contrastText,
-                    borderRadius: 2,
-                    p: 2,
-                    mt: 2,
-                  }}
-                >
+                <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
-                  <Typography variant="h6" sx={{ mb: 1 }}>
-                    Secrets
-                  </Typography>
-                  {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                    catalogItem.secrets.map((secret) => {
-                      const secretEdited =
-                        (secret.assigned &&
-                          localSecrets[secret.name] !==
-                            ASSIGNED_SECRET_PLACEHOLDER) ||
-                        (!secret.assigned && localSecrets[secret.name] !== '');
-                      return (
-                        <Stack
-                          key={secret.name}
-                          direction="row"
-                          spacing={2}
-                          alignItems="center"
-                        >
-                          <TextField
+
+                  <Stack>
+                    <Typography variant="subtitle2">Secrets</Typography>
+                    {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
+                      catalogItem.secrets.map((secret) => {
+                        const secretEdited =
+                          (secret.assigned &&
+                            localSecrets[secret.name] !==
+                              ASSIGNED_SECRET_PLACEHOLDER) ||
+                          (!secret.assigned &&
+                            localSecrets[secret.name] !== '');
+                        return (
+                          <Stack
                             key={secret.name}
-                            label={secret.name}
-                            value={localSecrets[secret.name]}
-                            fullWidth
-                            onChange={(e) => {
-                              setLocalSecrets({
-                                ...localSecrets,
-                                [secret.name]: e.target.value,
-                              });
-                            }}
-                            type="password"
-                          />
-                          {secret.assigned && !secretEdited && (
-                            <IconButton
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                          >
+                            <OutlinedInput
                               size="small"
-                              color="error"
-                              onClick={() => {
-                                mutateSecret.mutateAsync({
-                                  name: secret.name,
-                                  value: undefined,
-                                  policies: [MCP_POLICY_NAME],
+                              key={secret.name}
+                              placeholder={secret.name}
+                              value={localSecrets[secret.name]}
+                              fullWidth
+                              onChange={(e) => {
+                                setLocalSecrets({
+                                  ...localSecrets,
+                                  [secret.name]: e.target.value,
                                 });
                               }}
-                            >
-                              <DeleteOutlined />
-                            </IconButton>
-                          )}
-                          {secretEdited && (
-                            <ButtonGroup>
+                              type="password"
+                            />
+                            {secret.assigned && !secretEdited && (
                               <IconButton
-                                onClick={async () => {
-                                  await mutateSecret.mutateAsync({
+                                size="small"
+                                color="error"
+                                onClick={() => {
+                                  mutateSecret.mutateAsync({
                                     name: secret.name,
-                                    value: localSecrets[secret.name]!,
+                                    value: undefined,
                                     policies: [MCP_POLICY_NAME],
                                   });
                                 }}
                               >
-                                <CheckOutlined sx={{ color: 'success.main' }} />
+                                <DeleteOutlined />
                               </IconButton>
-                              <IconButton
-                                onClick={async () => {
-                                  setLocalSecrets({
-                                    ...localSecrets,
-                                    [secret.name]: secret.assigned
-                                      ? ASSIGNED_SECRET_PLACEHOLDER
-                                      : '',
-                                  });
-                                }}
-                              >
-                                <CloseOutlined sx={{ color: 'error.main' }} />
-                              </IconButton>
-                            </ButtonGroup>
-                          )}
-                        </Stack>
-                      );
-                    })
-                  ) : (
-                    <Alert severity="info">
-                      No secrets available for this item.
-                    </Alert>
-                  )}
+                            )}
+                            {secretEdited && (
+                              <ButtonGroup>
+                                <IconButton
+                                  onClick={async () => {
+                                    await mutateSecret.mutateAsync({
+                                      name: secret.name,
+                                      value: localSecrets[secret.name]!,
+                                      policies: [MCP_POLICY_NAME],
+                                    });
+                                  }}
+                                >
+                                  <CheckOutlined
+                                    sx={{ color: 'success.main' }}
+                                  />
+                                </IconButton>
+                                <IconButton
+                                  onClick={async () => {
+                                    setLocalSecrets({
+                                      ...localSecrets,
+                                      [secret.name]: secret.assigned
+                                        ? ASSIGNED_SECRET_PLACEHOLDER
+                                        : '',
+                                    });
+                                  }}
+                                >
+                                  <CloseOutlined sx={{ color: 'error.main' }} />
+                                </IconButton>
+                              </ButtonGroup>
+                            )}
+                          </Stack>
+                        );
+                      })
+                    ) : (
+                      <Alert severity="info">
+                        No secrets available for this item.
+                      </Alert>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
             </TabPanel>
