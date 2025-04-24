@@ -37,7 +37,7 @@ registry:
     prompts: 1
     resources: {}
   qr code:
-    description: Generate a qrcode for an input text string.
+    description: Generate a qrcode for an input text string
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/qrencode.md
     icon: https://2.gravatar.com/userimage/39790510/4918b92358fde20da56c0ec8e5ac7a23?size=256
@@ -64,7 +64,7 @@ registry:
     prompts: 0
     resources: {}
   chrome:
-    description: Drive a headless Chrome browser to interact with web pages.
+    description: Drive a headless Chrome browser to interact with web pages
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/chrome.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
@@ -76,7 +76,7 @@ registry:
     prompts: 1
     resources: {}
   sequentialthinking:
-    description: A tool for dynamic and reflective problem-solving through a structured thinking process.
+    description: A tool for dynamic and reflective problem-solving through a structured thinking process
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/sequentialthinking.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/sequentialthinking.md
@@ -111,7 +111,7 @@ registry:
     prompts: 0
     resources: {}
   brave:
-    description: Web and local search using Brave's Search API.
+    description: Web and local search using Brave's Search API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/brave.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -198,7 +198,7 @@ registry:
     resources: {}
     config:
       - name: redis
-        description: Configure the connection to Redis.
+        description: Configure the connection to Redis
         type: object
         properties:
           redis.host:
@@ -265,7 +265,7 @@ registry:
     prompts: 0
     resources: {}
   gdrive:
-    description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files.
+    description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/gdrive
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
@@ -276,7 +276,7 @@ registry:
     prompts: 0
     resources: {}
   time:
-    description: Time and timezone conversion capabilities.
+    description: Time and timezone conversion capabilities
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/time.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/time
@@ -287,7 +287,7 @@ registry:
     prompts: 0
     resources: {}
   fetch:
-    description: Fetches a URL from the internet and extracts its contents as markdown.
+    description: Fetches a URL from the internet and extracts its contents as markdown
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/fetch.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/fetch
@@ -297,7 +297,7 @@ registry:
     prompts: 0
     resources: {}
   git:
-    description: A Model Context Protocol server for Git repository interaction and automation.
+    description: A Model Context Protocol server for Git repository interaction and automation
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/git.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/git.md
@@ -307,7 +307,7 @@ registry:
     prompts: 1
     resources: {}
   kubernetes:
-    description: Connect to a Kubernetes cluster and manage it.
+    description: Connect to a Kubernetes cluster and manage it
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/kubernetes.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/kubernetes.md
     source: https://github.com/Flux159/mcp-server-kubernetes/tree/main
@@ -356,7 +356,7 @@ registry:
     prompts: 0
     resources: {}
   docker:
-    description: Use the Docker CLI.
+    description: Use the Docker CLI
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/docker.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
     tools:
@@ -380,7 +380,7 @@ registry:
     prompts: 0
     resources: {}
   filesystem:
-    description: Local filesystem access with configurable allowed paths.
+    description: Local filesystem access with configurable allowed paths
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/filesystem.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -401,7 +401,7 @@ registry:
     resources: {}
     config:
       - name: filesystem
-        description: The MCP server is allowed to access these paths.
+        description: The MCP server is allowed to access these paths
         type: object
         properties:
           paths:
@@ -411,7 +411,7 @@ registry:
         required:
           - paths
   youtube_transcript:
-    description: Retrieves transcripts for given YouTube video URLs.
+    description: Retrieves transcripts for given YouTube video URLs
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/youtube_transcript.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/youtube_transcript.md
     source: https://github.com/slimslenderslacks/mcp-youtube-transcript/tree/slim/docker
@@ -464,7 +464,7 @@ registry:
     resources: {}
   bootstrap:
     description: |
-      Bootstrap new tools from your MCP client.
+      Bootstrap new tools from your MCP client
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/bootstrap.md
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
@@ -475,7 +475,7 @@ registry:
     prompts: 0
     resources: {}
   notion:
-    description: Official Notion MCP Server.
+    description: Official Notion MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/notion.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/notion.md
     source: https://github.com/makenotion/notion-mcp-server/tree/main
@@ -505,7 +505,7 @@ registry:
     prompts: 0
     resources: {}
   openapi-schema:
-    description: OpenAPI Schema Model Context Protocol Server.
+    description: OpenAPI Schema Model Context Protocol Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/openapi-schema.md
     source: https://github.com/slimslenderslacks/mcp-openapi-schema/tree/master
@@ -570,7 +570,7 @@ registry:
     resources: {}
     config:
       - name: atlassian
-        description: The MCP server is allowed to access these paths.
+        description: The MCP server is allowed to access these paths
         type: object
         properties:
           confluence:
@@ -597,7 +597,7 @@ registry:
           - required:
               - jira
   jetbrains:
-    description: A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio.
+    description: 'A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio'
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/jetbrains.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/jetbrains.md
     source: https://github.com/GannaChernyshova/mcp-jetbrains/tree/main
@@ -637,7 +637,7 @@ registry:
     resources: {}
     config:
       - name: jetbrains
-        description: Configure the connection to the IDE.
+        description: Configure the connection to the IDE
         type: object
         properties:
           port:
@@ -702,14 +702,14 @@ registry:
     resources: {}
     config:
       - name: gitlab
-        description: Configure the local or Cloud GitLab instance.
+        description: Configure the local or Cloud GitLab instance
         type: object
         properties:
           url:
             type: string
-            description: api url - optional for self-hosted instances.
+            description: api url - optional for self-hosted instances
   obsidian:
-    description: MCP server that interacts with Obsidian via the Obsidian rest API community plugin.
+    description: MCP server that interacts with Obsidian via the Obsidian rest API community plugin
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/obsidian.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/obsidian.md
     source: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
@@ -773,7 +773,7 @@ registry:
     prompts: 0
     resources: {}
   resend:
-    description: Send emails directly from Cursor with this email sending MCP server.
+    description: Send emails directly from Cursor with this email sending MCP server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/resend.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/resend.md
     source: https://github.com/slimslenderslacks/mcp-send-email/tree/slim/docker
@@ -786,15 +786,15 @@ registry:
     resources: {}
     config:
       - name: resend
-        description: Configure sender and reply email addresses.
+        description: Configure sender and reply email addresses
         type: object
         properties:
           reply_to:
             type: string
-            description: comma separated list of reply to email addresses.
+            description: comma separated list of reply to email addresses
           sender:
             type: string
-            description: sender email address.
+            description: sender email address
   GitHub MCP Server:
     description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
@@ -886,13 +886,13 @@ registry:
     resources: {}
     config:
       - name: armor-crypto
-        description: Configure the connection to Armor.
+        description: Configure the connection to Armor
         type: object
         properties:
           api_url:
             type: string
   astra-db:
-    description: An MCP server for Astra DB workloads.
+    description: An MCP server for Astra DB workloads
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/astra-db.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/astra-db.md
     source: https://github.com/datastax/astra-db-mcp/tree/refs/pull/14/merge
@@ -920,13 +920,13 @@ registry:
     resources: {}
     config:
       - name: astra-db
-        description: Configure the connection to Astra DB.
+        description: Configure the connection to Astra DB
         type: object
         properties:
           endpoint:
             type: string
   atlas-docs:
-    description: Provide LLMs hosted, clean markdown documentation of libraries and frameworks.
+    description: Provide LLMs hosted, clean markdown documentation of libraries and frameworks
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/atlas-docs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/atlas-docs.md
     source: https://github.com/CartographAI/atlas-docs-mcp/tree/master
@@ -941,13 +941,13 @@ registry:
     resources: {}
     config:
       - name: atlas-docs
-        description: Configure the connection to Atlas Docs.
+        description: Configure the connection to Atlas Docs
         type: object
         properties:
           api_url:
             type: string
   audiense-insights:
-    description: Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account.
+    description: Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/audiense-insights.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/audiense-insights.md
     source: https://github.com/AudienseCo/mcp-audiense-insights/tree/main
@@ -968,7 +968,7 @@ registry:
     resources: {}
     config:
       - name: audiense-insights
-        description: Configure the connection to Audiense Insights.
+        description: Configure the connection to Audiense Insights
         type: object
         properties:
           client_id:
@@ -976,7 +976,7 @@ registry:
         required:
           - client_id
   basic-memory:
-    description: Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md.
+    description: Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/basic-memory.md
     source: https://github.com/basicmachines-co/basic-memory/tree/main
@@ -1018,7 +1018,7 @@ registry:
     resources: {}
     config:
       - name: bitrefill
-        description: Configure the connection to Bitrefill.
+        description: Configure the connection to Bitrefill
         type: object
         properties:
           api_id:
@@ -1026,7 +1026,7 @@ registry:
         required:
           - api_id
   box:
-    description: An MCP server capable of interacting with the Box API.
+    description: An MCP server capable of interacting with the Box API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/box.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/box.md
     source: https://github.com/box-community/mcp-server-box/tree/refs/pull/4/merge
@@ -1050,7 +1050,7 @@ registry:
     prompts: 0
     resources: {}
   chroma:
-    description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma.
+    description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/chroma.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/chroma.md
     source: https://github.com/chroma-core/chroma-mcp/tree/main
@@ -1073,7 +1073,7 @@ registry:
     prompts: 0
     resources: {}
   cyreslab-ai-shodan:
-    description: A Model Context Protocol server that provides access to Shodan API functionality.
+    description: A Model Context Protocol server that provides access to Shodan API functionality
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/cyreslab-ai-shodan.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/cyreslab-ai-shodan.md
     source: https://github.com/Cyreslab-AI/shodan-mcp-server/tree/main
@@ -1089,7 +1089,7 @@ registry:
     prompts: 0
     resources: {}
   dart:
-    description: Dart AI Model Context Protocol (MCP) server.
+    description: Dart AI Model Context Protocol (MCP) server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dart.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/dart.md
     source: https://github.com/its-dart/dart-mcp-server/tree/main
@@ -1112,13 +1112,13 @@ registry:
     resources: {}
     config:
       - name: dart
-        description: Configure the connection to Dart.
+        description: Configure the connection to Dart
         type: object
         properties:
           host:
             type: string
   databutton:
-    description: Databutton MCP Server.
+    description: Databutton MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/databutton.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/databutton.md
     source: https://github.com/databutton/databutton-mcp/tree/main
@@ -1144,7 +1144,7 @@ registry:
     resources: {}
     config:
       - name: descope
-        description: Configure the connection to Descope.
+        description: Configure the connection to Descope
         type: object
         properties:
           project_id:
@@ -1152,7 +1152,7 @@ registry:
         required:
           - project_id
   devhub-cms:
-    description: DevHub CMS LLM integration through the Model Context Protocol.
+    description: DevHub CMS LLM integration through the Model Context Protocol
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/devhub-cms.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/devhub-cms.md
     source: https://github.com/devhub/devhub-cms-mcp/tree/main
@@ -1175,7 +1175,7 @@ registry:
     resources: {}
     config:
       - name: devhub-cms
-        description: Configure the connection to DevHub CMS.
+        description: Configure the connection to DevHub CMS
         type: object
         properties:
           url:
@@ -1183,7 +1183,7 @@ registry:
         required:
           - url
   e2b:
-    description: Giving Claude ability to run code with E2B via MCP (Model Context Protocol).
+    description: Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/e2b.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/e2b.md
     source: https://github.com/e2b-dev/mcp-server/tree/main
@@ -1211,7 +1211,7 @@ registry:
     resources: {}
     config:
       - name: elasticsearch
-        description: Configure the connection to Elasticsearch.
+        description: Configure the connection to Elasticsearch
         type: object
         properties:
           url:
@@ -1239,7 +1239,7 @@ registry:
     resources: {}
     config:
       - name: firecrawl
-        description: Configure the connection to Firecrawl.
+        description: Configure the connection to Firecrawl
         type: object
         properties:
           credit_critical_threshold:
@@ -1270,7 +1270,7 @@ registry:
     prompts: 0
     resources: {}
   handwriting-ocr:
-    description: Model Context Protocol (MCP) Server for Handwriting OCR.
+    description: Model Context Protocol (MCP) Server for Handwriting OCR
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/handwriting-ocr.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/handwriting-ocr.md
     source: https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server/tree/main
@@ -1284,7 +1284,7 @@ registry:
     prompts: 0
     resources: {}
   heroku:
-    description: Heroku Platform MCP Server.
+    description: Heroku Platform MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/heroku.md
     source: https://github.com/heroku/heroku-mcp-server/tree/refs/pull/24/merge
@@ -1329,7 +1329,7 @@ registry:
     prompts: 0
     resources: {}
   hyperbrowser:
-    description: A MCP server implementation for hyperbrowser.
+    description: A MCP server implementation for hyperbrowser
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperbrowser.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperbrowser.md
     source: https://github.com/hyperbrowserai/mcp/tree/main
@@ -1350,7 +1350,7 @@ registry:
     prompts: 0
     resources: {}
   hyperspell:
-    description: Hyperspell MCP Server.
+    description: Hyperspell MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hyperspell.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hyperspell.md
     source: https://github.com/hyperspell/hyperspell-mcp/tree/main
@@ -1365,7 +1365,7 @@ registry:
     resources: {}
     config:
       - name: hyperspell
-        description: Configure the connection to Hyperspell.
+        description: Configure the connection to Hyperspell
         type: object
         properties:
           collection:
@@ -1373,7 +1373,7 @@ registry:
           use_resources:
             type: boolean
   iaptic:
-    description: Model Context Protocol server for interacting with iaptic.
+    description: Model Context Protocol server for interacting with iaptic
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/iaptic.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/iaptic.md
     source: https://github.com/iaptic/mcp-server-iaptic/tree/main
@@ -1401,7 +1401,7 @@ registry:
     resources: {}
     config:
       - name: iaptic
-        description: Configure the connection to iaptic.
+        description: Configure the connection to iaptic
         type: object
         properties:
           app_name:
@@ -1423,13 +1423,13 @@ registry:
     resources: {}
     config:
       - name: kagisearch
-        description: Configure the connection to Kagi search.
+        description: Configure the connection to Kagi search
         type: object
         properties:
           engine:
             type: string
   multiversx-mx:
-    description: MCP Server for MultiversX.
+    description: MCP Server for MultiversX
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/multiversx-mx.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/multiversx-mx.md
     source: https://github.com/multiversx/mx-mcp/tree/main
@@ -1453,7 +1453,7 @@ registry:
     resources: {}
     config:
       - name: multiversx-mx
-        description: Configure the connection to MultiversX blockchain.
+        description: Configure the connection to MultiversX blockchain
         type: object
         properties:
           network:
@@ -1464,7 +1464,7 @@ registry:
           - network
           - wallet
   neon:
-    description: MCP server for interacting with Neon Management API and databases.
+    description: MCP server for interacting with Neon Management API and databases
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neon.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neon.md
     source: https://github.com/neondatabase/mcp-server-neon/tree/main
@@ -1491,7 +1491,7 @@ registry:
     prompts: 0
     resources: {}
   neondatabase-labs:
-    description: MCP server for interacting with Neon Management API and databases.
+    description: MCP server for interacting with Neon Management API and databases
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neondatabase-labs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/neondatabase-labs.md
     source: https://github.com/neondatabase-labs/mcp-server-neon/tree/main
@@ -1549,7 +1549,7 @@ registry:
     resources: {}
     config:
       - name: opik
-        description: Configure the connection to Opik.
+        description: Configure the connection to Opik
         type: object
         properties:
           api_base_url:
@@ -1589,7 +1589,7 @@ registry:
     resources: {}
     config:
       - name: oxylabs
-        description: Configure the connection to Oxylabs Scraper.
+        description: Configure the connection to Oxylabs Scraper
         type: object
         properties:
           username:
@@ -1639,7 +1639,7 @@ registry:
     prompts: 0
     resources: {}
   scrapegraph:
-    description: ScapeGraph MCP Server.
+    description: ScapeGraph MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/scrapegraph.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/scrapegraph.md
     source: https://github.com/ScrapeGraphAI/scrapegraph-mcp/tree/main
@@ -1665,7 +1665,7 @@ registry:
     prompts: 0
     resources: {}
   shopify:
-    description: Shopify.dev MCP server.
+    description: Shopify.dev MCP server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/shopify.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/shopify.md
     source: https://github.com/Shopify/dev-mcp/tree/refs/pull/7/merge
@@ -1689,7 +1689,7 @@ registry:
     prompts: 0
     resources: {}
   tembo:
-    description: MCP server for Tembo Cloud's platform API.
+    description: MCP server for Tembo Cloud's platform API
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tembo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tembo.md
     source: https://github.com/tembo-io/mcp-server-tembo/tree/main
@@ -1710,7 +1710,7 @@ registry:
     prompts: 0
     resources: {}
   triplewhale:
-    description: Triplewhale MCP Server.
+    description: Triplewhale MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/triplewhale.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/triplewhale.md
     source: https://github.com/Triple-Whale/mcp-server-triplewhale/tree/master
@@ -1722,7 +1722,7 @@ registry:
     prompts: 0
     resources: {}
   tweetbinder:
-    description: TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account.
+    description: TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/tweetbinder.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/tweetbinder.md
     source: https://github.com/audienseco/mcp-tweetbinder/tree/main
@@ -1754,7 +1754,7 @@ registry:
     prompts: 0
     resources: {}
   desktop-commander:
-    description: Search, update, manage files and run terminal commands with AI.
+    description: Search, update, manage files and run terminal commands with AI
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/desktop-commander.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/desktop-commander.md
     source: https://github.com/wonderwhy-er/DesktopCommanderMCP/tree/main
@@ -1928,7 +1928,7 @@ registry:
     resources: {}
     config:
       - name: edubase
-        description: Configure the connection to EduBase.
+        description: Configure the connection to EduBase
         type: object
         properties:
           app:
@@ -1961,7 +1961,7 @@ registry:
     prompts: 0
     resources: {}
   wolfram-alpha:
-    description: Connect your chat repl to wolfram alpha computational intelligence.
+    description: Connect your chat repl to wolfram alpha computational intelligence
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wolfram-alpha.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/wolfram-alpha.md
     source: https://github.com/SecretiveShell/MCP-wolfram-alpha/tree/master
@@ -1973,7 +1973,7 @@ registry:
     prompts: 0
     resources: {}
   glif:
-    description: Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app.
+    description: 'Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app'
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/glif.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/glif.md
     source: https://github.com/glifxyz/glif-mcp-server/tree/main
@@ -2007,7 +2007,7 @@ registry:
           ignored_saved:
             type: boolean
   exa:
-    description: Claude can perform Web Search | Exa with MCP (Model Context Protocol).
+    description: Claude can perform Web Search | Exa with MCP (Model Context Protocol)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/exa.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/exa.md
     source: https://github.com/exa-labs/exa-mcp-server/tree/main
@@ -2078,7 +2078,7 @@ registry:
     resources: {}
     config:
       - name: 3d-printer
-        description: Configure the connection to your 3D printer.
+        description: Configure the connection to your 3D printer
         type: object
         properties:
           printer.host:
@@ -2088,7 +2088,7 @@ registry:
           printer.type:
             type: string
   grafana:
-    description: MCP server for Grafana.
+    description: MCP server for Grafana
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/grafana.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/grafana.md
     source: https://github.com/grafana/mcp-grafana/tree/main
@@ -2126,13 +2126,13 @@ registry:
     resources: {}
     config:
       - name: grafana
-        description: Configure the connection to Grafana.
+        description: Configure the connection to Grafana
         type: object
         properties:
           url:
             type: string
   pulumi:
-    description: Pulumi MCP Server.
+    description: Pulumi MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/pulumi.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/pulumi.md
     source: https://github.com/pulumi/mcp-server/tree/main
@@ -2168,7 +2168,7 @@ registry:
     resources: {}
     config:
       - name: kong
-        description: Configure the connection to Kong Konnect.
+        description: Configure the connection to Kong Konnect
         type: object
         properties:
           region:
@@ -2189,13 +2189,13 @@ registry:
     resources: {}
     config:
       - name: circleci
-        description: Configure the connection to CircleCI.
+        description: Configure the connection to CircleCI
         type: object
         properties:
           url:
             type: string
   302_sandbox:
-    description: 302 Sandbox MCP.
+    description: 302 Sandbox MCP
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/302_sandbox.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/302_sandbox.md
     source: https://github.com/302ai/302_sandbox_mcp/tree/main
@@ -2215,7 +2215,7 @@ registry:
     prompts: 0
     resources: {}
   smithery-cli:
-    description: Official MCP server for Smithery CLI.
+    description: Official MCP server for Smithery CLI
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/smithery-cli.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/smithery-cli.md
     source: https://github.com/smithery-ai/smithery-cli-mcp/tree/main
@@ -2229,7 +2229,7 @@ registry:
     prompts: 0
     resources: {}
   doit:
-    description: DoiT official MCP Server.
+    description: DoiT official MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/doit.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/doit.md
     source: https://github.com/doitintl/doit-mcp-server/tree/main
@@ -2250,7 +2250,7 @@ registry:
     prompts: 0
     resources: {}
   elevenlabs:
-    description: The official ElevenLabs MCP server.
+    description: The official ElevenLabs MCP server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/elevenlabs.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/elevenlabs.md
     source: https://github.com/elevenlabs/elevenlabs-mcp/tree/refs/pull/17/merge
@@ -2293,7 +2293,7 @@ registry:
     prompts: 0
     resources: {}
   risken:
-    description: RISKEN's official MCP Server.
+    description: RISKEN's official MCP Server
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/risken.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/risken.md
     source: https://github.com/ca-risken/risken-mcp-server/tree/main
@@ -2309,13 +2309,13 @@ registry:
     resources: {}
     config:
       - name: risken
-        description: Configure the connection to Risken.
+        description: Configure the connection to Risken
         type: object
         properties:
           risken.url:
             type: string
   context7:
-    description: Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors.
+    description: Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/context7.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/context7.md
     source: https://github.com/upstash/context7/tree/master
@@ -2375,13 +2375,13 @@ registry:
     resources: {}
     config:
       - name: line
-        description: Configure the connection to LINE.
+        description: Configure the connection to LINE
         type: object
         properties:
           user_id:
             type: string
   gyazo:
-    description: Official Model Context Protocol server for Gyazo.
+    description: Official Model Context Protocol server for Gyazo
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gyazo.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/gyazo.md
     source: https://github.com/nota/gyazo-mcp-server/tree/main
@@ -2396,7 +2396,7 @@ registry:
     prompts: 0
     resources: {}
   hackle:
-    description: Model Context Protocol server for Hackle.
+    description: Model Context Protocol server for Hackle
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hackle.md
     readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hackle.md
     source: https://github.com/hackle-io/hackle-mcp/tree/main
