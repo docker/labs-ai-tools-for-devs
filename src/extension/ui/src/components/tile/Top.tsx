@@ -2,6 +2,7 @@ import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
 
 import { CatalogItemRichened } from '../../types/catalog';
 import { formatName } from '../../formatName';
+import { format } from 'path';
 
 type TopProps = {
   onToggleRegister: (checked: boolean) => void;
@@ -34,8 +35,8 @@ export default function Top({ item, onToggleRegister }: TopProps) {
           <Tooltip
             title={
               item.registered
-                ? 'Unregistering this server will hide it from MCP clients.'
-                : 'Registering this server will expose it to MCP clients.'
+                ? `Disable ${formatName(item.name)}`
+                : `Enable ${formatName(item.name)}`
             }
           >
             <Switch
@@ -48,7 +49,9 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             />
           </Tooltip>
         ) : (
-          <Tooltip title="This server needs configuration before it can be used.">
+          <Tooltip
+            title={`Enabling ${formatName(item.name)} requires configuration`}
+          >
             <span>
               <Switch checked={false} disabled />
             </span>
