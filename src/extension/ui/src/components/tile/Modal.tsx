@@ -25,7 +25,6 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { capitalize } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
 import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from '../../Constants';
@@ -34,6 +33,7 @@ import { useConfig } from '../../queries/useConfig';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
+import { formatName } from '../../formatName';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -154,15 +154,7 @@ const ConfigurationModal = ({
               borderRadius: 1,
             }}
           />
-          {
-            // Lodash doesn't have a capitalize function that works with strings
-            catalogItem.name
-              .replace(/-/g, ' ')
-              .replace(/_/g, ' ')
-              .split(' ')
-              .map(capitalize)
-              .join(' ')
-          }
+          {formatName(catalogItem.name)}
 
           <Tooltip
             placement="right"

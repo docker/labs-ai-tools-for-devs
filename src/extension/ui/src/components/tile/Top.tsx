@@ -1,7 +1,8 @@
 import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
-import { capitalize } from 'lodash-es';
 
 import { CatalogItemRichened } from '../../types/catalog';
+import { formatName } from '../../formatName';
+import { format } from 'path';
 
 type TopProps = {
   onToggleRegister: (checked: boolean) => void;
@@ -26,15 +27,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
       }
       title={
         <Typography sx={{ justifySelf: 'flex-start', fontWeight: 'bold' }}>
-          {
-            // Lodash doesn't have a capitalize function that works with strings
-            item.name
-              .replace(/-/g, ' ')
-              .replace(/_/g, ' ')
-              .split(' ')
-              .map(capitalize)
-              .join(' ')
-          }
+          {formatName(item.name)}
         </Typography>
       }
       action={
@@ -42,8 +35,8 @@ export default function Top({ item, onToggleRegister }: TopProps) {
           <Tooltip
             title={
               item.registered
-                ? 'Unregistering this server will hide it from MCP clients.'
-                : 'Registering this server will expose it to MCP clients.'
+                ? `Disable ${formatName(item.name)}`
+                : `Enable ${formatName(item.name)}`
             }
           >
             <Switch
@@ -56,7 +49,9 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             />
           </Tooltip>
         ) : (
-          <Tooltip title="This server needs configuration before it can be used.">
+          <Tooltip
+            title={`Enabling ${formatName(item.name)} requires configuration`}
+          >
             <span>
               <Switch checked={false} disabled />
             </span>

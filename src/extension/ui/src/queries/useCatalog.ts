@@ -1,27 +1,27 @@
-import { v1 } from "@docker/extension-api-client-types";
+import { v1 } from '@docker/extension-api-client-types';
 import {
   CatalogItem,
   CatalogItemRichened,
   CatalogItemWithName,
-} from "../types/catalog";
-import { getRegistry, syncRegistryWithConfig } from "../Registry";
-import Secrets from "../Secrets";
-import { parse, stringify } from "yaml";
+} from '../types/catalog';
+import { getRegistry, syncRegistryWithConfig } from '../Registry';
+import Secrets from '../Secrets';
+import { parse, stringify } from 'yaml';
 import {
   CATALOG_URL,
   POLL_INTERVAL,
   UNASSIGNED_SECRET_PLACEHOLDER,
-} from "../Constants";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getTemplateForItem } from "./useConfig";
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { escapeJSONForPlatformShell, tryRunImageSync } from "../FileUtils";
-import { useConfig } from "./useConfig";
-import { useSecrets } from "./useSecrets";
+} from '../Constants';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getTemplateForItem } from './useConfig';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { escapeJSONForPlatformShell, tryRunImageSync } from '../FileUtils';
+import { useConfig } from './useConfig';
+import { useSecrets } from './useSecrets';
 
 const STORAGE_KEYS = {
-  catalog: "docker-catalog-catalog",
-  registry: "docker-catalog-registry",
+  catalog: 'docker-catalog-catalog',
+  registry: 'docker-catalog-registry',
 };
 
 function useCatalog(client: v1.DockerDesktopClient) {
@@ -73,23 +73,20 @@ function useCatalog(client: v1.DockerDesktopClient) {
     isLoading: catalogLoading,
     refetch: refetchCatalog,
   } = useQuery({
-    queryKey: ["catalog"],
+    queryKey: ['catalog'],
     enabled: !secretsLoading && !registryLoading && !configLoading,
     queryFn: async () => {
       const response = await fetch(
-        localStorage.getItem("catalogUrl") || CATALOG_URL
+        localStorage.getItem('catalogUrl') || CATALOG_URL
       );
       const catalog = await response.text();
-      const items = parse(catalog)["registry"] as { [key: string]: any };
+      const items = parse(catalog)['registry'] as { [key: string]: any };
       const enrichedItems = Object.entries(items).map(([name, item]) => ({
         name,
         ...item,
       })) as CatalogItemWithName[];
       return enrichedItems.reverse().map(enrichCatalogItem);
     },
-    refetchInterval: POLL_INTERVAL,
-    staleTime: 60000,
-    gcTime: 300000,
   });
 
   // This effect will re-enrich catalog items whenever secrets, config, or registry items change
@@ -106,7 +103,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
       // Use deep comparison for determining if updates are needed
       if (JSON.stringify(enrichedItems) !== JSON.stringify(catalogItems)) {
         // Use a stable reference for query data updates
-        queryClient.setQueryData(["catalog"], [...enrichedItems]);
+        queryClient.setQueryData(['catalog'], [...enrichedItems]);
       }
     }
   }, [
@@ -120,7 +117,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
 
   // Persist catalog to localStorage when it changes (for fallback only)
   useQuery({
-    queryKey: ["catalog", "persist", catalogItems],
+    queryKey: ['catalog', 'persist', catalogItems],
     queryFn: async () => {
       if (catalogItems && catalogItems.length > 0) {
         localStorage.setItem(
@@ -158,7 +155,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
     refetch: refetchRegistry,
     isLoading: registryLoading,
   } = useQuery({
-    queryKey: ["registry"],
+    queryKey: ['registry'],
     queryFn: async () => {
       setCanRegister(false);
       try {
@@ -168,11 +165,11 @@ function useRegistry(client: v1.DockerDesktopClient) {
       } catch (error) {
         if (error instanceof Error) {
           client.desktopUI.toast.error(
-            "Failed to get prompt registry: " + error.message
+            'Failed to get prompt registry: ' + error.message
           );
         } else {
           client.desktopUI.toast.error(
-            "Failed to get prompt registry: " + JSON.stringify(error)
+            'Failed to get prompt registry: ' + JSON.stringify(error)
           );
         }
         setCanRegister(true);
@@ -185,15 +182,15 @@ function useRegistry(client: v1.DockerDesktopClient) {
   });
 
   useQuery({
-    queryKey: ["registry", "init"],
+    queryKey: ['registry', 'init'],
     queryFn: async () => {
       const cachedRegistry = localStorage.getItem(STORAGE_KEYS.registry);
       if (cachedRegistry && queryClient && !registryItems) {
         try {
           const parsedRegistry = JSON.parse(cachedRegistry);
-          queryClient.setQueryData(["registry"], parsedRegistry);
+          queryClient.setQueryData(['registry'], parsedRegistry);
         } catch (e) {
-          console.error("Failed to parse cached registry:", e);
+          console.error('Failed to parse cached registry:', e);
         }
       }
       return null;
@@ -208,7 +205,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
   );
 
   useQuery({
-    queryKey: ["registry", "persist"],
+    queryKey: ['registry', 'persist'],
     queryFn: async () => {
       if (registryItemsString) {
         localStorage.setItem(STORAGE_KEYS.registry, registryItemsString);
@@ -228,7 +225,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
         {
           files: [
             {
-              path: "registry.yaml",
+              path: 'registry.yaml',
               content: stringify({ registry: newRegistry }),
             },
           ],
@@ -237,12 +234,12 @@ function useRegistry(client: v1.DockerDesktopClient) {
       );
 
       await tryRunImageSync(client, [
-        "--rm",
-        "-v",
-        "docker-prompts:/docker-prompts",
-        "--workdir",
-        "/docker-prompts",
-        "vonwig/function_write_files:latest",
+        '--rm',
+        '-v',
+        'docker-prompts:/docker-prompts',
+        '--workdir',
+        '/docker-prompts',
+        'vonwig/function_write_files:latest',
         payload,
       ]);
 
@@ -292,7 +289,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
           {
             files: [
               {
-                path: "registry.yaml",
+                path: 'registry.yaml',
                 content: stringify({ registry: newRegistry }),
               },
             ],
@@ -301,12 +298,12 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         );
 
         await tryRunImageSync(client, [
-          "--rm",
-          "-v",
-          "docker-prompts:/docker-prompts",
-          "--workdir",
-          "/docker-prompts",
-          "vonwig/function_write_files:latest",
+          '--rm',
+          '-v',
+          'docker-prompts:/docker-prompts',
+          '--workdir',
+          '/docker-prompts',
+          'vonwig/function_write_files:latest',
           payload,
         ]);
 
@@ -318,7 +315,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         return { success: true, newRegistry };
       } catch (error) {
         client.desktopUI.toast.error(
-          "Failed to register catalog item: " + error
+          'Failed to register catalog item: ' + error
         );
         // Treat YAML file write failures as fatal, no rollback
         throw error;
@@ -327,10 +324,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
     // Only need one update of registry data, not both onMutate and onSuccess
     onSuccess: async (data) => {
       // Update the registry data after successful registration
-      queryClient.setQueryData(["registry"], data.newRegistry);
-
-      // Also invalidate catalog to refresh the registered state
-      await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+      queryClient.setQueryData(['registry'], data.newRegistry);
     },
   });
 
@@ -350,7 +344,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
           {
             files: [
               {
-                path: "registry.yaml",
+                path: 'registry.yaml',
                 content: stringify({ registry: currentRegistry }),
               },
             ],
@@ -359,12 +353,12 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         );
 
         await tryRunImageSync(client, [
-          "--rm",
-          "-v",
-          "docker-prompts:/docker-prompts",
-          "--workdir",
-          "/docker-prompts",
-          "vonwig/function_write_files:latest",
+          '--rm',
+          '-v',
+          'docker-prompts:/docker-prompts',
+          '--workdir',
+          '/docker-prompts',
+          'vonwig/function_write_files:latest',
           payload,
         ]);
 
@@ -374,7 +368,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         return { success: true, newRegistry: currentRegistry };
       } catch (error) {
         client.desktopUI.toast.error(
-          "Failed to unregister catalog item: " + error
+          'Failed to unregister catalog item: ' + error
         );
         // Treat YAML file write failures as fatal, no rollback
         throw error;
@@ -383,10 +377,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
     // Only need one update of registry data, not both onMutate and onSuccess
     onSuccess: async (data) => {
       // Update the registry data after successful unregistration
-      queryClient.setQueryData(["registry"], data.newRegistry);
-
-      // Also invalidate catalog to refresh the registered state
-      await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+      queryClient.setQueryData(['registry'], data.newRegistry);
     },
   });
 
