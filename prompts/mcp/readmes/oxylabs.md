@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server that enables AI assistants like Claude to 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[oxylabs](https://github.com/oxylabs)
+**Docker Image**|[mcp/oxylabs](https://hub.docker.com/repository/docker/mcp/oxylabs)
+**Author**|[oxylabs](https://github.com/oxylabs)
 **Repository**|https://github.com/oxylabs/oxylabs-mcp
 **Dockerfile**|https://github.com/oxylabs/oxylabs-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ An MCP server for Astra DB workloads
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[datastax](https://github.com/datastax)
+**Docker Image**|[mcp/astra-db](https://hub.docker.com/repository/docker/mcp/astra-db)
+**Author**|[datastax](https://github.com/datastax)
 **Repository**|https://github.com/datastax/astra-db-mcp
 **Dockerfile**|https://github.com/datastax/astra-db-mcp/blob/refs/pull/14/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[mendableai](https://github.com/mendableai)
+**Docker Image**|[mcp/firecrawl](https://hub.docker.com/repository/docker/mcp/firecrawl)
+**Author**|[mendableai](https://github.com/mendableai)
 **Repository**|https://github.com/mendableai/firecrawl-mcp-server
 **Dockerfile**|https://github.com/mendableai/firecrawl-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Connect to a Kubernetes cluster and manage it
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Flux159](https://github.com/Flux159)
+**Docker Image**|[mcp/kubernetes](https://hub.docker.com/repository/docker/mcp/kubernetes)
+**Author**|[Flux159](https://github.com/Flux159)
 **Repository**|https://github.com/Flux159/mcp-server-kubernetes
 **Dockerfile**|https://github.com/Flux159/mcp-server-kubernetes/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

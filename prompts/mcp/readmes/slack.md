@@ -8,7 +8,8 @@ Interact with Slack Workspaces over the Slack API.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/slack](https://hub.docker.com/repository/docker/mcp/slack)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/slack/Dockerfile
 **Docker Image built by**|Docker Inc.

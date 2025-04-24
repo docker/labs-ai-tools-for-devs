@@ -8,7 +8,8 @@ Hyperspell MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[hyperspell](https://github.com/hyperspell)
+**Docker Image**|[mcp/hyperspell](https://hub.docker.com/repository/docker/mcp/hyperspell)
+**Author**|[hyperspell](https://github.com/hyperspell)
 **Repository**|https://github.com/hyperspell/hyperspell-mcp
 **Dockerfile**|https://github.com/hyperspell/hyperspell-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

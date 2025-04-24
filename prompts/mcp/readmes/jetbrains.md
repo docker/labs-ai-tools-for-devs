@@ -8,7 +8,8 @@ A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[GannaChernyshova](https://github.com/GannaChernyshova)
+**Docker Image**|[mcp/jetbrains](https://hub.docker.com/repository/docker/mcp/jetbrains)
+**Author**|[GannaChernyshova](https://github.com/GannaChernyshova)
 **Repository**|https://github.com/GannaChernyshova/mcp-jetbrains
 **Dockerfile**|https://github.com/GannaChernyshova/mcp-jetbrains/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

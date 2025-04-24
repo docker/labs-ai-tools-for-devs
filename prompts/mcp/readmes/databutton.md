@@ -8,7 +8,8 @@ Databutton MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[databutton](https://github.com/databutton)
+**Docker Image**|[mcp/databutton](https://hub.docker.com/repository/docker/mcp/databutton)
+**Author**|[databutton](https://github.com/databutton)
 **Repository**|https://github.com/databutton/databutton-mcp
 **Dockerfile**|https://github.com/databutton/databutton-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

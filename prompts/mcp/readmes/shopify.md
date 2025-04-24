@@ -8,7 +8,8 @@ Shopify.dev MCP server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Shopify](https://github.com/Shopify)
+**Docker Image**|[mcp/shopify](https://hub.docker.com/repository/docker/mcp/shopify)
+**Author**|[Shopify](https://github.com/Shopify)
 **Repository**|https://github.com/Shopify/dev-mcp
 **Dockerfile**|https://github.com/Shopify/dev-mcp/blob/refs/pull/7/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

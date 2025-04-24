@@ -8,7 +8,8 @@ Interact with your Elasticsearch indices through natural language conversations.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[elastic](https://github.com/elastic)
+**Docker Image**|[mcp/elasticsearch](https://hub.docker.com/repository/docker/mcp/elasticsearch)
+**Author**|[elastic](https://github.com/elastic)
 **Repository**|https://github.com/elastic/mcp-server-elasticsearch
 **Dockerfile**|https://github.com/elastic/mcp-server-elasticsearch/blob/refs/pull/37/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

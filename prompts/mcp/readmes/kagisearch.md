@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server for Kagi search & other tools.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[kagisearch](https://github.com/kagisearch)
+**Docker Image**|[mcp/kagisearch](https://hub.docker.com/repository/docker/mcp/kagisearch)
+**Author**|[kagisearch](https://github.com/kagisearch)
 **Repository**|https://github.com/kagisearch/kagimcp
 **Dockerfile**|https://github.com/kagisearch/kagimcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Basic Memory is a knowledge management system that allows you to build a persist
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[basicmachines-co](https://github.com/basicmachines-co)
+**Docker Image**|[mcp/basic-memory](https://hub.docker.com/repository/docker/mcp/basic-memory)
+**Author**|[basicmachines-co](https://github.com/basicmachines-co)
 **Repository**|https://github.com/basicmachines-co/basic-memory
 **Dockerfile**|https://github.com/basicmachines-co/basic-memory/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

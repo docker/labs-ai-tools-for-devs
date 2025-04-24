@@ -8,7 +8,8 @@ A Model Context Protocol server for Git repository interaction and automation
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/git](https://hub.docker.com/repository/docker/mcp/git)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/git/Dockerfile
 **Docker Image built by**|Docker Inc.

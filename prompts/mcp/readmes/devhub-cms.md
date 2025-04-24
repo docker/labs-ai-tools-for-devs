@@ -8,7 +8,8 @@ DevHub CMS LLM integration through the Model Context Protocol
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[devhub](https://github.com/devhub)
+**Docker Image**|[mcp/devhub-cms](https://hub.docker.com/repository/docker/mcp/devhub-cms)
+**Author**|[devhub](https://github.com/devhub)
 **Repository**|https://github.com/devhub/devhub-cms-mcp
 **Dockerfile**|https://github.com/devhub/devhub-cms-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

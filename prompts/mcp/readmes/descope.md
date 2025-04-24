@@ -8,7 +8,8 @@ The Descope Model Context Protocol (MCP) server provides an interface to interac
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[descope-sample-apps](https://github.com/descope-sample-apps)
+**Docker Image**|[mcp/descope](https://hub.docker.com/repository/docker/mcp/descope)
+**Author**|[descope-sample-apps](https://github.com/descope-sample-apps)
 **Repository**|https://github.com/descope-sample-apps/descope-mcp-server
 **Dockerfile**|https://github.com/descope-sample-apps/descope-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

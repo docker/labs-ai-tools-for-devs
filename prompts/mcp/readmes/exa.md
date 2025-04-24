@@ -8,7 +8,8 @@ Claude can perform Web Search | Exa with MCP (Model Context Protocol)
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[exa-labs](https://github.com/exa-labs)
+**Docker Image**|[mcp/exa](https://hub.docker.com/repository/docker/mcp/exa)
+**Author**|[exa-labs](https://github.com/exa-labs)
 **Repository**|https://github.com/exa-labs/exa-mcp-server
 **Dockerfile**|https://github.com/exa-labs/exa-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

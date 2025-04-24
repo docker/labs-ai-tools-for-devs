@@ -8,7 +8,8 @@ MCP server for Tembo Cloud's platform API
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[tembo-io](https://github.com/tembo-io)
+**Docker Image**|[mcp/tembo](https://hub.docker.com/repository/docker/mcp/tembo)
+**Author**|[tembo-io](https://github.com/tembo-io)
 **Repository**|https://github.com/tembo-io/mcp-server-tembo
 **Dockerfile**|https://github.com/tembo-io/mcp-server-tembo/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

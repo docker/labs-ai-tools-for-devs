@@ -8,7 +8,8 @@ An MCP server implementation for retrieving information from the AWS Knowledge B
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/aws-kb-retrieval-server](https://hub.docker.com/repository/docker/mcp/aws-kb-retrieval-server)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/aws-kb-retrieval-server/Dockerfile
 **Docker Image built by**|Docker Inc.

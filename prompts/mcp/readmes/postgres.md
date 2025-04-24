@@ -8,7 +8,8 @@ Connect with read-only access to PostgreSQL databases. This server enables LLMs 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/postgres](https://hub.docker.com/repository/docker/mcp/postgres)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/postgres/Dockerfile
 **Docker Image built by**|Docker Inc.

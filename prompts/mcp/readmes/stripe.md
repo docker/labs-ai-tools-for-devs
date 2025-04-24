@@ -8,7 +8,8 @@ Interact with Stripe services over the Stripe API.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[stripe](https://github.com/stripe)
+**Docker Image**|[mcp/stripe](https://hub.docker.com/repository/docker/mcp/stripe)
+**Author**|[stripe](https://github.com/stripe)
 **Repository**|https://github.com/stripe/agent-toolkit
 **Dockerfile**|https://github.com/stripe/agent-toolkit/blob/main/modelcontextprotocol/Dockerfile
 **Docker Image built by**|Docker Inc.

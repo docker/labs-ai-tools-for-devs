@@ -8,7 +8,8 @@ A Model Context Protocol Server connector for Bitrefill public API, to enable AI
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[bitrefill](https://github.com/bitrefill)
+**Docker Image**|[mcp/bitrefill](https://hub.docker.com/repository/docker/mcp/bitrefill)
+**Author**|[bitrefill](https://github.com/bitrefill)
 **Repository**|https://github.com/bitrefill/bitrefill-mcp-server
 **Dockerfile**|https://github.com/bitrefill/bitrefill-mcp-server/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ MCP server for interacting with Neon Management API and databases
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[neondatabase-labs](https://github.com/neondatabase-labs)
+**Docker Image**|[mcp/neondatabase-labs](https://hub.docker.com/repository/docker/mcp/neondatabase-labs)
+**Author**|[neondatabase-labs](https://github.com/neondatabase-labs)
 **Repository**|https://github.com/neondatabase-labs/mcp-server-neon
 **Dockerfile**|https://github.com/neondatabase-labs/mcp-server-neon/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

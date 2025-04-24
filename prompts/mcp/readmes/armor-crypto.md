@@ -8,7 +8,8 @@ The MCP server for interacting with Blockchain, Swaps, Strategic Planning and mo
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[armorwallet](https://github.com/armorwallet)
+**Docker Image**|[mcp/armor-crypto](https://hub.docker.com/repository/docker/mcp/armor-crypto)
+**Author**|[armorwallet](https://github.com/armorwallet)
 **Repository**|https://github.com/armorwallet/armor-crypto-mcp
 **Dockerfile**|https://github.com/armorwallet/armor-crypto-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[upstash](https://github.com/upstash)
+**Docker Image**|[mcp/context7](https://hub.docker.com/repository/docker/mcp/context7)
+**Author**|[upstash](https://github.com/upstash)
 **Repository**|https://github.com/upstash/context7
 **Dockerfile**|https://github.com/upstash/context7/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

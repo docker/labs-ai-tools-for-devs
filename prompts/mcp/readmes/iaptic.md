@@ -8,7 +8,8 @@
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[iaptic](https://github.com/iaptic)
+**Docker Image**|[mcp/iaptic](https://hub.docker.com/repository/docker/mcp/iaptic)
+**Author**|[iaptic](https://github.com/iaptic)
 **Repository**|https://github.com/iaptic/mcp-server-iaptic
 **Dockerfile**|https://github.com/iaptic/mcp-server-iaptic/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

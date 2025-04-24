@@ -8,7 +8,8 @@ Easily run glif.app AI workflows inside your LLM: image generators, memes, selfi
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[glifxyz](https://github.com/glifxyz)
+**Docker Image**|[mcp/glif](https://hub.docker.com/repository/docker/mcp/glif)
+**Author**|[glifxyz](https://github.com/glifxyz)
 **Repository**|https://github.com/glifxyz/glif-mcp-server
 **Dockerfile**|https://github.com/glifxyz/glif-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

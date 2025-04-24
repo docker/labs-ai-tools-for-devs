@@ -8,7 +8,8 @@ Official Model Context Protocol server for Gyazo
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[nota](https://github.com/nota)
+**Docker Image**|[mcp/gyazo](https://hub.docker.com/repository/docker/mcp/gyazo)
+**Author**|[nota](https://github.com/nota)
 **Repository**|https://github.com/nota/gyazo-mcp-server
 **Dockerfile**|https://github.com/nota/gyazo-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

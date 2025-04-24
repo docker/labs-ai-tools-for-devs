@@ -8,7 +8,8 @@ Dart AI Model Context Protocol (MCP) server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[its-dart](https://github.com/its-dart)
+**Docker Image**|[mcp/dart](https://hub.docker.com/repository/docker/mcp/dart)
+**Author**|[its-dart](https://github.com/its-dart)
 **Repository**|https://github.com/its-dart/dart-mcp-server
 **Dockerfile**|https://github.com/its-dart/dart-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Connect to Lara Translate API, enabling powerful translation capabilities with s
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[translated](https://github.com/translated)
+**Docker Image**|[mcp/lara](https://hub.docker.com/repository/docker/mcp/lara)
+**Author**|[translated](https://github.com/translated)
 **Repository**|https://github.com/translated/lara-mcp
 **Dockerfile**|https://github.com/translated/lara-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

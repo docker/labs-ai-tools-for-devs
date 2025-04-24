@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server for interacting with Kong Konnect APIs, al
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Kong](https://github.com/Kong)
+**Docker Image**|[mcp/kong](https://hub.docker.com/repository/docker/mcp/kong)
+**Author**|[Kong](https://github.com/Kong)
 **Repository**|https://github.com/Kong/mcp-konnect
 **Dockerfile**|https://github.com/Kong/mcp-konnect/blob/refs/pull/7/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

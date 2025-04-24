@@ -8,7 +8,8 @@ OpenAPI Schema Model Context Protocol Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[hannesj](https://github.com/hannesj)
+**Docker Image**|[mcp/openapi-schema](https://hub.docker.com/repository/docker/mcp/openapi-schema)
+**Author**|[hannesj](https://github.com/hannesj)
 **Repository**|https://github.com/hannesj/mcp-openapi-schema
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-openapi-schema/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

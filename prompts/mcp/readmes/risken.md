@@ -8,7 +8,8 @@ RISKEN's official MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[ca-risken](https://github.com/ca-risken)
+**Docker Image**|[mcp/risken](https://hub.docker.com/repository/docker/mcp/risken)
+**Author**|[ca-risken](https://github.com/ca-risken)
 **Repository**|https://github.com/ca-risken/risken-mcp-server
 **Dockerfile**|https://github.com/ca-risken/risken-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

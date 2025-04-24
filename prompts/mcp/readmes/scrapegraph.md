@@ -8,7 +8,8 @@ ScapeGraph MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[ScrapeGraphAI](https://github.com/ScrapeGraphAI)
+**Docker Image**|[mcp/scrapegraph](https://hub.docker.com/repository/docker/mcp/scrapegraph)
+**Author**|[ScrapeGraphAI](https://github.com/ScrapeGraphAI)
 **Repository**|https://github.com/ScrapeGraphAI/scrapegraph-mcp
 **Dockerfile**|https://github.com/ScrapeGraphAI/scrapegraph-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

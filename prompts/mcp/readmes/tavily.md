@@ -8,7 +8,8 @@ The Tavily MCP server provides seamless interaction with the tavily-search and t
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[tavily-ai](https://github.com/tavily-ai)
+**Docker Image**|[mcp/tavily](https://hub.docker.com/repository/docker/mcp/tavily)
+**Author**|[tavily-ai](https://github.com/tavily-ai)
 **Repository**|https://github.com/tavily-ai/tavily-mcp
 **Dockerfile**|https://github.com/tavily-ai/tavily-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

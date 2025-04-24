@@ -8,7 +8,8 @@ Model Context Protocol server for Hackle
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[hackle-io](https://github.com/hackle-io)
+**Docker Image**|[mcp/hackle](https://hub.docker.com/repository/docker/mcp/hackle)
+**Author**|[hackle-io](https://github.com/hackle-io)
 **Repository**|https://github.com/hackle-io/hackle-mcp
 **Dockerfile**|https://github.com/hackle-io/hackle-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

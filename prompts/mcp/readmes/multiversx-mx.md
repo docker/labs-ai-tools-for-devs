@@ -8,7 +8,8 @@ MCP Server for MultiversX
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[multiversx](https://github.com/multiversx)
+**Docker Image**|[mcp/multiversx-mx](https://hub.docker.com/repository/docker/mcp/multiversx-mx)
+**Author**|[multiversx](https://github.com/multiversx)
 **Repository**|https://github.com/multiversx/mx-mcp
 **Dockerfile**|https://github.com/multiversx/mx-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

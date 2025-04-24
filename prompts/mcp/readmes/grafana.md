@@ -8,7 +8,8 @@ MCP server for Grafana
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[grafana](https://github.com/grafana)
+**Docker Image**|[mcp/grafana](https://hub.docker.com/repository/docker/mcp/grafana)
+**Author**|[grafana](https://github.com/grafana)
 **Repository**|https://github.com/grafana/mcp-grafana
 **Dockerfile**|https://github.com/grafana/mcp-grafana/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

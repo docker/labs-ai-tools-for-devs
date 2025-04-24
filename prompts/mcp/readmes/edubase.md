@@ -8,7 +8,8 @@ The EduBase MCP server enables Claude and other LLMs to interact with EduBase's 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[EduBase](https://github.com/EduBase)
+**Docker Image**|[mcp/edubase](https://hub.docker.com/repository/docker/mcp/edubase)
+**Author**|[EduBase](https://github.com/EduBase)
 **Repository**|https://github.com/EduBase/MCP
 **Dockerfile**|https://github.com/EduBase/MCP/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

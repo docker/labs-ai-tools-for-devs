@@ -8,7 +8,8 @@ An MCP server capable of interacting with the Box API
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[box-community](https://github.com/box-community)
+**Docker Image**|[mcp/box](https://hub.docker.com/repository/docker/mcp/box)
+**Author**|[box-community](https://github.com/box-community)
 **Repository**|https://github.com/box-community/mcp-server-box
 **Dockerfile**|https://github.com/box-community/mcp-server-box/blob/refs/pull/4/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server that provides web search capabilities thro
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[nickclyde](https://github.com/nickclyde)
+**Docker Image**|[mcp/duckduckgo](https://hub.docker.com/repository/docker/mcp/duckduckgo)
+**Author**|[nickclyde](https://github.com/nickclyde)
 **Repository**|https://github.com/nickclyde/duckduckgo-mcp-server
 **Dockerfile**|https://github.com/nickclyde/duckduckgo-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

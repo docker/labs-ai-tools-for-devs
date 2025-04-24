@@ -8,7 +8,8 @@ Dappier MCP server connects any AI to proprietary, real-time data — including 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[DappierAI](https://github.com/DappierAI)
+**Docker Image**|[mcp/dappier](https://hub.docker.com/repository/docker/mcp/dappier)
+**Author**|[DappierAI](https://github.com/DappierAI)
 **Repository**|https://github.com/dappierai/dappier-mcp
 **Dockerfile**|https://github.com/dappierai/dappier-mcp/blob/staging/Dockerfile
 **Docker Image built by**|Docker Inc.

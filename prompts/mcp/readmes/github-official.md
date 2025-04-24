@@ -8,7 +8,8 @@ Provides seamless integration with GitHub APIs, enabling advanced automation and
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[github](https://github.com/github)
+**Docker Image**|[mcp/github-mcp-server](https://hub.docker.com/repository/docker/mcp/github-mcp-server)
+**Author**|[github](https://github.com/github)
 **Repository**|https://github.com/github/github-mcp-server
 **Dockerfile**|https://github.com/docker/labs-ai-tools-for-devs/blob/main/functions/github-mcp-server/Dockerfile
 **Docker Image built by**|Docker Inc.
