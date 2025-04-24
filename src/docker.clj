@@ -226,9 +226,9 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
-(defn inspect-image [{:keys [Id]}]
+(defn inspect-image [{:keys [Name Id]}]
   (curl/get
-   (format "http://localhost/images/%s/json" Id)
+    (format "http://localhost/images/%s/json" (or Name Id))
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -338,12 +338,9 @@
 
 (defn has-image? [image]
   (let [[_ digest] (re-find #".*@(.*)" image)]
-    (some
-     (fn [{:keys [RepoTags Id]}]
-       (or
-        (some #(= % image)  RepoTags)
-        (and digest (= digest Id))))
-     (images {}))))
+    (try
+      (image-inspect (if digest {:Id digest} {:Name image}))
+      (catch Throwable _))))
 
 (defn check-then-pull [container-definition]
   (when (not (has-image? (:image container-definition)))
@@ -374,9 +371,7 @@
   (check-then-pull container-definition)
   (let [{:keys [Entrypoint Cmd Env]}
         (->
-         (image-inspect
-          (-> (images {"reference" [(:image container-definition)]})
-              first))
+         (image-inspect {:Name (:image container-definition)})
          :Config)
         real-entrypoint (string/join " " (concat
                                           (or (:entrypoint container-definition) Entrypoint)

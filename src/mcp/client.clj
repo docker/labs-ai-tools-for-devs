@@ -305,15 +305,9 @@
     (recur)))
 ;; ------------------------------
 
-(defn inspect-image [container-definition]
-  (:Id
-   (docker/image-inspect
-    (-> (docker/images {"reference" [(:image container-definition)]})
-        first))))
-
 (defn add-digest [container-definition]
   (docker/check-then-pull container-definition)
-  (assoc container-definition :digest (inspect-image container-definition)))
+  (assoc container-definition :digest (:Id (docker/image-inspect {:Name (:image container-definition)}))))
 
 (def cached-mcp-get-tools
   (fn [container-definition]
