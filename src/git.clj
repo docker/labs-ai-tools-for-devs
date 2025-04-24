@@ -35,10 +35,12 @@
     m))
 
 (defn parse-github-ref [ref]
-  (some-> ref
-          split-opts
-          parse-ref
-          add-attributes))
+  (if-let [[_ path] (and ref (re-find #"file://(.*)" ref))]
+    {:path path}
+    (some-> ref
+            split-opts
+            parse-ref
+            add-attributes)))
 
 (defn hashch
   "returns #uuid"

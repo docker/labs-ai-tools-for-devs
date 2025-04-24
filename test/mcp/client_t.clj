@@ -30,18 +30,20 @@
    {:image "mcp/time:latest"
     :workdir "/app"}})
 
-(dotimes [n 100]
-  (logger/info "**** run " n)
-  (let [tools
-        (get-mcp-tools-from-prompt
-          {:mcp [github-mcp-server]
-           :local-get-tools -get-tools})]
-    (logger/info "tool count " (count tools)) )
-  (logger/info "**** finished run " n))
+(comment
+  (dotimes [n 100]
+    (logger/info "**** run " n)
+    (let [tools
+          (get-mcp-tools-from-prompt
+            {:mcp [github-mcp-server]
+             :local-get-tools -get-tools})]
+      (logger/info "tool count " (count tools)) )
+    (logger/info "**** finished run " n)))
 
-(get-mcp-tools-from-prompt
-  {:mcp [gdrive-mcp-server]
-   :local-get-tools -get-tools})
+(comment
+  (get-mcp-tools-from-prompt
+    {:mcp [gdrive-mcp-server]
+     :local-get-tools -get-tools}))
 
 (->> (client/resource-templates-cursor
        "cursor"
@@ -243,6 +245,12 @@
    {:mcp [{:container
            {:image "mcp/github-mcp-server:latest"
             :secrets {:github.personal_access_token "GITHUB_PERSONAL_ACCESS_TOKEN"}}}]
+    :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+   {:mcp [{:container
+           {:image "mcp/kubernetes:latest" 
+            :workdir "/usr/local/app" }}]
     :local-get-tools -get-tools})
 
   (docker/run-container

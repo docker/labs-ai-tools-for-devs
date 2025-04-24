@@ -1,6 +1,6 @@
 # IMAGE?=docker/labs-ai-tools-for-devs
 IMAGE?=docker/labs-ai-tools-for-devs
-TAG?=0.2.41
+TAG?=0.2.50
 
 BUILDER=buildx-multi-arch
 

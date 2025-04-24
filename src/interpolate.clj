@@ -55,9 +55,10 @@
     (cond-> (merge
              (:container definition)
              (dissoc defaults :functions)
-             {:command (interpolate-coll
-                        (-> definition :container :command)
-                        arg-context)}
+             (when (-> definition :container :command)
+               {:command (interpolate-coll
+                           (-> definition :container :command)
+                           arg-context)})
              (when (-> definition :container :entrypoint)
                {:entrypoint (->> (-> definition :container :entrypoint)
                                  (map (fn [s] (first (interpolate arg-context s))))

@@ -46,7 +46,6 @@
         socket-channel (docker/attach-socket (:Id x))
         c (async/chan 10)
         dead-channel (async/chan)]
-
     (docker/start x)
 
     ;; process the output-stream of the container
@@ -93,9 +92,7 @@
 
           ;; non-stdout message - show to user
           :else
-          (do
-            (logger/info "socket read loop " (:stderr block))
-            (recur)))))
+          (recur))))
 
        ;; add a function to send a jsonrpc request
     (assoc x

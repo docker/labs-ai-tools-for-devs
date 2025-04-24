@@ -91,8 +91,8 @@
 (s/def :tool/description string?)
 (s/def ::prompt-tool (s/keys :req-un [:tool/name :tool/description :docker/type]
                              :opt-un [:tool/parameters :prompt/prompt :prompt/ref]))
-(s/def ::container-tool (s/keys :req-un [:tool/name :tool/description :tool/container]
-                                :opt-un [:tool/parameters]))
+(s/def ::container-tool (s/keys :req-un [:tool/name :tool/container]
+                                :opt-un [:tool/parameters :tool/description]))
 (s/def :tool/function (s/or :container ::container-tool :prompt ::prompt-tool))
 (s/def :tool/type #{"function"})
 (s/def ::tool (s/keys :req-un [:tool/type :tool/function]))

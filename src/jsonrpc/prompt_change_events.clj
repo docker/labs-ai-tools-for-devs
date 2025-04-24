@@ -64,6 +64,7 @@
       (let [{x :container}
             (docker/run-streaming-function-with-no-stdin
              {:image "vonwig/inotifywait:latest"
+              :labels {"com.docker.desktop.service" "true"}
               :volumes ["docker-prompts:/prompts"]
               :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
              (fn [line]
