@@ -9,16 +9,15 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
   IconButton,
   Stack,
   TextField,
-  Typography,
+  Typography
 } from '@mui/material';
 import { useState } from 'react';
 
 import { MCP_POLICY_NAME } from '../../Constants';
-import { useCatalogAll, useCatalogOperations } from '../../queries/useCatalog';
+import { useCatalogOperations } from '../../queries/useCatalog';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import Bottom from './Bottom';
@@ -29,9 +28,10 @@ import Top from './Top';
 type TileProps = {
   item: CatalogItemRichened;
   client: v1.DockerDesktopClient;
+  registryLoading: boolean;
 };
 
-const Tile = ({ item, client }: TileProps) => {
+const Tile = ({ item, client, registryLoading }: TileProps) => {
   const [showSecretDialog, setShowSecretDialog] = useState(false);
   const [assignedSecrets] = useState<{ name: string; assigned: boolean }[]>([]);
   const [changedSecrets, setChangedSecrets] = useState<{
@@ -43,7 +43,6 @@ const Tile = ({ item, client }: TileProps) => {
     useSecrets(client);
   const { registerCatalogItem, unregisterCatalogItem } =
     useCatalogOperations(client);
-  const { registryLoading } = useCatalogAll(client);
 
   if (registryLoading || secretsLoading) {
     return (
@@ -140,12 +139,12 @@ const Tile = ({ item, client }: TileProps) => {
           </Stack>
         </DialogContent>
       </Dialog>
-      <ConfigurationModal
+      {showConfigModal && <ConfigurationModal
         open={showConfigModal}
         onClose={() => setShowConfigModal(false)}
         catalogItem={item}
         client={client}
-      />
+      />}
       <Card>
         <CardActionArea
           sx={{ padding: 1.5 }}
