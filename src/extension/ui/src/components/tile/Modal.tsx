@@ -28,13 +28,14 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from '../../Constants';
+import { ASSIGNED_SECRET_PLACEHOLDER, getUnsupportedSecretMessage, MCP_POLICY_NAME } from '../../Constants';
 import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
 import { formatName } from '../../formatName';
+import useDDInfo from '../../queries/useDDInfo';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,6 +85,8 @@ const ConfigurationModal = ({
   const { registerCatalogItem, unregisterCatalogItem } =
     useCatalogOperations(client);
   const { configLoading } = useConfig(client);
+
+  const { ddInfo, ddInfoLoading } = useDDInfo(client);
 
   useEffect(() => {
     setLocalSecrets(
@@ -281,15 +284,26 @@ const ConfigurationModal = ({
               >
                 <Stack direction="column" spacing={2} >
                   <ConfigEditor catalogItem={catalogItem} client={client} />
-
-                  {catalogItem.secrets?.length > 0 && (
-                    <Stack spacing={1}>
-                      <Typography variant="subtitle2">Secrets</Typography>
-                      {catalogItem.secrets.map((secret) => {
+                  <Stack>
+                    <Typography variant="subtitle2">Secrets</Typography>
+                    {!ddInfo && !ddInfoLoading && (
+                      <Alert severity="error">
+                        Failed to get Docker Desktop version
+                      </Alert>
+                    )}
+                    {ddInfo && !ddInfo?.hasSecretSupport && (
+                      <Alert severity="error">
+                        {getUnsupportedSecretMessage(ddInfo?.parsedVersion)}
+                      </Alert>
+                    )}
+                    {ddInfo?.hasSecretSupport &&
+                      catalogItem.secrets &&
+                      catalogItem.secrets?.length > 0 ? (
+                      catalogItem.secrets.map((secret) => {
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
-                              ASSIGNED_SECRET_PLACEHOLDER) ||
+                            ASSIGNED_SECRET_PLACEHOLDER) ||
                           (!secret.assigned &&
                             localSecrets[secret.name] !== '');
                         return (
@@ -360,7 +374,7 @@ const ConfigurationModal = ({
                           </Stack>
                         );
                       })}
-                    </Stack>
+                  </Stack>
                   )}
                 </Stack>
               </Stack>
