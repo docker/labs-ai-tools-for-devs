@@ -124,7 +124,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({
                 </Alert>}
                 <Box sx={{ position: 'sticky', top: 0, zIndex: 1000, backgroundColor: 'background.default' }}>
                     <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} sx={CATALOG_LAYOUT_SX}>
-                        <Tab label="Tools" />
+                        <Tab label="Servers" />
                         <Tab label={<Badge variant='dot' invisible={!noConfiguredClients} badgeContent={"TEST"} color="error">
                             Clients
                         </Badge>} />
