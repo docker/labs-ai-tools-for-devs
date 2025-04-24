@@ -8,7 +8,8 @@ DoiT official MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[doitintl](https://github.com/doitintl)
+**Docker Image**|[mcp/doit](https://hub.docker.com/repository/docker/mcp/doit)
+**Author**|[doitintl](https://github.com/doitintl)
 **Repository**|https://github.com/doitintl/doit-mcp-server
 **Dockerfile**|https://github.com/doitintl/doit-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

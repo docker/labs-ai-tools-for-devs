@@ -8,7 +8,8 @@ A MCP server implementation for hyperbrowser
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[hyperbrowserai](https://github.com/hyperbrowserai)
+**Docker Image**|[mcp/hyperbrowser](https://hub.docker.com/repository/docker/mcp/hyperbrowser)
+**Author**|[hyperbrowserai](https://github.com/hyperbrowserai)
 **Repository**|https://github.com/hyperbrowserai/mcp
 **Dockerfile**|https://github.com/hyperbrowserai/mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

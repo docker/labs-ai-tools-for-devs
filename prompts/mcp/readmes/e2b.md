@@ -8,7 +8,8 @@ Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[e2b-dev](https://github.com/e2b-dev)
+**Docker Image**|[mcp/e2b](https://hub.docker.com/repository/docker/mcp/e2b)
+**Author**|[e2b-dev](https://github.com/e2b-dev)
 **Repository**|https://github.com/e2b-dev/mcp-server
 **Dockerfile**|https://github.com/e2b-dev/mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

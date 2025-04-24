@@ -8,7 +8,8 @@ Heroku Platform MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[heroku](https://github.com/heroku)
+**Docker Image**|[mcp/heroku](https://hub.docker.com/repository/docker/mcp/heroku)
+**Author**|[heroku](https://github.com/heroku)
 **Repository**|https://github.com/heroku/heroku-mcp-server
 **Dockerfile**|https://github.com/heroku/heroku-mcp-server/blob/refs/pull/24/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

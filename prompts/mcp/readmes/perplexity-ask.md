@@ -8,7 +8,8 @@ Connector for Perplexity API, to enable real-time, web-wide research.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[ppl-ai](https://github.com/ppl-ai)
+**Docker Image**|[mcp/perplexity-ask](https://hub.docker.com/repository/docker/mcp/perplexity-ask)
+**Author**|[ppl-ai](https://github.com/ppl-ai)
 **Repository**|https://github.com/ppl-ai/modelcontextprotocol
 **Dockerfile**|https://github.com/ppl-ai/modelcontextprotocol/blob/f0a927c250e04b389ff5c34f6a2a85ad625668e8/perplexity-ask/Dockerfile
 **Docker Image built by**|Docker Inc.

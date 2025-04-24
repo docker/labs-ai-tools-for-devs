@@ -8,7 +8,8 @@ Interact with the Discord platform.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
+**Docker Image**|[mcp/mcp-discord](https://hub.docker.com/repository/docker/mcp/mcp-discord)
+**Author**|[slimslenderslacks](https://github.com/slimslenderslacks)
 **Repository**|https://github.com/slimslenderslacks/mcp-discord
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-discord/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Send emails directly from Cursor with this email sending MCP server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[resend](https://github.com/resend)
+**Docker Image**|[mcp/resend](https://hub.docker.com/repository/docker/mcp/resend)
+**Author**|[resend](https://github.com/resend)
 **Repository**|https://github.com/resend/mcp-send-email
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-send-email/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.

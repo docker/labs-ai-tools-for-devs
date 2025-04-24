@@ -8,7 +8,8 @@ Official MCP server for Smithery CLI
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[smithery-ai](https://github.com/smithery-ai)
+**Docker Image**|[mcp/smithery-cli](https://hub.docker.com/repository/docker/mcp/smithery-cli)
+**Author**|[smithery-ai](https://github.com/smithery-ai)
 **Repository**|https://github.com/smithery-ai/smithery-cli-mcp
 **Dockerfile**|https://github.com/smithery-ai/smithery-cli-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

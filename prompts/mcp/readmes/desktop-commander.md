@@ -8,7 +8,8 @@ Search, update, manage files and run terminal commands with AI
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[wonderwhy-er](https://github.com/wonderwhy-er)
+**Docker Image**|[mcp/desktop-commander](https://hub.docker.com/repository/docker/mcp/desktop-commander)
+**Author**|[wonderwhy-er](https://github.com/wonderwhy-er)
 **Repository**|https://github.com/wonderwhy-er/DesktopCommanderMCP
 **Dockerfile**|https://github.com/wonderwhy-er/DesktopCommanderMCP/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

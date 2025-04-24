@@ -8,7 +8,8 @@ Web and local search using Brave's Search API
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/brave-search](https://hub.docker.com/repository/docker/mcp/brave-search)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/brave-search/Dockerfile
 **Docker Image built by**|Docker Inc.

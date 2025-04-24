@@ -8,7 +8,8 @@ VeyraX MCP is the only connection you need to access all your tools in any MCP-c
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[VeyraX](https://github.com/VeyraX)
+**Docker Image**|[mcp/veyrax](https://hub.docker.com/repository/docker/mcp/veyrax)
+**Author**|[VeyraX](https://github.com/VeyraX)
 **Repository**|https://github.com/VeyraX/veyrax-mcp
 **Dockerfile**|https://github.com/VeyraX/veyrax-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

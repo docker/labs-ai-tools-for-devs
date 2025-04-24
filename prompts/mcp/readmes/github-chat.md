@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) for analyzing and querying GitHub repositories us
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[AsyncFuncAI](https://github.com/AsyncFuncAI)
+**Docker Image**|[mcp/github-chat](https://hub.docker.com/repository/docker/mcp/github-chat)
+**Author**|[AsyncFuncAI](https://github.com/AsyncFuncAI)
 **Repository**|https://github.com/AsyncFuncAI/github-chat-mcp
 **Dockerfile**|https://github.com/AsyncFuncAI/github-chat-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

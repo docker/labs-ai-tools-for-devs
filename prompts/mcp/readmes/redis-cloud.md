@@ -8,7 +8,8 @@ MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resour
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[redis](https://github.com/redis)
+**Docker Image**|[mcp/redis-cloud](https://hub.docker.com/repository/docker/mcp/redis-cloud)
+**Author**|[redis](https://github.com/redis)
 **Repository**|https://github.com/redis/mcp-redis-cloud
 **Dockerfile**|https://github.com/redis/mcp-redis-cloud/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

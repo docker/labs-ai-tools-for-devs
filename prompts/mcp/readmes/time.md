@@ -8,7 +8,8 @@ Time and timezone conversion capabilities
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/time](https://hub.docker.com/repository/docker/mcp/time)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/time/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ A Model Context Protocol server for Scrapezy that enables AI models to extract s
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Scrapezy](https://github.com/Scrapezy)
+**Docker Image**|[mcp/scrapezy](https://hub.docker.com/repository/docker/mcp/scrapezy)
+**Author**|[Scrapezy](https://github.com/Scrapezy)
 **Repository**|https://github.com/Scrapezy/mcp
 **Dockerfile**|https://github.com/Scrapezy/mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

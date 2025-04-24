@@ -8,7 +8,8 @@ Pulumi MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[pulumi](https://github.com/pulumi)
+**Docker Image**|[mcp/pulumi](https://hub.docker.com/repository/docker/mcp/pulumi)
+**Author**|[pulumi](https://github.com/pulumi)
 **Repository**|https://github.com/pulumi/mcp-server
 **Dockerfile**|https://github.com/pulumi/mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

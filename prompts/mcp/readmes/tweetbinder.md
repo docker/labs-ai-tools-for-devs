@@ -8,7 +8,8 @@ TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) tha
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[AudienseCo](https://github.com/AudienseCo)
+**Docker Image**|[mcp/tweetbinder](https://hub.docker.com/repository/docker/mcp/tweetbinder)
+**Author**|[AudienseCo](https://github.com/AudienseCo)
 **Repository**|https://github.com/audienseco/mcp-tweetbinder
 **Dockerfile**|https://github.com/audienseco/mcp-tweetbinder/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

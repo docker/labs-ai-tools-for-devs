@@ -8,7 +8,8 @@ Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integ
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[comet-ml](https://github.com/comet-ml)
+**Docker Image**|[mcp/opik](https://hub.docker.com/repository/docker/mcp/opik)
+**Author**|[comet-ml](https://github.com/comet-ml)
 **Repository**|https://github.com/comet-ml/opik-mcp
 **Dockerfile**|https://github.com/comet-ml/opik-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server implementation that provides database capa
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[chroma-core](https://github.com/chroma-core)
+**Docker Image**|[mcp/chroma](https://hub.docker.com/repository/docker/mcp/chroma)
+**Author**|[chroma-core](https://github.com/chroma-core)
 **Repository**|https://github.com/chroma-core/chroma-mcp
 **Dockerfile**|https://github.com/chroma-core/chroma-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

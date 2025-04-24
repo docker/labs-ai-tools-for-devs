@@ -8,7 +8,8 @@ A Model Context Protocol server that provides access to Shodan API functionality
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Cyreslab-AI](https://github.com/Cyreslab-AI)
+**Docker Image**|[mcp/cyreslab-ai-shodan](https://hub.docker.com/repository/docker/mcp/cyreslab-ai-shodan)
+**Author**|[Cyreslab-AI](https://github.com/Cyreslab-AI)
 **Repository**|https://github.com/Cyreslab-AI/shodan-mcp-server
 **Dockerfile**|https://github.com/Cyreslab-AI/shodan-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

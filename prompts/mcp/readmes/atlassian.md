@@ -8,7 +8,8 @@ Tools for Atlassian products (Confluence and Jira). This integration supports bo
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[sooperset](https://github.com/sooperset)
+**Docker Image**|[mcp/atlassian](https://hub.docker.com/repository/docker/mcp/atlassian)
+**Author**|[sooperset](https://github.com/sooperset)
 **Repository**|https://github.com/sooperset/mcp-atlassian
 **Dockerfile**|https://github.com/sooperset/mcp-atlassian/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

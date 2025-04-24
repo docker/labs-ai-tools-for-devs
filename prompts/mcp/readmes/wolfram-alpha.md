@@ -8,7 +8,8 @@ Connect your chat repl to wolfram alpha computational intelligence
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[SecretiveShell](https://github.com/SecretiveShell)
+**Docker Image**|[mcp/wolfram-alpha](https://hub.docker.com/repository/docker/mcp/wolfram-alpha)
+**Author**|[SecretiveShell](https://github.com/SecretiveShell)
 **Repository**|https://github.com/SecretiveShell/MCP-wolfram-alpha
 **Dockerfile**|https://github.com/SecretiveShell/MCP-wolfram-alpha/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

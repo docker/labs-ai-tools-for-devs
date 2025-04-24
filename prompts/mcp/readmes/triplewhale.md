@@ -8,7 +8,8 @@ Triplewhale MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Triple-Whale](https://github.com/Triple-Whale)
+**Docker Image**|[mcp/triplewhale](https://hub.docker.com/repository/docker/mcp/triplewhale)
+**Author**|[Triple-Whale](https://github.com/Triple-Whale)
 **Repository**|https://github.com/Triple-Whale/mcp-server-triplewhale
 **Dockerfile**|https://github.com/Triple-Whale/mcp-server-triplewhale/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

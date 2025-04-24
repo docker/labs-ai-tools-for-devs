@@ -8,7 +8,8 @@ The official ElevenLabs MCP server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[elevenlabs](https://github.com/elevenlabs)
+**Docker Image**|[mcp/elevenlabs](https://hub.docker.com/repository/docker/mcp/elevenlabs)
+**Author**|[elevenlabs](https://github.com/elevenlabs)
 **Repository**|https://github.com/elevenlabs/elevenlabs-mcp
 **Dockerfile**|https://github.com/elevenlabs/elevenlabs-mcp/blob/refs/pull/17/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

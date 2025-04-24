@@ -8,7 +8,8 @@ Connects MCP to major 3D printer APIs (Orca, Bambu, OctoPrint, Klipper, Duet, Re
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[DMontgomery40](https://github.com/DMontgomery40)
+**Docker Image**|[mcp/3d-printer](https://hub.docker.com/repository/docker/mcp/3d-printer)
+**Author**|[DMontgomery40](https://github.com/DMontgomery40)
 **Repository**|https://github.com/DMontgomery40/mcp-3D-printer-server
 **Dockerfile**|https://github.com/DMontgomery40/mcp-3D-printer-server/blob/refs/pull/3/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

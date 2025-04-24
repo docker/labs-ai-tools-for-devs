@@ -8,7 +8,8 @@ A specialized server implementation for the Model Context Protocol (MCP) designe
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[CircleCI-Public](https://github.com/CircleCI-Public)
+**Docker Image**|[mcp/circleci](https://hub.docker.com/repository/docker/mcp/circleci)
+**Author**|[CircleCI-Public](https://github.com/CircleCI-Public)
 **Repository**|https://github.com/CircleCI-Public/mcp-server-circleci
 **Dockerfile**|https://github.com/CircleCI-Public/mcp-server-circleci/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ Model Context Protocol (MCP) Server for Handwriting OCR
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Handwriting-OCR](https://github.com/Handwriting-OCR)
+**Docker Image**|[mcp/handwriting-ocr](https://hub.docker.com/repository/docker/mcp/handwriting-ocr)
+**Author**|[Handwriting-OCR](https://github.com/Handwriting-OCR)
 **Repository**|https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server
 **Dockerfile**|https://github.com/Handwriting-OCR/handwriting-ocr-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ This repository is for development of the Azure MCP Server, bringing the power o
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[Azure](https://github.com/Azure)
+**Docker Image**|[mcp/azure](https://hub.docker.com/repository/docker/mcp/azure)
+**Author**|[Azure](https://github.com/Azure)
 **Repository**|https://github.com/Azure/azure-mcp
 **Dockerfile**|https://github.com/Azure/azure-mcp/blob/refs/pull/16/merge/Dockerfile
 **Docker Image built by**|Docker Inc.

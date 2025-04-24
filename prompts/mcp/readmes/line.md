@@ -8,7 +8,8 @@ MCP server that integrates the LINE Messaging API to connect an AI Agent to the 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[line](https://github.com/line)
+**Docker Image**|[mcp/line](https://hub.docker.com/repository/docker/mcp/line)
+**Author**|[line](https://github.com/line)
 **Repository**|https://github.com/line/line-bot-mcp-server
 **Dockerfile**|https://github.com/line/line-bot-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

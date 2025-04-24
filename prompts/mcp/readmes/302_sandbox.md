@@ -8,7 +8,8 @@
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[302ai](https://github.com/302ai)
+**Docker Image**|[mcp/302_sandbox](https://hub.docker.com/repository/docker/mcp/302_sandbox)
+**Author**|[302ai](https://github.com/302ai)
 **Repository**|https://github.com/302ai/302_sandbox_mcp
 **Dockerfile**|https://github.com/302ai/302_sandbox_mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

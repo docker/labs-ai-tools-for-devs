@@ -8,7 +8,8 @@ Image generation server using EverArt's API.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/everart](https://hub.docker.com/repository/docker/mcp/everart)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/everart/Dockerfile
 **Docker Image built by**|Docker Inc.

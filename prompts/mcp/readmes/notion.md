@@ -8,7 +8,8 @@ Official Notion MCP Server
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[makenotion](https://github.com/makenotion)
+**Docker Image**|[mcp/notion](https://hub.docker.com/repository/docker/mcp/notion)
+**Author**|[makenotion](https://github.com/makenotion)
 **Repository**|https://github.com/makenotion/notion-mcp-server
 **Dockerfile**|https://github.com/makenotion/notion-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

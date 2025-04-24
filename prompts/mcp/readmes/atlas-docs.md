@@ -8,7 +8,8 @@ Provide LLMs hosted, clean markdown documentation of libraries and frameworks
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[CartographAI](https://github.com/CartographAI)
+**Docker Image**|[mcp/atlas-docs](https://hub.docker.com/repository/docker/mcp/atlas-docs)
+**Author**|[CartographAI](https://github.com/CartographAI)
 **Repository**|https://github.com/CartographAI/atlas-docs-mcp
 **Dockerfile**|https://github.com/CartographAI/atlas-docs-mcp/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.

@@ -8,7 +8,8 @@ A tool for dynamic and reflective problem-solving through a structured thinking 
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
+**Docker Image**|[mcp/sequentialthinking](https://hub.docker.com/repository/docker/mcp/sequentialthinking)
+**Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sequentialthinking/Dockerfile
 **Docker Image built by**|Docker Inc.

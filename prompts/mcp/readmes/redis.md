@@ -8,7 +8,8 @@ Access to Redis database operations.
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[redis](https://github.com/redis)
+**Docker Image**|[mcp/redis](https://hub.docker.com/repository/docker/mcp/redis)
+**Author**|[redis](https://github.com/redis)
 **Repository**|https://github.com/redis/mcp-redis
 **Dockerfile**|https://github.com/redis/mcp-redis/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

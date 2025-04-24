@@ -8,7 +8,8 @@ Audiense Insights MCP Server is a server based on the Model Context Protocol (MC
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[AudienseCo](https://github.com/AudienseCo)
+**Docker Image**|[mcp/audiense-insights](https://hub.docker.com/repository/docker/mcp/audiense-insights)
+**Author**|[AudienseCo](https://github.com/AudienseCo)
 **Repository**|https://github.com/AudienseCo/mcp-audiense-insights
 **Dockerfile**|https://github.com/AudienseCo/mcp-audiense-insights/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.

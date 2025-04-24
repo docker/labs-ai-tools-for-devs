@@ -8,7 +8,8 @@ A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Sra
 Attribute|Details|
 |-|-|
 **Image Source**|Official Image
-|**Author**|[open-strategy-partners](https://github.com/open-strategy-partners)
+**Docker Image**|[mcp/osp_marketing_tools](https://hub.docker.com/repository/docker/mcp/osp_marketing_tools)
+**Author**|[open-strategy-partners](https://github.com/open-strategy-partners)
 **Repository**|https://github.com/open-strategy-partners/osp_marketing_tools
 **Dockerfile**|https://github.com/open-strategy-partners/osp_marketing_tools/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
