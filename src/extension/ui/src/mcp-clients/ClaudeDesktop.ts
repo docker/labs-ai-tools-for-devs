@@ -1,5 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getUser, escapeJSONForPlatformShell } from "../FileUtils";
+import { BUSYBOX } from "../Constants";
+import { getUser, writeToMount } from "../FileUtils";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class ClaudeDesktopClient implements MCPClient {
@@ -39,7 +40,7 @@ class ClaudeDesktopClient implements MCPClient {
         const user = await getUser(client)
         path = path.replace('$USER', user)
         try {
-            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, 'alpine:latest', 'sh', '-c', `"cat /config.json"`])
+            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/config.json`, BUSYBOX, '/bin/cat', '/config.json'])
             return { content: result.stdout || undefined, path: path };
         } catch (e) {
             return { content: null, path: path };
@@ -63,30 +64,31 @@ class ClaudeDesktopClient implements MCPClient {
         }
         const user = await getUser(client)
         path = path.replace('$USER', user)
-        let payload = {
-            mcpServers: {
-                MCP_DOCKER: SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
-            }
-        }
+
+        let payload: Record<string, any> = {}
         try {
-            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])
+            const result = await client.docker.cli.exec('run', [
+                '--rm',
+                '--mount',
+                `type=bind,source="${path}",target=/claude_desktop_config`,
+                BUSYBOX,
+                '/bin/cat',
+                '/claude_desktop_config/claude_desktop_config.json',
+            ])
             if (result.stdout) {
                 payload = JSON.parse(result.stdout)
-                payload.mcpServers.MCP_DOCKER = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
             }
         } catch (e) {
             // No config or malformed config found, overwrite it
         }
+
+        if (!payload.mcpServers) {
+            payload.mcpServers = {}
+        }
+        payload.mcpServers.MCP_DOCKER = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER
+
         try {
-            await client.docker.cli.exec('run',
-                [
-                    '--rm',
-                    '--mount',
-                    `type=bind,source="${path}",target=/claude_desktop_config`,
-                    '--workdir',
-                    '/claude_desktop_config',
-                    'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'claude_desktop_config.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)])
+            await writeToMount(client, `type=bind,source="${path}",target=/claude_desktop_config`, '/claude_desktop_config/claude_desktop_config.json', JSON.stringify(payload, null, 2));
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
         }
@@ -111,26 +113,10 @@ class ClaudeDesktopClient implements MCPClient {
         path = path.replace('$USER', user)
         try {
             // This method is only called after the config has been validated, so we can safely assume it's a valid config.
-            const previousConfig = JSON.parse((await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '--workdir', '/claude_desktop_config', 'alpine:latest', 'sh', '-c', `"cat /claude_desktop_config/claude_desktop_config.json"`])).stdout || '{}')
+            const previousConfig = JSON.parse((await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source="${path}",target=/claude_desktop_config`, '-w', '/claude_desktop_config', BUSYBOX, '/bin/cat', '/claude_desktop_config/claude_desktop_config.json'])).stdout || '{}')
             const newConfig = { ...previousConfig }
             delete newConfig.mcpServers.MCP_DOCKER
-            await client.docker.cli.exec('run', [
-                '--rm',
-                '--mount',
-                `type=bind,source="${path}",target=/claude_desktop_config`,
-                '--workdir',
-                '/claude_desktop_config',
-                'vonwig/function_write_files:latest',
-                escapeJSONForPlatformShell(
-                    {
-                        files:
-                            [{
-                                path: 'claude_desktop_config.json',
-                                content: JSON.stringify(newConfig, null, 2)
-                            }]
-                    },
-                    client.host.platform)
-            ])
+            await writeToMount(client, `type=bind,source="${path}",target=/claude_desktop_config`, '/claude_desktop_config/claude_desktop_config.json', JSON.stringify(newConfig, null, 2));
         } catch (e) {
             client.desktopUI.toast.error((e as any).stderr)
         }

@@ -1,12 +1,12 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { getStoredConfig, syncConfigWithRegistry } from "../Registry";
-import { POLL_INTERVAL } from "../Constants";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { CatalogItemRichened, CatalogItemWithName } from "../types/catalog";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as JsonSchemaLibrary from "json-schema-library";
-import { escapeJSONForPlatformShell, tryRunImageSync } from "../FileUtils";
-import { stringify } from "yaml";
 import { useRef } from "react";
+import { stringify } from "yaml";
+import { POLL_INTERVAL } from "../Constants";
+import { writeToPromptsVolume } from "../FileUtils";
+import { getStoredConfig } from "../Registry";
+import { CatalogItemWithName } from "../types/catalog";
 
 export const getTemplateForItem = (
   item: CatalogItemWithName,
@@ -59,27 +59,8 @@ export function useConfig(client: v1.DockerDesktopClient) {
         const currentStoredConfig = { ...(configRef.current || {}) };
         const updatedConfig = { ...currentStoredConfig, [itemName]: newConfig };
 
-        const payload = escapeJSONForPlatformShell(
-          {
-            files: [
-              {
-                path: "config.yaml",
-                content: stringify(updatedConfig),
-              },
-            ],
-          },
-          client.host.platform
-        );
+        await writeToPromptsVolume(client, 'config.yaml', stringify(updatedConfig));
 
-        await tryRunImageSync(client, [
-          "--rm",
-          "-v",
-          "docker-prompts:/docker-prompts",
-          "--workdir",
-          "/docker-prompts",
-          "vonwig/function_write_files:latest",
-          payload,
-        ]);
         const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
         configRef.current = updatedConfigRef;
         return { itemName, updatedConfig: updatedConfigRef };

@@ -1,8 +1,8 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { escapeJSONForPlatformShell, getUser } from "../FileUtils";
-import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
-import { DOCKER_MCP_COMMAND } from "../Constants";
+import { BUSYBOX, DOCKER_MCP_COMMAND } from "../Constants";
+import { getUser, writeToMount } from "../FileUtils";
 import { mergeDeep } from "../MergeDeep";
+import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class CursorDesktopClient implements MCPClient {
     name = 'Cursor'
@@ -25,7 +25,7 @@ class CursorDesktopClient implements MCPClient {
         const platform = client.host.platform as keyof typeof this.expectedConfigPath
         const configPath = this.expectedConfigPath[platform].replace('$USER', await getUser(client))
         try {
-            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source=${configPath},target=/cursor_config/mcp.json`, 'alpine:latest', 'cat', '/cursor_config/mcp.json'])
+            const result = await client.docker.cli.exec('run', ['--rm', '--mount', `type=bind,source=${configPath},target=/cursor_config/mcp.json`, BUSYBOX, '/bin/cat', '/cursor_config/mcp.json'])
             return {
                 content: result.stdout,
                 path: configPath
@@ -52,16 +52,7 @@ class CursorDesktopClient implements MCPClient {
         }
         const payload = mergeDeep(cursorConfig, SAMPLE_MCP_CONFIG)
         try {
-            await client.docker.cli.exec('run',
-                [
-                    '--rm',
-                    '--mount',
-                    `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
-                    '--workdir',
-                    '/cursor_config', 'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)
-                ]
-            )
+            await writeToMount(client, `type=bind,source=${config.path},target=/cursor_config/mcp.json`, '/cursor_config/mcp.json', JSON.stringify(payload, null, 2));
         } catch (e) {
             if ((e as any).stderr) {
                 client.desktopUI.toast.error((e as any).stderr)
@@ -92,16 +83,7 @@ class CursorDesktopClient implements MCPClient {
             mcpServers: Object.fromEntries(Object.entries(cursorConfig.mcpServers).filter(([key]) => key !== 'MCP_DOCKER'))
         }
         try {
-            await client.docker.cli.exec('run',
-                [
-                    '--rm',
-                    '--mount',
-                    `type=bind,source="${config.path}",target=/cursor_config/mcp.json`,
-                    '--workdir',
-                    '/cursor_config', 'vonwig/function_write_files:latest',
-                    escapeJSONForPlatformShell({ files: [{ path: 'mcp.json', content: JSON.stringify(payload, null, 2) }] }, client.host.platform)
-                ]
-            )
+            await writeToMount(client, `type=bind,source=${config.path},target=/cursor_config/mcp.json`, '/cursor_config/mcp.json', JSON.stringify(payload, null, 2));
         } catch (e) {
             if ((e as any).stderr) {
                 client.desktopUI.toast.error((e as any).stderr)
