@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { ASSIGNED_SECRET_PLACEHOLDER, MCP_POLICY_NAME } from '../../Constants';
-import { useCatalogAll, useCatalogOperations } from '../../queries/useCatalog';
+import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
@@ -61,6 +61,7 @@ interface ConfigurationModalProps {
   onClose: () => void;
   catalogItem: CatalogItemRichened;
   client: v1.DockerDesktopClient;
+  registryLoading: boolean;
 }
 
 const ConfigurationModal = ({
@@ -68,6 +69,7 @@ const ConfigurationModal = ({
   onClose,
   catalogItem,
   client,
+  registryLoading,
 }: ConfigurationModalProps) => {
   const [localSecrets, setLocalSecrets] = useState<
     { [key: string]: string | undefined } | undefined
@@ -76,7 +78,6 @@ const ConfigurationModal = ({
 
   const { isLoading: secretsLoading, mutate: mutateSecret } =
     useSecrets(client);
-  const { registryLoading } = useCatalogAll(client);
   const { registerCatalogItem, unregisterCatalogItem } =
     useCatalogOperations(client);
   const { configLoading } = useConfig(client);
@@ -120,22 +121,8 @@ const ConfigurationModal = ({
     (!catalogItem.configSchema || catalogItem.configSchema.length === 0) &&
     (!catalogItem.secrets || catalogItem.secrets.length === 0);
 
-  if (secretsLoading || registryLoading || configLoading) {
-    return (
-      <>
-        <CircularProgress />
-        <Typography>Loading registry...</Typography>
-      </>
-    );
-  }
-
-  if (!localSecrets) {
-    return (
-      <>
-        <CircularProgress />
-        <Typography>Loading secrets...</Typography>
-      </>
-    );
+  if (secretsLoading || registryLoading || configLoading || !localSecrets) {
+    return null;
   }
 
   return (

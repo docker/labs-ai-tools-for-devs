@@ -12,7 +12,7 @@ import {
   IconButton,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -139,12 +139,15 @@ const Tile = ({ item, client, registryLoading }: TileProps) => {
           </Stack>
         </DialogContent>
       </Dialog>
-      {showConfigModal && <ConfigurationModal
-        open={showConfigModal}
-        onClose={() => setShowConfigModal(false)}
-        catalogItem={item}
-        client={client}
-      />}
+      {showConfigModal && (
+        <ConfigurationModal
+          open={showConfigModal}
+          onClose={() => setShowConfigModal(false)}
+          catalogItem={item}
+          client={client}
+          registryLoading={registryLoading}
+        />
+      )}
       <Card>
         <CardActionArea
           sx={{ padding: 1.5 }}
