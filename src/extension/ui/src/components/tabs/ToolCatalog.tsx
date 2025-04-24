@@ -12,7 +12,7 @@ interface ToolCatalogProps {
 }
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, showMine }) => {
-    const { catalogItems } = useCatalogAll(client)
+    const { catalogItems, registryLoading } = useCatalogAll(client)
 
     // Memoize the filtered catalog items to prevent unnecessary recalculations
     const filteredCatalogItems = useMemo(() => {
@@ -31,6 +31,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, showMine }) =
                         <Tile
                             item={catalogItem}
                             client={client}
+                            registryLoading={registryLoading}
                         />
                     </Grid2>
                 )
