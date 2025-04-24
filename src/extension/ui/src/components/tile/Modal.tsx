@@ -202,7 +202,8 @@ const ConfigurationModal = ({
             href={catalogItem.source || ''}
             target="_blank"
           >
-            {catalogItem.source || ''} <Launch />
+            {catalogItem.source || ''}
+            <Launch />
           </Link>
         </Typography>
 
