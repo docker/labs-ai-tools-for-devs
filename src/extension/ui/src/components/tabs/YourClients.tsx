@@ -198,10 +198,11 @@ function ClientSetting({
               alignItems: 'center',
               display: 'flex',
               cursor: 'pointer',
+              width: 'fit-content',
             }}
             onClick={() => setExpanded(!expanded)}
           >
-            Manual connection
+            Manual configuration
             <KeyboardArrowDownIcon fontSize="small" />
           </Typography>
         }
