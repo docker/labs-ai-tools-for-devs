@@ -1,7 +1,7 @@
 import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
-import { capitalize } from 'lodash-es';
 
 import { CatalogItemRichened } from '../../types/catalog';
+import { formatName } from '../../formatName';
 
 type TopProps = {
   onToggleRegister: (checked: boolean) => void;
@@ -26,15 +26,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
       }
       title={
         <Typography sx={{ justifySelf: 'flex-start', fontWeight: 'bold' }}>
-          {
-            // Lodash doesn't have a capitalize function that works with strings
-            item.name
-              .replace(/-/g, ' ')
-              .replace(/_/g, ' ')
-              .split(' ')
-              .map(capitalize)
-              .join(' ')
-          }
+          {formatName(item.name)}
         </Typography>
       }
       action={
