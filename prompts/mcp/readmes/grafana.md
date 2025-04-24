@@ -1,6 +1,6 @@
 # Grafana MCP Server
 
-MCP server for Grafana
+MCP server for Grafana.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

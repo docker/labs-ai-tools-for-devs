@@ -1,6 +1,6 @@
 # Elevenlabs MCP Server
 
-The official ElevenLabs MCP server
+The official ElevenLabs MCP server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

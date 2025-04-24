@@ -1,6 +1,6 @@
 # Risken MCP Server
 
-RISKEN's official MCP Server
+RISKEN's official MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

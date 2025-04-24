@@ -1,6 +1,6 @@
 # Openapi-schema MCP Server
 
-OpenAPI Schema Model Context Protocol Server
+OpenAPI Schema Model Context Protocol Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

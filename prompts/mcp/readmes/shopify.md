@@ -1,6 +1,6 @@
 # Shopify MCP Server
 
-Shopify.dev MCP server
+Shopify.dev MCP server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

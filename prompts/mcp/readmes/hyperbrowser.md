@@ -1,6 +1,6 @@
 # Hyperbrowser MCP Server
 
-A MCP server implementation for hyperbrowser
+A MCP server implementation for hyperbrowser.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

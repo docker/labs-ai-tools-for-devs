@@ -1,6 +1,6 @@
 # Box MCP Server
 
-An MCP server capable of interacting with the Box API
+An MCP server capable of interacting with the Box API.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

@@ -1,6 +1,6 @@
 # 302_sandbox MCP Server
 
-302 Sandbox MCP
+302 Sandbox MCP.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

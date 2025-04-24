@@ -1,6 +1,6 @@
 # Iaptic MCP Server
 
- Model Context Protocol server for interacting with iaptic
+ Model Context Protocol server for interacting with iaptic.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

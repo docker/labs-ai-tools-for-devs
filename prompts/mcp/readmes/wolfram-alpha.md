@@ -1,6 +1,6 @@
 # Wolfram-alpha MCP Server
 
-Connect your chat repl to wolfram alpha computational intelligence
+Connect your chat repl to wolfram alpha computational intelligence.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

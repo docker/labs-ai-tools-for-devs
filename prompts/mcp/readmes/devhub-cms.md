@@ -1,6 +1,6 @@
 # Devhub-cms MCP Server
 
-DevHub CMS LLM integration through the Model Context Protocol
+DevHub CMS LLM integration through the Model Context Protocol.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

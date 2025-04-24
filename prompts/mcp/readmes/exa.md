@@ -1,6 +1,6 @@
 # Exa MCP Server
 
-Claude can perform Web Search | Exa with MCP (Model Context Protocol)
+Claude can perform Web Search | Exa with MCP (Model Context Protocol).
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

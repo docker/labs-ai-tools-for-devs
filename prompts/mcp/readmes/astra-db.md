@@ -1,6 +1,6 @@
 # Astra-db MCP Server
 
-An MCP server for Astra DB workloads
+An MCP server for Astra DB workloads.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

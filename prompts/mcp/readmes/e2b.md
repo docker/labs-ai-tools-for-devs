@@ -1,6 +1,6 @@
 # E2b MCP Server
 
-Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
+Giving Claude ability to run code with E2B via MCP (Model Context Protocol).
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

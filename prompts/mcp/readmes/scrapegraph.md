@@ -1,6 +1,6 @@
 # Scrapegraph MCP Server
 
-ScapeGraph MCP Server
+ScapeGraph MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

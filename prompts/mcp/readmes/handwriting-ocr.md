@@ -1,6 +1,6 @@
 # Handwriting-ocr MCP Server
 
-Model Context Protocol (MCP) Server for Handwriting OCR 
+Model Context Protocol (MCP) Server for Handwriting OCR .
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

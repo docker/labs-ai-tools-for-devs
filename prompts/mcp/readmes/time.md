@@ -1,6 +1,6 @@
 # Time MCP Server
 
-Time and timezone conversion capabilities
+Time and timezone conversion capabilities.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

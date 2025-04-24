@@ -1,6 +1,6 @@
 # Fetch MCP Server
 
-Fetches a URL from the internet and extracts its contents as markdown
+Fetches a URL from the internet and extracts its contents as markdown.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

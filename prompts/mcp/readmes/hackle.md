@@ -1,6 +1,6 @@
 # Hackle MCP Server
 
-Model Context Protocol server for Hackle
+Model Context Protocol server for Hackle.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

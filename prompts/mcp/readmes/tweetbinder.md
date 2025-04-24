@@ -1,6 +1,6 @@
 # Tweetbinder MCP Server
 
-TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account
+TweetBinder MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your TweetBinder by Audiense account.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

@@ -1,6 +1,6 @@
 # Desktop-commander MCP Server
 
-Search, update, manage files and run terminal commands with AI
+Search, update, manage files and run terminal commands with AI.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

@@ -1,6 +1,6 @@
 # Gyazo MCP Server
 
-Official Model Context Protocol server for Gyazo
+Official Model Context Protocol server for Gyazo.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

@@ -1,6 +1,6 @@
 # Tembo MCP Server
 
-MCP server for Tembo Cloud's platform API
+MCP server for Tembo Cloud's platform API.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

@@ -1,6 +1,6 @@
 # Youtube_transcript MCP Server
 
-Retrieves transcripts for given YouTube video URLs
+Retrieves transcripts for given YouTube video URLs.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

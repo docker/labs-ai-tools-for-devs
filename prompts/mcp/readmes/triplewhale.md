@@ -1,6 +1,6 @@
 # Triplewhale MCP Server
 
-Triplewhale MCP Server
+Triplewhale MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

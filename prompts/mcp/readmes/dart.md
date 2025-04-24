@@ -1,6 +1,6 @@
 # Dart MCP Server
 
-Dart AI Model Context Protocol (MCP) server
+Dart AI Model Context Protocol (MCP) server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
