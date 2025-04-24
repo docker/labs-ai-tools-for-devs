@@ -101,7 +101,7 @@ const ConfigurationModal = ({
     border: 1,
     borderColor: theme.palette.docker.grey[200],
     textAlign: 'center',
-    borderRadius: 4,
+    borderRadius: 1,
     fontFamily: 'Roboto Mono',
     fontSize: 12,
     fontStyle: 'normal',
