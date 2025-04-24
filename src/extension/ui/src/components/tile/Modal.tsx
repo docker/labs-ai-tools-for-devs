@@ -246,7 +246,7 @@ const ConfigurationModal = ({
                         }
                         color="error"
                       >
-                        Configure
+                        Configuration
                       </Badge>
                     }
                   />
@@ -286,6 +286,25 @@ const ConfigurationModal = ({
                 }}
               >
                 <Stack direction="column" spacing={2}>
+                  {catalogItem.readme !== undefined && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      See{' '}
+                      <Link
+                        onClick={() =>
+                          client.host.openExternal(catalogItem.readme || '')
+                        }
+                        href={catalogItem.readme || ''}
+                        target="_blank"
+                      >
+                        setup instruction.
+                        <Launch />
+                      </Link>
+                    </Typography>
+                  )}
+
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
                   <Stack>
