@@ -205,15 +205,15 @@ const ConfigurationModal = ({
         >
           {catalogItem.description}
         </Typography>
-        {catalogItem.source !== undefined && (
+        {catalogItem.readme !== undefined && (
           <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
             Repository:{' '}
             <Link
-              onClick={() => client.host.openExternal(catalogItem.source || '')}
-              href={catalogItem.source || ''}
+              onClick={() => client.host.openExternal(catalogItem.readme || '')}
+              href={catalogItem.readme || ''}
               target="_blank"
             >
-              {catalogItem.source || ''}
+              {catalogItem.readme || ''}
               <Launch />
             </Link>
           </Typography>
@@ -286,25 +286,6 @@ const ConfigurationModal = ({
                 }}
               >
                 <Stack direction="column" spacing={2}>
-                  {catalogItem.readme !== undefined && (
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'text.secondary' }}
-                    >
-                      See{' '}
-                      <Link
-                        onClick={() =>
-                          client.host.openExternal(catalogItem.readme || '')
-                        }
-                        href={catalogItem.readme || ''}
-                        target="_blank"
-                      >
-                        setup instruction.
-                        <Launch />
-                      </Link>
-                    </Typography>
-                  )}
-
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
                   <Stack>
