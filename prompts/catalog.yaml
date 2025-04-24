@@ -2395,3 +2395,23 @@ registry:
       - name: gyazo.access_token
     prompts: 0
     resources: {}
+  hackle:
+    description: Model Context Protocol server for Hackle
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/hackle.md
+    readme: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/readmes/hackle.md
+    source: https://github.com/hackle-io/hackle-mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/65485327?v=4
+    tools:
+      - name: active-user-series
+      - name: experiment-detail
+      - name: experiment-list
+      - name: in-app-message-detail
+      - name: in-app-message-list
+      - name: push-message-detail
+      - name: push-message-list
+      - name: retention-series
+      - name: stickiness-series
+    secrets:
+      - name: hackle.api_key
+    prompts: 0
+    resources: {}
