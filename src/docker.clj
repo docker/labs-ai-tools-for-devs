@@ -185,11 +185,10 @@
                   {:HostConfig
                    (merge
                     {:Binds
-                     (concat ["docker-lsp:/docker-lsp"
-                              "/var/run/docker.sock:/var/run/docker.sock"]
-                             (when host-dir [(format "%s:/project:rw" host-dir)])
-                             (when thread-id [(format "%s:/thread:rw" thread-id)])
-                             (or volumes mounts))}
+                     (concat
+                      (when host-dir [(format "%s:/project:rw" host-dir)])
+                      (when thread-id [(format "%s:/thread:rw" thread-id)])
+                      (or volumes mounts))}
                     (when network_mode
                       {:NetworkMode network_mode})
                     (when ports
@@ -554,9 +553,9 @@
           stdout (PipedOutputStream.)
           stdout-reader (io/reader (PipedInputStream. stdout))]
       (async/go-loop []
-                     (when-let [line (.readLine stdout-reader)]
-                       (async/put! c {:stdout line})
-                       (recur))) 
+        (when-let [line (.readLine stdout-reader)]
+          (async/put! c {:stdout line})
+          (recur)))
       (loop [offset 0]
         (let [result (.read ^SocketChannel in header-buf)]
           (cond

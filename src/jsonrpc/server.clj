@@ -201,9 +201,9 @@
                                 (async/into [])
                                 (async/<!!))]
     (merge
-      {:resourceTemplates resource-templates}
-      (when (= 100 (count resource-templates))
-        {:nextCursor nextCursor}))))
+     {:resourceTemplates resource-templates}
+     (when (= 100 (count resource-templates))
+       {:nextCursor nextCursor}))))
 
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ params]
   (logger/info "resources/subscribe" params)
@@ -261,51 +261,60 @@
          (mapcat (comp :content :result))
          (into []))))
 
+(defn poci? [components params]
+  false)
+
+(defn make-tool-calls [{:keys [db* server-id] :as components} params {:keys [thread-id] :as opts}]
+  ;; TODO non-mcp tool calls are maps of content, role tool_call_id
+  ;;      we turn them into one text message and respond to the jsonrpc request here
+  ;;      for mcp tool calls the response will already be valid content
+  ;;        so we can concat it and just return the result (or error)
+  ;; tool-outputs are :content, :role, :tool_call_id 
+  ;;   (MCP doesn't care about :role or :tool_call_id - these are client concerns)
+  (let [tool-outputs (->>
+                      (tools/make-tool-calls
+                       0
+                       (partial
+                        tools/function-handler
+                        (merge
+                          {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
+                           :host-dir (-> @db* :host-dir)
+                           :server-id server-id}
+                          (when thread-id {:thread-id thread-id})))
+                       ;; tool calls are functions, which are arguments,name maps, and ids
+                       ;; mcp tool call params are also maps of name, and arguments
+                       [{:function (update
+                                    params :arguments
+                                    (fn [arguments]
+                                      (logger/trace
+                                       (-> arguments
+                                           (merge
+                                            (db/parameter-values (:name params))
+                                            (select-keys (-> @db* :servers (get server-id)) [:roots]))
+                                           (json/generate-string)))))
+                         ;; TODO there's no id here like in regular agent tool calling loops
+                         ;; MCP clients do this on their side (using just the response id)
+                         :id "1"}])
+                      (async/reduce conj [])
+                      (async/<!!))]
+    ;; TODO with mcp, tool-calls with errors are still jsonrpc results
+    ;;      protocol errors are jsonrpc errors, with a code and a message
+    ;; TODO if result is ::method-not-found, we'll get a protocol error
+    ;;      responding with a map containing an :error key will also generate a protocol error
+    {:content (create-tool-outputs tool-outputs)
+     :is-error false}))
+
 (defn mcp-tool-calls
   " params
   db* - uses mcp.prompts/registry and host-dir
   params - tools/call mcp params"
   [{:keys [db* server-id] :as components} params]
-  (volumes/with-volume
-    (fn [thread-id]
-      ;; TODO non-mcp tool calls are maps of content, role tool_call_id
-      ;;      we turn them into one text message and respond to the jsonrpc request here
-      ;;      for mcp tool calls the response will already be valid content
-      ;;        so we can concat it and just return the result (or error)
-      ;; tool-outputs are :content, :role, :tool_call_id 
-      ;;   (MCP doesn't care about :role or :tool_call_id - these are client concerns)
-      (let [tool-outputs (->>
-                          (tools/make-tool-calls
-                           0
-                           (partial
-                            tools/function-handler
-                            {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-                             :host-dir (-> @db* :host-dir)
-                             :server-id server-id
-                             :thread-id thread-id})
-                           ;; tool calls are functions, which are arguments,name maps, and ids
-                           ;; mcp tool call params are also maps of name, and arguments
-                           [{:function (update
-                                        params :arguments
-                                        (fn [arguments]
-                                          (logger/trace
-                                           (-> arguments
-                                               (merge
-                                                (db/parameter-values (:name params))
-                                                (select-keys (-> @db* :servers (get server-id)) [:roots]))
-                                               (json/generate-string)))))
-                             :id "1"}])
-                          (async/reduce conj [])
-                          (async/<!!))]
-     ;; TODO with mcp, tool-calls with errors are still jsonrpc results
-     ;;      protocol errors are jsonrpc errors, with a code and a message
-     ;; TODO if result is ::method-not-found, we'll get a protocol error
-     ;;      responding with a map containing an :error key will also generate a protocol error
-        {:content
-         (concat
-          (create-tool-outputs tool-outputs)
-          (volumes/pick-up-mcp-resources thread-id (partial update-resources components)))
-         :is-error false}))))
+  (if (poci? components params)
+    (volumes/with-volume
+      (fn [thread-id]
+        (let [response (make-tool-calls components params {:thread-id thread-id})]
+          (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
+    (make-tool-calls components params {})))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]
   (logger/info "tools/call")
