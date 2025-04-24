@@ -195,17 +195,19 @@ const ConfigurationModal = ({
         >
           {catalogItem.description}
         </Typography>
-        <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-          Repository:{' '}
-          <Link
-            onClick={() => client.host.openExternal(catalogItem.source || '')}
-            href={catalogItem.source || ''}
-            target="_blank"
-          >
-            {catalogItem.source || ''}
-            <Launch />
-          </Link>
-        </Typography>
+        {catalogItem.source !== undefined && (
+          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+            Repository:{' '}
+            <Link
+              onClick={() => client.host.openExternal(catalogItem.source || '')}
+              href={catalogItem.source || ''}
+              target="_blank"
+            >
+              {catalogItem.source || ''}
+              <Launch />
+            </Link>
+          </Typography>
+        )}
 
         {configLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
