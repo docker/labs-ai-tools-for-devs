@@ -16,11 +16,11 @@ import {
   DialogTitle,
   IconButton,
   Link,
+  OutlinedInput,
   Stack,
   Switch,
   Tab,
   Tabs,
-  TextField,
   Tooltip,
   Typography,
   useTheme,
@@ -234,7 +234,7 @@ const ConfigurationModal = ({
                         }
                         color="error"
                       >
-                        Config & Secrets
+                        Configure
                       </Badge>
                     }
                   />
@@ -273,98 +273,93 @@ const ConfigurationModal = ({
                   minHeight: '180px',
                 }}
               >
-                <Stack
-                  direction="column"
-                  spacing={2}
-                  sx={{
-                    border: '2px solid',
-                    borderColor: theme.palette.warning.contrastText,
-                    borderRadius: 2,
-                    p: 2,
-                    mt: 2,
-                  }}
-                >
+                <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
-                  <Typography variant="h6" sx={{ mb: 1 }}>
-                    Secrets
-                  </Typography>
-                  {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                    catalogItem.secrets.map((secret) => {
-                      const secretEdited =
-                        (secret.assigned &&
-                          localSecrets[secret.name] !==
-                            ASSIGNED_SECRET_PLACEHOLDER) ||
-                        (!secret.assigned && localSecrets[secret.name] !== '');
-                      return (
-                        <Stack
-                          key={secret.name}
-                          direction="row"
-                          spacing={2}
-                          alignItems="center"
-                        >
-                          <TextField
+
+                  <Stack>
+                    <Typography variant="subtitle2">Secrets</Typography>
+                    {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
+                      catalogItem.secrets.map((secret) => {
+                        const secretEdited =
+                          (secret.assigned &&
+                            localSecrets[secret.name] !==
+                              ASSIGNED_SECRET_PLACEHOLDER) ||
+                          (!secret.assigned &&
+                            localSecrets[secret.name] !== '');
+                        return (
+                          <Stack
                             key={secret.name}
-                            label={secret.name}
-                            value={localSecrets[secret.name]}
-                            fullWidth
-                            onChange={(e) => {
-                              setLocalSecrets({
-                                ...localSecrets,
-                                [secret.name]: e.target.value,
-                              });
-                            }}
-                            type="password"
-                          />
-                          {secret.assigned && !secretEdited && (
-                            <IconButton
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                          >
+                            <OutlinedInput
                               size="small"
-                              color="error"
-                              onClick={() => {
-                                mutateSecret.mutateAsync({
-                                  name: secret.name,
-                                  value: undefined,
-                                  policies: [MCP_POLICY_NAME],
+                              key={secret.name}
+                              placeholder={secret.name}
+                              value={localSecrets[secret.name]}
+                              fullWidth
+                              onChange={(e) => {
+                                setLocalSecrets({
+                                  ...localSecrets,
+                                  [secret.name]: e.target.value,
                                 });
                               }}
-                            >
-                              <DeleteOutlined />
-                            </IconButton>
-                          )}
-                          {secretEdited && (
-                            <ButtonGroup>
+                              type="password"
+                            />
+                            {secret.assigned && !secretEdited && (
                               <IconButton
-                                onClick={async () => {
-                                  await mutateSecret.mutateAsync({
+                                size="small"
+                                color="error"
+                                onClick={() => {
+                                  mutateSecret.mutateAsync({
                                     name: secret.name,
-                                    value: localSecrets[secret.name]!,
+                                    value: undefined,
                                     policies: [MCP_POLICY_NAME],
                                   });
                                 }}
                               >
-                                <CheckOutlined sx={{ color: 'success.main' }} />
+                                <DeleteOutlined />
                               </IconButton>
-                              <IconButton
-                                onClick={async () => {
-                                  setLocalSecrets({
-                                    ...localSecrets,
-                                    [secret.name]: secret.assigned
-                                      ? ASSIGNED_SECRET_PLACEHOLDER
-                                      : '',
-                                  });
-                                }}
-                              >
-                                <CloseOutlined sx={{ color: 'error.main' }} />
-                              </IconButton>
-                            </ButtonGroup>
-                          )}
-                        </Stack>
-                      );
-                    })
-                  ) : (
-                    <Alert severity="info">
-                      No secrets available for this item.
-                    </Alert>
-                  )}
+                            )}
+                            {secretEdited && (
+                              <ButtonGroup>
+                                <IconButton
+                                  onClick={async () => {
+                                    await mutateSecret.mutateAsync({
+                                      name: secret.name,
+                                      value: localSecrets[secret.name]!,
+                                      policies: [MCP_POLICY_NAME],
+                                    });
+                                  }}
+                                >
+                                  <CheckOutlined
+                                    sx={{ color: 'success.main' }}
+                                  />
+                                </IconButton>
+                                <IconButton
+                                  onClick={async () => {
+                                    setLocalSecrets({
+                                      ...localSecrets,
+                                      [secret.name]: secret.assigned
+                                        ? ASSIGNED_SECRET_PLACEHOLDER
+                                        : '',
+                                    });
+                                  }}
+                                >
+                                  <CloseOutlined sx={{ color: 'error.main' }} />
+                                </IconButton>
+                              </ButtonGroup>
+                            )}
+                          </Stack>
+                        );
+                      })
+                    ) : (
+                      <Alert severity="info">
+                        No secrets available for this item.
+                      </Alert>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
             </TabPanel>
