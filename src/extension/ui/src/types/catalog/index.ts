@@ -25,6 +25,7 @@ export interface CatalogItemWithName extends CatalogItem {
  */
 export interface CatalogItemRichened extends CatalogItem {
     name: string;
+    readme?: string;
     secrets: { name: string, assigned: boolean }[];
     configValue: { [key: string]: any };
     configSchema: any;
