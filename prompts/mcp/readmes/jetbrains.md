@@ -1,6 +1,6 @@
 # Jetbrains MCP Server
 
-A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio
+A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

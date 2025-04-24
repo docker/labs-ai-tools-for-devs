@@ -1,6 +1,6 @@
 # Git MCP Server
 
-A Model Context Protocol server for Git repository interaction and automation
+A Model Context Protocol server for Git repository interaction and automation.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

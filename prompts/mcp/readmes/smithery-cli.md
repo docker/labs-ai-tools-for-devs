@@ -1,6 +1,6 @@
 # Smithery-cli MCP Server
 
-Official MCP server for Smithery CLI
+Official MCP server for Smithery CLI.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

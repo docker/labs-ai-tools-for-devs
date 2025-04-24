@@ -1,6 +1,6 @@
 # Obsidian MCP Server
 
-MCP server that interacts with Obsidian via the Obsidian rest API community plugin
+MCP server that interacts with Obsidian via the Obsidian rest API community plugin.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

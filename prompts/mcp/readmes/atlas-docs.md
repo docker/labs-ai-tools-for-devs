@@ -1,6 +1,6 @@
 # Atlas-docs MCP Server
 
-Provide LLMs hosted, clean markdown documentation of libraries and frameworks
+Provide LLMs hosted, clean markdown documentation of libraries and frameworks.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

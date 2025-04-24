@@ -1,6 +1,6 @@
 # Chroma MCP Server
 
-A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma
+A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

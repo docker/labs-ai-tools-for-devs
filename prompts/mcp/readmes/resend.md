@@ -1,6 +1,6 @@
 # Resend MCP Server
 
-Send emails directly from Cursor with this email sending MCP server
+Send emails directly from Cursor with this email sending MCP server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

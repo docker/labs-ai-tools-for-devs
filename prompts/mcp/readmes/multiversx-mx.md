@@ -1,6 +1,6 @@
 # Multiversx-mx MCP Server
 
-MCP Server for MultiversX
+MCP Server for MultiversX.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

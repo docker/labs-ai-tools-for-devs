@@ -1,6 +1,6 @@
 # Kubernetes MCP Server
 
-Connect to a Kubernetes cluster and manage it
+Connect to a Kubernetes cluster and manage it.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

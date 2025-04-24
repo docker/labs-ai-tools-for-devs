@@ -1,6 +1,6 @@
 # Memory MCP Server
 
-Knowledge graph-based persistent memory system
+Knowledge graph-based persistent memory system.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

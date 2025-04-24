@@ -1,6 +1,6 @@
 # Opik MCP Server
 
-Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics. 
+Model Context Protocol (MCP) implementation for Opik enabling seamless IDE integration and unified access to prompts, projects, traces, and metrics. .
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

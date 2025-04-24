@@ -1,6 +1,6 @@
 # Hyperspell MCP Server
 
-Hyperspell MCP Server
+Hyperspell MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

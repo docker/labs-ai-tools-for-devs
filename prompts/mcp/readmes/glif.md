@@ -1,6 +1,6 @@
 # Glif MCP Server
 
-Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app
+Easily run glif.app AI workflows inside your LLM: image generators, memes, selfies, and more. Glif supports all major multimedia AI models inside one app.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

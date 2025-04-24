@@ -1,6 +1,6 @@
 # Notion MCP Server
 
-Official Notion MCP Server
+Official Notion MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

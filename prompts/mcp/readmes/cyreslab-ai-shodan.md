@@ -1,6 +1,6 @@
 # Cyreslab-ai-shodan MCP Server
 
-A Model Context Protocol server that provides access to Shodan API functionality
+A Model Context Protocol server that provides access to Shodan API functionality.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

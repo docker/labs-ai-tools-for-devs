@@ -1,6 +1,6 @@
 # Brave MCP Server
 
-Web and local search using Brave's Search API
+Web and local search using Brave's Search API.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

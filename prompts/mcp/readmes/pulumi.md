@@ -1,6 +1,6 @@
 # Pulumi MCP Server
 
-Pulumi MCP Server
+Pulumi MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

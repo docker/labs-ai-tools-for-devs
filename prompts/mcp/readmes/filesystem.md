@@ -1,6 +1,6 @@
 # Filesystem MCP Server
 
-Local filesystem access with configurable allowed paths
+Local filesystem access with configurable allowed paths.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

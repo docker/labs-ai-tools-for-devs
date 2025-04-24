@@ -1,6 +1,6 @@
 # Sqlite MCP Server
 
-Database interaction and business intelligence capabilities
+Database interaction and business intelligence capabilities.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

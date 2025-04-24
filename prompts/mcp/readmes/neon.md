@@ -1,6 +1,6 @@
 # Neon MCP Server
 
-MCP server for interacting with Neon Management API and databases
+MCP server for interacting with Neon Management API and databases.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

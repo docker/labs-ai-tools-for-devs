@@ -1,6 +1,6 @@
 # Flexprice MCP Server
 
-Official flexprice MCP Server
+Official flexprice MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

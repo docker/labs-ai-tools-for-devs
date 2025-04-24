@@ -1,6 +1,6 @@
 # Doit MCP Server
 
-DoiT official MCP Server
+DoiT official MCP Server.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
