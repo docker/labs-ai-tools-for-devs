@@ -11,7 +11,6 @@ export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: stri
     try {
         const result = await client.docker.cli.exec('run', args)
         if (result.stderr) {
-            console.error(result.stderr)
             showError(result.stderr)
         }
         return result.stdout || ''
