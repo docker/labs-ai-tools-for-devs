@@ -72,6 +72,12 @@ post-gen-go-client:
 		./pkg/generated/go/client/$(DD_API_NAME)/go.* \
 		./pkg/generated/go/client/$(DD_API_NAME)/git_push.sh
 
-generate: DD_API_NAME=secrets
-generate: DD_API_PKGNAME=secretsapi
-generate: pre-gen-clients gen-go-client gen-ts-client gen-secrets-api-html post-gen-go-client
+generate-sm: DD_API_NAME=secrets
+generate-sm: DD_API_PKGNAME=secretsapi
+generate-sm: pre-gen-clients gen-go-client gen-secrets-api-html post-gen-go-client
+
+generate-oauth: DD_API_NAME=tools
+generate-oauth: DD_API_PKGNAME=oauthapi
+generate-oauth: pre-gen-clients gen-go-client gen-secrets-api-html post-gen-go-client
+
+generate: generate-sm generate-oauth
