@@ -5,6 +5,7 @@ import { CatalogGrid } from './components/CatalogGrid';
 import LoadingState from './components/LoadingState';
 import { useCatalogAll } from './queries/useCatalog';
 import { useConfig } from './queries/useConfig';
+import { useMCPClient } from './queries/useMCPClient';
 import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
 import { syncRegistryWithConfig } from './Registry';
@@ -21,6 +22,7 @@ export function App() {
   const requiredImages = useRequiredImages(client);
   const config = useConfig(client);
   const secrets = useSecrets(client);
+  const mcpClient = useMCPClient(client);
 
   // Create a memoized callback for syncing registry with config
   const syncRegistry = useCallback(async () => {
@@ -39,6 +41,8 @@ export function App() {
 
     catalogItems: catalogAll.catalogItems,
     registryItems: catalogAll.registryItems,
+
+    ...mcpClient,
   };
 
   const isLoading =
