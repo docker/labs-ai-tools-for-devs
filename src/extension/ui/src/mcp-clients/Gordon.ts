@@ -23,7 +23,7 @@ type GordonConfig = {
 
 class GordonMCPClient implements MCPClient {
     name = 'Gordon';
-    url = 'https://docs.docker.com/desktop/features/gordon/';
+    url = 'https://docs.docker.com/desktop/features/gordon/mcp/yaml/';
     manualConfigSteps = [
         'Enable Gordon in Docker Desktop',
         'Write gordon-mcp.yml to the directory you want to connect to',

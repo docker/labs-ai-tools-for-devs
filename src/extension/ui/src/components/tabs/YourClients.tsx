@@ -100,9 +100,8 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
 
       <Divider>Or</Divider>
       <Stack direction="column" alignItems="center" spacing={1}>
-        <Typography variant="h4">Other MCP Clients</Typography>
-        You can connect other MCP clients to the same server by specifying the
-        following command:
+        Connect other MCP clients to the same server by specifying the following
+        command:
         <Stack
           direction="row"
           alignItems="center"
@@ -311,7 +310,7 @@ function ClientSetting({
               </Link>
             </Stack>
             <Typography sx={{ fontWeight: 'bold' }}>
-              Expected Config Path:
+              Expected Config Path
             </Typography>
             <Typography
               component="pre"
@@ -320,7 +319,6 @@ function ClientSetting({
                 fontFamily: 'monospace',
                 whiteSpace: 'nowrap',
                 overflow: 'auto',
-                maxWidth: '80%',
                 backgroundColor: 'background.default',
                 padding: 1,
                 borderRadius: 1,
@@ -332,7 +330,7 @@ function ClientSetting({
               ] || 'N/A'}
             </Typography>
             <Typography sx={{ fontWeight: 'bold' }}>
-              Manually Configure:
+              Manual configuration
             </Typography>
           </Stack>
           <List sx={{ listStyleType: 'decimal', p: 0, pl: 2, mt: 1 }}>

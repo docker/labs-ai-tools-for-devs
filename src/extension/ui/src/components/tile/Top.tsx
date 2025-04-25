@@ -26,7 +26,12 @@ export default function Top({ item, onToggleRegister }: TopProps) {
         />
       }
       title={
-        <Typography sx={{ justifySelf: 'flex-start', fontWeight: 'bold' }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: 'text.primary',
+          }}
+        >
           {formatName(item.name)}
         </Typography>
       }

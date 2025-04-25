@@ -253,7 +253,7 @@ const ConfigurationModal = ({
                 spacing={1}
                 sx={{
                   overflow: 'auto',
-                  maxHeight: 'calc(80vh - 200px)',
+                  height: 'calc(80vh - 200px)',
                   minHeight: '180px',
                 }}
               >
@@ -273,7 +273,7 @@ const ConfigurationModal = ({
                 spacing={1}
                 sx={{
                   overflow: 'auto',
-                  maxHeight: 'calc(80vh - 200px)',
+                  height: 'calc(80vh - 200px)',
                   minHeight: '180px',
                 }}
               >
