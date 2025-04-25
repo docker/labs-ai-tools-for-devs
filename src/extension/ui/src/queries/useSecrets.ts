@@ -19,7 +19,7 @@ export function useSecrets(client: v1.DockerDesktopClient) {
         if (!secret.value) {
           return old.filter((s) => s.name !== secret.name);
         }
-        return [...old, secret];
+        return [...(old || []), secret];
       });
       if (!secret.value) {
         return Secrets.deleteSecret(client, secret.name);
