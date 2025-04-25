@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
+	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
+	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
 	"syscall"
-	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
-	"github.com/spf13/cobra"
 )
 
 func main() {
@@ -43,6 +43,14 @@ func newApiClient() (client.ApiClient, error) {
 		return nil, err
 	}
 	return client.NewApiClient(p), nil
+}
+
+func newOAuthApiClient() (client.OAuthApiClient, error) {
+	p, err := paths.GetToolsApiSocketPath()
+	if err != nil {
+		return nil, err
+	}
+	return client.NewOAuthApiClient(p), nil
 }
 
 type addOptions struct {
@@ -87,7 +95,7 @@ func ListSecrets(ctx context.Context) *cobra.Command {
 func DeleteSecret(ctx context.Context) *cobra.Command {
 	opts := &deleteOptions{}
 	cmd := &cobra.Command{
-		Use:   "delete",	
+		Use:   "delete",
 		Short: "Delete a secret",
 		Args:  cobra.NoArgs,
 		RunE: func(*cobra.Command, []string) error {

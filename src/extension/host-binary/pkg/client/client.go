@@ -36,12 +36,6 @@ func NewApiClient(socketPath string) ApiClient {
 	}
 }
 
-type Secret struct {
-	Name  string
-	Value string
-	Policies []string
-}
-
 func (d apiClientImpl) SetSecret(ctx context.Context, s secretsapi.Secret) error {
 	apiReq := d.SecretsApi.SetJfsSecret(ctx)
 	req := secretsapi.NewSecret(s.Name, s.Value, s.Policies)
