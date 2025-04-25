@@ -13,7 +13,7 @@ type ApiClient interface {
 	// GetPolicy retrieves a policy
 	GetPolicy(ctx context.Context, policy string) (secretsapi.Policy, error)
 	// GetSecret checks if a secret exists
-	GetSecret(ctx context.Context, secret string) (secretsapi.StoredSecret, error)
+	GetSecret(ctx context.Context, secret string) (secretsapi.Secret, error)
 	// ListPolicies lists all policies
 	ListPolicies(ctx context.Context) ([]secretsapi.Policy, error)
 	// ListSecrets lists all secrets
@@ -56,11 +56,11 @@ func (d apiClientImpl) ListSecrets(ctx context.Context) ([]secretsapi.StoredSecr
 	return res, err
 }
 
-func (d apiClientImpl) GetSecret(ctx context.Context, secret string) (secretsapi.StoredSecret, error) {
+func (d apiClientImpl) GetSecret(ctx context.Context, secret string) (secretsapi.Secret, error) {
 	apiReq := d.SecretsApi.GetJfsSecret(ctx, secret)
 	res, _, err := apiReq.Execute()
 	if err != nil {
-		return secretsapi.StoredSecret{}, err
+		return secretsapi.Secret{}, err
 	}
 	return *res, nil
 }

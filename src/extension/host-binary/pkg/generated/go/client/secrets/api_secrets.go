@@ -68,8 +68,8 @@ type SecretsApi interface {
 	GetJfsSecret(ctx context.Context, secret string) ApiGetJfsSecretRequest
 
 	// GetJfsSecretExecute executes the request
-	//  @return StoredSecret
-	GetJfsSecretExecute(r ApiGetJfsSecretRequest) (*StoredSecret, *http.Response, error)
+	//  @return Secret
+	GetJfsSecretExecute(r ApiGetJfsSecretRequest) (*Secret, *http.Response, error)
 
 	/*
 		ListJfsPolicies lists all policies
@@ -409,7 +409,7 @@ type ApiGetJfsSecretRequest struct {
 	secret     string
 }
 
-func (r ApiGetJfsSecretRequest) Execute() (*StoredSecret, *http.Response, error) {
+func (r ApiGetJfsSecretRequest) Execute() (*Secret, *http.Response, error) {
 	return r.ApiService.GetJfsSecretExecute(r)
 }
 
@@ -430,13 +430,13 @@ func (a *SecretsApiService) GetJfsSecret(ctx context.Context, secret string) Api
 
 // Execute executes the request
 //
-//	@return StoredSecret
-func (a *SecretsApiService) GetJfsSecretExecute(r ApiGetJfsSecretRequest) (*StoredSecret, *http.Response, error) {
+//	@return Secret
+func (a *SecretsApiService) GetJfsSecretExecute(r ApiGetJfsSecretRequest) (*Secret, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *StoredSecret
+		localVarReturnValue *Secret
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SecretsApiService.GetJfsSecret")

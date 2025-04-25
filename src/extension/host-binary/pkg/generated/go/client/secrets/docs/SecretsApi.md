@@ -217,7 +217,7 @@ No authorization required
 
 ## GetJfsSecret
 
-> StoredSecret GetJfsSecret(ctx, secret).Execute()
+> Secret GetJfsSecret(ctx, secret).Execute()
 
 checks if a secret exists
 
@@ -243,7 +243,7 @@ func main() {
         fmt.Fprintf(os.Stderr, "Error when calling `SecretsApi.GetJfsSecret``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `GetJfsSecret`: StoredSecret
+    // response from `GetJfsSecret`: Secret
     fmt.Fprintf(os.Stdout, "Response from `SecretsApi.GetJfsSecret`: %v\n", resp)
 }
 ```
@@ -267,7 +267,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**StoredSecret**](StoredSecret.md)
+[**Secret**](Secret.md)
 
 ### Authorization
 
