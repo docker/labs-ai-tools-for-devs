@@ -185,11 +185,10 @@
                   {:HostConfig
                    (merge
                     {:Binds
-                     (concat ["docker-lsp:/docker-lsp"
-                              "/var/run/docker.sock:/var/run/docker.sock"]
-                             (when host-dir [(format "%s:/project:rw" host-dir)])
-                             (when thread-id [(format "%s:/thread:rw" thread-id)])
-                             (or volumes mounts))}
+                     (concat
+                      (when host-dir [(format "%s:/project:rw" host-dir)])
+                      (when thread-id [(format "%s:/thread:rw" thread-id)])
+                      (or volumes mounts))}
                     (when network_mode
                       {:NetworkMode network_mode})
                     (when ports
@@ -227,9 +226,9 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
-(defn inspect-image [{:keys [Id]}]
+(defn inspect-image [{:keys [Name Id]}]
   (curl/get
-   (format "http://localhost/images/%s/json" Id)
+    (format "http://localhost/images/%s/json" (or Name Id))
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -339,12 +338,9 @@
 
 (defn has-image? [image]
   (let [[_ digest] (re-find #".*@(.*)" image)]
-    (some
-     (fn [{:keys [RepoTags Id]}]
-       (or
-        (some #(= % image)  RepoTags)
-        (and digest (= digest Id))))
-     (images {}))))
+    (try
+      (image-inspect (if digest {:Id digest} {:Name image}))
+      (catch Throwable _))))
 
 (defn check-then-pull [container-definition]
   (when (not (has-image? (:image container-definition)))
@@ -375,9 +371,7 @@
   (check-then-pull container-definition)
   (let [{:keys [Entrypoint Cmd Env]}
         (->
-         (image-inspect
-          (-> (images {"reference" [(:image container-definition)]})
-              first))
+         (image-inspect {:Name (:image container-definition)})
          :Config)
         real-entrypoint (string/join " " (concat
                                           (or (:entrypoint container-definition) Entrypoint)
@@ -554,9 +548,9 @@
           stdout (PipedOutputStream.)
           stdout-reader (io/reader (PipedInputStream. stdout))]
       (async/go-loop []
-                     (when-let [line (.readLine stdout-reader)]
-                       (async/put! c {:stdout line})
-                       (recur))) 
+        (when-let [line (.readLine stdout-reader)]
+          (async/put! c {:stdout line})
+          (recur)))
       (loop [offset 0]
         (let [result (.read ^SocketChannel in header-buf)]
           (cond

@@ -253,6 +253,20 @@
             :workdir "/usr/local/app" }}]
     :local-get-tools -get-tools})
 
+  (get-mcp-tools-from-prompt
+   {:mcp [{:container
+           {:image "mcp/webflow:latest" 
+            :workdir "/app"
+            :secrets {:webflow.token "WEBFLOW_TOKEN"} }}]
+    :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+   {:mcp [{:container
+           {:image "mcp/azure:latest" 
+            :workdir "/app"
+            :command ["server" "start"] }}]
+    :local-get-tools -get-tools})
+
   (docker/run-container
    (docker/inject-secret-transform
     {:image "mcp/time:latest"
