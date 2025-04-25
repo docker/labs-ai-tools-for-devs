@@ -252,6 +252,7 @@ const ConfigurationModal = ({
               <Stack
                 spacing={1}
                 sx={{
+                  padding: 1,
                   overflow: 'auto',
                   height: 'calc(80vh - 200px)',
                   minHeight: '180px',
@@ -272,12 +273,13 @@ const ConfigurationModal = ({
               <Stack
                 spacing={1}
                 sx={{
+                  padding: 1,
                   overflow: 'auto',
                   height: 'calc(80vh - 200px)',
                   minHeight: '180px',
                 }}
               >
-                <Stack direction="column" spacing={2}>
+                <Stack direction="column" spacing={2} >
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
                   {catalogItem.secrets?.length > 0 && (
