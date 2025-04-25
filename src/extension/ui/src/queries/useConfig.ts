@@ -28,6 +28,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
     isLoading: configLoading,
   } = useQuery({
     queryKey: ["config"],
+    networkMode: "always",
     queryFn: async () => {
       try {
         const response = await getStoredConfig(client);
@@ -37,7 +38,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
         client.desktopUI.toast.error("Failed to get stored config: " + error);
         throw error;
       }
-    }
+    },
   });
 
   const saveConfigMutation = useMutation({
@@ -51,10 +52,15 @@ export function useConfig(client: v1.DockerDesktopClient) {
       try {
         const updatedConfig = {
           ...((queryClient.getQueryData(["config"]) as Record<string, any>) ||
-            {}), [itemName]: newConfig
+            {}),
+          [itemName]: newConfig,
         };
 
-        await writeToPromptsVolume(client, 'config.yaml', stringify(updatedConfig));
+        await writeToPromptsVolume(
+          client,
+          "config.yaml",
+          stringify(updatedConfig)
+        );
 
         const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
         return { itemName, updatedConfig: updatedConfigRef };

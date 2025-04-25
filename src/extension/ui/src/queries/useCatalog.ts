@@ -2,17 +2,11 @@ import { v1 } from "@docker/extension-api-client-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { parse, stringify } from "yaml";
-import {
-  CATALOG_URL,
-  REGISTRY_YAML
-} from "../Constants";
+import { CATALOG_URL, REGISTRY_YAML } from "../Constants";
 import { writeToPromptsVolume } from "../FileUtils";
 import { getRegistry, syncRegistryWithConfig } from "../Registry";
 import Secrets from "../Secrets";
-import {
-  CatalogItemRichened,
-  CatalogItemWithName
-} from "../types/catalog";
+import { CatalogItemRichened, CatalogItemWithName } from "../types/catalog";
 import { getTemplateForItem, useConfig } from "./useConfig";
 import { useSecrets } from "./useSecrets";
 
@@ -43,7 +37,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
         Boolean(item.config) &&
         (neverOnceConfigured ||
           JSON.stringify(itemConfigValue) ===
-          JSON.stringify(baseConfigTemplate));
+            JSON.stringify(baseConfigTemplate));
 
       const missingASecret = secretsWithAssignment.some(
         (secret) => !secret.assigned
@@ -152,6 +146,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
     isLoading: registryLoading,
   } = useQuery({
     queryKey: ["registry"],
+    networkMode: "always",
     queryFn: async () => {
       setCanRegister(false);
       try {
@@ -171,7 +166,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
         setCanRegister(true);
         throw error;
       }
-    }
+    },
   });
 
   useQuery({
@@ -214,7 +209,11 @@ function useRegistry(client: v1.DockerDesktopClient) {
     mutationFn: async (newRegistry: {
       [key: string]: { ref: string; config?: any };
     }) => {
-      await writeToPromptsVolume(client, REGISTRY_YAML, stringify({ registry: newRegistry }));
+      await writeToPromptsVolume(
+        client,
+        REGISTRY_YAML,
+        stringify({ registry: newRegistry })
+      );
 
       return newRegistry;
     },
@@ -252,7 +251,11 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
           [item.name]: { ref: item.ref },
         };
 
-        await writeToPromptsVolume(client, REGISTRY_YAML, stringify({ registry: newRegistry }));
+        await writeToPromptsVolume(
+          client,
+          REGISTRY_YAML,
+          stringify({ registry: newRegistry })
+        );
         return { success: true, newRegistry };
       } catch (error) {
         client.desktopUI.toast.error(
@@ -281,7 +284,11 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
           delete currentRegistry[item.name];
         }
 
-        await writeToPromptsVolume(client, REGISTRY_YAML, stringify({ registry: currentRegistry }));
+        await writeToPromptsVolume(
+          client,
+          REGISTRY_YAML,
+          stringify({ registry: currentRegistry })
+        );
 
         return { success: true, newRegistry: currentRegistry };
       } catch (error) {
