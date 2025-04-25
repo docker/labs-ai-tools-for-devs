@@ -52,7 +52,6 @@ export function useConfig(client: v1.DockerDesktopClient) {
       newConfig: { [key: string]: any };
     }) => {
       try {
-        // Use the ref which contains the pre-optimistic update state
         const updatedConfig = {  ...((queryClient.getQueryData(["config"]) as Record<string, any>) ||
           {}), [itemName]: newConfig };
 
