@@ -81,7 +81,7 @@ const ConfigEditor = ({
 
   return (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Config</Typography>
+      <Typography variant="subtitle2">Parameters</Typography>
       <Stack direction="column" spacing={2}>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
