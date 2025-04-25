@@ -2,44 +2,50 @@ import React, { useMemo } from 'react';
 import { Grid2 } from '@mui/material';
 import Tile from '../tile/Index';
 import { v1 } from '@docker/extension-api-client-types';
+import { partition } from 'lodash-es';
+
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 import { useCatalogAll } from '../../queries/useCatalog';
+import type { CatalogItemRichened } from '../../types';
 
 interface ToolCatalogProps {
   search: string;
   client: v1.DockerDesktopClient;
-  showMine: boolean;
   sort: 'name-asc' | 'name-desc';
 }
 
-const ToolCatalog: React.FC<ToolCatalogProps> = ({
-  search,
-  client,
-  showMine,
-  sort,
-}) => {
+function sortItems(
+  items: CatalogItemRichened[],
+  sort: 'name-asc' | 'name-desc'
+) {
+  if (sort === 'name-asc') {
+    return items.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return items.sort((a, b) => b.name.localeCompare(a.name));
+}
+
+const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, sort }) => {
   const { catalogItems, registryLoading } = useCatalogAll(client);
 
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const result = useMemo(() => {
-    const filteredItems = catalogItems.filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const hideBecauseItsNotMine = showMine && !item.registered;
-      return matchesSearch && !hideBecauseItsNotMine;
+    if (search === '') {
+      return catalogItems;
+    }
+
+    const matchedSearch = catalogItems.filter((item) =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const [enabledItems, disabledItems] = partition(matchedSearch, (item) => {
+      return item.registered === true;
     });
 
-    return sort === 'name-asc'
-      ? filteredItems.sort((a, b) => {
-          return a.name.localeCompare(b.name);
-        })
-      : sort === 'name-desc'
-      ? filteredItems.sort((a, b) => {
-          return b.name.localeCompare(a.name);
-        })
-      : filteredItems;
-  }, [catalogItems, search, showMine, sort]);
+    return [
+      ...sortItems(enabledItems, sort),
+      ...sortItems(disabledItems, sort),
+    ];
+  }, [catalogItems, search, sort]);
 
   return (
     <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>

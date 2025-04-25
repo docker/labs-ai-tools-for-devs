@@ -7,15 +7,12 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
-  FormControlLabel,
   FormGroup,
   IconButton,
   Menu,
   MenuItem,
   OutlinedInput,
   Stack,
-  Switch,
   Tab,
   Tabs,
   Typography,
@@ -41,17 +38,12 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
 
   const [search, setSearch] = useState<string>('');
   const [tab, setTab] = useState<number>(0);
-  const [showMine, setShowMine] = useState<boolean>(
-    localStorage.getItem('showMine') === 'true'
-  );
   const [openMenus, setOpenMenus] = useState<{
     [key: string]: { anchorEl: HTMLElement | null; open: boolean };
   }>({
     'demo-customized-menu': { anchorEl: null, open: false },
   });
-  const [sort, setSort] = useState<'name-asc' | 'name-desc'>(
-    'name-asc'
-  );
+  const [sort, setSort] = useState<'name-asc' | 'name-desc'>('name-asc');
 
   // Only calculate hasOutOfCatalog when relevant data changes
   const hasOutOfCatalog = useMemo(() => {
@@ -174,21 +166,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
                 >
                   <SwapVert fontSize="small" />
                 </IconButton>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showMine}
-                      onChange={(e) => {
-                        setShowMine(e.target.checked);
-                        localStorage.setItem(
-                          'showMine',
-                          e.target.checked.toString()
-                        );
-                      }}
-                    />
-                  }
-                  label="Show only enabled tools"
-                />
               </Stack>
             </FormGroup>
 
@@ -244,12 +221,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         }
       >
         {tab === 0 && (
-          <ToolCatalog
-            search={search}
-            showMine={showMine}
-            client={client}
-            sort={sort}
-          />
+          <ToolCatalog search={search} client={client} sort={sort} />
         )}
         {tab === 1 && <YourClients appProps={appProps} />}
       </Suspense>
