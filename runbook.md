@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.14"
+VERSION="0.0.15"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
@@ -45,11 +45,12 @@ clj -M:main-repl serve --mcp --port 8811
 ```sh
 docker run --rm -i --pull always -q --init \
            -v /var/run/docker.sock:/var/run/docker.sock \
+           -v /run/host-services/backend.sock:/backend.sock \
            --mount type=volume,source=docker-prompts,target=/prompts \
            -p 8811:8811 \
-           mcp/docker:0.0.1 \
-           serve --mcp --port 8811 \
-           --register "github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md"
+           -e "GATEWAY_CONTAINER_RM=false" \
+           mcp/docker:0.0.15 \
+           serve --mcp --port 8811
 ```
 
 ```sh

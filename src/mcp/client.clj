@@ -152,7 +152,9 @@
                                (:image container-definition)))
                 {:error :did-not-initialize})))
           (finally
-            (when (not (true? stateful))
+            (when (and
+                    (not (true? stateful))
+                    (not (= "false" (System/getenv "GATEWAY_CONTAINER_RM"))))
               (remove))))))
     (catch Throwable t
       (logger/error (.getMessage t))
