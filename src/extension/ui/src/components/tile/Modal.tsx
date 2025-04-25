@@ -280,10 +280,10 @@ const ConfigurationModal = ({
                 <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2">Secrets</Typography>
-                    {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                      catalogItem.secrets.map((secret) => {
+                  {catalogItem.secrets?.length > 0 && (
+                    <Stack spacing={1}>
+                      <Typography variant="subtitle2">Secrets</Typography>
+                      {catalogItem.secrets.map((secret) => {
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
@@ -357,19 +357,11 @@ const ConfigurationModal = ({
                             )}
                           </Stack>
                         );
-                      })
-                    ) : (
-                      <Alert severity="info">
-                        No secrets available for this item.
-                      </Alert>
-                    )}
-                  </Stack>
+                      })}
+                    </Stack>
+                  )}
                 </Stack>
               </Stack>
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-              <Typography>Examples</Typography>
-              WIP
             </TabPanel>
           </>
         )}
