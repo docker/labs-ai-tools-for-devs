@@ -373,9 +373,11 @@ const ConfigurationModal = ({
                             )}
                           </Stack>
                         );
-                      })}
+                      })
+                    ) : (
+                      <Typography>No secrets available.</Typography>
+                    )}
                   </Stack>
-                  )}
                 </Stack>
               </Stack>
             </TabPanel>
