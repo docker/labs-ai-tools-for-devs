@@ -228,7 +228,7 @@
 
 (defn inspect-image [{:keys [Name Id]}]
   (curl/get
-    (format "http://localhost/images/%s/json" (or Name Id))
+   (format "http://localhost/images/%s/json" (or Name Id))
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -547,10 +547,13 @@
     (let [header-buf (ByteBuffer/allocate 8)
           stdout (PipedOutputStream.)
           stdout-reader (io/reader (PipedInputStream. stdout))]
-      (async/go-loop []
-        (when-let [line (.readLine stdout-reader)]
-          (async/put! c {:stdout line})
-          (recur)))
+      (.start ^Thread
+       (Thread.
+        (fn []
+          (loop []
+            (when-let [line (.readLine stdout-reader)]
+              (async/put! c {:stdout line})
+              (recur))))))
       (loop [offset 0]
         (let [result (.read ^SocketChannel in header-buf)]
           (cond
@@ -656,7 +659,10 @@
         c (async/chan)
         output-channel (async/chan)]
     (start x)
-    (async/thread (read-loop socket-channel c))
+    (.start ^Thread
+     (Thread. 
+       (fn [] 
+         (read-loop socket-channel c))))
     (async/go
       (docker/wait x)
       (async/>! c :stopped)
