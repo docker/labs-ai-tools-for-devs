@@ -21,7 +21,6 @@ export const getTemplateForItem = (
 
 export function useConfig(client: v1.DockerDesktopClient) {
   const queryClient = useQueryClient();
-  const configRef = useRef<any>(null);
 
   const {
     data: config = undefined,
@@ -33,8 +32,6 @@ export function useConfig(client: v1.DockerDesktopClient) {
       try {
         const response = await getStoredConfig(client);
         const result = response || {};
-        // Store a deep copy of the config in the ref
-        configRef.current = JSON.parse(JSON.stringify(result));
         return result;
       } catch (error) {
         client.desktopUI.toast.error("Failed to get stored config: " + error);
@@ -55,14 +52,12 @@ export function useConfig(client: v1.DockerDesktopClient) {
       newConfig: { [key: string]: any };
     }) => {
       try {
-        // Use the ref which contains the pre-optimistic update state
-        const currentStoredConfig = { ...(configRef.current || {}) };
-        const updatedConfig = { ...currentStoredConfig, [itemName]: newConfig };
+        const updatedConfig = {  ...((queryClient.getQueryData(["config"]) as Record<string, any>) ||
+          {}), [itemName]: newConfig };
 
         await writeToPromptsVolume(client, 'config.yaml', stringify(updatedConfig));
 
         const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
-        configRef.current = updatedConfigRef;
         return { itemName, updatedConfig: updatedConfigRef };
       } catch (error) {
         client.desktopUI.toast.error("Failed to update config: " + error);
