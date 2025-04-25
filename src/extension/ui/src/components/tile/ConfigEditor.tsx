@@ -82,7 +82,7 @@ const ConfigEditor = ({
   return (
     <Stack spacing={1}>
       <Typography variant="subtitle2">Parameters</Typography>
-      <Stack direction="column" spacing={2}>
+      <Stack direction="column" spacing={1}>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
           const isSaving = savingKeys.has(key);
@@ -90,6 +90,7 @@ const ConfigEditor = ({
           return (
             <Stack key={key} direction="row" spacing={2}>
               <TextField
+                fullWidth
                 size="small"
                 label={key}
                 value={localConfig[key] || ''}
