@@ -2,7 +2,7 @@ import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
 
 import { CatalogItemRichened } from '../../types/catalog';
 import { formatName } from '../../formatName';
-import { format } from 'path';
+import { useEffect, useState } from 'react';
 
 type TopProps = {
   onToggleRegister: (checked: boolean) => void;
@@ -10,6 +10,17 @@ type TopProps = {
 };
 
 export default function Top({ item, onToggleRegister }: TopProps) {
+  // For some unknown reason, item.registered is not updated right away when the user toggles the switch.
+  // This `toggled` state is used to control the switch in the UI. Its main purpose is to do optimistic UI updates.
+  // When the user toggles the switch. The `useEffect` hook is used to synchronize the `toggled` state with the `item.registered`
+  // prop, which is the source of truth for the registration status of the item. This way, if the `item.registered` prop changes
+  // (e.g., due to a successful registration or unregistration), the switch will reflect the correct state.
+  const [toggled, setToggled] = useState(item.registered);
+
+  useEffect(() => {
+    setToggled(item.registered);
+  }, [item.registered]);
+
   return (
     <CardHeader
       sx={{ padding: 0 }}
@@ -45,10 +56,12 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             }
           >
             <Switch
-              checked={item.registered}
+              checked={toggled}
               onChange={(event, checked) => {
                 event.stopPropagation();
                 event.preventDefault();
+
+                setToggled(checked);
                 onToggleRegister(checked);
               }}
             />
