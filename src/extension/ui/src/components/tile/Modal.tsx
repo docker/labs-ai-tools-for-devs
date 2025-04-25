@@ -199,7 +199,6 @@ const ConfigurationModal = ({
         </Typography>
         {catalogItem.readme !== undefined && (
           <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-            Repository:{' '}
             <Link
               onClick={() => client.host.openExternal(catalogItem.readme || '')}
               href={catalogItem.readme || ''}
