@@ -38,7 +38,8 @@ func NewApiClient(socketPath string) ApiClient {
 
 func (d apiClientImpl) SetSecret(ctx context.Context, s secretsapi.Secret) error {
 	apiReq := d.SecretsApi.SetJfsSecret(ctx)
-	req := secretsapi.NewSecret(s.Name, s.Value, s.Policies)
+	req := secretsapi.NewSecret(s.Name, s.Value)
+	req.SetPolicies(s.Policies)
 	_, err := apiReq.Secret(*req).Execute()
 	return err
 }
