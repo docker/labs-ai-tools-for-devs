@@ -1,6 +1,6 @@
 registry:
-  mcp-sqlite:
-    description: The MCP SQLite promptfile contributes all of the tools necessary to work with SQLite and SQLite databases. The file also includes a prompt to seed the database with initial data which helps to demonstrate what you can do with an SQLite MCP Server.
+  SQLite:
+    description: Work with SQLite and SQLite databases. Also includes a prompt to seed the database with initial data.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/sqlite.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
@@ -15,7 +15,7 @@ registry:
     prompts: 1
     resources: {}
   curl:
-    description: This prompt file contains the standard curl tool. In addition to the tool itself, you get a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
+    description: Standard curl tool. In addition, you get a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/curl.md
     icon: https://avatars.githubusercontent.com/u/16928085?s=200&v=4
@@ -25,7 +25,7 @@ registry:
     prompts: 1
     resources: {}
   ffmpeg:
-    description: Use ffmpeg to process video files. This prompt file contains the ffmpeg tool, and a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
+    description: Use ffmpeg to process video files. Contains the ffmpeg tool, and a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/ffmpeg.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/ffmpeg.md
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/ffmpeg.svg
@@ -46,7 +46,7 @@ registry:
     prompts: 0
     resources: {}
   memory:
-    description: Give your MCP client a memory system! This prompt file contains a tool to create entities, relations, and observations in a knowledge graph. It also contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
+    description: Give your MCP client a memory system! Contains a tool to create entities, relations, and observations in a knowledge graph. It also contains a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/mcp-memory.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/memory.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-memory.md
@@ -76,7 +76,7 @@ registry:
     prompts: 1
     resources: {}
   sequentialthinking:
-    description: A tool for dynamic and reflective problem-solving through a structured thinking process.
+    description: Dynamic and reflective problem-solving through a structured thinking process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/sequentialthinking.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/sequentialthinking.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/sequentialthinking.md
@@ -273,7 +273,7 @@ registry:
     prompts: 0
     resources: {}
   gdrive:
-    description: This MCP server integrates with Google Drive to allow listing, reading, and searching over files.
+    description: Integrate with Google Drive to allow listing, reading, and searching over files.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/gdrive.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/gdrive
     icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googledrive.svg
@@ -305,7 +305,7 @@ registry:
     prompts: 0
     resources: {}
   git:
-    description: A Model Context Protocol server for Git repository interaction and automation.
+    description: Git repository interaction and automation.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/git.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/git.md
@@ -770,8 +770,7 @@ registry:
     prompts: 0
     resources: {}
   discordmcp:
-    description: |
-      A Model Context Protocol (MCP) server that enables LLMs to interact with Discord channels, allowing them to send and read messages through Discord's API. Using this server, LLMs like Claude can directly interact with Discord channels while maintaining user control and security.
+    description: Interact with Discord channels, allowing them to send and read messages.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
     icon: https://avatars.githubusercontent.com/u/1965106?s=200&v=4
     tools: []
