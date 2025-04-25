@@ -1,8 +1,8 @@
 // From secrets.yaml
 
 import { v1 } from "@docker/extension-api-client-types";
-import { CatalogItemRichened, CatalogItemWithName } from "./types/catalog";
-import { Secret, StoredSecret, Policy } from "./types/secrets";
+import { CatalogItemWithName } from "./types/catalog";
+import { Secret } from "./types/secrets";
 
 namespace Secrets {
   export async function getSecrets(
