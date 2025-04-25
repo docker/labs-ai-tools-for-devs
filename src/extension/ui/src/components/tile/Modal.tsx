@@ -10,6 +10,7 @@ import {
   Badge,
   Box,
   ButtonGroup,
+  Chip,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -94,6 +95,12 @@ const ConfigurationModal = ({
     );
   }, [catalogItem.secrets]);
 
+  useEffect(() => {
+    if (!catalogItem.canRegister) {
+      setTabValue(1);
+    }
+  }, [catalogItem.canRegister]);
+
   const toolChipStyle = {
     padding: '2px 8px',
     justifyContent: 'center',
@@ -156,7 +163,6 @@ const ConfigurationModal = ({
             }}
           />
           {formatName(catalogItem.name)}
-
           <Tooltip
             placement="right"
             title={
@@ -177,6 +183,12 @@ const ConfigurationModal = ({
               />
             </span>
           </Tooltip>
+          {catalogItem.missingSecrets && (
+            <Chip label="Requires secrets" color="warning" />
+          )}
+          {catalogItem.missingConfig && (
+            <Chip label="Requires configuration" color="warning" />
+          )}
         </Stack>
       </DialogTitle>
       <IconButton
@@ -289,7 +301,7 @@ const ConfigurationModal = ({
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
-                              ASSIGNED_SECRET_PLACEHOLDER) ||
+                            ASSIGNED_SECRET_PLACEHOLDER) ||
                           (!secret.assigned &&
                             localSecrets[secret.name] !== '');
                         return (
