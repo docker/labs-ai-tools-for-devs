@@ -4,7 +4,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import SwapVert from '@mui/icons-material/SwapVert';
 import {
   Alert,
-  Badge,
   Box,
   Button,
   CircularProgress,
@@ -24,7 +23,6 @@ import {
 import React, { Suspense, useMemo, useState } from 'react';
 
 import { CATALOG_LAYOUT_SX } from '../Constants';
-import { MCPClientState } from '../MCPClients';
 import { CatalogItemRichened } from '../types/catalog';
 import YourClients from './tabs/YourClients';
 
@@ -39,12 +37,7 @@ interface CatalogGridProps {
 
 export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   // Extract all the values we need from appProps
-  const {
-    catalogItems,
-    registryItems,
-    mcpClientStates,
-    isLoading: mcpLoading,
-  } = appProps;
+  const { catalogItems, registryItems } = appProps;
 
   const [search, setSearch] = useState<string>('');
   const [tab, setTab] = useState<number>(0);
@@ -82,14 +75,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
       </>
     );
   }
-
-  // Check if there are any configured clients
-  const noConfiguredClients =
-    !mcpLoading && mcpClientStates
-      ? !Object.values(mcpClientStates as Record<string, MCPClientState>).some(
-          (state) => state.exists && state.configured
-        )
-      : false;
 
   return (
     <Stack spacing={2} justifyContent="center" alignItems="center">
@@ -140,18 +125,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
           sx={CATALOG_LAYOUT_SX}
         >
           <Tab label="Tools" />
-          <Tab
-            label={
-              <Badge
-                variant="dot"
-                invisible={!noConfiguredClients}
-                badgeContent={'TEST'}
-                color="error"
-              >
-                Clients
-              </Badge>
-            }
-          />
+          <Tab label="Clients" />
         </Tabs>
         {tab === 0 && (
           <Stack
