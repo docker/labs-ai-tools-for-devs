@@ -47,7 +47,8 @@ export default function Top({ item, onToggleRegister }: TopProps) {
         </Typography>
       }
       action={
-        item.canRegister ? (
+        // Allow unregister even if it cannot be registered
+        item.registered || item.canRegister ? (
           <Tooltip
             title={
               item.registered

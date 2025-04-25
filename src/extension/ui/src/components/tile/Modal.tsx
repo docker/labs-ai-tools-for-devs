@@ -173,7 +173,8 @@ const ConfigurationModal = ({
           >
             <span>
               <Switch
-                disabled={!catalogItem.canRegister}
+                // Allow unregister even if it cannot be registered
+                disabled={!catalogItem.canRegister && !catalogItem.registered}
                 checked={catalogItem.registered}
                 onChange={(e) =>
                   catalogItem.registered
