@@ -10,27 +10,23 @@ interface LoadingStateProps {
 }
 
 const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
-    // Extract the loading states from appProps
-    const { secretsLoading, catalogLoading, registryLoading } = appProps;
-    const { imageStates, isLoading: imagesLoading } = appProps;
-    const { configLoading } = appProps;
-
-    // Determine if any loading is happening
-    const isLoading = secretsLoading || catalogLoading || registryLoading || imagesLoading || configLoading;
-
+    const { imagesLoading, configLoading, secretsLoading, catalogLoading, registryLoading } = appProps;
     const [progress, setProgress] = useState(0);
+    const isLoading = imagesLoading || configLoading || secretsLoading || catalogLoading || registryLoading;
 
     useEffect(() => {
-        const imageProgressTotal = imagesLoading ? 100 : 0;
-        const configProgressTotal = configLoading ? 100 : 0;
-        const secretsProgressTotal = secretsLoading ? 100 : 0;
-        const catalogProgressTotal = catalogLoading ? 100 : 0;
-        const registryProgressTotal = registryLoading ? 100 : 0;
+        const progress = [
+            imagesLoading ? 0 : 100,
+            configLoading ? 0 : 100,
+            secretsLoading ? 0 : 100,
+            catalogLoading ? 0 : 100,
+            registryLoading ? 0 : 100,
+        ]
 
-        const totalLoadedProgress = imageProgressTotal + configProgressTotal + secretsProgressTotal + catalogProgressTotal + registryProgressTotal;
-        const totalPossibleProgress = 500;
-        setProgress(Math.round((totalLoadedProgress / totalPossibleProgress) * 100));
-    }, [imageStates, configLoading, secretsLoading, catalogLoading, registryLoading]);
+        const progressPercent = Math.round(progress.reduce((a, b) => a + b) / progress.length);
+
+        setProgress(progressPercent);
+    }, [imagesLoading, configLoading, secretsLoading, catalogLoading, registryLoading]);
 
     if (!isLoading) return null;
 

@@ -1,11 +1,10 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { useEffect, useCallback, memo } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 
 import { CatalogGrid } from './components/CatalogGrid';
 import LoadingState from './components/LoadingState';
 import { useCatalogAll } from './queries/useCatalog';
 import { useConfig } from './queries/useConfig';
-import { useMCPClient } from './queries/useMCPClient';
 import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
 import { syncRegistryWithConfig } from './Registry';
@@ -20,7 +19,6 @@ export function App() {
   // Use hooks directly in the component
   const catalogAll = useCatalogAll(client);
   const requiredImages = useRequiredImages(client);
-  const mcpClient = useMCPClient(client);
   const config = useConfig(client);
   const secrets = useSecrets(client);
 
@@ -33,24 +31,22 @@ export function App() {
 
   // Create a context-like combined props object to pass to children
   const appProps = {
-    // Catalog related props
-    ...catalogAll,
+    imagesLoading: requiredImages.imagesLoading,
+    configLoading: config.configLoading,
+    secretsLoading: secrets.isLoading,
+    catalogLoading: catalogAll.catalogLoading,
+    registryLoading: catalogAll.registryLoading,
 
-    // Required images props
-    ...requiredImages,
-
-    // MCP Client props
-    ...mcpClient,
-
-    // Config props
-    ...config,
+    catalogItems: catalogAll.catalogItems,
+    registryItems: catalogAll.registryItems,
   };
 
   const isLoading =
+    requiredImages.imagesLoading ||
+    config.configLoading ||
+    secrets.isLoading ||
     catalogAll.catalogLoading ||
-    catalogAll.registryLoading ||
-    requiredImages.isLoading ||
-    secrets.isLoading;
+    catalogAll.registryLoading;
 
   useEffect(() => {
     syncRegistry();
