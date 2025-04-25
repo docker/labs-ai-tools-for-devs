@@ -9,7 +9,7 @@ interface ToolCatalogProps {
   search: string;
   client: v1.DockerDesktopClient;
   showMine: boolean;
-  sort: 'name-asc' | 'name-desc' | 'date-desc';
+  sort: 'name-asc' | 'name-desc';
 }
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({
@@ -30,15 +30,13 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
       return matchesSearch && !hideBecauseItsNotMine;
     });
 
-    return sort !== 'date-desc'
+    return sort === 'name-asc'
       ? filteredItems.sort((a, b) => {
-          if (sort === 'name-asc') {
-            return a.name.localeCompare(b.name);
-          }
-          if (sort === 'name-desc') {
-            return b.name.localeCompare(a.name);
-          }
-          return 0;
+          return a.name.localeCompare(b.name);
+        })
+      : sort === 'name-desc'
+      ? filteredItems.sort((a, b) => {
+          return b.name.localeCompare(a.name);
         })
       : filteredItems;
   }, [catalogItems, search, showMine, sort]);
