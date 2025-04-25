@@ -1,84 +1,34 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from "react";
 import { BUSYBOX } from "../Constants";
 
-// List of required images for the extension
-const REQUIRED_IMAGES = [BUSYBOX];
-
-// Image loading state interface
-interface ImageState {
-    status: 'idle' | 'loading' | 'success' | 'error';
-    result?: ExecResult;
-    error?: unknown;
-}
-
 export function useRequiredImages(client: v1.DockerDesktopClient) {
-    // Create queries for each required image
-    const imageQueries = REQUIRED_IMAGES.map(imageName => {
-        return useQuery({
-            queryKey: ['image', imageName],
-            queryFn: async () => {
-                try {
-                    return await client.docker.cli.exec('pull', [imageName]);
-                } catch (error) {
-                    client.desktopUI.toast.error(`Failed to pull image ${imageName}: ${error}`);
-                    throw error;
-                }
-            },
-            staleTime: Infinity,
-            refetchOnWindowFocus: false,
-            refetchOnMount: false,
+    const [isLoading, setIsLoading] = useState(false);
+
+    const imageName = BUSYBOX;
+    const fetchRequiredImage = async () => {
+        try {
+            await client.docker.cli.exec('inspect', [imageName]);
+        } catch (error) {
+            // Ignore
+        }
+
+        try {
+            await client.docker.cli.exec('pull', [imageName]);
+        } catch (error) {
+            client.desktopUI.toast.error(`Failed to pull image ${imageName}: ${error}`);
+            throw error;
+        }
+    }
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchRequiredImage().then(() => {
+            setIsLoading(false);
         });
-    });
-
-    // Construct the image states map
-    const imageStates: Record<string, ImageState> = {};
-
-    REQUIRED_IMAGES.forEach((imageName, index) => {
-        const query = imageQueries[index];
-        imageStates[imageName] = {
-            status: query.isLoading ? 'loading' :
-                query.isError ? 'error' :
-                    query.isSuccess ? 'success' : 'idle',
-            result: query.data,
-            error: query.error
-        };
-    });
-
-    // Calculate overall loading state
-    const isLoading = imageQueries.some(query => query.isLoading);
-    const isFetching = imageQueries.some(query => query.isFetching);
-
-    // Load a specific image
-    const loadImage = async (imageName: string) => {
-        const index = REQUIRED_IMAGES.indexOf(imageName);
-        if (index === -1) {
-            client.desktopUI.toast.error(`Unknown image: ${imageName}`);
-            return;
-        }
-
-        try {
-            await imageQueries[index].refetch();
-        } catch (error) {
-            client.desktopUI.toast.error(`Failed to load image ${imageName}: ${error}`);
-        }
-    };
-
-    // Load all required images
-    const loadAllImages = async () => {
-        try {
-            await Promise.all(imageQueries.map(query => query.refetch()));
-        } catch (error) {
-            client.desktopUI.toast.error(`Failed to load one or more images: ${error}`);
-        }
-    };
+    }, []);
 
     return {
-        imageStates,
         isLoading,
-        isFetching,
-        loadAllImages,
-        loadImage
     };
 } 

@@ -1,16 +1,9 @@
-import { LinearProgress, Box, Typography, Paper, Stack, Fade, CircularProgress } from "@mui/material";
-import { useEffect, useState } from "react";
 import { createDockerDesktopClient } from '@docker/extension-api-client';
+import { Box, CircularProgress, Fade, LinearProgress, Paper, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
-
-// Type definition for image state
-interface ImageState {
-    status: 'idle' | 'loading' | 'success' | 'error';
-    result?: any;
-    error?: unknown;
-}
 
 interface LoadingStateProps {
     appProps: any; // We'll use this to pass all our hook data
@@ -28,14 +21,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        const imageProgressTotal = (() => {
-            const total = 5;
-            // Type assertion to Record<string, ImageState>
-            const imageStatesMap = imageStates as Record<string, ImageState> || {};
-            const loaded = Object.values(imageStatesMap).filter(state => state.status === 'success').length;
-            return Math.round((loaded / total) * 100);
-        })()
-
+        const imageProgressTotal = imagesLoading ? 100 : 0;
         const configProgressTotal = configLoading ? 100 : 0;
         const secretsProgressTotal = secretsLoading ? 100 : 0;
         const catalogProgressTotal = catalogLoading ? 100 : 0;
@@ -56,15 +42,6 @@ const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
         if (registryLoading) return 'Loading registry';
         return 'Loading...';
     }
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'loading': return '#3498db';
-            case 'success': return '#2ecc71';
-            case 'error': return '#e74c3c';
-            default: return '#95a5a6';
-        }
-    };
 
     return (
         <Fade in={isLoading}>
