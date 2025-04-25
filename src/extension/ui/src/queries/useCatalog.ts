@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { parse, stringify } from "yaml";
 import {
   CATALOG_URL,
-  POLL_INTERVAL,
   REGISTRY_YAML
 } from "../Constants";
 import { writeToPromptsVolume } from "../FileUtils";
@@ -72,7 +71,6 @@ function useCatalog(client: v1.DockerDesktopClient) {
     refetch: refetchCatalog,
   } = useQuery({
     queryKey: ["catalog"],
-    enabled: !secretsLoading && !registryLoading && !configLoading,
     queryFn: async () => {
       const response = await fetch(
         localStorage.getItem("catalogUrl") || CATALOG_URL
@@ -173,10 +171,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
         setCanRegister(true);
         throw error;
       }
-    },
-    refetchInterval: POLL_INTERVAL,
-    staleTime: 30000,
-    gcTime: 300000,
+    }
   });
 
   useQuery({

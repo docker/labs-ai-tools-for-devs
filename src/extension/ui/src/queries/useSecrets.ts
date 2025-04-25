@@ -1,7 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { client } from "../App";
-import Secrets from "../Secrets";
 import { v1 } from "@docker/extension-api-client-types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Secrets from "../Secrets";
 import { Secret } from "../types";
 
 export function useSecrets(client: v1.DockerDesktopClient) {

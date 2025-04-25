@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import { BUSYBOX } from "../Constants";
 
 export function useRequiredImages(client: v1.DockerDesktopClient) {
-    const [isLoading, setIsLoading] = useState(false);
+    const [imagesLoading, setImagesLoading] = useState(true);
 
     const imageName = BUSYBOX;
     const fetchRequiredImage = async () => {
         try {
             await client.docker.cli.exec('inspect', [imageName]);
+            return;
         } catch (error) {
             // Ignore
         }
@@ -22,13 +23,12 @@ export function useRequiredImages(client: v1.DockerDesktopClient) {
     }
 
     useEffect(() => {
-        setIsLoading(true);
         fetchRequiredImage().then(() => {
-            setIsLoading(false);
+            setImagesLoading(false);
         });
     }, []);
 
     return {
-        isLoading,
+        imagesLoading,
     };
 } 
