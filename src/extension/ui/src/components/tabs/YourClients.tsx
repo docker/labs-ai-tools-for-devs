@@ -310,7 +310,7 @@ function ClientSetting({
               </Link>
             </Stack>
             <Typography sx={{ fontWeight: 'bold' }}>
-              Expected Config Path:
+              Expected Config Path
             </Typography>
             <Typography
               component="pre"
@@ -319,7 +319,6 @@ function ClientSetting({
                 fontFamily: 'monospace',
                 whiteSpace: 'nowrap',
                 overflow: 'auto',
-                maxWidth: '80%',
                 backgroundColor: 'background.default',
                 padding: 1,
                 borderRadius: 1,
@@ -331,7 +330,7 @@ function ClientSetting({
               ] || 'N/A'}
             </Typography>
             <Typography sx={{ fontWeight: 'bold' }}>
-              Manually Configure:
+              Manual configuration
             </Typography>
           </Stack>
           <List sx={{ listStyleType: 'decimal', p: 0, pl: 2, mt: 1 }}>
