@@ -108,14 +108,17 @@ Parameters|Type|Description
         "-i",
         "--rm",
         "-e",
-        "SLACK_BOT_TOKEN",
-        "-e",
         "SLACK_TEAM_ID",
+        "-e",
+        "SLACK_CHANNEL_IDS",
+        "-e",
+        "SLACK_BOT_TOKEN",
         "mcp/slack"
       ],
       "env": {
-        "SLACK_BOT_TOKEN": "xoxb-your-bot-token",
-        "SLACK_TEAM_ID": "T01234567"
+        "SLACK_TEAM_ID": "T01234567",
+        "SLACK_CHANNEL_IDS": "C01234567, C76543210",
+        "SLACK_BOT_TOKEN": "xoxb-your-bot-token"
       }
     }
   }

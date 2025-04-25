@@ -140,9 +140,17 @@ registry:
       - name: slack_reply_to_thread
     secrets:
       - name: slack.bot_token
-      - name: slack.team_id
     prompts: 0
     resources: {}
+    config:
+      - name: slack
+        description: Configure the connection to Slack
+        type: object
+        properties:
+          channel_ids:
+            type: string
+          team_id:
+            type: string
   redis:
     description: Access to Redis database operations.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis.md
