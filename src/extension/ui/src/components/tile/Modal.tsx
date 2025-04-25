@@ -21,6 +21,7 @@ import {
   Switch,
   Tab,
   Tabs,
+  TextField,
   Tooltip,
   Typography,
   useTheme,
@@ -279,7 +280,7 @@ const ConfigurationModal = ({
                 <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
-                  <Stack>
+                  <Stack spacing={1}>
                     <Typography variant="subtitle2">Secrets</Typography>
                     {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
                       catalogItem.secrets.map((secret) => {
@@ -296,10 +297,10 @@ const ConfigurationModal = ({
                             spacing={2}
                             alignItems="center"
                           >
-                            <OutlinedInput
+                            <TextField
                               size="small"
                               key={secret.name}
-                              placeholder={secret.name}
+                              label={secret.name}
                               value={localSecrets[secret.name]}
                               fullWidth
                               onChange={(e) => {

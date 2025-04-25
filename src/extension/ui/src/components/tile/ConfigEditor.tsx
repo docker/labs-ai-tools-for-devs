@@ -2,10 +2,8 @@ import { v1 } from '@docker/extension-api-client-types';
 import CheckOutlined from '@mui/icons-material/CheckOutlined';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
 import {
-  Alert,
   CircularProgress,
   IconButton,
-  OutlinedInput,
   Stack,
   TextField,
   Typography,
@@ -82,7 +80,7 @@ const ConfigEditor = ({
   }
 
   return (
-    <Stack>
+    <Stack spacing={1}>
       <Typography variant="subtitle2">Config</Typography>
       <Stack direction="column" spacing={2}>
         {Object.keys(flattenedConfig).map((key: string) => {
@@ -91,9 +89,9 @@ const ConfigEditor = ({
 
           return (
             <Stack key={key} direction="row" spacing={2}>
-              <OutlinedInput
+              <TextField
                 size="small"
-                placeholder={key}
+                label={key}
                 value={localConfig[key] || ''}
                 onChange={(e) =>
                   setLocalConfig({ ...localConfig, [key]: e.target.value })
