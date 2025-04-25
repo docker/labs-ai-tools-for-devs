@@ -84,9 +84,9 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         justifyContent="center"
         sx={CATALOG_LAYOUT_SX}
       >
-        <Typography variant="h3">AI Tool Catalog</Typography>
+        <Typography variant="h3">Docker MCP Toolkit</Typography>
         <Typography variant="caption">
-          Discover and use open AI tools for your agents on Docker
+          Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client
         </Typography>
       </Stack>
       {hasOutOfCatalog && (
@@ -124,7 +124,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
           onChange={(_, newValue) => setTab(newValue)}
           sx={CATALOG_LAYOUT_SX}
         >
-          <Tab label="Tools" />
+          <Tab label="MCP Catalog" />
           <Tab label="Clients" />
         </Tabs>
         {tab === 0 && (
