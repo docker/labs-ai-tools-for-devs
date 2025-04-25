@@ -4,7 +4,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/mcp-sqlite.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/sqlite.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/sqlite.svg
+    icon: https://avatars.githubusercontent.com/u/48680494?v=4
     tools:
       - name: read-query
       - name: write-query
@@ -18,7 +18,7 @@ registry:
     description: This prompt file contains the standard curl tool. In addition to the tool itself, you get a tool to read the latest man page to help clear up any issues. It also contains a prompt to demonstrate how to use the tool in a multi-step process.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/curl.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/curl.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/curl.svg
+    icon: https://avatars.githubusercontent.com/u/16928085?s=200&v=4
     tools:
       - name: curl-manual
       - name: curl
@@ -36,7 +36,7 @@ registry:
       - name: ffmpeg
     prompts: 1
     resources: {}
-  qr code:
+  QR code:
     description: Generate a qrcode for an input text string.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/qrencode.md
@@ -67,7 +67,7 @@ registry:
     description: Drive a headless Chrome browser to interact with web pages.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/chrome.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/chrome.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/googlechrome.svg
+    icon: https://avatars.githubusercontent.com/u/1778935?s=200&v=4
     tools:
       - name: interact-with-chrome
       - name: curl-manual
@@ -301,7 +301,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/git.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/git.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/git.svg
+    icon: https://avatars.githubusercontent.com/u/18133?s=200&v=4
     tools:
       - name: git
     prompts: 1
@@ -436,7 +436,7 @@ registry:
     description: "Provides PostgreSQL database management capabilities. \nThis server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.\n"
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/postgres.md
-    icon: https://img.icons8.com/ios/50/postgreesql.png
+    icon: https://avatars.githubusercontent.com/u/177543?s=200&v=4
     tools:
       - name: analyze_database
       - name: get_setup_instructions
@@ -508,7 +508,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/openapi-schema.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/openapi-schema.md
     source: https://github.com/slimslenderslacks/mcp-openapi-schema/tree/master
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/16343502?s=200&v=4
     tools:
       - name: get-component
       - name: get-endpoint
@@ -765,7 +765,7 @@ registry:
     description: |
       A Model Context Protocol (MCP) server that enables LLMs to interact with Discord channels, allowing them to send and read messages through Discord's API. Using this server, LLMs like Claude can directly interact with Discord channels while maintaining user control and security.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/discord.svg
+    icon: https://avatars.githubusercontent.com/u/1965106?s=200&v=4
     tools: []
     secrets:
       - name: discord.token
