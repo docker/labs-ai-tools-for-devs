@@ -1,12 +1,10 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { useQuery } from '@tanstack/react-query';
 import { ExecResult } from '@docker/extension-api-client-types/dist/v0';
+import { useQuery } from '@tanstack/react-query';
+import { BUSYBOX } from "../Constants";
 
 // List of required images for the extension
-const REQUIRED_IMAGES = [
-    'vonwig/function_write_files:latest',
-    'alpine:latest'
-];
+const REQUIRED_IMAGES = [BUSYBOX];
 
 // Image loading state interface
 interface ImageState {

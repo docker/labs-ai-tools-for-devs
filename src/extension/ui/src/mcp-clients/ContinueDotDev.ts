@@ -1,9 +1,10 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { escapeJSONForPlatformShell, getUser } from "../FileUtils";
-import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
-import { DOCKER_MCP_COMMAND } from "../Constants";
-import { mergeDeep } from "../MergeDeep";
 import { parse, stringify } from "yaml";
+import { BUSYBOX } from "../Constants";
+import { getUser, writeToMount } from "../FileUtils";
+import { mergeDeep } from "../MergeDeep";
+import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
+
 class ContinueDotDev implements MCPClient {
   name = "Continue.dev";
   url = "https://continue.dev/";
@@ -26,13 +27,13 @@ class ContinueDotDev implements MCPClient {
       await getUser(client)
     );
     try {
-      const result = await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
+      const result = await client.docker.cli.exec('run', [
+        '--rm',
+        '--mount',
         `type=bind,source=${configPath},target=/continue/config.yaml`,
-        "alpine:latest",
-        "cat",
-        "/continue/config.yaml",
+        BUSYBOX,
+        '/bin/cat',
+        '/continue/config.yaml',
       ]);
       return {
         content: result.stdout,
@@ -61,18 +62,7 @@ class ContinueDotDev implements MCPClient {
     }
     const payload = mergeDeep(continueConfig, SAMPLE_MCP_CONFIG);
     try {
-      await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source="${config.path}",target=/continue/config.yaml`,
-        "--workdir",
-        "/continue",
-        "vonwig/function_write_files:latest",
-        escapeJSONForPlatformShell(
-          { files: [{ path: "config.yaml", content: stringify(payload) }] },
-          client.host.platform
-        ),
-      ]);
+      await writeToMount(client, `type=bind,source=${config.path},target=/continue/config.yaml`, '/continue/config.yaml', stringify(payload));
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);
@@ -99,7 +89,7 @@ class ContinueDotDev implements MCPClient {
     } catch (e) {
       client.desktopUI.toast.error(
         "Failed to disconnect. Invalid Continue.dev config found at " +
-          config.path
+        config.path
       );
       return;
     }
@@ -112,18 +102,7 @@ class ContinueDotDev implements MCPClient {
       ),
     };
     try {
-      await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source="${config.path}",target=/continue/config.yaml`,
-        "--workdir",
-        "/continue",
-        "vonwig/function_write_files:latest",
-        escapeJSONForPlatformShell(
-          { files: [{ path: "config.yaml", content: stringify(payload) }] },
-          client.host.platform
-        ),
-      ]);
+      await writeToMount(client, `type=bind,source=${config.path},target=/continue/config.yaml`, '/continue/config.yaml', stringify(payload));
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);

@@ -1,6 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from "yaml";
-import { readFileInPromptsVolume, writeFileToPromptsVolume } from "./FileUtils";
+import { REGISTRY_YAML } from "./Constants";
+import { readFileInPromptsVolume, writeToPromptsVolume } from "./FileUtils";
 import { mergeDeep } from "./MergeDeep";
 import { ParsedParameters } from "./types/config";
 
@@ -19,7 +20,7 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const writeRegistryIfNotExists = async () => {
         const registry = await readFileInPromptsVolume(client, 'registry.yaml')
         if (!registry) {
-            await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: 'registry: {}' }] }))
+            await writeToPromptsVolume(client, REGISTRY_YAML, 'registry: {}')
         }
     }
     try {
@@ -43,7 +44,7 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
     const writeConfigIfNotExists = async () => {
         const config = await readFileInPromptsVolume(client, 'config.yaml')
         if (!config) {
-            await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: '{}' }] }))
+            await writeToPromptsVolume(client, 'config.yaml', '{}')
         }
     }
     try {
@@ -79,7 +80,7 @@ export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, reg
     }
     const newConfigString = JSON.stringify(config)
     if (oldConfigString !== newConfigString) {
-        await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'config.yaml', content: stringify(config) }] }))
+        await writeToPromptsVolume(client, 'config.yaml', stringify(config))
     }
     return config
 }
@@ -105,7 +106,7 @@ export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, reg
     }
     const newRegString = JSON.stringify(registry)
     if (oldRegString !== newRegString) {
-        await writeFileToPromptsVolume(client, JSON.stringify({ files: [{ path: 'registry.yaml', content: stringify({ registry }) }] }))
+        await writeToPromptsVolume(client, REGISTRY_YAML, stringify({ registry }))
     }
     return registry
 }

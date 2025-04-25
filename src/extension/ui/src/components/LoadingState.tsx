@@ -137,62 +137,6 @@ const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
                             variant="determinate"
                             value={progress}
                         />
-
-                        {imagesLoading && imageStates && (
-                            <Box
-                                sx={{
-                                    mt: 2,
-                                    p: 2,
-                                    width: '100%',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                                    borderRadius: 1,
-                                }}
-                            >
-                                <Typography variant="subtitle2" fontWeight="medium" gutterBottom>
-                                    Docker Images
-                                </Typography>
-
-                                <Stack spacing={1.5} mt={1}>
-                                    {/* Type assertion for imageStates */}
-                                    {Object.entries(imageStates as Record<string, ImageState>).map(([imageName, state]) => (
-                                        <Box
-                                            key={imageName}
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                p: 1,
-                                                borderRadius: 1,
-                                                backgroundColor: 'background.paper',
-                                            }}
-                                        >
-                                            <Typography variant="body2" fontWeight="medium">{imageName}</Typography>
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1,
-                                                }}
-                                            >
-                                                {state.status === 'loading' && (
-                                                    <CircularProgress size={14} thickness={4} />
-                                                )}
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        color: getStatusColor(state.status),
-                                                        fontWeight: 'medium',
-                                                        textTransform: 'capitalize'
-                                                    }}
-                                                >
-                                                    {state.status}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    ))}
-                                </Stack>
-                            </Box>
-                        )}
                     </Stack>
                 </Paper>
             </Box>

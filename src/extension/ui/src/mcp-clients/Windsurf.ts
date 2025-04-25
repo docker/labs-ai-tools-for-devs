@@ -1,8 +1,8 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { escapeJSONForPlatformShell, getUser } from "../FileUtils";
-import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
-import { DOCKER_MCP_COMMAND } from "../Constants";
+import { BUSYBOX, DOCKER_MCP_COMMAND } from "../Constants";
+import { getUser, writeToMount } from "../FileUtils";
 import { mergeDeep } from "../MergeDeep";
+import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
 class WindsurfDesktopClient implements MCPClient {
   name = "Windsurf";
@@ -13,8 +13,8 @@ class WindsurfDesktopClient implements MCPClient {
     "Click on the <strong>Add new MCP server</strong> button",
     "Set name: <code>MCP_DOCKER</code>",
     'Set command: <pre style="font-family: monospace; white-space: nowrap; overflow: auto; width: 80%; background-color: grey.200; padding: 1; border-radius: 1; font-size: 12px;">' +
-      DOCKER_MCP_COMMAND +
-      "</pre>",
+    DOCKER_MCP_COMMAND +
+    "</pre>",
   ];
   expectedConfigPath = {
     darwin: "$HOME/.codeium/mcp_config.json",
@@ -29,13 +29,13 @@ class WindsurfDesktopClient implements MCPClient {
       await getUser(client)
     );
     try {
-      const result = await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
+      const result = await client.docker.cli.exec('run', [
+        '--rm',
+        '--mount',
         `type=bind,source=${configPath},target=/codeium_config/mcp_config.json`,
-        "alpine:latest",
-        "cat",
-        "/codeium_config/mcp_config.json",
+        BUSYBOX,
+        '/bin/cat',
+        '/codeium_config/mcp_config.json',
       ]);
       return {
         content: result.stdout,
@@ -66,22 +66,7 @@ class WindsurfDesktopClient implements MCPClient {
     }
     const payload = mergeDeep(windsurfConfig, SAMPLE_MCP_CONFIG);
     try {
-      await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source="${config.path}",target=/codeium_config/mcp_config.json`,
-        "--workdir",
-        "/codeium_config",
-        "vonwig/function_write_files:latest",
-        escapeJSONForPlatformShell(
-          {
-            files: [
-              { path: "mcp_config.json", content: JSON.stringify(payload) },
-            ],
-          },
-          client.host.platform
-        ),
-      ]);
+      await writeToMount(client, `type=bind,source=${config.path},target=/codeium_config/mcp_config.json`, '/codeium_config/mcp_config.json', JSON.stringify(payload));
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);
@@ -120,22 +105,7 @@ class WindsurfDesktopClient implements MCPClient {
       ),
     };
     try {
-      await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source="${config.path}",target=/codeium_config/mcp_config.json`,
-        "--workdir",
-        "/codeium_config",
-        "vonwig/function_write_files:latest",
-        escapeJSONForPlatformShell(
-          {
-            files: [
-              { path: "mcp_config.json", content: JSON.stringify(payload) },
-            ],
-          },
-          client.host.platform
-        ),
-      ]);
+      await writeToMount(client, `type=bind,source=${config.path},target=/codeium_config/mcp_config.json`, '/codeium_config/mcp_config.json', JSON.stringify(payload));
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);
