@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
+	"slices"
 	"syscall"
 )
 
@@ -23,6 +24,7 @@ func main() {
 	cmd.AddCommand(AuthorizeApp(ctx))
 	cmd.AddCommand(UnauthorizeApp(ctx))
 	cmd.AddCommand(ListOAuthApps(ctx))
+	cmd.AddCommand(DeriveSecret(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -237,4 +239,45 @@ func runDeleteSecret(ctx context.Context, opts deleteOptions) error {
 
 func assertMcpPolicyExists(ctx context.Context, apiClient client.ApiClient) error {
 	return apiClient.SetPolicy(ctx, secretsapi.Policy{Name: mcpPolicyName, Images: []string{"*"}})
+}
+
+type deriveOptions struct {
+	Src string
+	Dst string
+}
+
+func DeriveSecret(ctx context.Context) *cobra.Command {
+	opts := &deriveOptions{}
+	cmd := &cobra.Command{
+		Use:   "derive",
+		Short: "Derive a secret from another secret",
+		Args:  cobra.NoArgs,
+		RunE: func(*cobra.Command, []string) error {
+			return runDeriveSecret(ctx, *opts)
+		},
+	}
+	flags := cmd.Flags()
+	flags.StringVarP(&opts.Src, "src", "s", "", "Name of the source secret")
+	_ = cmd.MarkFlagRequired("src")
+	flags.StringVarP(&opts.Dst, "dst", "d", "", "Name of the destination secret")
+	_ = cmd.MarkFlagRequired("dst")
+	return cmd
+}
+
+func runDeriveSecret(ctx context.Context, opts deriveOptions) error {
+	c, err := newApiClient()
+	if err != nil {
+		return err
+	}
+	if err := assertMcpPolicyExists(ctx, c); err != nil {
+		return err
+	}
+	s, err := c.GetSecret(ctx, opts.Src)
+	if err != nil {
+		return err
+	}
+	if !slices.Contains(s.Policies, mcpPolicyName) {
+		s.Policies = append(s.Policies, mcpPolicyName)
+	}
+	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Dst, Value: s.Value, Policies: []string{mcpPolicyName}})
 }
