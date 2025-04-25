@@ -773,7 +773,9 @@ registry:
     description: Interact with Discord channels, allowing them to send and read messages.
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/v-3-discordmcp.md
     icon: https://avatars.githubusercontent.com/u/1965106?s=200&v=4
-    tools: []
+    tools:
+      - name: read-messages
+      - name: send-message
     secrets:
       - name: discord.token
     prompts: 0
