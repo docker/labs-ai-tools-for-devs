@@ -77,7 +77,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   }
 
   return (
-    <Stack spacing={2} justifyContent="center" alignItems="center">
+    <Stack spacing={2} sx={{ padding: 2 }}>
       <Stack
         direction="column"
         spacing={1}
