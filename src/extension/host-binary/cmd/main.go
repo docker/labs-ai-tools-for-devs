@@ -279,5 +279,5 @@ func runDeriveSecret(ctx context.Context, opts deriveOptions) error {
 	if !slices.Contains(s.Policies, mcpPolicyName) {
 		s.Policies = append(s.Policies, mcpPolicyName)
 	}
-	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Dst, Value: s.Value, Policies: []string{mcpPolicyName}})
+	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Dst, Value: s.Value, Policies: s.Policies})
 }
