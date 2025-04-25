@@ -100,9 +100,8 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
 
       <Divider>Or</Divider>
       <Stack direction="column" alignItems="center" spacing={1}>
-        <Typography variant="h4">Other MCP Clients</Typography>
-        You can connect other MCP clients to the same server by specifying the
-        following command:
+        Connect other MCP clients to the same server by specifying the following
+        command:
         <Stack
           direction="row"
           alignItems="center"
