@@ -49,8 +49,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   }>({
     'demo-customized-menu': { anchorEl: null, open: false },
   });
-  const [sort, setSort] = useState<'name-asc' | 'name-desc' | 'date-desc'>(
-    'date-desc'
+  const [sort, setSort] = useState<'name-asc' | 'name-desc'>(
+    'name-asc'
   );
 
   // Only calculate hasOutOfCatalog when relevant data changes
@@ -77,7 +77,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   }
 
   return (
-    <Stack spacing={2} justifyContent="center" alignItems="center">
+    <Stack spacing={2} sx={{ padding: 2 }}>
       <Stack
         direction="column"
         spacing={1}
@@ -206,20 +206,6 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
                 })
               }
             >
-              <MenuItem
-                sx={{ fontWeight: sort === 'date-desc' ? 'bold' : 'normal' }}
-                onClick={() => {
-                  setOpenMenus({
-                    ...openMenus,
-                    'demo-customized-menu': { anchorEl: null, open: false },
-                  });
-                  setSort('date-desc');
-                }}
-                disableRipple
-              >
-                ⏰ Most Recent
-              </MenuItem>
-              <Divider sx={{ my: 0.5 }} />
               <MenuItem
                 sx={{ fontWeight: sort === 'name-asc' ? 'bold' : 'normal' }}
                 onClick={() => {

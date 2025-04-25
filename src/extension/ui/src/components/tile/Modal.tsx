@@ -21,6 +21,7 @@ import {
   Switch,
   Tab,
   Tabs,
+  TextField,
   Tooltip,
   Typography,
   useTheme,
@@ -199,7 +200,6 @@ const ConfigurationModal = ({
         </Typography>
         {catalogItem.readme !== undefined && (
           <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-            Repository:{' '}
             <Link
               onClick={() => client.host.openExternal(catalogItem.readme || '')}
               href={catalogItem.readme || ''}
@@ -280,10 +280,10 @@ const ConfigurationModal = ({
                 <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
 
-                  <Stack>
-                    <Typography variant="subtitle2">Secrets</Typography>
-                    {catalogItem.secrets && catalogItem.secrets?.length > 0 ? (
-                      catalogItem.secrets.map((secret) => {
+                  {catalogItem.secrets?.length > 0 && (
+                    <Stack spacing={1}>
+                      <Typography variant="subtitle2">Secrets</Typography>
+                      {catalogItem.secrets.map((secret) => {
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
@@ -297,10 +297,10 @@ const ConfigurationModal = ({
                             spacing={2}
                             alignItems="center"
                           >
-                            <OutlinedInput
+                            <TextField
                               size="small"
                               key={secret.name}
-                              placeholder={secret.name}
+                              label={secret.name}
                               value={localSecrets[secret.name]}
                               fullWidth
                               onChange={(e) => {
@@ -357,19 +357,11 @@ const ConfigurationModal = ({
                             )}
                           </Stack>
                         );
-                      })
-                    ) : (
-                      <Alert severity="info">
-                        No secrets available for this item.
-                      </Alert>
-                    )}
-                  </Stack>
+                      })}
+                    </Stack>
+                  )}
                 </Stack>
               </Stack>
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-              <Typography>Examples</Typography>
-              WIP
             </TabPanel>
           </>
         )}
