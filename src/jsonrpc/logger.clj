@@ -54,9 +54,9 @@
     `(when *logger*
        (-debug *logger* ~fmeta ~@args))))
 
-(defn trace [x]
-  (info "trace " x)
-  x)
+(defn trace
+  ([x] (info "trace " x) x)
+  ([s x] (info (format "%s %s" s x)) x))
 
 (defn log! [level args fmeta]
   (timbre/log! level :p args {:?line (:line fmeta)

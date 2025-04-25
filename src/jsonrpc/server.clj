@@ -261,8 +261,17 @@
          (mapcat (comp :content :result))
          (into []))))
 
-(defn poci? [components params]
-  false)
+(defn get-functions [db*]
+  (->> @db* :mcp.prompts/registry vals (mapcat :functions)))
+
+(defn poci? [{:keys [db*] :as components} params]
+  (not
+   (= :mcp
+      (-> (filter #(= (-> params :name) (-> % :function :name)) (get-functions db*))
+          first
+          :function
+          :container
+          :type))))
 
 (defn make-tool-calls [{:keys [db* server-id] :as components} params {:keys [thread-id] :as opts}]
   ;; TODO non-mcp tool calls are maps of content, role tool_call_id
@@ -277,10 +286,10 @@
                        (partial
                         tools/function-handler
                         (merge
-                          {:functions (->> @db* :mcp.prompts/registry vals (mapcat :functions))
-                           :host-dir (-> @db* :host-dir)
-                           :server-id server-id}
-                          (when thread-id {:thread-id thread-id})))
+                         {:functions (get-functions db*)
+                          :host-dir (-> @db* :host-dir)
+                          :server-id server-id}
+                         (when thread-id {:thread-id thread-id})))
                        ;; tool calls are functions, which are arguments,name maps, and ids
                        ;; mcp tool call params are also maps of name, and arguments
                        [{:function (update
