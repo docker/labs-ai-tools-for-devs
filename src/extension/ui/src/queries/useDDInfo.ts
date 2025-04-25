@@ -16,6 +16,7 @@ const parseDDVersion = (ddVersion: string) => {
 const useDDInfo = (client: v1.DockerDesktopClient) => {
   const { data: ddInfo, isLoading: ddInfoLoading } = useQuery({
     queryKey: ["ddInfo"],
+    networkMode: "always",
     queryFn: async () => {
       const result = await client.docker.cli.exec("version", [
         "--format",

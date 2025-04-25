@@ -20,6 +20,7 @@ export function useMCPClient(client: v1.DockerDesktopClient) {
     isFetching,
   } = useQuery({
     queryKey: ["mcpClientStates"],
+    networkMode: "always",
     queryFn: async () => {
       const states = await getMCPClientStates(client);
 
