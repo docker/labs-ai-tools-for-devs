@@ -147,9 +147,9 @@ registry:
         description: Configure the connection to Slack
         type: object
         properties:
-          channel_ids:
-            type: string
           team_id:
+            type: string
+          channel_ids:
             type: string
   redis:
     description: Access to Redis database operations.
@@ -209,26 +209,26 @@ registry:
         description: Configure the connection to Redis
         type: object
         properties:
-          ca_certs:
-            type: string
-          ca_path:
-            type: string
-          cert_reqs:
-            type: string
-          cluster_mode:
-            type: boolean
           host:
             type: string
           port:
             type: integer
+          username:
+            type: string
           ssl:
             type: boolean
-          ssl_certfile:
+          ca_path:
             type: string
           ssl_keyfile:
             type: string
-          username:
+          ssl_certfile:
             type: string
+          cert_reqs:
+            type: string
+          ca_certs:
+            type: string
+          cluster_mode:
+            type: boolean
   github:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
