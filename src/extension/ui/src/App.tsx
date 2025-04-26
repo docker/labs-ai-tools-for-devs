@@ -9,7 +9,7 @@ import { useMCPClient } from './queries/useMCPClient';
 import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
 import { syncRegistryWithConfig } from './Registry';
-
+import useOAuthProvider from './queries/useOAuthProvider';
 export const client = createDockerDesktopClient();
 
 // Memoize the CatalogGrid component to prevent unnecessary re-renders
@@ -24,7 +24,7 @@ export function App() {
   const secrets = useSecrets(client);
   const mcpClient = useMCPClient(client);
 
-  // Create a memoized callback for syncing registry with config
+  // Create a memoized callback for syncing registry with config we can call later
   const syncRegistry = useCallback(async () => {
     if (config.config && catalogAll.registryItems) {
       await syncRegistryWithConfig(client, catalogAll.registryItems, config.config);

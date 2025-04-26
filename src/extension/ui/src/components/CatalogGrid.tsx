@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   FormControlLabel,
   FormGroup,
   IconButton,
@@ -25,8 +24,8 @@ import React, { Suspense, useMemo, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { CatalogItemRichened } from '../types/catalog';
 import YourClients from './tabs/YourClients';
-
-const ToolCatalog = React.lazy(() => import('./tabs/ToolCatalog'));
+import OAuthProviders from './tabs/OAuthProviders';
+import ToolCatalog from './tabs/ToolCatalog';
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -126,6 +125,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         >
           <Tab label="MCP Catalog" />
           <Tab label="Clients" />
+          <Tab label="OAuth Providers" />
         </Tabs>
         {tab === 0 && (
           <Stack
@@ -253,6 +253,17 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         )}
         {tab === 1 && <YourClients appProps={appProps} />}
       </Suspense>
+      <Suspense
+        fallback={
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+            <CircularProgress />
+          </Box>
+        }
+      >
+        {tab === 2 && <OAuthProviders client={client} />}
+      </Suspense>
     </Stack>
   );
 };
+
+export default CatalogGrid;
