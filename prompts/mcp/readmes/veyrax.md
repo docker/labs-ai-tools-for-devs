@@ -46,6 +46,7 @@ This method also returns all flows with name and id that user has access to (if 
 Parameters|Type|Description
 -|-|-
 `question`|`string`|Query question that you want find answer for. Try to ALWAYS provide this field based on conversation with user. Could be your reasoning for calling tool.
+`tool`|`string`|Guess the tool name. Use explicit information based on the user's request or make an educated guess. It will be used for vector search for identifying the most relevant tools.
 
 ---
 #### Tool: **`tool_call`**

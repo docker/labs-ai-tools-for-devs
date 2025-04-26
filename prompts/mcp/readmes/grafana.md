@@ -45,6 +45,7 @@ Tools provided by this Server|Short Description
 `query_loki_stats`|Query statistics about log streams in a Loki datasource, using LogQL selectors to select streams|
 `query_prometheus`|Query Prometheus using a range or instant request|
 `search_dashboards`|Search for dashboards|
+`update_dashboard`|Create or update a dashboard|
 
 ---
 ## Tools Details
@@ -280,6 +281,17 @@ Search for dashboards
 Parameters|Type|Description
 -|-|-
 `query`|`string` *optional*|The query to search for
+
+---
+#### Tool: **`update_dashboard`**
+Create or update a dashboard
+Parameters|Type|Description
+-|-|-
+`dashboard`|`object`|The full dashboard JSON
+`folderUid`|`string` *optional*|The UID of the dashboard's folder
+`message`|`string` *optional*|Set a commit message for the version history
+`overwrite`|`boolean` *optional*|Overwrite the dashboard if it exists. Otherwise create one
+`userId`|`integer` *optional*|
 
 ---
 ## Use this MCP Server

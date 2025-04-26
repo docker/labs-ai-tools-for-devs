@@ -1,6 +1,6 @@
 # Basic-memory MCP Server
 
-Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants. All knowledge is stored in standard Markdown files on your computer, giving you full control and ownership of your data. Integrates directly with Obsidan.md.
+Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants, stored in standard Markdown files on your computer. Integrates directly with Obsidan.md.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

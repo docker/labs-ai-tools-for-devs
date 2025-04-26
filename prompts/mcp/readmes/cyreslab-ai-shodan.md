@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/cyreslab-ai-shodan](https://hub.docker.com/repository/docker/mcp/cyreslab-ai-shodan)
 **Author**|[Cyreslab-AI](https://github.com/Cyreslab-AI)
 **Repository**|https://github.com/Cyreslab-AI/shodan-mcp-server
-**Dockerfile**|https://github.com/Cyreslab-AI/shodan-mcp-server/blob/main/Dockerfile
+**Dockerfile**|https://github.com/Cyreslab-AI/shodan-mcp-server/blob/935f7044f60570cf2d094d94596eeea7872fb6be/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/cyreslab-ai-shodan)
 **Licence**|MIT License

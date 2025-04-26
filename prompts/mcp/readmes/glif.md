@@ -20,19 +20,15 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `glif_info`|Get detailed information about a glif including input fields|
-`list_bots`|Get a list of bots and sim templates with optional filtering and sorting.|
 `list_featured_glifs`|Get a curated list of featured glifs|
 `list_saved_glif_tools`|List all saved glif tools|
-`load_bot`|Get detailed information about a specific bot|
 `my_glif_user_info`|Get detailed information about your user account, recent glifs, and recent runs|
 `my_glifs`|Get a list of your glifs|
 `remove_all_glif_tools`|Remove all saved glif tools and return to a pristine state|
 `remove_glif_tool`|Remove a saved glif tool|
 `run_glif`|Run a glif with the specified ID and inputs|
-`save_bot_skills_as_tools`|Save all skills from a bot as individual tools|
 `save_glif_as_tool`|Save a glif as a custom tool|
 `search_glifs`|Search for glifs by query string|
-`show_bot_info`|Get detailed information about a specific bot (alias for load_bot)|
 
 ---
 ## Tools Details
@@ -44,26 +40,10 @@ Parameters|Type|Description
 `id`|`string`|The ID of the glif to show details for
 
 ---
-#### Tool: **`list_bots`**
-Get a list of bots and sim templates with optional filtering and sorting. Supports sort={new,popular,featured} (defaults to popular), username filtering, and text search.
-Parameters|Type|Description
--|-|-
-`searchQuery`|`string` *optional*|Optional search query to filter bots by name or description
-`sort`|`string` *optional*|Optional sort order for bots (defaults to featured)
-`username`|`string` *optional*|Optional filter for bots by creator username
-
----
 #### Tool: **`list_featured_glifs`**
 Get a curated list of featured glifs
 #### Tool: **`list_saved_glif_tools`**
 List all saved glif tools
-#### Tool: **`load_bot`**
-Get detailed information about a specific bot
-Parameters|Type|Description
--|-|-
-`id`|`string`|The ID of the bot to load
-
----
 #### Tool: **`my_glif_user_info`**
 Get detailed information about your user account, recent glifs, and recent runs
 #### Tool: **`my_glifs`**
@@ -85,14 +65,6 @@ Parameters|Type|Description
 `inputs`|`array`|Array of input values for the glif
 
 ---
-#### Tool: **`save_bot_skills_as_tools`**
-Save all skills from a bot as individual tools
-Parameters|Type|Description
--|-|-
-`id`|`string`|The ID of the bot whose skills to save
-`prefix`|`string` *optional*|Optional prefix to add to tool names (e.g., 'tshirt_')
-
----
 #### Tool: **`save_glif_as_tool`**
 Save a glif as a custom tool
 Parameters|Type|Description
@@ -108,13 +80,6 @@ Search for glifs by query string
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query string
-
----
-#### Tool: **`show_bot_info`**
-Get detailed information about a specific bot (alias for load_bot)
-Parameters|Type|Description
--|-|-
-`id`|`string`|The ID of the bot to show details for
 
 ---
 ## Use this MCP Server

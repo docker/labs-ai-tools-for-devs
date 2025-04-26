@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/slack](https://hub.docker.com/repository/docker/mcp/slack)
 **Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/slack/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.24/src/slack/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/slack)
 **Licence**|MIT License
@@ -24,7 +24,7 @@ Tools provided by this Server|Short Description
 `slack_get_thread_replies`|Get all replies in a message thread|
 `slack_get_user_profile`|Get detailed profile information for a specific user|
 `slack_get_users`|Get a list of all users in the workspace with their basic profile information|
-`slack_list_channels`|List public channels in the workspace with pagination|
+`slack_list_channels`|List public or pre-defined channels in the workspace with pagination|
 `slack_post_message`|Post a new message to a Slack channel|
 `slack_reply_to_thread`|Reply to a specific message thread in Slack|
 
@@ -72,7 +72,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`slack_list_channels`**
-List public channels in the workspace with pagination
+List public or pre-defined channels in the workspace with pagination
 Parameters|Type|Description
 -|-|-
 `cursor`|`string` *optional*|Pagination cursor for next page of results

@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/sqlite](https://hub.docker.com/repository/docker/mcp/sqlite)
 **Author**|[modelcontextprotocol](https://github.com/modelcontextprotocol)
 **Repository**|https://github.com/modelcontextprotocol/servers
-**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.6/src/sqlite/Dockerfile
+**Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.24/src/sqlite/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/sqlite)
 **Licence**|MIT License

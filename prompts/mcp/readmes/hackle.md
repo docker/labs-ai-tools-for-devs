@@ -51,8 +51,8 @@ Parameters|Type|Description
 Fetches a paginated list of A/B test experiments with search functionality.
 Parameters|Type|Description
 -|-|-
-`pageNumber`|`number`|
-`pageSize`|`number`|
+`pageNumber`|`number` *optional*|
+`pageSize`|`number` *optional*|
 `searchKeyword`|`string` *optional*|
 
 ---
@@ -67,8 +67,8 @@ Parameters|Type|Description
 Fetches a paginated list of in-app messages with search functionality.
 Parameters|Type|Description
 -|-|-
-`pageNumber`|`number`|
-`pageSize`|`number`|
+`pageNumber`|`number` *optional*|
+`pageSize`|`number` *optional*|
 `searchKeyword`|`string` *optional*|
 
 ---
@@ -83,8 +83,8 @@ Parameters|Type|Description
 Fetches a paginated list of push messages with search functionality.
 Parameters|Type|Description
 -|-|-
-`pageNumber`|`number`|
-`pageSize`|`number`|
+`pageNumber`|`number` *optional*|
+`pageSize`|`number` *optional*|
 `searchKeyword`|`string` *optional*|
 
 ---

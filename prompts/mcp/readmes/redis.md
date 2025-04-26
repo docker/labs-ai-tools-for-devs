@@ -414,6 +414,18 @@ Parameters|Type|Description
         "-e",
         "REDIS_SSL",
         "-e",
+        "REDIS_CA_PATH",
+        "-e",
+        "REDIS_SSL_KEYFILE",
+        "-e",
+        "REDIS_SSL_CERTFILE",
+        "-e",
+        "REDIS_CERT_REQS",
+        "-e",
+        "REDIS_CA_CERTS",
+        "-e",
+        "REDIS_CLUSTER_MODE",
+        "-e",
         "REDIS_PWD",
         "mcp/redis"
       ],
@@ -422,6 +434,12 @@ Parameters|Type|Description
         "REDIS_PORT": "6379",
         "REDIS_USERNAME": "default",
         "REDIS_SSL": "False",
+        "REDIS_CA_PATH": "",
+        "REDIS_SSL_KEYFILE": "",
+        "REDIS_SSL_CERTFILE": "",
+        "REDIS_CERT_REQS": "required",
+        "REDIS_CA_CERTS": "",
+        "REDIS_CLUSTER_MODE": "False",
         "REDIS_PWD": ""
       }
     }

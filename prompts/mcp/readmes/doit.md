@@ -80,7 +80,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`list_dimensions`**
-Lists Cloud Analytics dimensions that your account has access to. Use this tool to get the dimensions that you can use in the run_query tool.
+Lists Cloud Analytics dimensions that your account has access to. Use this tool to get the dimensions that you can use in the run_query tool. Use filter to narrow down the results.
 Parameters|Type|Description
 -|-|-
 `filter`|`string` *optional*|Filter string (optional) in format 'key:value|key:value'. Multiple values for same key are treated as OR, different keys as AND. The fields eligible for filtering are: type, label, key. 
@@ -100,6 +100,16 @@ Parameters|Type|Description
 Runs a report query with the specified configuration without persisting it. 
     Fields that are not populated will use their default values if needed.
     Use the dimension tool before running the query to get the list of dimensions and their types.
+    If possible, use `timeRange` instead of `customTimeRange` when no specific dates are given.
+    Example for cost report:
+    {
+      "config": {
+        "dataSource": "billing",
+        "metric": {"type": "basic", "value": "cost"},
+        "timeRange": {"mode": "last", "amount": 1, "unit": "month", "includeCurrent": true},
+        "group": [{"id": "service_description", "type": "fixed", "limit": {"metric": {"type": "basic", "value": "cost"}, "sort": "desc", "value": 10}}]
+      }
+    }
 Parameters|Type|Description
 -|-|-
 `config`|`object`|The configuration for the query, including dimensions, metrics, filters, etc.
