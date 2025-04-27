@@ -81,14 +81,12 @@
             (doseq [message messages]
               (if-let [p (get @response-promises (:id message))]
                 (async/put! p message)
-                (logger/debug "no promise found: " message)))
+                (logger/debug (:image container) message)))
             (recur))
 
           ;; channel is closed
           (nil? block)
-          (do
-            (logger/info "nil block - closing")
-            (async/put! dead-channel :closed))
+          (async/put! dead-channel :closed) 
 
           ;; non-stdout message - show to user
           :else
