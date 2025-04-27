@@ -31,8 +31,10 @@
 
   (def server (process/process
                 {:out :stream :in :stream}
-                "docker" "run" "-i" "--rm" "--workdir=/app"
-                "mcp/discord:latest"))
+                "docker" "run" "-i" "--workdir=/app"
+                "--label=x-secret:stripe.secret_key=/secret/stripe.secret_key"
+                "--entrypoint" "/bin/sh -c \"export STRIPE_SECRET_KEY=$(cat /secret/stripe.secret_key); node /app/dist/index.js --tools=all;\""
+                "mcp/stripe:latest")))
 
   (async/thread
     (loop []

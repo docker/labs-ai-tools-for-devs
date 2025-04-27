@@ -6,6 +6,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/run/host-services/backend.sock:/backend.sock"
+      - "/run/guest-services/jfs.sock:/jfs.sock"
       - "docker-prompts:/prompts"
     command:
       - serve

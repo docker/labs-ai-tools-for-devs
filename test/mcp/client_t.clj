@@ -127,10 +127,10 @@
                                    :secrets {:stripe.api_key "API_KEY"}
                                    :command ["--tools=all"
                                              "--api-key=$API_KEY"]})
-  (get-mcp-tools-from-prompt {:mcp [{:container {:image "vonwig/stripe:latest"
-                                                 :secrets {:stripe.api_key "API_KEY"}
-                                                 :command ["--tools=all"
-                                                           "--api-key=$API_KEY"]}}]})
+  (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/stripe:latest"
+                                                 :secrets {:stripe.secret_key "STRIPE_SECRET_KEY"}
+                                                 :command ["--tools=all"]}}]
+                              :local-get-tools -get-tools})
   (get-mcp-tools-from-prompt {:mcp [{:container {:image "mcp/brave-search:latest"
                                                  :workdir "/app"
                                                  :secrets {:brave.api_key "BRAVE_API_KEY"}}}]})

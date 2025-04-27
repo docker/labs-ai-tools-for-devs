@@ -77,6 +77,17 @@
               (format "%s/Library/Containers/com.docker.docker/Data/backend.sock" (System/getenv "HOME"))]]
     (some unix-socket-file coll)))
 
+(defn- get-jfs-socket []
+  (let [coll [(or (System/getenv "JFS_SOCKET_PATH") "/jfs.sock")
+              (format "%s/Library/Containers/com.docker.docker/Data/jfs.sock" (System/getenv "HOME"))]]
+    (some unix-socket-file coll)))
+
+(defn jfs-get-secret [s]
+  (curl/get
+   (format "http://localhost/secrets/%s" s)
+   {:raw-args ["--unix-socket"  (get-jfs-socket)]
+    :throw false}))
+
 (defn backend-is-logged-in? [_]
   (curl/get
    "http://localhost/registry/is-logged-in"
@@ -310,6 +321,7 @@
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
 (def containers (comp ->json (status? 200 "list-containers") list-containers))
+(def secrets-get (comp ->json (status? 200 "secrets-get") jfs-get-secret))
 
 (defn add-latest [image]
   (let [[_ tag] (re-find #".*(:.*)$" image)]
@@ -367,25 +379,35 @@
         [s])
        (string/join " ; ")))
 
+(defn get-secrets [{:keys [secrets]}]
+  (logger/info (format "getting secrets %s" secrets))
+  (->> secrets
+       (map (fn [[k v]]
+              [v (:value (secrets-get (name k)))]))
+       (into {})))
+
 (defn inject-secret-transform [container-definition]
   (check-then-pull container-definition)
-  (let [{:keys [Entrypoint Cmd Env]}
+  (let [{:keys [Entrypoint Cmd Env User]}
         (->
          (image-inspect {:Name (:image container-definition)})
          :Config)
         real-entrypoint (string/join " " (concat
                                           (or (:entrypoint container-definition) Entrypoint)
                                           (or (:command container-definition) Cmd)))]
-    (-> container-definition
-        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint
-                                            (:secrets container-definition)
-                                            (concat
-                                             Env
-                                             (->> (:environment container-definition)
-                                                  (map (fn [[k v]] (format "%s=%s" (if (keyword? k) (name k) k) v)))
-                                                  (into [])))
-                                            real-entrypoint)])
-        (dissoc :command))))
+    (if (#{"" "root"} User)
+      (-> container-definition
+          (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint
+                                              (:secrets container-definition)
+                                              (concat
+                                               Env
+                                               (->> (:environment container-definition)
+                                                    (map (fn [[k v]] (format "%s=%s" (if (keyword? k) (name k) k) v)))
+                                                    (into [])))
+                                              real-entrypoint)])
+          (dissoc :command))
+      (-> container-definition
+          (update :environment (fnil merge {}) (get-secrets container-definition))))))
 
 (defn run-streaming-function-with-no-stdin
   "run container function with no stdin, and no timeout, but streaming stdout"
@@ -660,9 +682,9 @@
         output-channel (async/chan)]
     (start x)
     (.start ^Thread
-     (Thread. 
-       (fn [] 
-         (read-loop socket-channel c))))
+     (Thread.
+      (fn []
+        (read-loop socket-channel c))))
     (async/go
       (docker/wait x)
       (async/>! c :stopped)

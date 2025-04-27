@@ -80,7 +80,7 @@
                               (into []))]
             (doseq [message messages]
               (if-let [p (get @response-promises (:id message))]
-                (async/put! p message)  
+                (async/put! p message)
                 (logger/debug "no promise found: " message)))
             (recur))
 
@@ -153,8 +153,8 @@
                 {:error :did-not-initialize})))
           (finally
             (when (and
-                    (not (true? stateful))
-                    (not (= "false" (System/getenv "GATEWAY_CONTAINER_RM"))))
+                   (not (true? stateful))
+                   (not (= "false" (System/getenv "GATEWAY_CONTAINER_RM"))))
               (remove))))))
     (catch Throwable t
       (logger/error (.getMessage t))
