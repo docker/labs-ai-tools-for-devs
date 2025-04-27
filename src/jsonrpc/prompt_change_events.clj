@@ -60,29 +60,28 @@
         :unknown)
       (recur (async/<! debounced)))
     ;; watch filesystem
-    (async/thread
-      (let [{x :container}
-            (docker/run-streaming-function-with-no-stdin
-             {:image "vonwig/inotifywait:latest"
-              :labels {"com.docker.desktop.service" "true"}
-              :volumes ["docker-prompts:/prompts"]
-              :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
-             (fn [line]
-               (let [[_dir _event f] (string/split line #"\s+")]
-                 (async/>!!
-                  change-events-channel
-                  (cond
-                    (= f "registry.yaml")
-                    {:opts opts :f f :type :registry}
-                    (string/ends-with? f ".md")
-                    {:opts opts :f f :type :markdown}
-                    :else
-                    {})))))]
-        (shutdown/schedule-container-shutdown
-         (fn []
-           (logger/info "inotifywait shutting down")
-           (docker/kill-container x)
-           (docker/delete x)))))))
+    (let [{x :container}
+          (docker/run-streaming-function-with-no-stdin
+           {:image "vonwig/inotifywait:latest"
+            :labels {"com.docker.desktop.service" "true"}
+            :volumes ["docker-prompts:/prompts"]
+            :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
+           (fn [line]
+             (let [[_dir _event f] (string/split line #"\s+")]
+               (async/put!
+                change-events-channel
+                (cond
+                  (= f "registry.yaml")
+                  {:opts opts :f f :type :registry}
+                  (string/ends-with? f ".md")
+                  {:opts opts :f f :type :markdown}
+                  :else
+                  {})))))]
+      (shutdown/schedule-container-shutdown
+       (fn []
+         (logger/info "inotifywait shutting down")
+         (docker/kill-container x)
+         (docker/delete x))))))
 
 (comment
   (repl/setup-stdout-logger)

@@ -380,7 +380,6 @@
        (string/join " ; ")))
 
 (defn get-secrets [{:keys [secrets]}]
-  (logger/info (format "getting secrets %s" secrets))
   (->> secrets
        (map (fn [[k v]]
               [v (:value (secrets-get (name k)))]))
@@ -424,18 +423,22 @@
         finished-channel (async/promise-chan)]
     (start x)
 
-    (async/go
-      (try
-        (let [s (:body (attach-container-stream-stdout x))]
-          (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
-            (cb line)))
-        (catch Throwable e
-          (println e))))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (try
+          (let [s (:body (attach-container-stream-stdout x))]
+            (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
+              (cb line)))
+          (catch Throwable e
+            (logger/error "run-streaming-function" e))))))
 
     ;; watch the container
-    (async/go
-      (wait x)
-      (async/>! finished-channel {:done :exited}))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (wait x)
+        (async/put! finished-channel {:done :exited}))))
 
     {:container x
      ;; stopped channel
