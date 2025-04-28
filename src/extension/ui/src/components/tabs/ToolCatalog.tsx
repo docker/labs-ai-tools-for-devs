@@ -23,7 +23,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
   const [expandedNotEnabled, setExpandedNotEnabled] = useState(localStorage.getItem('expandedNotEnabled') !== 'false');
 
   // Memoize the filtered catalog items to prevent unnecessary recalculations
-  const result = useMemo(() => {
+  const all = useMemo(() => {
     const filteredItems = catalogItems.filter((item) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
@@ -38,36 +38,41 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
         })
         : filteredItems;
   }, [catalogItems, search, sort]);
+  const enabled = all.filter((item) => item.registered);
 
   return (
     <>
-      <Typography
-        variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
-        onClick={() => {
-          const newExpanded = !expandedEnabled
-          setExpandedEnabled(newExpanded);
-          localStorage.setItem('expandedEnabled', JSON.stringify(newExpanded));
-        }}>
-        Enabled tools
-        {expandedEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
-      </Typography >
+      {(enabled.length > 0) && (
+        <>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
+            onClick={() => {
+              const newExpanded = !expandedEnabled
+              setExpandedEnabled(newExpanded);
+              localStorage.setItem('expandedEnabled', JSON.stringify(newExpanded));
+            }}>
+            {`Enabled (${enabled.length})`}
+            {expandedEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
+          </Typography >
 
-      <Collapse in={expandedEnabled}>
-        <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
-          {result.filter((item) => item.registered).map((catalogItem) => {
-            return (
-              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
-                <Tile
-                  item={catalogItem}
-                  client={client}
-                  registryLoading={registryLoading}
-                />
-              </Grid2>
-            );
-          })}
-        </Grid2>
-      </Collapse>
+          <Collapse in={expandedEnabled}>
+            <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
+              {enabled.map((catalogItem) => {
+                return (
+                  <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
+                    <Tile
+                      item={catalogItem}
+                      client={client}
+                      registryLoading={registryLoading}
+                    />
+                  </Grid2>
+                );
+              })}
+            </Grid2>
+          </Collapse>
+        </>
+      )}
 
       <Typography
         variant='subtitle2'
@@ -77,13 +82,13 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
           setExpandedNotEnabled(newExpanded);
           localStorage.setItem('expandedNotEnabled', JSON.stringify(newExpanded));
         }}>
-        All the tools
+        {`All (${all.length})`}
         {expandedNotEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
       </Typography>
 
       <Collapse in={expandedNotEnabled}>
         <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
-          {result.filter((item) => true).map((catalogItem) => {
+          {all.map((catalogItem) => {
             return (
               <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
                 <Tile
