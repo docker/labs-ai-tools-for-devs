@@ -2,12 +2,11 @@ import { v1 } from '@docker/extension-api-client-types';
 import CheckOutlined from '@mui/icons-material/CheckOutlined';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
 import {
-  ButtonGroup,
   CircularProgress,
   IconButton,
   Stack,
   TextField,
-  Typography,
+  Typography
 } from '@mui/material';
 import * as JsonSchema from 'json-schema-library';
 import { useEffect, useMemo, useState } from 'react';
@@ -50,9 +49,9 @@ const ConfigEditor = ({
     () =>
       configSchema
         ? deepFlattenObject({
-            ...catalogItem.configTemplate,
-            ...existingConfigForItem,
-          })
+          ...catalogItem.configTemplate,
+          ...existingConfigForItem,
+        })
         : {},
     [catalogItem.configTemplate, existingConfigForItem, configSchema]
   );
