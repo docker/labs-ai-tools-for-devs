@@ -84,7 +84,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         sx={CATALOG_LAYOUT_SX}
       >
         <Typography variant="h3">Docker MCP Toolkit</Typography>
-        <Typography variant="caption">
+        <Typography sx={{ color: 'text.secondary' }}>
           Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client
         </Typography>
       </Stack>

@@ -59,7 +59,6 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
 
   return (
     <Stack sx={CATALOG_LAYOUT_SX} spacing={2}>
-      <Typography>Connect to runtimes for your tools</Typography>
       <Stack direction="column" spacing={1}>
         {Object.entries(mcpClientStates).map(
           ([name, mcpClientState]: [string, any]) => {
@@ -175,19 +174,7 @@ function ClientSetting({
           )
         }
         title={
-          <Typography variant="subtitle2">
-            {name}{' '}
-            {mcpClientState.exists && (
-              <Chip
-                label={mcpClientState.configured ? 'Connected' : 'Disconnected'}
-                color={mcpClientState.configured ? 'success' : 'primary'}
-                size="small"
-              />
-            )}
-            {!mcpClientState.exists && (
-              <Chip label="No Config Found" color="warning" size="small" />
-            )}
-          </Typography>
+          <Typography variant="subtitle2">{name}</Typography>
         }
         subheader={
           <Typography
@@ -231,8 +218,15 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Disconnect</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Connect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Disconnect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
@@ -261,8 +255,15 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Connect</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
@@ -286,8 +287,15 @@ function ClientSetting({
                 }}
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Configure</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
