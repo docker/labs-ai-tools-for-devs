@@ -2,6 +2,7 @@ import { v1 } from '@docker/extension-api-client-types';
 import CheckOutlined from '@mui/icons-material/CheckOutlined';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
 import {
+  ButtonGroup,
   CircularProgress,
   IconButton,
   Stack,
@@ -49,9 +50,9 @@ const ConfigEditor = ({
     () =>
       configSchema
         ? deepFlattenObject({
-          ...catalogItem.configTemplate,
-          ...existingConfigForItem,
-        })
+            ...catalogItem.configTemplate,
+            ...existingConfigForItem,
+          })
         : {},
     [catalogItem.configTemplate, existingConfigForItem, configSchema]
   );
@@ -88,7 +89,14 @@ const ConfigEditor = ({
           const isSaving = savingKeys.has(key);
 
           return (
-            <Stack key={key} direction="row" spacing={2}>
+            <Stack
+              key={key}
+              direction="row"
+              spacing={2}
+              sx={{
+                alignItems: 'center',
+              }}
+            >
               <TextField
                 fullWidth
                 size="small"
@@ -100,12 +108,13 @@ const ConfigEditor = ({
                 disabled={isSaving}
               />
               {edited && (
-                <Stack direction="row" spacing={2}>
+                <>
                   {isSaving ? (
                     <CircularProgress size={24} />
                   ) : (
-                    <Stack direction="row" spacing={2}>
+                    <Stack direction="row" spacing={1}>
                       <IconButton
+                        size="small"
                         onClick={() =>
                           updateExistingConfig(
                             catalogItem.name,
@@ -114,9 +123,13 @@ const ConfigEditor = ({
                         }
                         disabled={isSaving}
                       >
-                        <CheckOutlined sx={{ color: 'success.main' }} />
+                        <CheckOutlined
+                          fontSize="small"
+                          sx={{ color: 'success.main' }}
+                        />
                       </IconButton>
                       <IconButton
+                        size="small"
                         onClick={() =>
                           setLocalConfig({
                             ...localConfig,
@@ -125,11 +138,14 @@ const ConfigEditor = ({
                         }
                         disabled={isSaving}
                       >
-                        <CloseOutlined sx={{ color: 'error.main' }} />
+                        <CloseOutlined
+                          fontSize="small"
+                          sx={{ color: 'error.main' }}
+                        />
                       </IconButton>
                     </Stack>
                   )}
-                </Stack>
+                </>
               )}
             </Stack>
           );
