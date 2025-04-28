@@ -275,8 +275,11 @@ const ConfigurationModal = ({
               {!catalogItem?.tools?.length && (
                 <Typography>No tools available for this item.</Typography>
               )}
-              <TableContainer component={Paper}>
-                <Table>
+              <TableContainer
+                component={Paper}
+                sx={{ height: 'calc(80vh - 200px)' }}
+              >
+                <Table stickyHeader>
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
