@@ -43,7 +43,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
     <>
       <Typography
         variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
         onClick={() => {
           const newExpanded = !expandedEnabled
           setExpandedEnabled(newExpanded);
@@ -71,7 +71,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
 
       <Typography
         variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
         onClick={() => {
           const newExpanded = !expandedNotEnabled
           setExpandedNotEnabled(newExpanded);
