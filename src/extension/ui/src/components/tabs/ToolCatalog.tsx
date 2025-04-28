@@ -2,7 +2,7 @@ import { v1 } from '@docker/extension-api-client-types';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { Collapse, Grid2, Typography } from '@mui/material';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 import { useCatalogAll } from '../../queries/useCatalog';
 import Tile from '../tile/Index';
@@ -10,28 +10,22 @@ import Tile from '../tile/Index';
 interface ToolCatalogProps {
   search: string;
   client: v1.DockerDesktopClient;
-  showMine: boolean;
   sort: 'name-asc' | 'name-desc';
 }
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({
   search,
   client,
-  showMine,
   sort,
 }) => {
   const { catalogItems, registryLoading } = useCatalogAll(client);
-  const [expandedEnabled, setExpandedEnabled] = useState(true);
-  const [expandedNotEnabled, setExpandedNotEnabled] = useState(true);
+  const [expandedEnabled, setExpandedEnabled] = useState(localStorage.getItem('expandedEnabled') !== 'false');
+  const [expandedNotEnabled, setExpandedNotEnabled] = useState(localStorage.getItem('expandedNotEnabled') !== 'false');
 
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const result = useMemo(() => {
     const filteredItems = catalogItems.filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const hideBecauseItsNotMine = showMine && !item.registered;
-      return matchesSearch && !hideBecauseItsNotMine;
+      return item.name.toLowerCase().includes(search.toLowerCase());
     });
 
     return sort === 'name-asc'
@@ -43,19 +37,21 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
           return b.name.localeCompare(a.name);
         })
         : filteredItems;
-  }, [catalogItems, search, showMine, sort]);
-
-
+  }, [catalogItems, search, sort]);
 
   return (
     <>
       <Typography
         variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
-        onClick={() => setExpandedEnabled(!expandedEnabled)}>
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
+        onClick={() => {
+          const newExpanded = !expandedEnabled
+          setExpandedEnabled(newExpanded);
+          localStorage.setItem('expandedEnabled', JSON.stringify(newExpanded));
+        }}>
         Enabled tools
         {expandedEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
-      </Typography>
+      </Typography >
 
       <Collapse in={expandedEnabled}>
         <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
@@ -75,8 +71,12 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
 
       <Typography
         variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
-        onClick={() => setExpandedNotEnabled(!expandedNotEnabled)}>
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
+        onClick={() => {
+          const newExpanded = !expandedNotEnabled
+          setExpandedNotEnabled(newExpanded);
+          localStorage.setItem('expandedNotEnabled', JSON.stringify(newExpanded));
+        }}>
         All the tools
         {expandedNotEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
       </Typography>
