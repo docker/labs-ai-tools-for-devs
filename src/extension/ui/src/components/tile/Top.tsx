@@ -1,7 +1,6 @@
 import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
 
 import { CatalogItemRichened } from '../../types/catalog';
-import { formatName } from '../../formatName';
 import { useEffect, useState } from 'react';
 
 type TopProps = {
@@ -43,16 +42,14 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             color: 'text.primary',
           }}
         >
-          {formatName(item.name)}
+          {item.name}
         </Typography>
       }
       action={
         item.canRegister ? (
           <Tooltip
             title={
-              item.registered
-                ? `Disable ${formatName(item.name)}`
-                : `Enable ${formatName(item.name)}`
+              item.registered ? `Disable ${item.name}` : `Enable ${item.name}`
             }
           >
             <Switch
@@ -67,9 +64,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             />
           </Tooltip>
         ) : (
-          <Tooltip
-            title={`Enabling ${formatName(item.name)} requires configuration`}
-          >
+          <Tooltip title={`Enabling ${item.name} requires configuration`}>
             <span>
               <Switch checked={false} disabled />
             </span>

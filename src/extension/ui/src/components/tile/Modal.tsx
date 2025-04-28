@@ -38,7 +38,6 @@ import {
   getUnsupportedSecretMessage,
   MCP_POLICY_NAME,
 } from '../../Constants';
-import { formatName } from '../../formatName';
 import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
 import useDDInfo from '../../queries/useDDInfo';
@@ -176,7 +175,7 @@ const ConfigurationModal = ({
               borderRadius: 1,
             }}
           />
-          {formatName(catalogItem.name)}
+          {catalogItem.name}
           <Tooltip
             placement="right"
             title={
