@@ -9,7 +9,6 @@ import {
   Avatar,
   Badge,
   Box,
-  ButtonGroup,
   Chip,
   CircularProgress,
   Dialog,
@@ -31,10 +30,9 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme,
+  useTheme
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-
 import {
   ASSIGNED_SECRET_PLACEHOLDER,
   getUnsupportedSecretMessage,
@@ -250,7 +248,7 @@ const ConfigurationModal = ({
           <>
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
               <Tabs value={tabValue} onChange={handleTabChange}>
-                <Tab label="Tools" />
+                <Tab label={`Tools (${catalogItem?.tools?.length})`} />
                 {!contributesNoConfigOrSecrets && (
                   <Tab
                     disabled={contributesNoConfigOrSecrets}
@@ -301,8 +299,7 @@ const ConfigurationModal = ({
                           <Link
                             onClick={() =>
                               client.host.openExternal(
-                                `${
-                                  catalogItem.readme
+                                `${catalogItem.readme
                                 }#tool-${tool.name.replaceAll(' ', '-')}` || ''
                               )
                             }
@@ -344,13 +341,13 @@ const ConfigurationModal = ({
                       </Alert>
                     )}
                     {ddInfo?.hasSecretSupport &&
-                    catalogItem.secrets &&
-                    catalogItem.secrets?.length > 0 ? (
+                      catalogItem.secrets &&
+                      catalogItem.secrets?.length > 0 ? (
                       catalogItem.secrets.map((secret, index) => {
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
-                              ASSIGNED_SECRET_PLACEHOLDER) ||
+                            ASSIGNED_SECRET_PLACEHOLDER) ||
                           (!secret.assigned &&
                             localSecrets[secret.name] !== '');
                         return (
