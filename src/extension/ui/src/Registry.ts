@@ -61,30 +61,6 @@ export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
 // if that’s not true and the registry.yaml value is valid then you should sync with it
 // if it’s not true and the registry.yaml is invalid then the catalog item needs user assistance because the catalog has probably been updated with a breaking change
 
-// Replace conflicting config values with registry values
-export const syncConfigWithRegistry = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
-    if (Object.keys(registry).length === 0) {
-        return;
-    }
-    if (Object.keys(config).length === 0) {
-        return;
-    }
-    const oldConfigString = JSON.stringify(config)
-    for (const [registryItemName, registryItem] of Object.entries(registry)) {
-        const configInRegistry = registryItem.config
-        const configInConfigFile = config[registryItemName]
-        if (configInConfigFile) {
-            const mergedConfig = mergeDeep(configInConfigFile, configInRegistry)
-            config[registryItemName][registryItemName] = mergedConfig
-        }
-    }
-    const newConfigString = JSON.stringify(config)
-    if (oldConfigString !== newConfigString) {
-        await writeToPromptsVolume(client, 'config.yaml', stringify(config))
-    }
-    return config
-}
-
 //  Replace conflicting registry values with config values
 export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, registry: { [key: string]: { ref: string, config: any } }, config: { [key: string]: { [key: string]: ParsedParameters } }) => {
     if (Object.keys(config).length === 0) {

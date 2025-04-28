@@ -9,7 +9,6 @@ import { useMCPClient } from './queries/useMCPClient';
 import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
 import { syncRegistryWithConfig } from './Registry';
-import useOAuthProvider from './queries/useOAuthProvider';
 export const client = createDockerDesktopClient();
 
 // Memoize the CatalogGrid component to prevent unnecessary re-renders

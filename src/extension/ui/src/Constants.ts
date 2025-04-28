@@ -20,7 +20,6 @@ export const CATALOG_LAYOUT_SX = {
 };
 
 export const ASSIGNED_SECRET_PLACEHOLDER = "********";
-export const UNASSIGNED_SECRET_PLACEHOLDER = "UNASSIGNED";
 
 export const BUSYBOX = 'busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f';
 

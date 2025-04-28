@@ -5,7 +5,7 @@ import { DeepObject } from './types/utils';
  * @param item
  * @returns {boolean}
  */
-export function isObject(item: unknown): item is DeepObject {
+function isObject(item: unknown): item is DeepObject {
     return Boolean(item && typeof item === 'object' && !Array.isArray(item));
 }
 
@@ -60,27 +60,3 @@ export function buildObjectFromFlattenedObject(flattenedObject: Record<string, a
         return acc;
     }, {} as DeepObject);
 }
-
-export function deepGet(obj: DeepObject, path: string): any {
-    return path.split('.').reduce((acc, key) => {
-        if (isObject(acc)) {
-            return acc[key];
-        }
-        return undefined;
-    }, obj);
-}
-
-export function deepSet(obj: DeepObject, path: string, value: any): DeepObject {
-    const keys = path.split('.');
-    const key = keys.pop();
-    if (!key) return obj;
-
-    const current = keys.reduce((acc, key) => {
-        if (!acc[key]) acc[key] = {};
-        return acc[key];
-    }, obj);
-
-    current[key] = value;
-
-    return obj;
-}   

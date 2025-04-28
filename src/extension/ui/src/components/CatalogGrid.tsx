@@ -246,5 +246,3 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
     </Stack>
   );
 };
-
-export default CatalogGrid;
