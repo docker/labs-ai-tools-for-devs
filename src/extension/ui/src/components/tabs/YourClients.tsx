@@ -218,7 +218,7 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Disconnect</Typography>
+                  <Typography sx={{ fontSize: 12, width: 80 }}>Disconnect</Typography>
                   {buttonsLoading[name] && <CircularProgress size={12} />}
                 </Stack>
               </Button>
@@ -248,7 +248,7 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Connect</Typography>
+                  <Typography sx={{ fontSize: 12, width: 80 }}>Connect</Typography>
                   {buttonsLoading[name] && <CircularProgress size={12} />}
                 </Stack>
               </Button>
@@ -273,7 +273,7 @@ function ClientSetting({
                 }}
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Connect</Typography>
+                  <Typography sx={{ fontSize: 12, width: 80 }}>Connect</Typography>
                   {buttonsLoading[name] && <CircularProgress size={12} />}
                 </Stack>
               </Button>
