@@ -1,4 +1,4 @@
-# Scrapegraph MCP Server
+# ScrapeGraph MCP Server
 
 ScapeGraph MCP Server.
 

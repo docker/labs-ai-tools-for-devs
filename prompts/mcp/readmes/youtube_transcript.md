@@ -1,4 +1,4 @@
-# Youtube_transcript MCP Server
+# YouTube transcripts MCP Server
 
 Retrieves transcripts for given YouTube video URLs.
 

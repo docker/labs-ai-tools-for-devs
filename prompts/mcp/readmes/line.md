@@ -1,4 +1,4 @@
-# Line MCP Server
+# LINE MCP Server
 
 MCP server that integrates the LINE Messaging API to connect an AI Agent to the LINE Official Account.
 

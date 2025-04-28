@@ -1,4 +1,4 @@
-# Edubase MCP Server
+# EduBase MCP Server
 
 The EduBase MCP server enables Claude and other LLMs to interact with EduBase's comprehensive e-learning platform through the Model Context Protocol (MCP).
 

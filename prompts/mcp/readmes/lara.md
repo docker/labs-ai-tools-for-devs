@@ -1,4 +1,4 @@
-# Lara MCP Server
+# Lara Translate MCP Server
 
 Connect to Lara Translate API, enabling powerful translation capabilities with support for language detection and context-aware translations.
 

@@ -1,4 +1,4 @@
-# Dart MCP Server
+# Dart AI MCP Server
 
 Dart AI Model Context Protocol (MCP) server.
 

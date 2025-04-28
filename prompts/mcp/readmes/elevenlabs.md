@@ -1,4 +1,4 @@
-# Elevenlabs MCP Server
+# ElevenLabs MCP Server
 
 The official ElevenLabs MCP server.
 

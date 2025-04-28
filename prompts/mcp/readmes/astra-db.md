@@ -1,4 +1,4 @@
-# Astra-db MCP Server
+# Astra DB MCP Server
 
 An MCP server for Astra DB workloads.
 

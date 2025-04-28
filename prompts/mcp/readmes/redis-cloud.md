@@ -1,4 +1,4 @@
-# Redis-cloud MCP Server
+# Redis Cloud MCP Server
 
 MCP Server for Redis Cloud's API, allowing you to manage your Redis Cloud resources using natural language.
 

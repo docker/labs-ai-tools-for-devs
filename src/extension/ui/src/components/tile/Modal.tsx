@@ -175,7 +175,7 @@ const ConfigurationModal = ({
               borderRadius: 1,
             }}
           />
-          {catalogItem.name}
+          {catalogItem.title ?? catalogItem.name}
           <Tooltip
             placement="right"
             title={
@@ -305,8 +305,7 @@ const ConfigurationModal = ({
                           <Link
                             onClick={() =>
                               client.host.openExternal(
-                                `${
-                                  catalogItem.readme
+                                `${catalogItem.readme
                                 }#tool-${tool.name.replaceAll(' ', '-')}` || ''
                               )
                             }
@@ -356,7 +355,7 @@ const ConfigurationModal = ({
                           const secretEdited =
                             (secret.assigned &&
                               localSecrets[secret.name] !==
-                                ASSIGNED_SECRET_PLACEHOLDER) ||
+                              ASSIGNED_SECRET_PLACEHOLDER) ||
                             (!secret.assigned &&
                               localSecrets[secret.name] !== '');
                           return (

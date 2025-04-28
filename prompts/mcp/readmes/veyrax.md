@@ -1,4 +1,4 @@
-# Veyrax MCP Server
+# VeyraX MCP Server
 
 VeyraX MCP is the only connection you need to access all your tools in any MCP-compatible environment.
 

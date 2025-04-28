@@ -1,4 +1,4 @@
-# Mcp-discord MCP Server
+# Discord MCP Server
 
 Interact with the Discord platform.
 

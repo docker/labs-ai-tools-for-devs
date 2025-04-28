@@ -1,4 +1,4 @@
-# Kagisearch MCP Server
+# Kagi search MCP Server
 
 A Model Context Protocol (MCP) server for Kagi search & other tools.
 

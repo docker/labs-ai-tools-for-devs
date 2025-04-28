@@ -1,4 +1,4 @@
-# Handwriting-ocr MCP Server
+# Handwriting OCR MCP Server
 
 Model Context Protocol (MCP) Server for Handwriting OCR .
 

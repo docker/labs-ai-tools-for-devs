@@ -1,4 +1,4 @@
-# Flexprice MCP Server
+# FlexPrice MCP Server
 
 Official flexprice MCP Server.
 

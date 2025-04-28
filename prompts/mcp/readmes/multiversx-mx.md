@@ -1,4 +1,4 @@
-# Multiversx-mx MCP Server
+# MultiversX MCP Server
 
 MCP Server for MultiversX.
 

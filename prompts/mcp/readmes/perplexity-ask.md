@@ -1,4 +1,4 @@
-# Perplexity-ask MCP Server
+# Perplexity MCP Server
 
 Connector for Perplexity API, to enable real-time, web-wide research.
 

@@ -1,4 +1,4 @@
-# Github-chat MCP Server
+# GitHub Chat MCP Server
 
 A Model Context Protocol (MCP) for analyzing and querying GitHub repositories using the GitHub Chat API.
 

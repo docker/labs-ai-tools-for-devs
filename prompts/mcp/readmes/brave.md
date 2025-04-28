@@ -1,4 +1,4 @@
-# Brave MCP Server
+# Brave Search MCP Server
 
 Web and local search using Brave's Search API.
 

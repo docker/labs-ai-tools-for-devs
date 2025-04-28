@@ -1,4 +1,4 @@
-# Wolfram-alpha MCP Server
+# WolframAlpha MCP Server
 
 Connect your chat repl to wolfram alpha computational intelligence.
 

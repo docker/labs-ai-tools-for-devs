@@ -1,4 +1,4 @@
-# Armor-crypto MCP Server
+# Armor Crypto MCP Server
 
 The MCP server for interacting with Blockchain, Swaps, Strategic Planning and more.
 

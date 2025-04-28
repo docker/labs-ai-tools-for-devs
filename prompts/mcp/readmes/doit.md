@@ -1,4 +1,4 @@
-# Doit MCP Server
+# DOiT MCP Server
 
 DoiT official MCP Server.
 

@@ -1,4 +1,4 @@
-# 3d-printer MCP Server
+# 3D Printer MCP Server
 
 Connects MCP to major 3D printer APIs (Orca, Bambu, OctoPrint, Klipper, Duet, Repetier, Prusa, Creality). Control prints, monitor status, and perform advanced STL operations like scaling, rotation, sectional editing, and base extension. Includes slicing and visualization.
 

@@ -1,4 +1,4 @@
-# Smithery-cli MCP Server
+# Smithery CLI MCP Server
 
 Official MCP server for Smithery CLI.
 

@@ -1,4 +1,4 @@
-# Github-official MCP Server
+# GitHub Official MCP Server
 
 Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
 

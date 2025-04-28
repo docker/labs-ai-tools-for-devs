@@ -1,4 +1,4 @@
-# E2b MCP Server
+# E2B MCP Server
 
 Giving Claude ability to run code with E2B via MCP (Model Context Protocol).
 

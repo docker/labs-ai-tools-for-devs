@@ -1,4 +1,4 @@
-# Cyreslab-ai-shodan MCP Server
+# Shodan MCP Server
 
 A Model Context Protocol server that provides access to Shodan API functionality.
 

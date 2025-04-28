@@ -1,4 +1,4 @@
-# Desktop-commander MCP Server
+# Desktop Commander MCP Server
 
 Search, update, manage files and run terminal commands with AI.
 

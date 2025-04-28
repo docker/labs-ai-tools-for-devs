@@ -1,4 +1,4 @@
-# Jetbrains MCP Server
+# JetBrains MCP Server
 
 A model context protocol server to work with JetBrains IDEs: IntelliJ, PyCharm, WebStorm, etc. Also, works with Android Studio.
 

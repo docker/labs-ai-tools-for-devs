@@ -1,4 +1,4 @@
-# Osp_marketing_tools MCP Server
+# OSP Marketing Tools MCP Server
 
 A Model Context Protocol (MCP) server that empowers LLMs to use some of Open Srategy Partners' core writing and product marketing techniques.
 

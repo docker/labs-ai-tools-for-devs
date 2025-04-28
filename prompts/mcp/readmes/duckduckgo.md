@@ -1,4 +1,4 @@
-# Duckduckgo MCP Server
+# DuckDuckGo MCP Server
 
 A Model Context Protocol (MCP) server that provides web search capabilities through DuckDuckGo, with additional features for content fetching and parsing.
 

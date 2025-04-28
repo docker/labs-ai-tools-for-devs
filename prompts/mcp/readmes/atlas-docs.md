@@ -1,4 +1,4 @@
-# Atlas-docs MCP Server
+# Atlas Docs MCP Server
 
 Provide LLMs hosted, clean markdown documentation of libraries and frameworks.
 

@@ -1,4 +1,4 @@
-# Neondatabase-labs MCP Server
+# Neon Management MCP Server
 
 MCP server for interacting with Neon Management API and databases.
 

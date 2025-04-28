@@ -1,4 +1,4 @@
-# Everart MCP Server
+# EverArt MCP Server
 
 Image generation server using EverArt's API.
 

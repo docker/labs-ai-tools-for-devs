@@ -1,4 +1,4 @@
-# Resend MCP Server
+# Send emails MCP Server
 
 Send emails directly from Cursor with this email sending MCP server.
 

@@ -1,4 +1,4 @@
-# Devhub-cms MCP Server
+# DevHub CMS MCP Server
 
 DevHub CMS LLM integration through the Model Context Protocol.
 

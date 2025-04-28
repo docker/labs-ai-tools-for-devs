@@ -1,4 +1,4 @@
-# 302_sandbox MCP Server
+# 302 Sandbox MCP Server
 
 302 Sandbox MCP.
 

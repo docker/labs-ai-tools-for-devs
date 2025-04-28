@@ -1,4 +1,4 @@
-# Basic-memory MCP Server
+# Basic Memory MCP Server
 
 Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants, stored in standard Markdown files on your computer. Integrates directly with Obsidan.md.
 

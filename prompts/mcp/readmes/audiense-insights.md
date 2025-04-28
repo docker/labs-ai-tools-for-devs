@@ -1,4 +1,4 @@
-# Audiense-insights MCP Server
+# Audiense Insights MCP Server
 
 Audiense Insights MCP Server is a server based on the Model Context Protocol (MCP) that allows Claude and other MCP-compatible clients to interact with your Audiense Insights account.
 

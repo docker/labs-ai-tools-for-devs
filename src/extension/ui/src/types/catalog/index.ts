@@ -6,6 +6,7 @@ import { Secret } from "../secrets";
  */
 export interface CatalogItem {
     description?: string;
+    title?: string;
     source?: string;
     icon?: string;
     secrets?: { name: string }[];

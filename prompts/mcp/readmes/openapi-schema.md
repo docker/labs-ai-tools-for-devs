@@ -1,4 +1,4 @@
-# Openapi-schema MCP Server
+# OpenAPI Schema MCP Server
 
 OpenAPI Schema Model Context Protocol Server.
 

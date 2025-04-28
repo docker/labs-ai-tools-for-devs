@@ -1,4 +1,4 @@
-# Google-maps MCP Server
+# Google Maps MCP Server
 
 Tools for interacting with the Google Maps API.
 

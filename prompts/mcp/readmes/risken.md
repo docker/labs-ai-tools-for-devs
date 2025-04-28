@@ -1,4 +1,4 @@
-# Risken MCP Server
+# RISKEN MCP Server
 
 RISKEN's official MCP Server.
 
