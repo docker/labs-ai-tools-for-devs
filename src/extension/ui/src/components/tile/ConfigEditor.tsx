@@ -2,7 +2,6 @@ import { v1 } from '@docker/extension-api-client-types';
 import CheckOutlined from '@mui/icons-material/CheckOutlined';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
 import {
-  CircularProgress,
   IconButton,
   Stack,
   TextField,
@@ -42,7 +41,6 @@ const ConfigEditor = ({
   const [localConfig, setLocalConfig] = useState<
     { [key: string]: any } | undefined
   >(undefined);
-  const [savingKeys, setSavingKeys] = useState<Set<string>>(new Set());
 
   // Use memoized flattenedConfig to ensure it only updates when config changes
   // This MUST be called before any early returns to avoid conditional hook calls
@@ -86,7 +84,6 @@ const ConfigEditor = ({
       <Stack>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
-          const isSaving = savingKeys.has(key);
 
           return (
             <Stack
@@ -105,54 +102,40 @@ const ConfigEditor = ({
                 onChange={(e) =>
                   setLocalConfig({ ...localConfig, [key]: e.target.value })
                 }
-                disabled={isSaving}
               />
               {edited && (
-                <>
-                  {isSaving ? (
-                    <CircularProgress size={24} />
-                  ) : (
-                    <Stack direction="row" spacing={1}>
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          const newConfig = buildObjectFromFlattenedObject(localConfig);
-
-                          // Remove all attributes which are optional and which have the defautl value
-                          const schema = new JsonSchemaLibrary.Draft2019(catalogItem.config[0]);
-                          const requiredAttributes = (schema.rootSchema.required || []) as string[];
-                          const template = schema.getTemplate({});
-                          const requiredConfig = Object.fromEntries(Object.entries(newConfig).filter(([key, value]) => {
-                            return requiredAttributes.includes(key) || (value !== template[key]);
-                          }));
-
-                          updateExistingConfig(catalogItem.name, requiredConfig)
-                        }}
-                        disabled={isSaving}
-                      >
-                        <CheckOutlined
-                          fontSize="small"
-                          sx={{ color: 'success.main' }}
-                        />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() =>
-                          setLocalConfig({
-                            ...localConfig,
-                            [key]: flattenedConfig[key],
-                          })
-                        }
-                        disabled={isSaving}
-                      >
-                        <CloseOutlined
-                          fontSize="small"
-                          sx={{ color: 'error.main' }}
-                        />
-                      </IconButton>
-                    </Stack>
-                  )}
-                </>
+                <Stack direction="row" spacing={1}>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      const newConfig = sanitizeConfig(localConfig, catalogItem);
+                      updateExistingConfig(catalogItem.name, newConfig);
+                      setLocalConfig({
+                        ...localConfig,
+                        [key]: newConfig[key],
+                      });
+                    }}
+                  >
+                    <CheckOutlined
+                      fontSize="small"
+                      sx={{ color: 'success.main' }}
+                    />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      setLocalConfig({
+                        ...localConfig,
+                        [key]: flattenedConfig[key],
+                      })
+                    }
+                  >
+                    <CloseOutlined
+                      fontSize="small"
+                      sx={{ color: 'error.main' }}
+                    />
+                  </IconButton>
+                </Stack>
               )}
             </Stack>
           );
@@ -161,5 +144,32 @@ const ConfigEditor = ({
     </Stack>
   );
 };
+
+function sanitizeConfig(config: { [key: string]: any; }, catalogItem: CatalogItemRichened) {
+  const newConfig = buildObjectFromFlattenedObject(config);
+
+  // Remove all attributes which are optional and which have the defautl value
+  const schema = new JsonSchemaLibrary.Draft2019(catalogItem.config[0]);
+  const requiredAttributes = (schema.rootSchema.required || []) as string[];
+  const template = schema.getTemplate({});
+  const requiredConfig = Object.fromEntries(Object.entries(newConfig).filter(([key, value]) => {
+    return requiredAttributes.includes(key) || (value !== template[key]);
+  }));
+
+  // Use the right types for each attribute
+  const typedConfig = Object.fromEntries(Object.entries(requiredConfig).map(([key, value]) => {
+    const propertyType = schema.rootSchema.properties[key].type;
+    switch (propertyType) {
+      case "integer":
+        return [key, parseInt(value) || 0];
+      case "boolean":
+        return [key, (value as string).toLowerCase() === "true"];
+      default:
+        return [key, value];
+    }
+  }));
+
+  return typedConfig;
+}
 
 export default ConfigEditor;
