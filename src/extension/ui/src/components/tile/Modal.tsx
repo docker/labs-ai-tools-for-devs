@@ -18,9 +18,16 @@ import {
   IconButton,
   Link,
   OutlinedInput,
+  Paper,
   Stack,
   Switch,
   Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Tabs,
   TextField,
   Tooltip,
@@ -264,32 +271,41 @@ const ConfigurationModal = ({
               {!catalogItem?.tools?.length && (
                 <Typography>No tools available for this item.</Typography>
               )}
-              <Stack
-                spacing={1}
-                sx={{
-                  padding: 1,
-                  overflow: 'auto',
-                  height: 'calc(80vh - 200px)',
-                  minHeight: '180px',
-                }}
-              >
-                {(catalogItem.tools || []).map((tool) => (
-                  <Typography
-                    key={tool.name}
-                    variant="body2"
-                    sx={toolChipStyle}
-                  >
-                    {tool.name}
-                    <Link
-                      onClick={() => client.host.openExternal(`${catalogItem.readme}#tool-${tool.name.replaceAll(' ', '-')}` || '')}
-                      href="#"
-                      target="_blank"
-                    >
-                      <Launch />
-                    </Link>
-                  </Typography>
-                ))}
-              </Stack>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {(catalogItem.tools || []).map((tool) => (
+                      <TableRow>
+                        <TableCell>
+                          <Typography
+                            key={tool.name}
+                            variant="body2"
+                            sx={toolChipStyle}
+                          >
+                            {tool.name}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Link
+                            onClick={() => client.host.openExternal(`${catalogItem.readme}#tool-${tool.name.replaceAll(' ', '-')}` || '')}
+                            href="#"
+                            target="_blank"
+                          >
+                            Documentation
+                            <Launch />
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
               <Stack
@@ -401,9 +417,10 @@ const ConfigurationModal = ({
               </Stack>
             </TabPanel>
           </>
-        )}
-      </DialogContent>
-    </Dialog>
+        )
+        }
+      </DialogContent >
+    </Dialog >
   );
 };
 
