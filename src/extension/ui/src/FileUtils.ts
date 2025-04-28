@@ -28,10 +28,15 @@ export const tryRunImageSync = async (client: v1.DockerDesktopClient, args: stri
     }
 }
 
+let user: string | null = null;
+
 export const getUser = async (client: v1.DockerDesktopClient) => {
-    const result = await tryRunImageSync(client, ['--rm', '-e', 'USER', BUSYBOX, '/bin/echo', '$USER'])
-    return result.trim()
-}
+    if (user == null) {
+        const result = await tryRunImageSync(client, ['--rm', '-e', 'USER', BUSYBOX, '/bin/echo', '$USER']);
+        user = result.trim();
+    }
+    return user;
+};
 
 export const readFileInPromptsVolume = async (client: v1.DockerDesktopClient, path: string) => {
     return tryRunImageSync(client, ['--rm', '-v', 'docker-prompts:/docker-prompts', '-w', '/docker-prompts', BUSYBOX, '/bin/cat', `${path}`], true)
