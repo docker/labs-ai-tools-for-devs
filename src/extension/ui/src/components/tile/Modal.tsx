@@ -2,7 +2,7 @@ import { v1 } from '@docker/extension-api-client-types';
 import CheckOutlined from '@mui/icons-material/CheckOutlined';
 import Close from '@mui/icons-material/Close';
 import CloseOutlined from '@mui/icons-material/CloseOutlined';
-import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import Launch from '@mui/icons-material/Launch';
 import {
   Alert,
@@ -17,7 +17,6 @@ import {
   DialogTitle,
   IconButton,
   Link,
-  OutlinedInput,
   Paper,
   Stack,
   Switch,
@@ -34,16 +33,20 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ASSIGNED_SECRET_PLACEHOLDER, getUnsupportedSecretMessage, MCP_POLICY_NAME } from '../../Constants';
+import {
+  ASSIGNED_SECRET_PLACEHOLDER,
+  getUnsupportedSecretMessage,
+  MCP_POLICY_NAME,
+} from '../../Constants';
+import { formatName } from '../../formatName';
 import { useCatalogOperations } from '../../queries/useCatalog';
 import { useConfig } from '../../queries/useConfig';
+import useDDInfo from '../../queries/useDDInfo';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
-import { formatName } from '../../formatName';
-import useDDInfo from '../../queries/useDDInfo';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -86,6 +89,9 @@ const ConfigurationModal = ({
   const [localSecrets, setLocalSecrets] = useState<
     { [key: string]: string | undefined } | undefined
   >(undefined);
+
+  const inputRefs = useRef<HTMLInputElement[]>([]);
+
   const theme = useTheme();
 
   const { isLoading: secretsLoading, mutate: mutateSecret } =
@@ -293,7 +299,13 @@ const ConfigurationModal = ({
                         </TableCell>
                         <TableCell>
                           <Link
-                            onClick={() => client.host.openExternal(`${catalogItem.readme}#tool-${tool.name.replaceAll(' ', '-')}` || '')}
+                            onClick={() =>
+                              client.host.openExternal(
+                                `${
+                                  catalogItem.readme
+                                }#tool-${tool.name.replaceAll(' ', '-')}` || ''
+                              )
+                            }
                             href="#"
                             target="_blank"
                           >
@@ -317,7 +329,7 @@ const ConfigurationModal = ({
                   minHeight: '180px',
                 }}
               >
-                <Stack direction="column" spacing={2} >
+                <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
                   <Stack>
                     <Typography variant="subtitle2">Secrets</Typography>
@@ -332,13 +344,13 @@ const ConfigurationModal = ({
                       </Alert>
                     )}
                     {ddInfo?.hasSecretSupport &&
-                      catalogItem.secrets &&
-                      catalogItem.secrets?.length > 0 ? (
-                      catalogItem.secrets.map((secret) => {
+                    catalogItem.secrets &&
+                    catalogItem.secrets?.length > 0 ? (
+                      catalogItem.secrets.map((secret, index) => {
                         const secretEdited =
                           (secret.assigned &&
                             localSecrets[secret.name] !==
-                            ASSIGNED_SECRET_PLACEHOLDER) ||
+                              ASSIGNED_SECRET_PLACEHOLDER) ||
                           (!secret.assigned &&
                             localSecrets[secret.name] !== '');
                         return (
@@ -350,6 +362,10 @@ const ConfigurationModal = ({
                           >
                             <TextField
                               size="small"
+                              inputRef={(element) =>
+                                (inputRefs.current[index] = element)
+                              }
+                              disabled={secret.assigned}
                               key={secret.name}
                               label={secret.name}
                               value={localSecrets[secret.name]}
@@ -365,8 +381,14 @@ const ConfigurationModal = ({
                             {secret.assigned && !secretEdited && (
                               <IconButton
                                 size="small"
-                                color="error"
                                 onClick={() => {
+                                  setLocalSecrets({
+                                    ...localSecrets,
+                                    [secret.name]: '',
+                                  });
+                                  // We need to enable the input to be able to focus on it
+                                  inputRefs.current[index].disabled = false;
+                                  inputRefs.current[index].focus();
                                   mutateSecret.mutateAsync({
                                     name: secret.name,
                                     value: undefined,
@@ -374,12 +396,13 @@ const ConfigurationModal = ({
                                   });
                                 }}
                               >
-                                <DeleteOutlined />
+                                <EditOutlinedIcon fontSize="small" />
                               </IconButton>
                             )}
                             {secretEdited && (
                               <ButtonGroup>
                                 <IconButton
+                                  size="small"
                                   onClick={async () => {
                                     await mutateSecret.mutateAsync({
                                       name: secret.name,
@@ -389,10 +412,12 @@ const ConfigurationModal = ({
                                   }}
                                 >
                                   <CheckOutlined
+                                    fontSize="small"
                                     sx={{ color: 'success.main' }}
                                   />
                                 </IconButton>
                                 <IconButton
+                                  size="small"
                                   onClick={async () => {
                                     setLocalSecrets({
                                       ...localSecrets,
@@ -402,7 +427,10 @@ const ConfigurationModal = ({
                                     });
                                   }}
                                 >
-                                  <CloseOutlined sx={{ color: 'error.main' }} />
+                                  <CloseOutlined
+                                    fontSize="small"
+                                    sx={{ color: 'error.main' }}
+                                  />
                                 </IconButton>
                               </ButtonGroup>
                             )}
@@ -417,10 +445,9 @@ const ConfigurationModal = ({
               </Stack>
             </TabPanel>
           </>
-        )
-        }
-      </DialogContent >
-    </Dialog >
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
