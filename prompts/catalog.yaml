@@ -583,10 +583,10 @@ registry:
       - name: jira_update_issue
       - name: jira_update_sprint
     secrets:
-      - name: atlassian.jira.api_token
       - name: atlassian.confluence.api_token
-      - name: atlassian.jira.personal_token
       - name: atlassian.confluence.personal_token
+      - name: atlassian.jira.api_token
+      - name: atlassian.jira.personal_token
     prompts: 0
     resources: {}
     config:

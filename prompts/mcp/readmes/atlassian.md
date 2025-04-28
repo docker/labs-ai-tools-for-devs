@@ -422,13 +422,13 @@ Parameters|Type|Description
         "-e",
         "JIRA_USERNAME",
         "-e",
-        "JIRA_API_TOKEN",
-        "-e",
         "CONFLUENCE_API_TOKEN",
         "-e",
-        "JIRA_PERSONAL_TOKEN",
-        "-e",
         "CONFLUENCE_PERSONAL_TOKEN",
+        "-e",
+        "JIRA_API_TOKEN",
+        "-e",
+        "JIRA_PERSONAL_TOKEN",
         "mcp/atlassian"
       ],
       "env": {
@@ -436,10 +436,10 @@ Parameters|Type|Description
         "CONFLUENCE_USERNAME": "your.email@company.com",
         "JIRA_URL": "https://your-company.atlassian.net",
         "JIRA_USERNAME": "your.email@company.com",
-        "JIRA_API_TOKEN": "your_api_token",
         "CONFLUENCE_API_TOKEN": "your_api_token",
-        "JIRA_PERSONAL_TOKEN": "your_api_token",
-        "CONFLUENCE_PERSONAL_TOKEN": "your_api_token"
+        "CONFLUENCE_PERSONAL_TOKEN": "your_api_token",
+        "JIRA_API_TOKEN": "your_api_token",
+        "JIRA_PERSONAL_TOKEN": "your_api_token"
       }
     }
   }
