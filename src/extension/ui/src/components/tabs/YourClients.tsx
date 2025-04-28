@@ -273,7 +273,7 @@ function ClientSetting({
                 }}
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12 }}>Configure</Typography>
+                  <Typography sx={{ fontSize: 12 }}>Connect</Typography>
                   {buttonsLoading[name] && <CircularProgress size={12} />}
                 </Stack>
               </Button>
