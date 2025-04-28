@@ -59,7 +59,6 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
 
   return (
     <Stack sx={CATALOG_LAYOUT_SX} spacing={2}>
-      <Typography>Connect to runtimes for your tools</Typography>
       <Stack direction="column" spacing={1}>
         {Object.entries(mcpClientStates).map(
           ([name, mcpClientState]: [string, any]) => {
