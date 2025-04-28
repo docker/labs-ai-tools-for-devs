@@ -10,14 +10,12 @@ import Tile from '../tile/Index';
 interface ToolCatalogProps {
   search: string;
   client: v1.DockerDesktopClient;
-  showMine: boolean;
   sort: 'name-asc' | 'name-desc';
 }
 
 const ToolCatalog: React.FC<ToolCatalogProps> = ({
   search,
   client,
-  showMine,
   sort,
 }) => {
   const { catalogItems, registryLoading } = useCatalogAll(client);
@@ -27,11 +25,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const result = useMemo(() => {
     const filteredItems = catalogItems.filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const hideBecauseItsNotMine = showMine && !item.registered;
-      return matchesSearch && !hideBecauseItsNotMine;
+      return item.name.toLowerCase().includes(search.toLowerCase());
     });
 
     return sort === 'name-asc'
@@ -43,9 +37,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
           return b.name.localeCompare(a.name);
         })
         : filteredItems;
-  }, [catalogItems, search, showMine, sort]);
-
-
+  }, [catalogItems, search, sort]);
 
   return (
     <>
