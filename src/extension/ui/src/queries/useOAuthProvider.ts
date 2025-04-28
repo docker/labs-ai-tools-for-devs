@@ -9,7 +9,7 @@ import {
 const useOAuthProvider = (client: v1.DockerDesktopClient) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["oauth-providers"],
-    queryFn: () => listOAuthApps(client),
+    queryFn: async () => listOAuthApps(client),
   });
   const authorizeOAuthProvider = useMutation({
     mutationFn: (appId: string) => authorizeOAuthApp(client, appId),

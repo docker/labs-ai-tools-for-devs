@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { parse, stringify } from "yaml";
 import { CATALOG_URL, REGISTRY_YAML } from "../Constants";
-import { writeToPromptsVolume } from "../FileUtils";
+import { writeToPromptsVolume } from "../utils/Files";
 import { getRegistry, syncRegistryWithConfig } from "../Registry";
 import Secrets from "../Secrets";
 import { CatalogItemRichened, CatalogItemWithName } from "../types/catalog";

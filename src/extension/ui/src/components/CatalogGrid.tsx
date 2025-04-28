@@ -122,7 +122,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         >
           <Tab label="MCP Servers" />
           <Tab label="MCP Clients" />
-          <Tab label="OAuth Providers" />
+          {/* <Tab label="OAuth Providers" /> */}
         </Tabs>
         {tab === 0 && (
           <Stack
