@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
-import { Grid2 } from '@mui/material';
-import Tile from '../tile/Index';
 import { v1 } from '@docker/extension-api-client-types';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { Collapse, Grid2, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 import { useCatalogAll } from '../../queries/useCatalog';
+import Tile from '../tile/Index';
 
 interface ToolCatalogProps {
   search: string;
@@ -19,6 +21,8 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
   sort,
 }) => {
   const { catalogItems, registryLoading } = useCatalogAll(client);
+  const [expandedEnabled, setExpandedEnabled] = useState(true);
+  const [expandedNotEnabled, setExpandedNotEnabled] = useState(true);
 
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const result = useMemo(() => {
@@ -32,29 +36,67 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
 
     return sort === 'name-asc'
       ? filteredItems.sort((a, b) => {
-          return a.name.localeCompare(b.name);
-        })
+        return a.name.localeCompare(b.name);
+      })
       : sort === 'name-desc'
-      ? filteredItems.sort((a, b) => {
+        ? filteredItems.sort((a, b) => {
           return b.name.localeCompare(a.name);
         })
-      : filteredItems;
+        : filteredItems;
   }, [catalogItems, search, showMine, sort]);
 
+
+
   return (
-    <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
-      {result.map((catalogItem) => {
-        return (
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
-            <Tile
-              item={catalogItem}
-              client={client}
-              registryLoading={registryLoading}
-            />
-          </Grid2>
-        );
-      })}
-    </Grid2>
+    <>
+      <Typography
+        variant='subtitle2'
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
+        onClick={() => setExpandedEnabled(!expandedEnabled)}>
+        Enabled tools
+        {expandedEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
+      </Typography>
+
+      <Collapse in={expandedEnabled}>
+        <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
+          {result.filter((item) => item.registered).map((catalogItem) => {
+            return (
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
+                <Tile
+                  item={catalogItem}
+                  client={client}
+                  registryLoading={registryLoading}
+                />
+              </Grid2>
+            );
+          })}
+        </Grid2>
+      </Collapse>
+
+      <Typography
+        variant='subtitle2'
+        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer" }}
+        onClick={() => setExpandedNotEnabled(!expandedNotEnabled)}>
+        All the tools
+        {expandedNotEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
+      </Typography>
+
+      <Collapse in={expandedNotEnabled}>
+        <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
+          {result.filter((item) => true).map((catalogItem) => {
+            return (
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={catalogItem.name}>
+                <Tile
+                  item={catalogItem}
+                  client={client}
+                  registryLoading={registryLoading}
+                />
+              </Grid2>
+            );
+          })}
+        </Grid2>
+      </Collapse>
+    </>
   );
 };
 
