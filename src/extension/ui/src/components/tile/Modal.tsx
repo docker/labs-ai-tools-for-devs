@@ -30,7 +30,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -299,7 +299,8 @@ const ConfigurationModal = ({
                           <Link
                             onClick={() =>
                               client.host.openExternal(
-                                `${catalogItem.readme
+                                `${
+                                  catalogItem.readme
                                 }#tool-${tool.name.replaceAll(' ', '-')}` || ''
                               )
                             }
@@ -328,7 +329,7 @@ const ConfigurationModal = ({
               >
                 <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
-                  <Stack>
+                  <Stack spacing={1}>
                     <Typography variant="subtitle2">Secrets</Typography>
                     {!ddInfo && !ddInfoLoading && (
                       <Alert severity="error">
@@ -340,105 +341,104 @@ const ConfigurationModal = ({
                         {getUnsupportedSecretMessage(ddInfo?.parsedVersion)}
                       </Alert>
                     )}
-                    {ddInfo?.hasSecretSupport &&
-                      catalogItem.secrets &&
-                      catalogItem.secrets?.length > 0 ? (
-                      catalogItem.secrets.map((secret, index) => {
-                        const secretEdited =
-                          (secret.assigned &&
-                            localSecrets[secret.name] !==
-                            ASSIGNED_SECRET_PLACEHOLDER) ||
-                          (!secret.assigned &&
-                            localSecrets[secret.name] !== '');
-                        return (
-                          <Stack
-                            key={secret.name}
-                            direction="row"
-                            spacing={2}
-                            sx={{
-                              alignItems: 'center',
-                            }}
-                          >
-                            <TextField
-                              size="small"
-                              inputRef={(element) =>
-                                (inputRefs.current[index] = element)
-                              }
-                              disabled={secret.assigned}
+                    <Stack>
+                      {ddInfo?.hasSecretSupport &&
+                        catalogItem.secrets &&
+                        catalogItem.secrets?.length > 0 &&
+                        catalogItem.secrets.map((secret, index) => {
+                          const secretEdited =
+                            (secret.assigned &&
+                              localSecrets[secret.name] !==
+                                ASSIGNED_SECRET_PLACEHOLDER) ||
+                            (!secret.assigned &&
+                              localSecrets[secret.name] !== '');
+                          return (
+                            <Stack
                               key={secret.name}
-                              label={secret.name}
-                              value={localSecrets[secret.name]}
-                              fullWidth
-                              onChange={(e) => {
-                                setLocalSecrets({
-                                  ...localSecrets,
-                                  [secret.name]: e.target.value,
-                                });
+                              direction="row"
+                              spacing={2}
+                              sx={{
+                                alignItems: 'center',
                               }}
-                              type="password"
-                            />
-                            {secret.assigned && !secretEdited && (
-                              <IconButton
+                            >
+                              <TextField
                                 size="small"
-                                onClick={() => {
+                                inputRef={(element) =>
+                                  (inputRefs.current[index] = element)
+                                }
+                                disabled={secret.assigned}
+                                key={secret.name}
+                                label={secret.name}
+                                value={localSecrets[secret.name]}
+                                fullWidth
+                                onChange={(e) => {
                                   setLocalSecrets({
                                     ...localSecrets,
-                                    [secret.name]: '',
-                                  });
-                                  // We need to enable the input to be able to focus on it
-                                  inputRefs.current[index].disabled = false;
-                                  inputRefs.current[index].focus();
-                                  mutateSecret.mutateAsync({
-                                    name: secret.name,
-                                    value: undefined,
-                                    policies: [MCP_POLICY_NAME],
+                                    [secret.name]: e.target.value,
                                   });
                                 }}
-                              >
-                                <EditOutlinedIcon fontSize="small" />
-                              </IconButton>
-                            )}
-                            {secretEdited && (
-                              <Stack direction="row" spacing={1}>
+                                type="password"
+                              />
+                              {secret.assigned && !secretEdited && (
                                 <IconButton
                                   size="small"
-                                  onClick={async () => {
-                                    await mutateSecret.mutateAsync({
+                                  onClick={() => {
+                                    setLocalSecrets({
+                                      ...localSecrets,
+                                      [secret.name]: '',
+                                    });
+                                    // We need to enable the input to be able to focus on it
+                                    inputRefs.current[index].disabled = false;
+                                    inputRefs.current[index].focus();
+                                    mutateSecret.mutateAsync({
                                       name: secret.name,
-                                      value: localSecrets[secret.name]!,
+                                      value: undefined,
                                       policies: [MCP_POLICY_NAME],
                                     });
                                   }}
                                 >
-                                  <CheckOutlined
-                                    fontSize="small"
-                                    sx={{ color: 'success.main' }}
-                                  />
+                                  <EditOutlinedIcon fontSize="small" />
                                 </IconButton>
-                                <IconButton
-                                  size="small"
-                                  onClick={async () => {
-                                    setLocalSecrets({
-                                      ...localSecrets,
-                                      [secret.name]: secret.assigned
-                                        ? ASSIGNED_SECRET_PLACEHOLDER
-                                        : '',
-                                    });
-                                  }}
-                                >
-                                  <CloseOutlined
-                                    fontSize="small"
-                                    sx={{ color: 'error.main' }}
-                                  />
-                                </IconButton>
-                              </Stack>
-                            )}
-                          </Stack>
-                        );
-                      })
-                    ) : (
-                      <Typography>No secrets available.</Typography>
-                    )}
+                              )}
+                              {secretEdited && (
+                                <Stack direction="row" spacing={1}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={async () => {
+                                      await mutateSecret.mutateAsync({
+                                        name: secret.name,
+                                        value: localSecrets[secret.name]!,
+                                        policies: [MCP_POLICY_NAME],
+                                      });
+                                    }}
+                                  >
+                                    <CheckOutlined
+                                      fontSize="small"
+                                      sx={{ color: 'success.main' }}
+                                    />
+                                  </IconButton>
+                                  <IconButton
+                                    size="small"
+                                    onClick={async () => {
+                                      setLocalSecrets({
+                                        ...localSecrets,
+                                        [secret.name]: secret.assigned
+                                          ? ASSIGNED_SECRET_PLACEHOLDER
+                                          : '',
+                                      });
+                                    }}
+                                  >
+                                    <CloseOutlined
+                                      fontSize="small"
+                                      sx={{ color: 'error.main' }}
+                                    />
+                                  </IconButton>
+                                </Stack>
+                              )}
+                            </Stack>
+                          );
+                        })}
+                    </Stack>
                   </Stack>
                 </Stack>
               </Stack>

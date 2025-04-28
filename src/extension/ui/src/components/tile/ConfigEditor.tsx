@@ -81,7 +81,7 @@ const ConfigEditor = ({
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={1}>
       <Typography variant="subtitle2">Parameters</Typography>
       <Stack>
         {Object.keys(flattenedConfig).map((key: string) => {
