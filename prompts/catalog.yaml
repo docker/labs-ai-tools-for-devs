@@ -2483,3 +2483,36 @@ registry:
         properties:
           base_url:
             type: string
+  playwright:
+    description: Playwright MCP server.
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/playwright.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/playwright.md
+    source: https://github.com/microsoft/playwright-mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/6154722?v=4
+    tools:
+      - name: browser_click
+      - name: browser_close
+      - name: browser_console_messages
+      - name: browser_drag
+      - name: browser_file_upload
+      - name: browser_handle_dialog
+      - name: browser_hover
+      - name: browser_install
+      - name: browser_navigate
+      - name: browser_navigate_back
+      - name: browser_navigate_forward
+      - name: browser_network_requests
+      - name: browser_pdf_save
+      - name: browser_press_key
+      - name: browser_resize
+      - name: browser_select_option
+      - name: browser_snapshot
+      - name: browser_tab_close
+      - name: browser_tab_list
+      - name: browser_tab_new
+      - name: browser_tab_select
+      - name: browser_take_screenshot
+      - name: browser_type
+      - name: browser_wait
+    prompts: 0
+    resources: {}
