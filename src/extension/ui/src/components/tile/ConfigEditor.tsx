@@ -87,6 +87,7 @@ const ConfigEditor = ({
       <Stack>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
+          const propertyType = schema.rootSchema.properties[key].type;
 
           return (
             <Stack
@@ -102,6 +103,7 @@ const ConfigEditor = ({
                 size="small"
                 label={`${key} ${requiredAttributes.includes(key) ? ' (required)' : ''}`}
                 value={localConfig[key]}
+                type={propertyType === 'integer' ? 'number' : 'text'}
                 onChange={(e) =>
                   setLocalConfig({ ...localConfig, [key]: e.target.value })
                 }
