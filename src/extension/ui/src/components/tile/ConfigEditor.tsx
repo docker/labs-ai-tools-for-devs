@@ -29,6 +29,11 @@ const ConfigEditor = ({
   catalogItem: CatalogItemRichened;
   client: v1.DockerDesktopClient;
 }) => {
+
+  if (!catalogItem.config?.[0]) {
+    return null;
+  }
+
   const configSchema = catalogItem.configSchema;
 
   const {
@@ -160,6 +165,9 @@ const ConfigEditor = ({
 };
 
 function sanitizeConfig(config: { [key: string]: any; }, catalogItem: CatalogItemRichened) {
+  if (!catalogItem.config?.[0]) {
+    return config;
+  }
   const newConfig = buildObjectFromFlattenedObject(config);
 
   // Remove all attributes which are optional and which have the defautl value

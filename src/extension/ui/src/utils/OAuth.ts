@@ -1,10 +1,11 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { OAuthProvider } from "../types/oauth/Provider";
+import { OAuthClient } from "../types/oauth/Client";
+
 export const listOAuthApps = async (client: v1.DockerDesktopClient) => {
   const output = await client.extension.host?.cli.exec("host-binary", [
     "list-oauth-apps",
   ]);
-  return JSON.parse(output?.stdout || "[]") as OAuthProvider[];
+  return JSON.parse(output?.stdout || "[]") as OAuthClient[];
 };
 
 export const authorizeOAuthApp = async (

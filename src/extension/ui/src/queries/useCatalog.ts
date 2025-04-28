@@ -46,7 +46,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
         ...item,
         secrets: secretsWithAssignment,
         configValue: itemConfigValue,
-        configSchema: item.config,
+        configSchema: item.config || {},
         configTemplate,
         missingConfig: unConfigured,
         missingSecrets: missingASecret,
