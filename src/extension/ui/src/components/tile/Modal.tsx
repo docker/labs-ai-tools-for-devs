@@ -358,7 +358,9 @@ const ConfigurationModal = ({
                             key={secret.name}
                             direction="row"
                             spacing={2}
-                            alignItems="center"
+                            sx={{
+                              alignItems: 'center',
+                            }}
                           >
                             <TextField
                               size="small"
@@ -400,7 +402,7 @@ const ConfigurationModal = ({
                               </IconButton>
                             )}
                             {secretEdited && (
-                              <ButtonGroup>
+                              <Stack direction="row" spacing={1}>
                                 <IconButton
                                   size="small"
                                   onClick={async () => {
@@ -432,7 +434,7 @@ const ConfigurationModal = ({
                                     sx={{ color: 'error.main' }}
                                   />
                                 </IconButton>
-                              </ButtonGroup>
+                              </Stack>
                             )}
                           </Stack>
                         );
