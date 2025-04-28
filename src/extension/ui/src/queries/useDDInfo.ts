@@ -1,7 +1,5 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
-import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 import { DD_BUILD_WITH_SECRET_SUPPORT } from "../Constants";
 
 const parseDDVersion = (ddVersion: string) => {

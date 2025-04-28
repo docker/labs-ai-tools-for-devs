@@ -1,10 +1,8 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as JsonSchemaLibrary from "json-schema-library";
-import { useRef } from "react";
 import { stringify } from "yaml";
-import { POLL_INTERVAL } from "../Constants";
-import { writeToPromptsVolume } from "../FileUtils";
+import { writeToPromptsVolume } from "../utils/Files";
 import { getStoredConfig } from "../Registry";
 import { CatalogItemWithName } from "../types/catalog";
 

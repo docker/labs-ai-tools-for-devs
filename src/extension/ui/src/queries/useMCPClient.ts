@@ -21,45 +21,7 @@ export function useMCPClient(client: v1.DockerDesktopClient) {
   } = useQuery({
     queryKey: ["mcpClientStates"],
     networkMode: "always",
-    queryFn: async () => {
-      const states = await getMCPClientStates(client);
-
-      if (mcpClientStates) {
-        const oldStates = { ...mcpClientStates };
-
-        // Whenever a client connection changes, show toast to user
-        const newlyConnectedClient = Object.values(states).find(
-          (state) =>
-            state.exists &&
-            state.configured &&
-            oldStates[state.client.name] &&
-            !oldStates[state.client.name].configured
-        );
-        const newlyDisconnectedClient = Object.values(states).find(
-          (state) =>
-            state.exists &&
-            !state.configured &&
-            oldStates[state.client.name] &&
-            oldStates[state.client.name].configured
-        );
-
-        if (newlyDisconnectedClient) {
-          if (newlyDisconnectedClient.client.name === "Gordon") {
-            client.desktopUI.toast.error(
-              "Gordon is disconnected from the Catalog."
-            );
-          } else {
-            client.desktopUI.toast.error(
-              "Client Disconnected: " +
-                newlyDisconnectedClient.client.name +
-                ". Restart it to remove the Catalog."
-            );
-          }
-        }
-      }
-
-      return states;
-    },
+    queryFn: async () => getMCPClientStates(client),
     refetchInterval: POLL_INTERVAL,
     initialData: undefined,
     staleTime: 30000,

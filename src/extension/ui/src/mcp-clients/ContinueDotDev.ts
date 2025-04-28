@@ -1,7 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { parse, stringify } from "yaml";
 import { BUSYBOX } from "../Constants";
-import { getUser, writeToMount } from "../FileUtils";
+import { getUser, writeToMount } from "../utils/Files";
 import { mergeDeep } from "../MergeDeep";
 import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
 
@@ -27,13 +27,13 @@ class ContinueDotDev implements MCPClient {
       await getUser(client)
     );
     try {
-      const result = await client.docker.cli.exec('run', [
-        '--rm',
-        '--mount',
+      const result = await client.docker.cli.exec("run", [
+        "--rm",
+        "--mount",
         `type=bind,source=${configPath},target=/continue/config.yaml`,
         BUSYBOX,
-        '/bin/cat',
-        '/continue/config.yaml',
+        "/bin/cat",
+        "/continue/config.yaml",
       ]);
       return {
         content: result.stdout,
@@ -62,7 +62,12 @@ class ContinueDotDev implements MCPClient {
     }
     const payload = mergeDeep(continueConfig, SAMPLE_MCP_CONFIG);
     try {
-      await writeToMount(client, `type=bind,source=${config.path},target=/continue/config.yaml`, '/continue/config.yaml', stringify(payload));
+      await writeToMount(
+        client,
+        `type=bind,source=${config.path},target=/continue/config.yaml`,
+        "/continue/config.yaml",
+        stringify(payload)
+      );
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);
@@ -89,7 +94,7 @@ class ContinueDotDev implements MCPClient {
     } catch (e) {
       client.desktopUI.toast.error(
         "Failed to disconnect. Invalid Continue.dev config found at " +
-        config.path
+          config.path
       );
       return;
     }
@@ -102,7 +107,12 @@ class ContinueDotDev implements MCPClient {
       ),
     };
     try {
-      await writeToMount(client, `type=bind,source=${config.path},target=/continue/config.yaml`, '/continue/config.yaml', stringify(payload));
+      await writeToMount(
+        client,
+        `type=bind,source=${config.path},target=/continue/config.yaml`,
+        "/continue/config.yaml",
+        stringify(payload)
+      );
     } catch (e) {
       if ((e as any).stderr) {
         client.desktopUI.toast.error((e as any).stderr);
