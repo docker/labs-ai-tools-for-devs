@@ -52,7 +52,7 @@ export const writeToPromptsVolume = async (client: v1.DockerDesktopClient, filen
         BUSYBOX,
         "/bin/sh",
         "-c",
-        `'echo ${encode(content)} | base64 -d > ${filename}'`,
+        `\\"echo ${encode(content)} | base64 -d > ${filename}\\"`,
     ]);
 }
 
@@ -64,6 +64,6 @@ export const writeToMount = async (client: v1.DockerDesktopClient, mount: string
         BUSYBOX,
         "/bin/sh",
         "-c",
-        `'echo ${encode(content)} | base64 -d > ${filename}'`,
+        `\\"echo ${encode(content)} | base64 -d > ${filename}\\"`,
     ]);
 }
