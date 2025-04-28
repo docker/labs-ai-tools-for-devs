@@ -280,6 +280,13 @@ const ConfigurationModal = ({
                     sx={toolChipStyle}
                   >
                     {tool.name}
+                    <Link
+                      onClick={() => client.host.openExternal(`${catalogItem.readme}#tool-${tool.name.replaceAll(' ', '-')}` || '')}
+                      href="#"
+                      target="_blank"
+                    >
+                      <Launch />
+                    </Link>
                   </Typography>
                 ))}
               </Stack>
