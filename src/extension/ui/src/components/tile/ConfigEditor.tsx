@@ -89,6 +89,14 @@ const ConfigEditor = ({
           const edited = localConfig[key] !== flattenedConfig[key];
           const propertyType = schema.rootSchema.properties[key].type;
 
+          let label = key
+          if (propertyType === "array") {
+            label += ' (comma separated)';
+          }
+          if (requiredAttributes.includes(key)) {
+            label += ' (required)';
+          }
+
           return (
             <Stack
               key={key}
@@ -101,7 +109,7 @@ const ConfigEditor = ({
               <TextField
                 fullWidth
                 size="small"
-                label={`${key} ${requiredAttributes.includes(key) ? ' (required)' : ''}`}
+                label={label}
                 value={localConfig[key]}
                 type={propertyType === 'integer' ? 'number' : 'text'}
                 onChange={(e) =>
@@ -169,6 +177,8 @@ function sanitizeConfig(config: { [key: string]: any; }, catalogItem: CatalogIte
         return [key, parseInt(value) || 0];
       case "boolean":
         return [key, (value as string).toLowerCase() === "true"];
+      case "array":
+        return [key, (value as string).split(",").map((item) => item.trim())];
       default:
         return [key, value];
     }
