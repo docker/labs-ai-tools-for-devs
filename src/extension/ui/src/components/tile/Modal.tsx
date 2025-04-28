@@ -285,7 +285,7 @@ const ConfigurationModal = ({
                   </TableHead>
                   <TableBody>
                     {(catalogItem.tools || []).map((tool) => (
-                      <TableRow>
+                      <TableRow key={tool.name}>
                         <TableCell>
                           <Typography
                             key={tool.name}
