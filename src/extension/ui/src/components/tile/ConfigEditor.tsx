@@ -17,6 +17,7 @@ import {
 } from '../../MergeDeep';
 import { useConfig } from '../../queries/useConfig';
 import { CatalogItemRichened } from '../../types/catalog';
+import { get } from 'lodash-es';
 
 JsonSchema.settings.GET_TEMPLATE_RECURSION_LIMIT = 1000;
 JsonSchema.settings.templateDefaultOptions.addOptionalProps = true;
@@ -87,7 +88,7 @@ const ConfigEditor = ({
       <Stack>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
-          const propertyType = schema.rootSchema.properties[key].type;
+          const propertyType = get(schema.rootSchema.properties, key.replaceAll(".", ".properties.")).type;
 
           let label = key
           if (propertyType === "array") {
@@ -171,7 +172,7 @@ function sanitizeConfig(config: { [key: string]: any; }, catalogItem: CatalogIte
 
   // Use the right types for each attribute
   const typedConfig = Object.fromEntries(Object.entries(requiredConfig).map(([key, value]) => {
-    const propertyType = schema.rootSchema.properties[key].type;
+    const propertyType = get(schema.rootSchema.properties, key.replaceAll(".", ".properties.")).type;
     switch (propertyType) {
       case "integer":
         return [key, parseInt(value) || 0];
