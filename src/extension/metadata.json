@@ -5,7 +5,7 @@
   },
   "ui": {
     "dashboard-tab": {
-      "title": "Docker MCP Toolkit",
+      "title": "MCP Toolkit",
       "src": "index.html",
       "root": "ui"
     }

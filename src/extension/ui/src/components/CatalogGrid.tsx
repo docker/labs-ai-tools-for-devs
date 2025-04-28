@@ -120,8 +120,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
           onChange={(_, newValue) => setTab(newValue)}
           sx={CATALOG_LAYOUT_SX}
         >
-          <Tab label="MCP Catalog" />
-          <Tab label="Clients" />
+          <Tab label="MCP Servers" />
+          <Tab label="MCP Clients" />
           <Tab label="OAuth Providers" />
         </Tabs>
         {tab === 0 && (
