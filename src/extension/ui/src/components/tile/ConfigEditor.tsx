@@ -49,9 +49,9 @@ const ConfigEditor = ({
     () =>
       configSchema
         ? deepFlattenObject({
-            ...catalogItem.configTemplate,
-            ...existingConfigForItem,
-          })
+          ...catalogItem.configTemplate,
+          ...existingConfigForItem,
+        })
         : {},
     [catalogItem.configTemplate, existingConfigForItem, configSchema]
   );
@@ -82,7 +82,7 @@ const ConfigEditor = ({
   return (
     <Stack spacing={1}>
       <Typography variant="subtitle2">Parameters</Typography>
-      <Stack direction="column" spacing={1}>
+      <Stack>
         {Object.keys(flattenedConfig).map((key: string) => {
           const edited = localConfig[key] !== flattenedConfig[key];
           const isSaving = savingKeys.has(key);
