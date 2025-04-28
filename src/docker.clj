@@ -77,6 +77,17 @@
               (format "%s/Library/Containers/com.docker.docker/Data/backend.sock" (System/getenv "HOME"))]]
     (some unix-socket-file coll)))
 
+(defn- get-jfs-socket []
+  (let [coll [(or (System/getenv "JFS_SOCKET_PATH") "/jfs.sock")
+              (format "%s/Library/Containers/com.docker.docker/Data/jfs.sock" (System/getenv "HOME"))]]
+    (some unix-socket-file coll)))
+
+(defn jfs-get-secret [s]
+  (curl/get
+   (format "http://localhost/secrets/%s" s)
+   {:raw-args ["--unix-socket"  (get-jfs-socket)]
+    :throw false}))
+
 (defn backend-is-logged-in? [_]
   (curl/get
    "http://localhost/registry/is-logged-in"
@@ -228,7 +239,7 @@
 
 (defn inspect-image [{:keys [Name Id]}]
   (curl/get
-    (format "http://localhost/images/%s/json" (or Name Id))
+   (format "http://localhost/images/%s/json" (or Name Id))
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
@@ -310,6 +321,7 @@
 (def pull (comp (status? 200 "pull-image") pull-image))
 (def images (comp ->json list-images))
 (def containers (comp ->json (status? 200 "list-containers") list-containers))
+(def secrets-get (comp ->json (status? 200 "secrets-get") jfs-get-secret))
 
 (defn add-latest [image]
   (let [[_ tag] (re-find #".*(:.*)$" image)]
@@ -367,25 +379,34 @@
         [s])
        (string/join " ; ")))
 
+(defn get-secrets [{:keys [secrets]}]
+  (->> secrets
+       (map (fn [[k v]]
+              [v (:value (secrets-get (name k)))]))
+       (into {})))
+
 (defn inject-secret-transform [container-definition]
   (check-then-pull container-definition)
-  (let [{:keys [Entrypoint Cmd Env]}
+  (let [{:keys [Entrypoint Cmd Env User]}
         (->
          (image-inspect {:Name (:image container-definition)})
          :Config)
         real-entrypoint (string/join " " (concat
                                           (or (:entrypoint container-definition) Entrypoint)
                                           (or (:command container-definition) Cmd)))]
-    (-> container-definition
-        (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint
-                                            (:secrets container-definition)
-                                            (concat
-                                             Env
-                                             (->> (:environment container-definition)
-                                                  (map (fn [[k v]] (format "%s=%s" (if (keyword? k) (name k) k) v)))
-                                                  (into [])))
-                                            real-entrypoint)])
-        (dissoc :command))))
+    (if (#{"" "root"} User)
+      (-> container-definition
+          (assoc :entrypoint ["/bin/sh" "-c" (injected-entrypoint
+                                              (:secrets container-definition)
+                                              (concat
+                                               Env
+                                               (->> (:environment container-definition)
+                                                    (map (fn [[k v]] (format "%s=%s" (if (keyword? k) (name k) k) v)))
+                                                    (into [])))
+                                              real-entrypoint)])
+          (dissoc :command))
+      (-> container-definition
+          (update :environment (fnil merge {}) (get-secrets container-definition))))))
 
 (defn run-streaming-function-with-no-stdin
   "run container function with no stdin, and no timeout, but streaming stdout"
@@ -402,18 +423,22 @@
         finished-channel (async/promise-chan)]
     (start x)
 
-    (async/go
-      (try
-        (let [s (:body (attach-container-stream-stdout x))]
-          (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
-            (cb line)))
-        (catch Throwable e
-          (println e))))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (try
+          (let [s (:body (attach-container-stream-stdout x))]
+            (doseq [line (line-seq (java.io.BufferedReader. (java.io.InputStreamReader. s)))]
+              (cb line)))
+          (catch Throwable e
+            (logger/error "run-streaming-function" e))))))
 
     ;; watch the container
-    (async/go
-      (wait x)
-      (async/>! finished-channel {:done :exited}))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (wait x)
+        (async/put! finished-channel {:done :exited}))))
 
     {:container x
      ;; stopped channel
@@ -547,10 +572,13 @@
     (let [header-buf (ByteBuffer/allocate 8)
           stdout (PipedOutputStream.)
           stdout-reader (io/reader (PipedInputStream. stdout))]
-      (async/go-loop []
-        (when-let [line (.readLine stdout-reader)]
-          (async/put! c {:stdout line})
-          (recur)))
+      (.start ^Thread
+       (Thread.
+        (fn []
+          (loop []
+            (when-let [line (.readLine stdout-reader)]
+              (async/put! c {:stdout line})
+              (recur))))))
       (loop [offset 0]
         (let [result (.read ^SocketChannel in header-buf)]
           (cond
@@ -656,7 +684,10 @@
         c (async/chan)
         output-channel (async/chan)]
     (start x)
-    (async/thread (read-loop socket-channel c))
+    (.start ^Thread
+     (Thread.
+      (fn []
+        (read-loop socket-channel c))))
     (async/go
       (docker/wait x)
       (async/>! c :stopped)

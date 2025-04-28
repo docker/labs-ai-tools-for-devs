@@ -80,15 +80,13 @@
                               (into []))]
             (doseq [message messages]
               (if-let [p (get @response-promises (:id message))]
-                (async/put! p message)  
-                (logger/debug "no promise found: " message)))
+                (async/put! p message)
+                (logger/debug (:image container) message)))
             (recur))
 
           ;; channel is closed
           (nil? block)
-          (do
-            (logger/info "nil block - closing")
-            (async/put! dead-channel :closed))
+          (async/put! dead-channel :closed) 
 
           ;; non-stdout message - show to user
           :else
@@ -152,7 +150,9 @@
                                (:image container-definition)))
                 {:error :did-not-initialize})))
           (finally
-            (when (not (true? stateful))
+            (when (and
+                   (not (true? stateful))
+                   (not (= "false" (System/getenv "GATEWAY_CONTAINER_RM"))))
               (remove))))))
     (catch Throwable t
       (logger/error (.getMessage t))

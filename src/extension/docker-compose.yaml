@@ -1,11 +1,12 @@
 services:
   mcp_docker:
-    image: mcp/docker:0.0.14
+    image: mcp/docker:0.0.15
     ports:
       - 8811:8811
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/run/host-services/backend.sock:/backend.sock"
+      - "/run/guest-services/jfs.sock:/jfs.sock"
       - "docker-prompts:/prompts"
     command:
       - serve

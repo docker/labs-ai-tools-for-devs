@@ -26,3 +26,4 @@
 .idea
 /catalog.updated.yaml
 claude_desktop_config.json
+/set-secrets.sh

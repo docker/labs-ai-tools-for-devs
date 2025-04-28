@@ -133,6 +133,7 @@
     :error (binding [*out* *err*]
              (println (:content params)))
     :prompts nil
+    :start nil
     (binding [*out* *err*] (println (format "%s\n%s\n" method params)))))
 
 (defn create-stdout-notifier [{:keys [debug]}]
