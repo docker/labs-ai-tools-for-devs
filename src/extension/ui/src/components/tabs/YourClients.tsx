@@ -218,8 +218,15 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12, width: buttonsLoading[name] ? 70 : 90 }}>Disconnect</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Connect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Disconnect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
@@ -248,8 +255,15 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12, width: buttonsLoading[name] ? 70 : 90 }}>Connect</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
@@ -273,8 +287,15 @@ function ClientSetting({
                 }}
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: 12, width: buttonsLoading[name] ? 70 : 90 }}>Connect</Typography>
-                  {buttonsLoading[name] && <CircularProgress size={12} />}
+                  {buttonsLoading[name]
+                    &&
+                    <>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <CircularProgress size={12} />
+                    </>
+                    ||
+                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
+                  }
                 </Stack>
               </Button>
             )}
