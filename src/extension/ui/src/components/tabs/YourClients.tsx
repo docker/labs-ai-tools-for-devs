@@ -1,5 +1,6 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
   Avatar,
   Button,
@@ -172,9 +173,7 @@ function ClientSetting({
             />
           )
         }
-        title={
-          <Typography variant="subtitle2">{name}</Typography>
-        }
+        title={<Typography variant="subtitle2">{name}</Typography>}
         subheader={
           <Typography
             variant="body2"
@@ -187,7 +186,11 @@ function ClientSetting({
             onClick={() => setExpanded(!expanded)}
           >
             Manual configuration
-            <KeyboardArrowDownIcon fontSize="small" />
+            {expanded ? (
+              <KeyboardArrowDownIcon fontSize="small" />
+            ) : (
+              <KeyboardArrowRightIcon fontSize="small" />
+            )}
           </Typography>
         }
         action={
@@ -216,15 +219,18 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  {buttonsLoading[name]
-                    &&
+                  {(buttonsLoading[name] && (
                     <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>Connect</Typography>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>
+                        Connect
+                      </Typography>
                       <CircularProgress size={12} />
                     </>
-                    ||
-                    <Typography sx={{ fontSize: 12, width: 90 }}>Disconnect</Typography>
-                  }
+                  )) || (
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Disconnect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
@@ -253,15 +259,18 @@ function ClientSetting({
                 size="small"
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  {buttonsLoading[name]
-                    &&
+                  {(buttonsLoading[name] && (
                     <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>
+                        Disconnect
+                      </Typography>
                       <CircularProgress size={12} />
                     </>
-                    ||
-                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
-                  }
+                  )) || (
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Connect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
@@ -285,15 +294,18 @@ function ClientSetting({
                 }}
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  {buttonsLoading[name]
-                    &&
+                  {(buttonsLoading[name] && (
                     <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>Disconnect</Typography>
+                      <Typography sx={{ fontSize: 12, width: 70 }}>
+                        Disconnect
+                      </Typography>
                       <CircularProgress size={12} />
                     </>
-                    ||
-                    <Typography sx={{ fontSize: 12, width: 90 }}>Connect</Typography>
-                  }
+                  )) || (
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Connect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
