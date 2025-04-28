@@ -7,7 +7,7 @@ import { ParsedParameters } from "./types/config";
 
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
     const parseRegistry = async () => {
-        const registry = await readFileInPromptsVolume(client, 'registry.yaml')
+        const registry = await readFileInPromptsVolume(client, REGISTRY_YAML)
         if (registry) {
             const value = parse(registry)['registry'] as { [key: string]: { ref: string, config: any } }
             if (!value) {
@@ -18,7 +18,7 @@ export const getRegistry = async (client: v1.DockerDesktopClient) => {
         return {};
     }
     const writeRegistryIfNotExists = async () => {
-        const registry = await readFileInPromptsVolume(client, 'registry.yaml')
+        const registry = await readFileInPromptsVolume(client, REGISTRY_YAML)
         if (!registry) {
             await writeToPromptsVolume(client, REGISTRY_YAML, 'registry: {}')
         }
@@ -95,12 +95,7 @@ export const syncRegistryWithConfig = async (client: v1.DockerDesktopClient, reg
     }
     const oldRegString = JSON.stringify(registry)
     for (const [itemName, itemConfig] of Object.entries(config)) {
-        const registryItem = registry[itemName]
-        if (registryItem && registryItem.config?.[itemName]) {
-            const mergedConfig = mergeDeep(registryItem.config[itemName] || {}, itemConfig)
-            registry[itemName].config = { [itemName]: mergedConfig }
-        }
-        else if (registryItem) {
+        if (registry[itemName]) {
             registry[itemName].config = { [itemName]: itemConfig }
         }
     }

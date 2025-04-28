@@ -11,6 +11,7 @@ import {
 import * as JsonSchema from 'json-schema-library';
 import { useEffect, useMemo, useState } from 'react';
 
+import * as JsonSchemaLibrary from "json-schema-library";
 import {
   buildObjectFromFlattenedObject,
   deepFlattenObject,
@@ -100,7 +101,7 @@ const ConfigEditor = ({
                 fullWidth
                 size="small"
                 label={key}
-                value={localConfig[key] || ''}
+                value={localConfig[key]}
                 onChange={(e) =>
                   setLocalConfig({ ...localConfig, [key]: e.target.value })
                 }
@@ -114,12 +115,19 @@ const ConfigEditor = ({
                     <Stack direction="row" spacing={1}>
                       <IconButton
                         size="small"
-                        onClick={() =>
-                          updateExistingConfig(
-                            catalogItem.name,
-                            buildObjectFromFlattenedObject(localConfig)
-                          )
-                        }
+                        onClick={() => {
+                          const newConfig = buildObjectFromFlattenedObject(localConfig);
+
+                          // Remove all attributes which are optional and which have the defautl value
+                          const schema = new JsonSchemaLibrary.Draft2019(catalogItem.config[0]);
+                          const requiredAttributes = (schema.rootSchema.required || []) as string[];
+                          const template = schema.getTemplate({});
+                          const requiredConfig = Object.fromEntries(Object.entries(newConfig).filter(([key, value]) => {
+                            return requiredAttributes.includes(key) || (value !== template[key]);
+                          }));
+
+                          updateExistingConfig(catalogItem.name, requiredConfig)
+                        }}
                         disabled={isSaving}
                       >
                         <CheckOutlined
