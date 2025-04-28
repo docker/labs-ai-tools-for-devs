@@ -78,6 +78,9 @@ const ConfigEditor = ({
     return null;
   }
 
+  const schema = new JsonSchemaLibrary.Draft2019(catalogItem.config[0]);
+  const requiredAttributes = (schema.rootSchema.required || []) as string[];
+
   return (
     <Stack spacing={1}>
       <Typography variant="subtitle2">Parameters</Typography>
@@ -97,7 +100,7 @@ const ConfigEditor = ({
               <TextField
                 fullWidth
                 size="small"
-                label={key}
+                label={`${key} ${requiredAttributes.includes(key) ? ' (required)' : ''}`}
                 value={localConfig[key]}
                 onChange={(e) =>
                   setLocalConfig({ ...localConfig, [key]: e.target.value })
