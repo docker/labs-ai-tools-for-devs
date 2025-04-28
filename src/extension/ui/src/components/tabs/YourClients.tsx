@@ -16,16 +16,17 @@ import {
   ListItem,
   ListItemText,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
 import ChatGPTIcon from '../../assets/chatgpt.svg';
 import ClaudeIcon from '../../assets/claude-ai-icon.svg';
+import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
 import GordonIcon from '../../assets/gordon-icon.png';
 import WindsurfIcon from '../../assets/windsurf.svg';
-import ContinueIcon from '../../assets/continue.svg';
 import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from '../../Constants';
 
 // Initialize the Docker Desktop client
@@ -175,23 +176,34 @@ function ClientSetting({
         }
         title={<Typography variant="subtitle2">{name}</Typography>}
         subheader={
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'text.secondary',
-              alignItems: 'center',
-              display: 'flex',
-              cursor: 'pointer',
-            }}
-            onClick={() => setExpanded(!expanded)}
-          >
-            Manual configuration
-            {expanded ? (
-              <KeyboardArrowDownIcon fontSize="small" />
-            ) : (
-              <KeyboardArrowRightIcon fontSize="small" />
-            )}
-          </Typography>
+          mcpClientState.exists ? (
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                alignItems: 'center',
+                display: 'flex',
+                cursor: 'pointer',
+              }}
+              onClick={() => setExpanded(!expanded)}
+            >
+              Manual configuration
+              {expanded ? (
+                <KeyboardArrowDownIcon fontSize="small" />
+              ) : (
+                <KeyboardArrowRightIcon fontSize="small" />
+              )}
+            </Typography>
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
+              Client not installed
+            </Typography>
+          )
         }
         action={
           <Stack direction="row" spacing={1}>
@@ -278,6 +290,7 @@ function ClientSetting({
               <Button
                 sx={{ fontSize: 12 }}
                 size="small"
+                disabled
                 onClick={async () => {
                   setButtonsLoading({
                     ...buttonsLoading,
