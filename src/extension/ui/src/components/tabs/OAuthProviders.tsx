@@ -2,7 +2,7 @@ import { v1 } from "@docker/extension-api-client-types";
 import useOAuthProvider from "../../queries/useOAuthProvider";
 import { Alert, Box, Button, Card, CardContent, CardHeader, Chip, CircularProgress, Collapse, Link, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { OAuthProvider } from "../../types/oauth/Provider";
+import { OAuthClient } from "../../types/oauth/Client";
 
 const OAuthProviders = ({ client }: { client: v1.DockerDesktopClient }) => {
     const { data, isLoading, error, authorizeOAuthProvider, unauthorizeOAuthProvider } = useOAuthProvider(client);
@@ -25,7 +25,7 @@ const OAuthProviders = ({ client }: { client: v1.DockerDesktopClient }) => {
     }
     if (data.length > 0) {
         return <>
-            {data.map((provider: OAuthProvider) => {
+            {data.map((provider: OAuthClient) => {
                 return <Card>
                     <CardHeader title={provider.app} action={provider.authorized ? <Button variant="contained" color="error" onClick={() => {
                         unauthorizeOAuthProvider.mutateAsync(provider.app);
