@@ -174,19 +174,7 @@ function ClientSetting({
           )
         }
         title={
-          <Typography variant="subtitle2">
-            {name}{' '}
-            {mcpClientState.exists && (
-              <Chip
-                label={mcpClientState.configured ? 'Connected' : 'Disconnected'}
-                color={mcpClientState.configured ? 'success' : 'primary'}
-                size="small"
-              />
-            )}
-            {!mcpClientState.exists && (
-              <Chip label="No Config Found" color="warning" size="small" />
-            )}
-          </Typography>
+          <Typography variant="subtitle2">{name}</Typography>
         }
         subheader={
           <Typography
