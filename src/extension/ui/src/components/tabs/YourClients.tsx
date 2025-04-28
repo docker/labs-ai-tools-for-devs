@@ -166,9 +166,8 @@ function ClientSetting({
               src={iconMap[name as keyof typeof iconMap]}
               alt={name}
               sx={{
-                width: 32,
-                height: 32,
-                borderRadius: 1,
+                width: 40,
+                height: 40,
               }}
             />
           )
@@ -184,7 +183,6 @@ function ClientSetting({
               alignItems: 'center',
               display: 'flex',
               cursor: 'pointer',
-              width: 'fit-content',
             }}
             onClick={() => setExpanded(!expanded)}
           >
