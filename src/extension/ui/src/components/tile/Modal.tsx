@@ -264,7 +264,7 @@ const ConfigurationModal = ({
                         }
                         color="error"
                       >
-                        Configuration
+                        <Typography sx={[tabValue === 1 && { fontWeight: 'bold' }]}>Configuration</Typography>
                       </Badge>
                     }
                   />
@@ -302,8 +302,7 @@ const ConfigurationModal = ({
                           <Link
                             onClick={() =>
                               client.host.openExternal(
-                                `${
-                                  catalogItem.readme
+                                `${catalogItem.readme
                                 }#tool-${tool.name.replaceAll(' ', '-')}` || ''
                               )
                             }
@@ -352,7 +351,7 @@ const ConfigurationModal = ({
                           const secretEdited =
                             (secret.assigned &&
                               localSecrets[secret.name] !==
-                                ASSIGNED_SECRET_PLACEHOLDER) ||
+                              ASSIGNED_SECRET_PLACEHOLDER) ||
                             (!secret.assigned &&
                               localSecrets[secret.name] !== '');
                           return (
@@ -449,7 +448,7 @@ const ConfigurationModal = ({
           </>
         )}
       </DialogContent>
-    </Dialog>
+    </Dialog >
   );
 };
 
