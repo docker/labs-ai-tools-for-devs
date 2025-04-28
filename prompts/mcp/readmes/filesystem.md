@@ -1,4 +1,4 @@
-# Filesystem MCP Server
+# Filesystem (Reference) MCP Server
 
 Local filesystem access with configurable allowed paths.
 

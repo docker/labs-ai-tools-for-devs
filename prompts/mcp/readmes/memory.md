@@ -1,4 +1,4 @@
-# Memory MCP Server
+# Memory (Reference) MCP Server
 
 Knowledge graph-based persistent memory system.
 

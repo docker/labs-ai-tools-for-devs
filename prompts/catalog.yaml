@@ -120,7 +120,7 @@ registry:
     resources: {}
   brave:
     description: Web and local search using Brave's Search API.
-    title: Brave Search
+    title: Brave Search (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/brave.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/brave.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -134,7 +134,7 @@ registry:
     resources: {}
   slack:
     description: Interact with Slack Workspaces over the Slack API.
-    title: Slack
+    title: Slack (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/slack.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/slack.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.24
@@ -242,7 +242,7 @@ registry:
             type: boolean
   github:
     description: Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
-    title: GitHub
+    title: GitHub (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/github.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -280,7 +280,7 @@ registry:
     resources: {}
   google-maps:
     description: Tools for interacting with the Google Maps API.
-    title: Google Maps
+    title: Google Maps (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/google-maps.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/google-maps.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -311,7 +311,7 @@ registry:
     resources: {}
   time:
     description: Time and timezone conversion capabilities.
-    title: Time
+    title: Time (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/time.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/time.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/time
@@ -323,7 +323,7 @@ registry:
     resources: {}
   fetch:
     description: Fetches a URL from the internet and extracts its contents as markdown.
-    title: Fetch
+    title: Fetch (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fetch.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/fetch.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/fetch
@@ -404,7 +404,7 @@ registry:
     resources: {}
   puppeteer:
     description: UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer.
-    title: Puppeteer
+    title: Puppeteer (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/puppeteer.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -421,7 +421,7 @@ registry:
     resources: {}
   filesystem:
     description: Local filesystem access with configurable allowed paths.
-    title: Filesystem
+    title: Filesystem (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/filesystem.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -464,7 +464,7 @@ registry:
     resources: {}
   postgres:
     description: Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
-    title: PostgreSQL (readonly)
+    title: PostgreSQL readonly (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/postgres.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/postgres.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -694,7 +694,7 @@ registry:
             type: integer
   aws-kb-retrieval-server:
     description: An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
-    title: AWS KB Retrieval
+    title: AWS KB Retrieval (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/aws-kb-retrieval-server.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/aws-kb-retrieval-server.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -709,7 +709,7 @@ registry:
     resources: {}
   everart:
     description: Image generation server using EverArt's API.
-    title: EverArt
+    title: EverArt (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/everart.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/everart.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
@@ -722,7 +722,7 @@ registry:
     resources: {}
   sentry:
     description: A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
-    title: Sentry
+    title: Sentry (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/sentry.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/sentry.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6/src/sentry
@@ -735,7 +735,7 @@ registry:
     resources: {}
   gitlab:
     description: MCP Server for the GitLab API, enabling project management, file operations, and more.
-    title: GitLab
+    title: GitLab (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/gitlab.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/gitlab.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.24

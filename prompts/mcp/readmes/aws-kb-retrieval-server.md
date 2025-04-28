@@ -1,4 +1,4 @@
-# AWS KB Retrieval MCP Server
+# AWS KB Retrieval (Reference) MCP Server
 
 An MCP server implementation for retrieving information from the AWS Knowledge Base using the Bedrock Agent Runtime.
 

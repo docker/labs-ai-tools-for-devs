@@ -1,4 +1,4 @@
-# GitLab MCP Server
+# GitLab (Reference) MCP Server
 
 MCP Server for the GitLab API, enabling project management, file operations, and more.
 

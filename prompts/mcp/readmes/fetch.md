@@ -1,4 +1,4 @@
-# Fetch MCP Server
+# Fetch (Reference) MCP Server
 
 Fetches a URL from the internet and extracts its contents as markdown.
 

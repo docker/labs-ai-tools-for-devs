@@ -1,4 +1,4 @@
-# Time MCP Server
+# Time (Reference) MCP Server
 
 Time and timezone conversion capabilities.
 

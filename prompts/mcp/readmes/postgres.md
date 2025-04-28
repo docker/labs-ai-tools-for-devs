@@ -1,4 +1,4 @@
-# PostgreSQL (readonly) MCP Server
+# PostgreSQL readonly (Reference) MCP Server
 
 Connect with read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.
 

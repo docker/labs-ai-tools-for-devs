@@ -1,4 +1,4 @@
-# Puppeteer MCP Server
+# Puppeteer (Reference) MCP Server
 
 UNDER CONSTRUCTION (support long running browser cache)
 Browser automation and web scraping using Puppeteer.

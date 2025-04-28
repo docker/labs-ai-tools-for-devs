@@ -1,4 +1,4 @@
-# Slack MCP Server
+# Slack (Reference) MCP Server
 
 Interact with Slack Workspaces over the Slack API.
 

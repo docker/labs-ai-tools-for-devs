@@ -1,4 +1,4 @@
-# GitHub MCP Server
+# GitHub (Reference) MCP Server
 
 Tools for interacting with the GitHub API, enabling file operations, repository management, search functionality, and more.
 

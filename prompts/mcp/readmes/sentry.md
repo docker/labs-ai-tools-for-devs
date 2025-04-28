@@ -1,4 +1,4 @@
-# Sentry MCP Server
+# Sentry (Reference) MCP Server
 
 A Model Context Protocol server for retrieving and analyzing issues from Sentry.io. This server provides tools to inspect error reports, stacktraces, and other debugging information from your Sentry account.
 
