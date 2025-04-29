@@ -19,3 +19,11 @@ func GetToolsApiSocketPath() (string, error) {
 	}
 	return filepath.Join(dir, "tools.sock"), nil
 }
+
+func GetVolumeContentsSocketPath() (string, error) {
+	dir, err := dockerDesktopSocketDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "volume-contents.sock"), nil
+}

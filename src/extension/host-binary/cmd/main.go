@@ -28,6 +28,7 @@ func main() {
 	cmd.AddCommand(ListOAuthApps(ctx))
 	cmd.AddCommand(DeriveSecret(ctx))
 	cmd.AddCommand(commands.CurrentUser(ctx))
+	cmd.AddCommand(commands.ReadFromVolume(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

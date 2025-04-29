@@ -55,21 +55,14 @@ export const readFileInPromptsVolume = async (
   client: v1.DockerDesktopClient,
   path: string
 ) => {
-  return tryRunImageSync(
-    client,
-    [
-      "--rm",
-      "-v",
-      "docker-prompts:/docker-prompts:ro",
-      "--network=none",
-      "-w",
-      "/docker-prompts",
-      BUSYBOX,
-      "/bin/cat",
-      `${path}`,
-    ],
-    true
-  );
+  try {
+    const result = await client.extension.host?.cli.exec("host-binary", ["read-from-volume", path]);
+    if (result) {
+      return result.stdout;
+    }
+  } catch { }
+
+  return ""
 };
 
 export const writeToPromptsVolume = async (
