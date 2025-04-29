@@ -83,7 +83,9 @@ export const writeToPromptsVolume = async (
     BUSYBOX,
     "/bin/sh",
     "-c",
-    `'echo ${encode(content)} | base64 -d > ${filename}'`,
+    client.host.platform === "win32"
+      ? `\"echo ${encode(content)} | base64 -d > ${filename}\"`
+      : `'echo ${encode(content)} | base64 -d > ${filename}'`,
   ]);
 };
 
@@ -100,6 +102,8 @@ export const writeToMount = async (
     BUSYBOX,
     "/bin/sh",
     "-c",
-    `'echo ${encode(content)} | base64 -d > ${filename}'`,
+    client.host.platform === "win32"
+      ? `\"echo ${encode(content)} | base64 -d > ${filename}\"`
+      : `'echo ${encode(content)} | base64 -d > ${filename}'`,
   ]);
 };
