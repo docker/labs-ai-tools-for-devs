@@ -1,0 +1,55 @@
+system:
+  claude-desktop:
+    displayName: Claude Desktop
+    installCheckPaths:
+    - /Applications/Claude.app
+    - $AppData/Claude/
+    paths:
+      linux: $HOME/.config/claude/claude_desktop_config.json
+      darwin: $HOME/Library/Application Support/Claude/claude_desktop_config.json
+      windows: $APPDATA/Claude/claude_desktop_config.json
+    yq:
+      list: '.mcpServers | to_entries | map(.value + {"name": .key})'
+      set: .mcpServers[$NAME] = $JSON
+      del: del(.mcpServers[$NAME])
+  continue:
+    displayName: Continue.dev
+    installCheckPaths:
+    - $HOME/.continue
+    - $USERPROFILE/.continue
+    paths:
+      linux: $HOME/.continue/config.yaml
+      darwin: $HOME/.continue/config.yaml
+      windows: $USERPROFILE/.continue/config.yaml
+    yq:
+      list: .mcpServers
+      set: .mcpServers = (.mcpServers // []) | .mcpServers += [{"name":$NAME}+$JSON]
+      del: del(.mcpServers[] | select(.name == $NAME))
+  cursor:
+    displayName: Cursor
+    installCheckPaths:
+    - /Applications/Cursor.app
+    - $AppData/Cursor/
+    paths:
+      linux: $HOME/.cursor/mcp.json
+      darwin: $HOME/.cursor/mcp.json
+      windows: $USERPROFILE/.cursor/mcp.json
+    yq:
+      list: '.mcpServers | to_entries | map(.value + {"name": .key})'
+      set: .mcpServers[$NAME] = $JSON
+      del: del(.mcpServers[$NAME])
+project:
+  cursor:
+    displayname: Cursor
+    projectfile: .cursor/mcp.json
+    yq:
+      list: '.mcpServers | to_entries | map(.value + {"name": .key})'
+      set: .mcpServers[$NAME] = $JSON
+      del: del(.mcpServers[$NAME])
+  vscode:
+    displayname: VSCode
+    projectfile: .vscode/mcp.json
+    yq:
+      list: '.servers | to_entries | map(.value + {"name": .key})'
+      set: .servers[$NAME] = $JSON+{"type":"stdio"}
+      del: del(.servers[$NAME])

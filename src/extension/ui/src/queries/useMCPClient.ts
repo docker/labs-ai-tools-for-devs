@@ -1,8 +1,7 @@
 import { v1 } from "@docker/extension-api-client-types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { getMCPClientStates, MCPClientState } from "../MCPClients";
-import { POLL_INTERVAL } from "../Constants";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getMCPClientStates } from "../MCPClients";
 
 export function useMCPClient(client: v1.DockerDesktopClient) {
   // State
@@ -22,10 +21,6 @@ export function useMCPClient(client: v1.DockerDesktopClient) {
     queryKey: ["mcpClientStates"],
     networkMode: "always",
     queryFn: async () => getMCPClientStates(client),
-    refetchInterval: POLL_INTERVAL,
-    initialData: undefined,
-    staleTime: 30000,
-    gcTime: 300000,
   });
 
   // Update MCP client states

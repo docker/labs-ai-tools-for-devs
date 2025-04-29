@@ -1,8 +1,6 @@
 import { v1 } from "@docker/extension-api-client-types";
-import { BUSYBOX, DOCKER_MCP_COMMAND } from "../Constants";
-import { getUser, writeToMount } from "../utils/Files";
-import { mergeDeep } from "../MergeDeep";
-import { MCPClient, SAMPLE_MCP_CONFIG } from "./MCPTypes";
+import { DOCKER_MCP_COMMAND } from "../Constants";
+import { MCPClient } from "./MCPTypes";
 
 class CursorDesktopClient implements MCPClient {
   name = "Cursor";
@@ -13,123 +11,27 @@ class CursorDesktopClient implements MCPClient {
     "Click on the <strong>Add new MCP server</strong> button",
     "Set name: <code>MCP_DOCKER</code>",
     'Set command: <pre style="font-family: monospace; white-space: nowrap; overflow: auto; width: 80%; background-color: grey.200; padding: 1; border-radius: 1; font-size: 12px;">' +
-      DOCKER_MCP_COMMAND +
-      "</pre>",
+    DOCKER_MCP_COMMAND +
+    "</pre>",
   ];
   expectedConfigPath = {
     darwin: "$HOME/.cursor/mcp.json",
     linux: "$HOME/.cursor/mcp.json",
     win32: "$USERPROFILE\\.cursor\\mcp.json",
   };
-  readConfig = async (client: v1.DockerDesktopClient) => {
-    const platform = client.host
-      .platform as keyof typeof this.expectedConfigPath;
-    const configPath = this.expectedConfigPath[platform].replace(
-      "$USER",
-      await getUser(client)
-    );
-    try {
-      const result = await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source=${configPath},target=/cursor_config/mcp.json`,
-        BUSYBOX,
-        "/bin/cat",
-        "/cursor_config/mcp.json",
-      ]);
-      return {
-        content: result.stdout,
-        path: configPath,
-      };
-    } catch (e) {
-      return {
-        content: null,
-        path: configPath,
-      };
-    }
-  };
   connect = async (client: v1.DockerDesktopClient) => {
-    const config = await this.readConfig(client);
-    let cursorConfig = null;
     try {
-      cursorConfig = JSON.parse(
-        config.content || "{}"
-      ) as typeof SAMPLE_MCP_CONFIG;
-      if (cursorConfig.mcpServers?.MCP_DOCKER) {
-        client.desktopUI.toast.error(
-          "Docker MCP Server already connected to Cursor"
-        );
-        return;
-      }
+      await client.extension.host?.cli.exec("host-binary", ["client", "connect", "--global", "cursor"]);
     } catch (e) {
-      client.desktopUI.toast.error(
-        "Failed to connect. Invalid Cursor config found at " + config.path
-      );
-      return;
-    }
-    const payload = mergeDeep(cursorConfig, SAMPLE_MCP_CONFIG);
-    try {
-      await writeToMount(
-        client,
-        `type=bind,source=${config.path},target=/cursor_config/mcp.json`,
-        "/cursor_config/mcp.json",
-        JSON.stringify(payload, null, 2)
-      );
-    } catch (e) {
-      if ((e as any).stderr) {
-        client.desktopUI.toast.error((e as any).stderr);
-      } else {
-        client.desktopUI.toast.error((e as Error).message);
-      }
+      client.desktopUI.toast.error("Unable to connect Cursor");
     }
   };
   disconnect = async (client: v1.DockerDesktopClient) => {
-    const config = await this.readConfig(client);
-    if (!config.content) {
-      client.desktopUI.toast.error("No config found");
-      return;
-    }
-    let cursorConfig = null;
     try {
-      cursorConfig = JSON.parse(config.content) as typeof SAMPLE_MCP_CONFIG;
-      if (!cursorConfig.mcpServers?.MCP_DOCKER) {
-        client.desktopUI.toast.error(
-          "Docker MCP Server not connected to Cursor"
-        );
-        return;
-      }
+      await client.extension.host?.cli.exec("host-binary", ["client", "disconnect", "--global", "cursor"]);
     } catch (e) {
-      client.desktopUI.toast.error(
-        "Failed to disconnect. Invalid Cursor config found at " + config.path
-      );
-      return;
+      client.desktopUI.toast.error("Unable to connect Cursor");
     }
-    const payload = {
-      ...cursorConfig,
-      mcpServers: Object.fromEntries(
-        Object.entries(cursorConfig.mcpServers).filter(
-          ([key]) => key !== "MCP_DOCKER"
-        )
-      ),
-    };
-    try {
-      await writeToMount(
-        client,
-        `type=bind,source=${config.path},target=/cursor_config/mcp.json`,
-        "/cursor_config/mcp.json",
-        JSON.stringify(payload, null, 2)
-      );
-    } catch (e) {
-      if ((e as any).stderr) {
-        client.desktopUI.toast.error((e as any).stderr);
-      } else {
-        client.desktopUI.toast.error((e as Error).message);
-      }
-    }
-  };
-  validateConfig = (content: string) => {
-    const config = JSON.parse(content || "{}") as typeof SAMPLE_MCP_CONFIG;
-    return !!config.mcpServers?.MCP_DOCKER;
   };
 }
 
