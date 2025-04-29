@@ -58,7 +58,7 @@ export const readFileInPromptsVolume = async (
     [
       "--rm",
       "-v",
-      "docker-prompts:/docker-prompts",
+      "docker-prompts:/docker-prompts:ro",
       "--network=none",
       "-w",
       "/docker-prompts",
