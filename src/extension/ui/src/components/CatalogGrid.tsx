@@ -7,14 +7,12 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
   FormGroup,
   IconButton,
   Menu,
   MenuItem,
   OutlinedInput,
   Stack,
-  Switch,
   Tab,
   Tabs,
   Typography,
@@ -23,9 +21,9 @@ import React, { Suspense, useMemo, useState } from 'react';
 
 import { CATALOG_LAYOUT_SX } from '../Constants';
 import { CatalogItemRichened } from '../types/catalog';
-import YourClients from './tabs/YourClients';
 import OAuthProviders from './tabs/OAuthProviders';
 import ToolCatalog from './tabs/ToolCatalog';
+import YourClients from './tabs/YourClients';
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -45,9 +43,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   }>({
     'demo-customized-menu': { anchorEl: null, open: false },
   });
-  const [sort, setSort] = useState<'name-asc' | 'name-desc'>(
-    'name-asc'
-  );
+  const [sort, setSort] = useState<'name-asc' | 'name-desc'>('name-asc');
 
   // Only calculate hasOutOfCatalog when relevant data changes
   const hasOutOfCatalog = useMemo(() => {
@@ -82,7 +78,8 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
       >
         <Typography variant="h3">Docker MCP Toolkit</Typography>
         <Typography sx={{ color: 'text.secondary' }}>
-          Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client
+          Browse the Docker MCP Catalog and connect Dockerized MCP servers to
+          your favorite MCP Client
         </Typography>
       </Stack>
       {hasOutOfCatalog && (
@@ -226,11 +223,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
         }
       >
         {tab === 0 && (
-          <ToolCatalog
-            search={search}
-            client={client}
-            sort={sort}
-          />
+          <ToolCatalog search={search} client={client} sort={sort} />
         )}
         {tab === 1 && <YourClients appProps={appProps} />}
       </Suspense>
