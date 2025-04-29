@@ -1,62 +1,40 @@
-import { v1 } from "@docker/extension-api-client-types";
-import { parse, stringify } from "yaml";
-import { REGISTRY_YAML } from "./Constants";
-import { readFileInPromptsVolume, writeToPromptsVolume } from "./utils/Files";
-import { mergeDeep } from "./MergeDeep";
-import { ParsedParameters } from "./types/config";
+import { v1 } from '@docker/extension-api-client-types';
+import { parse, stringify } from 'yaml';
+
+import { CONFIG_YAML, REGISTRY_YAML } from './Constants';
+import { ParsedParameters } from './types/config';
+import { readFileInPromptsVolume, writeToPromptsVolume } from './utils/Files';
 
 export const getRegistry = async (client: v1.DockerDesktopClient) => {
-  const parseRegistry = async () => {
+  try {
     const registry = await readFileInPromptsVolume(client, REGISTRY_YAML);
     if (registry) {
-      const value = parse(registry)["registry"] as {
+      return parse(registry)['registry'] as {
         [key: string]: { ref: string; config: any };
       };
-      if (!value) {
-        client.desktopUI.toast.error(
-          "Failed to parse registry.yaml: " + registry
-        );
-      }
-      return value;
     }
+
+    await writeToPromptsVolume(client, REGISTRY_YAML, 'registry: {}');
     return {};
-  };
-  const writeRegistryIfNotExists = async () => {
-    const registry = await readFileInPromptsVolume(client, REGISTRY_YAML);
-    if (!registry) {
-      await writeToPromptsVolume(client, REGISTRY_YAML, "registry: {}");
-    }
-  };
-  try {
-    await writeRegistryIfNotExists();
-    return await parseRegistry();
   } catch (error) {
-    client.desktopUI.toast.error("Failed to get prompt registry: " + error);
+    client.desktopUI.toast.error('Failed to get registry: ' + error);
     return {};
   }
 };
 
 export const getStoredConfig = async (client: v1.DockerDesktopClient) => {
-  const parseConfig = async () => {
-    const config = await readFileInPromptsVolume(client, "config.yaml");
+  try {
+    const config = await readFileInPromptsVolume(client, CONFIG_YAML);
     if (config) {
       return parse(config) as Promise<{
         [key: string]: { [key: string]: ParsedParameters };
       }>;
     }
+
+    await writeToPromptsVolume(client, CONFIG_YAML, '{}');
     return {};
-  };
-  const writeConfigIfNotExists = async () => {
-    const config = await readFileInPromptsVolume(client, "config.yaml");
-    if (!config) {
-      await writeToPromptsVolume(client, "config.yaml", "{}");
-    }
-  };
-  try {
-    await writeConfigIfNotExists();
-    return await parseConfig();
   } catch (error) {
-    client.desktopUI.toast.error("Failed to get stored configs: " + error);
+    client.desktopUI.toast.error('Failed to get stored configs: ' + error);
     return {};
   }
 };
