@@ -9,8 +9,8 @@ import (
 	"slices"
 	"syscall"
 
-	"github.com/docker/labs-ai-tools-for-devs/cmd/commands"
 	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/commands"
 	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
 	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
 	"github.com/spf13/cobra"
