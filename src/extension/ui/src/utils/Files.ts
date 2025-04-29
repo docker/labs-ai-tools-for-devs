@@ -41,8 +41,11 @@ export const getUser = async (client: v1.DockerDesktopClient) => {
       "-e",
       "USER",
       BUSYBOX,
-      "/bin/echo",
-      "$USER",
+      "/bin/sh",
+      "-c",
+      client.host.platform === "win32"
+        ? `\"echo $USER\"`
+        : `'echo $USER'`,
     ]);
     user = result.trim();
   }
