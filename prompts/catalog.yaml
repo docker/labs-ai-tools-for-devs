@@ -7,12 +7,12 @@ registry:
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
     icon: https://avatars.githubusercontent.com/u/48680494?v=4
     tools:
-      - name: read-query
-      - name: write-query
-      - name: create-table
-      - name: list-tables
-      - name: describe-table
-      - name: append-insight
+      - name: read_query
+      - name: write_query
+      - name: create_table
+      - name: list_tables
+      - name: describe_table
+      - name: append_insight
     prompts: 1
     resources: {}
   curl:
@@ -479,7 +479,6 @@ registry:
     description: "Provides PostgreSQL database management capabilities. \nThis server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.\n"
     title: PostgreSQL
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/postgres.md
     icon: https://avatars.githubusercontent.com/u/177543?s=200&v=4
     tools:
       - name: analyze_database
@@ -855,7 +854,7 @@ registry:
             type: string
             description: sender email address
   github-official:
-    description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
+    description: Official GitHub MCP Server, by GitHub. Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     title: GitHub Official
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/github-official.md
@@ -2619,3 +2618,27 @@ registry:
       - name: browser_wait
     prompts: 0
     resources: {}
+  razorpay:
+    description: Razorpay's Official MCP Server.
+    title: Razorpay
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/razorpay.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/razorpay.md
+    source: https://github.com/razorpay/razorpay-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/7713209?v=4
+    tools:
+      - name: create_order
+      - name: create_payment_link
+      - name: fetch_order
+      - name: fetch_payment
+      - name: fetch_payment_link
+    secrets:
+      - name: razorpay.key_secret
+    prompts: 0
+    resources: {}
+    config:
+      - name: razorpay
+        description: Configure the connection to Razorpay
+        type: object
+        properties:
+          key_id:
+            type: string
