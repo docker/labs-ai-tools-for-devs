@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Chip,
   CircularProgress,
   Collapse,
   Divider,
@@ -15,6 +16,7 @@ import {
   ListItem,
   ListItemText,
   Stack,
+  Theme,
   Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -24,6 +26,7 @@ import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
 import GordonIcon from '../../assets/gordon-icon.png';
 import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from '../../Constants';
+import { LinkOffOutlined, LinkOutlined } from '@mui/icons-material';
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -38,6 +41,16 @@ const iconMap = {
   Cursor: CursorIcon,
   'Continue.dev': ContinueIcon,
 };
+
+const ConnectButtonStyle = (theme: Theme) => ({
+  fontSize: '1.3em',
+  p: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1em',
+  },
+});
 
 const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
   // Extract all the values we need from appProps
@@ -127,6 +140,7 @@ function ClientSetting({
   mcpClientState: any;
   appProps: any;
 }) {
+
   const [expanded, setExpanded] = useState(false);
 
   // Extract all the values we need from appProps
@@ -149,75 +163,68 @@ function ClientSetting({
             />
           )
         }
-        title={<Typography variant="subtitle2">{name}</Typography>}
+        title={<Typography variant="subtitle2">{name}{mcpClientState.exists ? '' : <Chip sx={{ ml: 1 }} label="Not detected" color="error" size="small" />}</Typography>}
         subheader={
-          mcpClientState.exists ? (
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary',
-                alignItems: 'center',
-                display: 'flex',
-                cursor: 'pointer',
-              }}
-              onClick={() => setExpanded(!expanded)}
-            >
-              Manual configuration
-              {expanded ? (
+          < Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              alignItems: 'center',
+              display: 'flex',
+              cursor: 'pointer',
+            }}
+            onClick={() => setExpanded(!expanded)}
+          >
+            Manual configuration
+            {
+              expanded ? (
                 <KeyboardArrowDownIcon fontSize="small" />
               ) : (
                 <KeyboardArrowRightIcon fontSize="small" />
-              )}
-            </Typography>
-          ) : (
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'text.secondary',
-              }}
-            >
-              Client not installed
-            </Typography>
-          )
+              )
+            }
+          </Typography >
         }
         action={
-          <Stack direction="row" spacing={1}>
-            {mcpClientState.exists && mcpClientState.configured && (
-              <Button
-                onClick={async () => {
-                  setButtonsLoading({
-                    ...buttonsLoading,
-                    [name]: true,
-                  });
-                  try {
-                    await disconnectClient(name);
-                  } finally {
+          < Stack direction="row" spacing={1} >
+            {
+              mcpClientState.exists && mcpClientState.configured && (
+                <Button
+                  onClick={async () => {
                     setButtonsLoading({
                       ...buttonsLoading,
-                      [name]: false,
+                      [name]: true,
                     });
+                    try {
+                      await disconnectClient(name);
+                    } finally {
+                      setButtonsLoading({
+                        ...buttonsLoading,
+                        [name]: false,
+                      });
+                    }
+                  }}
+                  disabled={
+                    buttonsLoading[name] ||
+                    Boolean(mcpClientState.preventAutoConnectMessage)
                   }
-                }}
-                disabled={buttonsLoading[name]}
-                color="warning"
-                size="small"
-              >
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  {(buttonsLoading[name] && (
-                    <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>
-                        Connect
-                      </Typography>
-                      <CircularProgress size={12} />
-                    </>
-                  )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Disconnect
-                      </Typography>
-                    )}
-                </Stack>
-              </Button>
-            )}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
+                    {(buttonsLoading[name] && (
+                      <>
+                        <Typography sx={{ fontSize: 12, width: 70 }}>
+                          Connect
+                        </Typography>
+                        <CircularProgress size={12} />
+                      </>
+                    )) || (
+                        <Typography sx={{ fontSize: 12, width: 90 }}>
+                          Disconnect
+                        </Typography>
+                      )}
+                  </Stack>
+                </Button>
+              )}
             {mcpClientState.exists && !mcpClientState.configured && (
               <Button
                 sx={{ fontSize: 12 }}
@@ -231,15 +238,23 @@ function ClientSetting({
                   } finally {
                     setButtonsLoading({
                       ...buttonsLoading,
-                      [name]: false,
+                      [name]: true,
                     });
+                    try {
+                      await connectClient(name);
+                    } finally {
+                      setButtonsLoading({
+                        ...buttonsLoading,
+                        [name]: false,
+                      });
+                    }
                   }
                 }}
                 disabled={buttonsLoading[name]}
                 color="primary"
                 size="small"
               >
-                <Stack direction="row" alignItems="center" spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
                   {(buttonsLoading[name] && (
                     <>
                       <Typography sx={{ fontSize: 12, width: 70 }}>
@@ -255,46 +270,47 @@ function ClientSetting({
                 </Stack>
               </Button>
             )}
-            {!mcpClientState.exists && (
-              <Button
-                sx={{ fontSize: 12 }}
-                size="small"
-                disabled
-                onClick={async () => {
-                  setButtonsLoading({
-                    ...buttonsLoading,
-                    [name]: true,
-                  });
-                  try {
-                    await connectClient(name);
-                  } finally {
+            {
+              !mcpClientState.exists && (
+                <Button
+                  sx={{ fontSize: 12 }}
+                  size="small"
+                  disabled
+                  onClick={async () => {
                     setButtonsLoading({
                       ...buttonsLoading,
-                      [name]: false,
+                      [name]: true,
                     });
-                  }
-                }}
-              >
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  {(buttonsLoading[name] && (
-                    <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>
-                        Disconnect
-                      </Typography>
-                      <CircularProgress size={12} />
-                    </>
-                  )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Connect
-                      </Typography>
-                    )}
-                </Stack>
-              </Button>
-            )}
-          </Stack>
+                    try {
+                      await connectClient(name);
+                    } finally {
+                      setButtonsLoading({
+                        ...buttonsLoading,
+                        [name]: true,
+                      });
+                    }
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
+                    {(buttonsLoading[name] && (
+                      <>
+                        <Typography sx={{ fontSize: 12, width: 70 }}>
+                          Disconnect
+                        </Typography>
+                        <CircularProgress size={12} />
+                      </>
+                    )) || (
+                        <Typography sx={{ fontSize: 12, width: 90 }}>
+                          Connect
+                        </Typography>
+                      )}
+                  </Stack>
+                </Button>
+              )}
+          </Stack >
         }
       />
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <Collapse in={expanded} timeout="auto" unmountOnExit >
         <CardContent>
           <Stack direction="column" justifyContent="center" spacing={1}>
             <Stack direction="row" alignItems="center" spacing={1}>
@@ -345,8 +361,8 @@ function ClientSetting({
             )}
           </List>
         </CardContent>
-      </Collapse>
-    </Card>
+      </Collapse >
+    </Card >
   );
 }
 
