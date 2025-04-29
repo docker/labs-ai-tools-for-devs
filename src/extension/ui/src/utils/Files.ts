@@ -38,6 +38,7 @@ export const getUser = async (client: v1.DockerDesktopClient) => {
   if (user == null) {
     const result = await tryRunImageSync(client, [
       "--rm",
+      "--network=none",
       "-e",
       "USER",
       BUSYBOX,
