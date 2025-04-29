@@ -4,12 +4,12 @@
 #WORKDIR /backend
 #COPY backend/go.* .
 #RUN --mount=type=cache,target=/go/pkg/mod \
-    #--mount=type=cache,target=/root/.cache/go-build \
-    #go mod download
+#--mount=type=cache,target=/root/.cache/go-build \
+#go mod download
 #COPY backend/. .
 #RUN --mount=type=cache,target=/go/pkg/mod \
-    #--mount=type=cache,target=/root/.cache/go-build \
-    #go build -trimpath -ldflags="-s -w" -o bin/service
+#--mount=type=cache,target=/root/.cache/go-build \
+#go build -trimpath -ldflags="-s -w" -o bin/service
 
 FROM --platform=$BUILDPLATFORM node:23-alpine3.20 AS client-builder
 WORKDIR /ui
@@ -37,7 +37,7 @@ LABEL org.opencontainers.image.title="Docker MCP Toolkit" \
 #COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY docker.svg /docker.svg
+COPY extension-icon.svg /extension-icon.svg
 COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary.exe
 COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
 COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
