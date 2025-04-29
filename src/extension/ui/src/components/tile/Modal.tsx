@@ -44,6 +44,7 @@ import useDDInfo from '../../queries/useDDInfo';
 import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
+import { isEmpty } from 'lodash-es';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -141,8 +142,7 @@ const ConfigurationModal = ({
   };
 
   const contributesNoConfigOrSecrets =
-    (!catalogItem.configSchema || catalogItem.configSchema.length === 0) &&
-    (!catalogItem.secrets || catalogItem.secrets.length === 0);
+    isEmpty(catalogItem.configSchema) && isEmpty(catalogItem.secrets);
 
   if (secretsLoading || registryLoading || configLoading || !localSecrets) {
     return null;
@@ -305,7 +305,8 @@ const ConfigurationModal = ({
                           <Link
                             onClick={() =>
                               client.host.openExternal(
-                                `${catalogItem.readme
+                                `${
+                                  catalogItem.readme
                                 }#tool-${tool.name.replaceAll(' ', '-')}` || ''
                               )
                             }
@@ -335,117 +336,122 @@ const ConfigurationModal = ({
               >
                 <Stack direction="column" spacing={2}>
                   <ConfigEditor catalogItem={catalogItem} client={client} />
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2">Secrets</Typography>
-                    {!ddInfo && !ddInfoLoading && (
-                      <Alert severity="error">
-                        Failed to get Docker Desktop version
-                      </Alert>
-                    )}
-                    {ddInfo && !ddInfo?.hasSecretSupport && (
-                      <Alert severity="error">
-                        {getUnsupportedSecretMessage(ddInfo?.parsedVersion)}
-                      </Alert>
-                    )}
-                    <Stack>
-                      {ddInfo?.hasSecretSupport &&
-                        catalogItem.secrets &&
-                        catalogItem.secrets?.length > 0 &&
-                        catalogItem.secrets.map((secret, index) => {
-                          const secretEdited =
-                            (secret.assigned &&
-                              localSecrets[secret.name] !==
-                              ASSIGNED_SECRET_PLACEHOLDER) ||
-                            (!secret.assigned &&
-                              localSecrets[secret.name] !== '');
-                          return (
-                            <Stack
-                              key={secret.name}
-                              direction="row"
-                              spacing={2}
-                              sx={{
-                                alignItems: 'center',
-                              }}
-                            >
-                              <TextField
-                                size="small"
-                                inputRef={(element) =>
-                                  (inputRefs.current[index] = element)
-                                }
-                                disabled={secret.assigned}
-                                key={secret.name}
-                                label={secret.name}
-                                value={localSecrets[secret.name]}
-                                fullWidth
-                                onChange={(e) => {
-                                  setLocalSecrets({
-                                    ...localSecrets,
-                                    [secret.name]: e.target.value,
-                                  });
-                                }}
-                                type="password"
-                              />
-                              {secret.assigned && !secretEdited && (
-                                <IconButton
-                                  size="small"
-                                  onClick={() => {
-                                    setLocalSecrets({
-                                      ...localSecrets,
-                                      [secret.name]: '',
-                                    });
-                                    // We need to enable the input to be able to focus on it
-                                    inputRefs.current[index].disabled = false;
-                                    inputRefs.current[index].focus();
-                                    mutateSecret.mutateAsync({
-                                      name: secret.name,
-                                      value: undefined,
-                                      policies: [MCP_POLICY_NAME],
-                                    });
+                  {ddInfo?.hasSecretSupport &&
+                    catalogItem.secrets &&
+                    catalogItem.secrets?.length > 0 && (
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2">Secrets</Typography>
+                        {!ddInfo && !ddInfoLoading && (
+                          <Alert severity="error">
+                            Failed to get Docker Desktop version
+                          </Alert>
+                        )}
+                        {ddInfo && !ddInfo?.hasSecretSupport && (
+                          <Alert severity="error">
+                            {getUnsupportedSecretMessage(ddInfo?.parsedVersion)}
+                          </Alert>
+                        )}
+                        <Stack>
+                          {ddInfo?.hasSecretSupport &&
+                            catalogItem.secrets &&
+                            catalogItem.secrets?.length > 0 &&
+                            catalogItem.secrets.map((secret, index) => {
+                              const secretEdited =
+                                (secret.assigned &&
+                                  localSecrets[secret.name] !==
+                                    ASSIGNED_SECRET_PLACEHOLDER) ||
+                                (!secret.assigned &&
+                                  localSecrets[secret.name] !== '');
+                              return (
+                                <Stack
+                                  key={secret.name}
+                                  direction="row"
+                                  spacing={2}
+                                  sx={{
+                                    alignItems: 'center',
                                   }}
                                 >
-                                  <EditOutlinedIcon fontSize="small" />
-                                </IconButton>
-                              )}
-                              {secretEdited && (
-                                <Stack direction="row" spacing={1}>
-                                  <IconButton
+                                  <TextField
                                     size="small"
-                                    onClick={async () => {
-                                      await mutateSecret.mutateAsync({
-                                        name: secret.name,
-                                        value: localSecrets[secret.name]!,
-                                        policies: [MCP_POLICY_NAME],
-                                      });
-                                    }}
-                                  >
-                                    <CheckOutlined
-                                      fontSize="small"
-                                      sx={{ color: 'success.main' }}
-                                    />
-                                  </IconButton>
-                                  <IconButton
-                                    size="small"
-                                    onClick={async () => {
+                                    inputRef={(element) =>
+                                      (inputRefs.current[index] = element)
+                                    }
+                                    disabled={secret.assigned}
+                                    key={secret.name}
+                                    label={secret.name}
+                                    value={localSecrets[secret.name]}
+                                    fullWidth
+                                    onChange={(e) => {
                                       setLocalSecrets({
                                         ...localSecrets,
-                                        [secret.name]: secret.assigned
-                                          ? ASSIGNED_SECRET_PLACEHOLDER
-                                          : '',
+                                        [secret.name]: e.target.value,
                                       });
                                     }}
-                                  >
-                                    <CloseOutlined
-                                      fontSize="small"
-                                      sx={{ color: 'error.main' }}
-                                    />
-                                  </IconButton>
+                                    type="password"
+                                  />
+                                  {secret.assigned && !secretEdited && (
+                                    <IconButton
+                                      size="small"
+                                      onClick={() => {
+                                        setLocalSecrets({
+                                          ...localSecrets,
+                                          [secret.name]: '',
+                                        });
+                                        // We need to enable the input to be able to focus on it
+                                        inputRefs.current[index].disabled =
+                                          false;
+                                        inputRefs.current[index].focus();
+                                        mutateSecret.mutateAsync({
+                                          name: secret.name,
+                                          value: undefined,
+                                          policies: [MCP_POLICY_NAME],
+                                        });
+                                      }}
+                                    >
+                                      <EditOutlinedIcon fontSize="small" />
+                                    </IconButton>
+                                  )}
+                                  {secretEdited && (
+                                    <Stack direction="row" spacing={1}>
+                                      <IconButton
+                                        size="small"
+                                        onClick={async () => {
+                                          await mutateSecret.mutateAsync({
+                                            name: secret.name,
+                                            value: localSecrets[secret.name]!,
+                                            policies: [MCP_POLICY_NAME],
+                                          });
+                                        }}
+                                      >
+                                        <CheckOutlined
+                                          fontSize="small"
+                                          sx={{ color: 'success.main' }}
+                                        />
+                                      </IconButton>
+                                      <IconButton
+                                        size="small"
+                                        onClick={async () => {
+                                          setLocalSecrets({
+                                            ...localSecrets,
+                                            [secret.name]: secret.assigned
+                                              ? ASSIGNED_SECRET_PLACEHOLDER
+                                              : '',
+                                          });
+                                        }}
+                                      >
+                                        <CloseOutlined
+                                          fontSize="small"
+                                          sx={{ color: 'error.main' }}
+                                        />
+                                      </IconButton>
+                                    </Stack>
+                                  )}
                                 </Stack>
-                              )}
-                            </Stack>
-                          );
-                        })}
-                    </Stack>
-                  </Stack>
+                              );
+                            })}
+                        </Stack>
+                      </Stack>
+                    )}
                 </Stack>
               </Stack>
             </TabPanel>
