@@ -2,7 +2,7 @@ import { Avatar, CardHeader, Switch, Tooltip, Typography } from '@mui/material';
 
 import { CatalogItemRichened } from '../../types/catalog';
 import { useEffect, useState } from 'react';
-import CatalogIconPath from '../../utils/CatalogIconPath';
+import getCatalogIconPath from '../../utils/getCatalogIconPath';
 
 type TopProps = {
   onToggleRegister: (checked: boolean) => void;
@@ -21,7 +21,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
     setToggled(item.registered);
   }, [item.registered]);
 
-  const url = CatalogIconPath(item.icon || '');
+  const url = getCatalogIconPath(item.icon || '');
 
   return (
     <CardHeader
