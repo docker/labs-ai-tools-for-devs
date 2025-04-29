@@ -2619,3 +2619,27 @@ registry:
       - name: browser_wait
     prompts: 0
     resources: {}
+  razorpay:
+    description: Razorpay's Official MCP Server.
+    title: Razorpay
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/razorpay.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/razorpay.md
+    source: https://github.com/razorpay/razorpay-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/7713209?v=4
+    tools:
+      - name: create_order
+      - name: create_payment_link
+      - name: fetch_order
+      - name: fetch_payment
+      - name: fetch_payment_link
+    secrets:
+      - name: razorpay.key_secret
+    prompts: 0
+    resources: {}
+    config:
+      - name: razorpay
+        description: Configure the connection to Razorpay
+        type: object
+        properties:
+          key_id:
+            type: string
