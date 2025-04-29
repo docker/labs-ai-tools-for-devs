@@ -75,43 +75,29 @@ class ClaudeDesktopClient implements MCPClient {
     const user = await getUser(client);
     path = path.replace("$USER", user);
 
-    let payload: Record<string, any> = {};
-    try {
-      const result = await client.docker.cli.exec("run", [
-        "--rm",
-        "--mount",
-        `type=bind,source="${path}",target=/claude_desktop_config`,
-        BUSYBOX,
-        "/bin/cat",
-        "/claude_desktop_config/claude_desktop_config.json",
-      ]);
-      if (result.stdout) {
-        payload = JSON.parse(result.stdout);
-      }
-    } catch (e) {
-      throw new Error(
-        "Failed to connect to Claude Desktop" + (e as any).stderr
-      );
-    }
+    const previousConfigResult = await this.readConfig(client);
+    const previousConfig = JSON.parse(previousConfigResult.content || "{}");
+    const newConfig = { ...previousConfig };
 
-    if (!payload.mcpServers) {
-      payload.mcpServers = {};
+    if (!newConfig.mcpServers) {
+      newConfig.mcpServers = {};
     }
-    payload.mcpServers.MCP_DOCKER = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER;
+    newConfig.mcpServers.MCP_DOCKER = SAMPLE_MCP_CONFIG.mcpServers.MCP_DOCKER;
 
     try {
       await writeToMount(
         client,
         `type=bind,source="${path}",target=/claude_desktop_config`,
         "/claude_desktop_config/claude_desktop_config.json",
-        JSON.stringify(payload, null, 2)
+        JSON.stringify(newConfig, null, 2)
       );
     } catch (e) {
-      client.desktopUI.toast.error((e as any).stderr);
+      throw new Error(
+        "Failed to connect to Claude Desktop" + (e as any).stderr
+      );
     }
   };
   disconnect = async (client: v1.DockerDesktopClient) => {
-    console.log("Disconnecting from Claude Desktop");
     const platform = client.host.platform;
     let path = "";
     switch (platform) {
@@ -130,21 +116,8 @@ class ClaudeDesktopClient implements MCPClient {
     const user = await getUser(client);
     path = path.replace("$USER", user);
     try {
-      // This method is only called after the config has been validated, so we can safely assume it's a valid config.
-      const previousConfig = JSON.parse(
-        (
-          await client.docker.cli.exec("run", [
-            "--rm",
-            "--mount",
-            `type=bind,source="${path}",target=/claude_desktop_config`,
-            "-w",
-            "/claude_desktop_config",
-            BUSYBOX,
-            "/bin/cat",
-            "/claude_desktop_config/claude_desktop_config.json",
-          ])
-        ).stdout || "{}"
-      );
+      const previousConfigResult = await this.readConfig(client);
+      const previousConfig = JSON.parse(previousConfigResult.content || "{}");
       const newConfig = { ...previousConfig };
       delete newConfig.mcpServers.MCP_DOCKER;
       await writeToMount(

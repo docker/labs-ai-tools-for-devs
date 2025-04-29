@@ -16,7 +16,8 @@ export const tryRunImageSync = async (
   const showError = ignoreError ? () => {} : client.desktopUI.toast.error;
   try {
     const result = await client.docker.cli.exec("run", args);
-    if (result.code !== undefined && result.code != 0 && result.stderr) {
+    const hasRealError = !result.code || result.code !== 0;
+    if (result.stderr && hasRealError) {
       showError(result.stderr);
     }
     return result.stdout || "";
@@ -92,13 +93,20 @@ export const writeToMount = async (
   filename: string,
   content: string
 ) => {
-  return tryRunImageSync(client, [
-    "--rm",
-    "--mount",
-    mount,
-    BUSYBOX,
-    "/bin/sh",
-    "-c",
-    `\\"echo ${encode(content)} | base64 -d > ${filename}\\"`,
-  ]);
+  console.log("Writing to mount", mount, filename, content);
+  const result = await tryRunImageSync(
+    client,
+    [
+      "--rm",
+      "--mount",
+      mount,
+      BUSYBOX,
+      "/bin/sh",
+      "-c",
+      `\\"echo ${encode(content)} | base64 -d > ${filename}\\"`,
+    ],
+    false
+  );
+  console.log("Result", result);
+  return result;
 };
