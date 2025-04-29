@@ -84,6 +84,13 @@ const ConfigurationModal = ({
   client,
   registryLoading,
 }: ConfigurationModalProps) => {
+  // For some unknown reason, item.registered is not updated right away when the user toggles the switch.
+  // This `toggled` state is used to control the switch in the UI. Its main purpose is to do optimistic UI updates.
+  // When the user toggles the switch. The `useEffect` hook is used to synchronize the `toggled` state with the `item.registered`
+  // prop, which is the source of truth for the registration status of the item. This way, if the `item.registered` prop changes
+  // (e.g., due to a successful registration or unregistration), the switch will reflect the correct state.
+  const [toggled, setToggled] = useState(catalogItem.registered);
+
   const [localSecrets, setLocalSecrets] = useState<
     { [key: string]: string | undefined } | undefined
   >(undefined);
@@ -187,12 +194,13 @@ const ConfigurationModal = ({
             <span>
               <Switch
                 disabled={!catalogItem.canRegister}
-                checked={catalogItem.registered}
-                onChange={(e) =>
+                checked={toggled}
+                onChange={(_event, checked) => {
+                  setToggled(checked);
                   catalogItem.registered
                     ? unregisterCatalogItem(catalogItem)
-                    : registerCatalogItem(catalogItem)
-                }
+                    : registerCatalogItem(catalogItem);
+                }}
               />
             </span>
           </Tooltip>
@@ -247,7 +255,13 @@ const ConfigurationModal = ({
           <>
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
               <Tabs value={tabValue} onChange={handleTabChange}>
-                <Tab label={`Tools (${catalogItem?.tools?.length})`} />
+                <Tab
+                  label={
+                    <Typography sx={[tabValue === 0 && { fontWeight: 'bold' }]}>
+                      {`Tools (${catalogItem?.tools?.length})`}
+                    </Typography>
+                  }
+                />
                 {!contributesNoConfigOrSecrets && (
                   <Tab
                     disabled={contributesNoConfigOrSecrets}
@@ -424,41 +438,41 @@ const ConfigurationModal = ({
                                       <EditOutlinedIcon fontSize="small" />
                                     </IconButton>
                                   )}
-                                  {secretEdited && (
-                                    <Stack direction="row" spacing={1}>
-                                      <IconButton
-                                        size="small"
-                                        onClick={async () => {
-                                          await mutateSecret.mutateAsync({
-                                            name: secret.name,
-                                            value: localSecrets[secret.name]!,
-                                            policies: [MCP_POLICY_NAME],
-                                          });
-                                        }}
-                                      >
-                                        <CheckOutlined
-                                          fontSize="small"
-                                          sx={{ color: 'success.main' }}
-                                        />
-                                      </IconButton>
-                                      <IconButton
-                                        size="small"
-                                        onClick={async () => {
-                                          setLocalSecrets({
-                                            ...localSecrets,
-                                            [secret.name]: secret.assigned
-                                              ? ASSIGNED_SECRET_PLACEHOLDER
-                                              : '',
-                                          });
-                                        }}
-                                      >
-                                        <CloseOutlined
-                                          fontSize="small"
-                                          sx={{ color: 'error.main' }}
-                                        />
-                                      </IconButton>
-                                    </Stack>
-                                  )}
+                                  {secretEdited &&
+                                    localSecrets[secret.name] !== '' && (
+                                      <Stack direction="row" spacing={1}>
+                                        <IconButton
+                                          size="small"
+                                          onClick={async () => {
+                                            await mutateSecret.mutateAsync({
+                                              name: secret.name,
+                                              value: localSecrets[secret.name]!,
+                                              policies: [MCP_POLICY_NAME],
+                                            });
+                                          }}
+                                        >
+                                          <CheckOutlined
+                                            fontSize="small"
+                                            sx={{ color: 'success.main' }}
+                                          />
+                                        </IconButton>
+                                        <IconButton
+                                          size="small"
+                                          onClick={async () => {
+                                            inputRefs.current[index].focus();
+                                            setLocalSecrets({
+                                              ...localSecrets,
+                                              [secret.name]: '',
+                                            });
+                                          }}
+                                        >
+                                          <CloseOutlined
+                                            fontSize="small"
+                                            sx={{ color: 'error.main' }}
+                                          />
+                                        </IconButton>
+                                      </Stack>
+                                    )}
                                 </Stack>
                               );
                             })}
