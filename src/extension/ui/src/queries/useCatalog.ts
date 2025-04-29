@@ -62,7 +62,6 @@ function useCatalog(client: v1.DockerDesktopClient) {
   const { data: catalogItems = [], isLoading: catalogLoading } = useQuery({
     queryKey: ['catalog'],
     queryFn: async () => {
-      console.log('Fetching catalog items');
       const response = await fetch(
         localStorage.getItem('catalogUrl') || CATALOG_URL,
       );
