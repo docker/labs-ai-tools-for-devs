@@ -18,8 +18,7 @@ export const getMCPClientStates = async (ddClient: v1.DockerDesktopClient) => {
             mcpClientStates[mcpClient.name] = { exists: false, configured: false, path, client: mcpClient };
         } else if (content === undefined) {
             mcpClientStates[mcpClient.name] = { exists: true, configured: false, path, client: mcpClient };
-        }
-        else {
+        } else {
             mcpClientStates[mcpClient.name] = { exists: true, configured: mcpClient.validateConfig(content), path: path, client: mcpClient };
         }
     }
