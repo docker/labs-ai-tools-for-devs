@@ -2640,3 +2640,22 @@ registry:
         properties:
           key_id:
             type: string
+  fibery:
+    description: Interact with your Fibery workspace.
+    title: Fibery
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/fibery.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/fibery.md
+    source: https://github.com/Fibery-inc/fibery-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/72027989?v=4
+    tools:
+      - name: create_entities_batch
+      - name: create_entity
+      - name: current_date
+      - name: describe_database
+      - name: list_databases
+      - name: query_database
+      - name: update_entity
+    secrets:
+      - name: fibery.api_token
+    prompts: 0
+    resources: {}
