@@ -513,8 +513,6 @@ registry:
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: tool-registration
-      - name: write_files
-      - name: read-file
     prompts: 0
     resources: {}
   notion:
