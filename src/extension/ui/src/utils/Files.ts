@@ -36,32 +36,18 @@ let user: string | null = null;
 
 export const getUser = async (client: v1.DockerDesktopClient) => {
   if (user == null) {
-    if (client.host.platform === "win32") {
-      const result = await tryRunImageSync(client, [
-        "--rm",
-        "--network=none",
-        "-e",
-        "USERNAME",
-        BUSYBOX,
-        "/bin/sh",
-        "-c",
-        `\"echo $USERNAME\"`,
-      ]);
-      user = result.trim();
-    } else {
-      const result = await tryRunImageSync(client, [
-        "--rm",
-        "--network=none",
-        "-e",
-        "USER",
-        BUSYBOX,
-        "/bin/sh",
-        "-c",
-        `'echo $USER'`,
-      ]);
-      user = result.trim();
-    }
+    try {
+      const result = await client.extension.host?.cli.exec("host-binary", ["current-user"]);
+      if (result) {
+        user = result.stdout.trim();
+        return user;
+      }
+    } catch { }
+
+    client.desktopUI.toast.error("Unable to get current user");
+    return ""
   }
+
   return user;
 };
 
