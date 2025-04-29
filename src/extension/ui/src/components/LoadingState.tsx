@@ -14,24 +14,14 @@ interface LoadingStateProps {
 }
 
 const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
-  const {
-    imagesLoading,
-    configLoading,
-    secretsLoading,
-    catalogLoading,
-    registryLoading,
-  } = appProps;
+  const { configLoading, secretsLoading, catalogLoading, registryLoading } =
+    appProps;
   const [progress, setProgress] = useState(0);
   const isLoading =
-    imagesLoading ||
-    configLoading ||
-    secretsLoading ||
-    catalogLoading ||
-    registryLoading;
+    configLoading || secretsLoading || catalogLoading || registryLoading;
 
   useEffect(() => {
     const progress = [
-      imagesLoading ? 0 : 100,
       configLoading ? 0 : 100,
       secretsLoading ? 0 : 100,
       catalogLoading ? 0 : 100,
@@ -43,18 +33,11 @@ const LoadingState: React.FC<LoadingStateProps> = ({ appProps }) => {
     );
 
     setProgress(progressPercent);
-  }, [
-    imagesLoading,
-    configLoading,
-    secretsLoading,
-    catalogLoading,
-    registryLoading,
-  ]);
+  }, [configLoading, secretsLoading, catalogLoading, registryLoading]);
 
   if (!isLoading) return null;
 
   const getLoadingText = () => {
-    if (imagesLoading) return 'Loading required Docker images';
     if (configLoading) return 'Loading configuration';
     if (secretsLoading) return 'Loading secrets';
     if (catalogLoading) return 'Loading catalog';

@@ -6,7 +6,6 @@ import LoadingState from './components/LoadingState';
 import { useCatalogAll } from './queries/useCatalog';
 import { useConfig } from './queries/useConfig';
 import { useMCPClient } from './queries/useMCPClient';
-import { useRequiredImages } from './queries/useRequiredImages';
 import { useSecrets } from './queries/useSecrets';
 import { syncRegistryWithConfig } from './Registry';
 export const client = createDockerDesktopClient();
@@ -18,7 +17,6 @@ const MemoizedLoadingState = memo(LoadingState);
 export function App() {
   // Use hooks directly in the component
   const catalogAll = useCatalogAll(client);
-  const requiredImages = useRequiredImages(client);
   const config = useConfig(client);
   const secrets = useSecrets(client);
   const mcpClient = useMCPClient(client);
@@ -32,7 +30,6 @@ export function App() {
 
   // Create a context-like combined props object to pass to children
   const appProps = {
-    imagesLoading: requiredImages.imagesLoading,
     configLoading: config.configLoading,
     secretsLoading: secrets.isLoading,
     catalogLoading: catalogAll.catalogLoading,
@@ -45,7 +42,6 @@ export function App() {
   };
 
   const isLoading =
-    requiredImages.imagesLoading ||
     config.configLoading ||
     secrets.isLoading ||
     catalogAll.catalogLoading ||
