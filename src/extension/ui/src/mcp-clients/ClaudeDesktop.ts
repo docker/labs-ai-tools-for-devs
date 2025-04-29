@@ -52,6 +52,7 @@ class ClaudeDesktopClient implements MCPClient {
       ]);
       return { content: result.stdout || undefined, path: path };
     } catch (e) {
+      console.error(e);
       return { content: null, path: path };
     }
   };
@@ -88,7 +89,9 @@ class ClaudeDesktopClient implements MCPClient {
         payload = JSON.parse(result.stdout);
       }
     } catch (e) {
-      // No config or malformed config found, overwrite it
+      throw new Error(
+        "Failed to connect to Claude Desktop" + (e as any).stderr
+      );
     }
 
     if (!payload.mcpServers) {
@@ -108,6 +111,7 @@ class ClaudeDesktopClient implements MCPClient {
     }
   };
   disconnect = async (client: v1.DockerDesktopClient) => {
+    console.log("Disconnecting from Claude Desktop");
     const platform = client.host.platform;
     let path = "";
     switch (platform) {
@@ -150,7 +154,9 @@ class ClaudeDesktopClient implements MCPClient {
         JSON.stringify(newConfig, null, 2)
       );
     } catch (e) {
-      client.desktopUI.toast.error((e as any).stderr);
+      throw new Error(
+        "Failed to disconnect from Claude Desktop" + (e as any).stderr
+      );
     }
   };
   validateConfig = (content: string) => {

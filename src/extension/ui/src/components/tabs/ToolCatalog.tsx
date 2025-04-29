@@ -38,6 +38,7 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
         })
         : filteredItems;
   }, [catalogItems, search, sort]);
+
   const enabled = all.filter((item) => item.registered);
 
   return (
