@@ -1,6 +1,6 @@
 services:
   mcp_docker:
-    image: mcp/docker:0.0.15
+    image: mcp/docker:0.0.16
     ports:
       - 8811:8811
     volumes:

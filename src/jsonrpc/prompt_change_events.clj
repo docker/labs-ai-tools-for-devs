@@ -51,9 +51,15 @@
 (defn init-dynamic-prompt-watcher [opts registry-updated markdown-tool-updated]
   (let [change-events-channel (async/chan)
         debounced (debounce-by change-events-channel content)]
-    (logger/info "before")
-    (doseq [container (docker/containers {:label ["com.docker.desktop.service=true"]})]
-      (logger/info container))
+    (doseq [container (docker/containers {:label ["com.docker.desktop.extension=true"
+                                                  "com.docker.mcp.watch-service=true"]
+                                          :name ["com.docker.mcp.watch-service"]})]
+      (logger/info "shutting down previous vonwig/inotifywait container" (:name container))
+      (try
+        (docker/stop-container container)
+        (docker/kill-container container)
+        (catch Throwable _
+          (logger/warn "unable to kill conainer " (:Id container)))))
     ;; debounce the change event channel
     (async/go-loop
      [evt (async/<! debounced)]
@@ -63,32 +69,34 @@
         :unknown)
       (recur (async/<! debounced)))
     ;; watch filesystem
-    (let [{x :container}
-          (docker/run-streaming-function-with-no-stdin
-           {:image "vonwig/inotifywait:latest"
-            :name "com.docker.mcp.inotifywait"
-            :labels {"com.docker.desktop.service" "true"}
-            :volumes ["docker-prompts:/prompts"]
-            :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
-           (fn [line]
-             (let [[_dir _event f] (string/split line #"\s+")]
-               (async/put!
-                change-events-channel
-                (cond
-                  (= f "registry.yaml")
-                  {:opts opts :f f :type :registry}
-                  (string/ends-with? f ".md")
-                  {:opts opts :f f :type :markdown}
-                  :else
-                  {})))))]
-      (logger/info "after")
-      (doseq [container (docker/containers {:label ["com.docker.desktop.service=true"]})]
-        (logger/info container))
-      (shutdown/schedule-container-shutdown
-       (fn []
-         (logger/info "inotifywait shutting down")
-         (docker/kill-container x)
-         (docker/delete x))))))
+    (try
+      (let [{x :container}
+            (docker/run-streaming-function-with-no-stdin
+              {:image "vonwig/inotifywait:latest"
+               :labels {"com.docker.desktop.extension" "true"
+                        "com.docker.mcp.watch-service" "true"
+                        "com.docker.compose.project" "docker_labs-ai-tools-for-devs-desktop-extension"
+                        "com.docker.compose.service" "registry-watcher"}
+               :volumes ["docker-prompts:/prompts"]
+               :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
+              (fn [line]
+                (let [[_dir _event f] (string/split line #"\s+")]
+                  (async/put!
+                    change-events-channel
+                    (cond
+                      (= f "registry.yaml")
+                      {:opts opts :f f :type :registry}
+                      (string/ends-with? f ".md")
+                      {:opts opts :f f :type :markdown}
+                      :else
+                      {})))))]
+        (shutdown/schedule-container-shutdown
+          (fn []
+            (logger/info "inotifywait shutting down")
+            (docker/kill-container x)
+            (docker/delete x))))
+      (catch Throwable t
+        (logger/error "unable to start registry.yaml watcher" t)))))
 
 (comment
   (repl/setup-stdout-logger)

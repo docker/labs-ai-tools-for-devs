@@ -59,7 +59,8 @@
    (merge
     {:image "alpine/git:latest"
      :command (concat ["reset" "--hard"]
-                      (if ref [(format "origin/%s" ref)] ["origin/main"]))}
+                      (if ref [(format "origin/%s" ref)] ["origin/main"]))
+     :timeout 60000}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
        :volumes ["docker-prompts-git:/git"
@@ -72,7 +73,8 @@
    (merge
     {:image "alpine/git:latest"
      :command (concat ["pull" "origin"]
-                      (when ref [ref]))}
+                      (when ref [ref]))
+     :timeout 60000}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
        :volumes ["docker-prompts-git:/git"
@@ -83,7 +85,8 @@
 (defn clone [{:keys [dir owner repo ref ref-hash]}]
   (docker/run-container
    (merge
-    {:image "alpine/git:latest"}
+    {:image "alpine/git:latest"
+     :timeout 60000}
     (if (string/starts-with? (str dir) "/prompts")
       {:workdir (str dir)
        :volumes ["docker-prompts-git:/git"

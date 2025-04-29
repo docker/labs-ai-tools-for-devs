@@ -309,6 +309,12 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
+(defn stop-container [{:keys [Id]}]
+  (curl/post
+   (format "http://localhost/containers/%s/stop" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :throw false}))
+
 (defn ->json [response]
   (json/parse-string (:body response) keyword))
 
