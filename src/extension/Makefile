@@ -14,7 +14,7 @@ bin:
 cross:
 	cd host-binary && $(MAKE) cross
 
-pull-catalog-images: ## Pull all icons from the catalog into static-assets with base64 filenames
+pull-catalog-images: ## Pull all icons from the catalog into static-assets with base16 filename safe for paths and urls alike
 	cat ../../prompts/catalog.yaml | yq -r '.registry[].icon' | while read -r iconUrl; do \
 		iconName=$$( echo "$$iconUrl" | xxd -p -u | tr -d '\n' ); \
 		iconPath="ui/static-assets/$$iconName.png"; \

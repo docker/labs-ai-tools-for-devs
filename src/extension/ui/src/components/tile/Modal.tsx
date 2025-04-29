@@ -45,7 +45,6 @@ import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
 import { isEmpty } from 'lodash-es';
-import { encode } from 'js-base64';
 import CatalogIconPath from '../../utils/CatalogIconPath';
 
 interface TabPanelProps {
