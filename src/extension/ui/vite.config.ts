@@ -23,6 +23,7 @@ export default defineConfig({
       },
     },
   },
+  assetsInclude: ['./static-assets/**/*'],
   server: {
     port: 3000,
     strictPort: true,

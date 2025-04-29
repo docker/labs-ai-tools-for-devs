@@ -14,7 +14,14 @@ bin:
 cross:
 	cd host-binary && $(MAKE) cross
 
-build-extension: cross ## Build service image to be deployed as a desktop extension
+pull-catalog-images: ## Pull all icons from the catalog into static-assets with base64 filenames
+	cat ../../prompts/catalog.yaml | yq -r '.registry[].icon' | while read -r iconUrl; do \
+		iconName=$$( echo "$$iconUrl" | xxd -p -u | tr -d '\n' ); \
+		iconPath="ui/static-assets/$$iconName.png"; \
+		[ -f "$$iconPath" ] || curl -o "$$iconPath" "$$iconUrl"; \
+	done
+
+build-extension: cross pull-catalog-images ## Build service image to be deployed as a desktop extension
 	docker buildx build --load --tag=$(IMAGE):$(TAG) .
 	
 install-extension: build-extension ## Install the extension
