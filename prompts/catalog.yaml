@@ -7,12 +7,12 @@ registry:
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
     icon: https://avatars.githubusercontent.com/u/48680494?v=4
     tools:
-      - name: read-query
-      - name: write-query
-      - name: create-table
-      - name: list-tables
-      - name: describe-table
-      - name: append-insight
+      - name: read_query
+      - name: write_query
+      - name: create_table
+      - name: list_tables
+      - name: describe_table
+      - name: append_insight
     prompts: 1
     resources: {}
   curl:
