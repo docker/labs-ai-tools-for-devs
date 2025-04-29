@@ -70,20 +70,16 @@ export const writeToPromptsVolume = async (
   filename: string,
   content: string
 ) => {
-  return tryRunImageSync(client, [
-    "--rm",
-    "-v",
-    "docker-prompts:/workdir",
-    "--network=none",
-    "-w",
-    "/workdir",
-    BUSYBOX,
-    "/bin/sh",
-    "-c",
-    client.host.platform === "win32"
-      ? `\"echo ${encode(content)} | base64 -d > ${filename}\"`
-      : `'echo ${encode(content)} | base64 -d > ${filename}'`,
-  ]);
+  try {
+    await client.extension.host?.cli.exec("host-binary", ["write-to-volume", filename, encode(content)]);
+  } catch (e) {
+    if (e instanceof Error) {
+      client.desktopUI.toast.error(e.message);
+    }
+    if ((e as ExecResult).stderr) {
+      client.desktopUI.toast.error(JSON.stringify(e));
+    }
+  }
 };
 
 export const writeToMount = async (

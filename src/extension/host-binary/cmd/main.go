@@ -29,6 +29,7 @@ func main() {
 	cmd.AddCommand(DeriveSecret(ctx))
 	cmd.AddCommand(commands.CurrentUser(ctx))
 	cmd.AddCommand(commands.ReadFromVolume(ctx))
+	cmd.AddCommand(commands.WriteToVolume(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
