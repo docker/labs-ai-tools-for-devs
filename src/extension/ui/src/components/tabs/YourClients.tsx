@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Chip,
   CircularProgress,
   Collapse,
   Divider,
@@ -16,12 +15,10 @@ import {
   ListItem,
   ListItemText,
   Stack,
-  Tooltip,
-  Typography,
+  Typography
 } from '@mui/material';
 import { useState } from 'react';
 
-import ChatGPTIcon from '../../assets/chatgpt.svg';
 import ClaudeIcon from '../../assets/claude-ai-icon.svg';
 import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
@@ -74,29 +71,6 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
             );
           }
         )}
-
-        <Card>
-          <CardHeader
-            avatar={
-              <Avatar
-                variant="square"
-                src={ChatGPTIcon}
-                alt="ChatGPT Desktop"
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1,
-                }}
-              />
-            }
-            title={
-              <Typography variant="subtitle2">
-                {'ChatGPT'}{' '}
-                <Chip label="Coming soon" color="primary" size="small" />
-              </Typography>
-            }
-          />
-        </Card>
       </Stack>
 
       <Divider>Or</Divider>
@@ -239,10 +213,10 @@ function ClientSetting({
                       <CircularProgress size={12} />
                     </>
                   )) || (
-                    <Typography sx={{ fontSize: 12, width: 90 }}>
-                      Disconnect
-                    </Typography>
-                  )}
+                      <Typography sx={{ fontSize: 12, width: 90 }}>
+                        Disconnect
+                      </Typography>
+                    )}
                 </Stack>
               </Button>
             )}
@@ -279,10 +253,10 @@ function ClientSetting({
                       <CircularProgress size={12} />
                     </>
                   )) || (
-                    <Typography sx={{ fontSize: 12, width: 90 }}>
-                      Connect
-                    </Typography>
-                  )}
+                      <Typography sx={{ fontSize: 12, width: 90 }}>
+                        Connect
+                      </Typography>
+                    )}
                 </Stack>
               </Button>
             )}
@@ -315,10 +289,10 @@ function ClientSetting({
                       <CircularProgress size={12} />
                     </>
                   )) || (
-                    <Typography sx={{ fontSize: 12, width: 90 }}>
-                      Connect
-                    </Typography>
-                  )}
+                      <Typography sx={{ fontSize: 12, width: 90 }}>
+                        Connect
+                      </Typography>
+                    )}
                 </Stack>
               </Button>
             )}
