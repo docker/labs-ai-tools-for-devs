@@ -23,7 +23,6 @@ import ClaudeIcon from '../../assets/claude-ai-icon.svg';
 import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
 import GordonIcon from '../../assets/gordon-icon.png';
-import WindsurfIcon from '../../assets/windsurf.svg';
 import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from '../../Constants';
 
 // Initialize the Docker Desktop client
@@ -37,7 +36,6 @@ const iconMap = {
   'Claude Desktop': ClaudeIcon,
   Gordon: GordonIcon,
   Cursor: CursorIcon,
-  Windsurf: WindsurfIcon,
   'Continue.dev': ContinueIcon,
 };
 
