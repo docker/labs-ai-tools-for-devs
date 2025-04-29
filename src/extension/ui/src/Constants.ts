@@ -25,3 +25,4 @@ export const BUSYBOX = 'busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa
 
 // Filenames in docker-prompts volume
 export const REGISTRY_YAML = 'registry.yaml'
+export const CONFIG_YAML = 'config.yaml'
