@@ -42,6 +42,7 @@ COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary
 COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
 COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
 COPY --from=client-builder /ui/build ui
+COPY ui/static-assets ui/static-assets
 #COPY data /data
 
 #CMD ["/service", "-socket", "/run/guest-services/backend.sock"]
