@@ -1,18 +1,18 @@
-import { v1 } from "@docker/extension-api-client-types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { parse, stringify } from "yaml";
-import { CATALOG_URL, REGISTRY_YAML } from "../Constants";
-import { writeToPromptsVolume } from "../utils/Files";
-import { getRegistry, syncRegistryWithConfig } from "../Registry";
-import Secrets from "../Secrets";
-import { CatalogItemRichened, CatalogItemWithName } from "../types/catalog";
-import { getTemplateForItem, useConfig } from "./useConfig";
-import { useSecrets } from "./useSecrets";
+import { v1 } from '@docker/extension-api-client-types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { parse, stringify } from 'yaml';
+import { CATALOG_URL, REGISTRY_YAML } from '../Constants';
+import { getRegistry, syncRegistryWithConfig } from '../Registry';
+import Secrets from '../Secrets';
+import { CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
+import { writeToPromptsVolume } from '../utils/Files';
+import { getTemplateForItem, useConfig } from './useConfig';
+import { useSecrets } from './useSecrets';
 
 const STORAGE_KEYS = {
-  catalog: "docker-catalog-catalog",
-  registry: "docker-catalog-registry",
+  catalog: 'docker-catalog-catalog',
+  registry: 'docker-catalog-registry',
 };
 
 function useCatalog(client: v1.DockerDesktopClient) {
@@ -25,11 +25,11 @@ function useCatalog(client: v1.DockerDesktopClient) {
     (item: CatalogItemWithName): CatalogItemRichened => {
       const secretsWithAssignment = Secrets.getSecretsWithAssignment(
         item,
-        secrets || []
+        secrets || [],
       );
       const itemConfigValue = config?.[item.name] || {};
       const neverOnceConfigured = Boolean(
-        item.config && Object.keys(itemConfigValue).length === 0
+        item.config && Object.keys(itemConfigValue).length === 0,
       );
       const configTemplate = getTemplateForItem(item, itemConfigValue);
       const baseConfigTemplate = getTemplateForItem(item, {});
@@ -40,7 +40,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
             JSON.stringify(baseConfigTemplate));
 
       const missingASecret = secretsWithAssignment.some(
-        (secret) => !secret.assigned
+        (secret) => !secret.assigned,
       );
       const enrichedItem: CatalogItemRichened = {
         ...item,
@@ -56,21 +56,18 @@ function useCatalog(client: v1.DockerDesktopClient) {
       };
       return enrichedItem;
     },
-    [secrets, config, registryItems]
+    [secrets, config, registryItems],
   );
 
-  const {
-    data: catalogItems = [],
-    isLoading: catalogLoading,
-    refetch: refetchCatalog,
-  } = useQuery({
-    queryKey: ["catalog"],
+  const { data: catalogItems = [], isLoading: catalogLoading } = useQuery({
+    queryKey: ['catalog'],
     queryFn: async () => {
+      console.log('Fetching catalog items');
       const response = await fetch(
-        localStorage.getItem("catalogUrl") || CATALOG_URL
+        localStorage.getItem('catalogUrl') || CATALOG_URL,
       );
       const catalog = await response.text();
-      const items = parse(catalog)["registry"] as { [key: string]: any };
+      const items = parse(catalog)['registry'] as { [key: string]: any };
       const enrichedItems = Object.entries(items).map(([name, item]) => ({
         name,
         ...item,
@@ -93,7 +90,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
       // Use deep comparison for determining if updates are needed
       if (JSON.stringify(enrichedItems) !== JSON.stringify(catalogItems)) {
         // Use a stable reference for query data updates
-        queryClient.setQueryData(["catalog"], [...enrichedItems]);
+        queryClient.setQueryData(['catalog'], [...enrichedItems]);
       }
     }
   }, [
@@ -107,12 +104,12 @@ function useCatalog(client: v1.DockerDesktopClient) {
 
   // Persist catalog to localStorage when it changes (for fallback only)
   useQuery({
-    queryKey: ["catalog", "persist", catalogItems],
+    queryKey: ['catalog', 'persist', catalogItems],
     queryFn: async () => {
       if (catalogItems && catalogItems.length > 0) {
         localStorage.setItem(
           STORAGE_KEYS.catalog,
-          JSON.stringify(catalogItems)
+          JSON.stringify(catalogItems),
         );
       }
       return null;
@@ -121,17 +118,9 @@ function useCatalog(client: v1.DockerDesktopClient) {
     gcTime: 0,
   });
 
-  const tryLoadCatalog = async () => {
-    return await refetchCatalog({
-      cancelRefetch: false,
-    });
-  };
-
   return {
     catalogItems,
     catalogLoading,
-    tryLoadCatalog,
-    refetchCatalog,
   };
 }
 
@@ -145,8 +134,8 @@ function useRegistry(client: v1.DockerDesktopClient) {
     refetch: refetchRegistry,
     isLoading: registryLoading,
   } = useQuery({
-    queryKey: ["registry"],
-    networkMode: "always",
+    queryKey: ['registry'],
+    networkMode: 'always',
     queryFn: async () => {
       setCanRegister(false);
       try {
@@ -156,11 +145,11 @@ function useRegistry(client: v1.DockerDesktopClient) {
       } catch (error) {
         if (error instanceof Error) {
           client.desktopUI.toast.error(
-            "Failed to get prompt registry: " + error.message
+            'Failed to get prompt registry: ' + error.message,
           );
         } else {
           client.desktopUI.toast.error(
-            "Failed to get prompt registry: " + JSON.stringify(error)
+            'Failed to get prompt registry: ' + JSON.stringify(error),
           );
         }
         setCanRegister(true);
@@ -170,15 +159,15 @@ function useRegistry(client: v1.DockerDesktopClient) {
   });
 
   useQuery({
-    queryKey: ["registry", "init"],
+    queryKey: ['registry', 'init'],
     queryFn: async () => {
       const cachedRegistry = localStorage.getItem(STORAGE_KEYS.registry);
       if (cachedRegistry && queryClient && !registryItems) {
         try {
           const parsedRegistry = JSON.parse(cachedRegistry);
-          queryClient.setQueryData(["registry"], parsedRegistry);
+          queryClient.setQueryData(['registry'], parsedRegistry);
         } catch (e) {
-          console.error("Failed to parse cached registry:", e);
+          console.error('Failed to parse cached registry:', e);
         }
       }
       return null;
@@ -189,11 +178,11 @@ function useRegistry(client: v1.DockerDesktopClient) {
 
   const registryItemsString = useMemo(
     () => (registryItems ? JSON.stringify(registryItems) : null),
-    [registryItems]
+    [registryItems],
   );
 
   useQuery({
-    queryKey: ["registry", "persist"],
+    queryKey: ['registry', 'persist'],
     queryFn: async () => {
       if (registryItemsString) {
         localStorage.setItem(STORAGE_KEYS.registry, registryItemsString);
@@ -212,7 +201,7 @@ function useRegistry(client: v1.DockerDesktopClient) {
       await writeToPromptsVolume(
         client,
         REGISTRY_YAML,
-        stringify({ registry: newRegistry })
+        stringify({ registry: newRegistry }),
       );
 
       return newRegistry;
@@ -254,12 +243,12 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         await writeToPromptsVolume(
           client,
           REGISTRY_YAML,
-          stringify({ registry: newRegistry })
+          stringify({ registry: newRegistry }),
         );
         return { success: true, newRegistry };
       } catch (error) {
         client.desktopUI.toast.error(
-          "Failed to register catalog item: " + error
+          'Failed to register catalog item: ' + error,
         );
         // Treat YAML file write failures as fatal, no rollback
         throw error;
@@ -268,7 +257,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
     // Only need one update of registry data, not both onMutate and onSuccess
     onSuccess: async (data) => {
       // Update the registry data after successful registration
-      queryClient.setQueryData(["registry"], data.newRegistry);
+      queryClient.setQueryData(['registry'], data.newRegistry);
     },
   });
 
@@ -287,13 +276,13 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
         await writeToPromptsVolume(
           client,
           REGISTRY_YAML,
-          stringify({ registry: currentRegistry })
+          stringify({ registry: currentRegistry }),
         );
 
         return { success: true, newRegistry: currentRegistry };
       } catch (error) {
         client.desktopUI.toast.error(
-          "Failed to unregister catalog item: " + error
+          'Failed to unregister catalog item: ' + error,
         );
         // Treat YAML file write failures as fatal, no rollback
         throw error;
@@ -302,7 +291,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
     // Only need one update of registry data, not both onMutate and onSuccess
     onSuccess: async (data) => {
       // Update the registry data after successful unregistration
-      queryClient.setQueryData(["registry"], data.newRegistry);
+      queryClient.setQueryData(['registry'], data.newRegistry);
     },
   });
 
@@ -316,7 +305,7 @@ export function useCatalogOperations(client: v1.DockerDesktopClient) {
 
 // This hook represents the catalog query. The registry is not part of the UI and does not need to be exported.
 export function useCatalogAll(client: v1.DockerDesktopClient) {
-  const { catalogItems, catalogLoading, tryLoadCatalog } = useCatalog(client);
+  const { catalogItems, catalogLoading } = useCatalog(client);
   const {
     registryItems,
     registryLoading,
@@ -336,7 +325,6 @@ export function useCatalogAll(client: v1.DockerDesktopClient) {
     registryLoading,
 
     // Actions
-    tryLoadCatalog,
     tryLoadRegistry,
     registerCatalogItem,
     unregisterCatalogItem,
