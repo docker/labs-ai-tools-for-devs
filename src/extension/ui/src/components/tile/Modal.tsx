@@ -302,21 +302,34 @@ const ConfigurationModal = ({
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Link
-                            onClick={() =>
-                              client.host.openExternal(
-                                `${
-                                  catalogItem.readme
-                                }#tool-${tool.name.replaceAll(' ', '-')}` || ''
-                              )
-                            }
-                            href="#"
-                            target="_blank"
-                            sx={{ fontSize: 12 }}
-                          >
-                            Documentation
-                            <Launch />
-                          </Link>
+                          {catalogItem.readme && (
+                            <Link
+                              onClick={() =>
+                                client.host.openExternal(`${catalogItem.readme}#tool-${tool.name.replaceAll(' ', '-')}`
+                                )
+                              }
+                              href="#"
+                              target="_blank"
+                              sx={{ fontSize: 12 }}
+                            >
+                              Documentation
+                              <Launch />
+                            </Link>
+                          ) || (
+                              <Link
+                                onClick={() =>
+                                  client.host.openExternal(
+                                    `https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/${new URLSearchParams(catalogItem.ref.split('?')[1]).get('path')}`
+                                  )
+                                }
+                                href="#"
+                                target="_blank"
+                                sx={{ fontSize: 12 }}
+                              >
+                                Documentation
+                                <Launch />
+                              </Link>
+                            )}
                         </TableCell>
                       </TableRow>
                     ))}
