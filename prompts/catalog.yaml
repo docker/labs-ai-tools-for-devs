@@ -854,7 +854,7 @@ registry:
             type: string
             description: sender email address
   github-official:
-    description: Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
+    description: Official GitHub MCP Server, by GitHub. Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     title: GitHub Official
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/github-official.md
