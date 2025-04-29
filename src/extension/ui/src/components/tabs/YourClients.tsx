@@ -26,7 +26,7 @@ import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
 import GordonIcon from '../../assets/gordon-icon.png';
 import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from '../../Constants';
-import { LinkOffOutlined, LinkOutlined } from '@mui/icons-material';
+import { LinkOff, LinkOffOutlined, LinkOutlined } from '@mui/icons-material';
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -43,12 +43,15 @@ const iconMap = {
 };
 
 const ConnectButtonStyle = (theme: Theme) => ({
-  fontSize: '1.3em',
+  fontSize: '14px',
   p: 1,
   alignItems: 'center',
   justifyContent: 'center',
   [theme.breakpoints.down('sm')]: {
-    fontSize: '1em',
+    p: '2px',
+    '& .MuiTypography-root': {
+      fontSize: '12px',
+    },
   },
 });
 
@@ -190,6 +193,7 @@ function ClientSetting({
             {
               mcpClientState.exists && mcpClientState.configured && (
                 <Button
+                  color="warning"
                   onClick={async () => {
                     setButtonsLoading({
                       ...buttonsLoading,
@@ -212,22 +216,25 @@ function ClientSetting({
                   <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
                     {(buttonsLoading[name] && (
                       <>
-                        <Typography sx={{ fontSize: 12, width: 70 }}>
+                        <LinkOutlined />
+                        <Typography>
                           Connect
                         </Typography>
                         <CircularProgress size={12} />
                       </>
                     )) || (
-                        <Typography sx={{ fontSize: 12, width: 90 }}>
-                          Disconnect
-                        </Typography>
+                        <>
+                          <LinkOffOutlined />
+                          <Typography>
+                            Disconnect
+                          </Typography>
+                        </>
                       )}
                   </Stack>
                 </Button>
               )}
             {mcpClientState.exists && !mcpClientState.configured && (
               <Button
-                sx={{ fontSize: 12 }}
                 onClick={async () => {
                   setButtonsLoading({
                     ...buttonsLoading,
@@ -257,15 +264,19 @@ function ClientSetting({
                 <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
                   {(buttonsLoading[name] && (
                     <>
-                      <Typography sx={{ fontSize: 12, width: 70 }}>
+                      <LinkOffOutlined />
+                      <Typography>
                         Disconnect
                       </Typography>
                       <CircularProgress size={12} />
                     </>
                   )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Connect
-                      </Typography>
+                      <>
+                        <LinkOutlined />
+                        <Typography>
+                          Connect
+                        </Typography>
+                      </>
                     )}
                 </Stack>
               </Button>
@@ -273,9 +284,8 @@ function ClientSetting({
             {
               !mcpClientState.exists && (
                 <Button
-                  sx={{ fontSize: 12 }}
                   size="small"
-                  disabled
+                  variant="outlined"
                   onClick={async () => {
                     setButtonsLoading({
                       ...buttonsLoading,
@@ -294,15 +304,19 @@ function ClientSetting({
                   <Stack direction="row" alignItems="center" spacing={1} sx={ConnectButtonStyle}>
                     {(buttonsLoading[name] && (
                       <>
-                        <Typography sx={{ fontSize: 12, width: 70 }}>
-                          Disconnect
+                        <LinkOffOutlined />
+                        <Typography>
+                          Attempt disconnect
                         </Typography>
                         <CircularProgress size={12} />
                       </>
                     )) || (
-                        <Typography sx={{ fontSize: 12, width: 90 }}>
-                          Connect
-                        </Typography>
+                        <>
+                          <LinkOutlined />
+                          <Typography>
+                            Attempt connection
+                          </Typography>
+                        </>
                       )}
                   </Stack>
                 </Button>
