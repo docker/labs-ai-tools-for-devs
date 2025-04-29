@@ -17,7 +17,7 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ClaudeIcon from '../../assets/claude-ai-icon.svg';
 import ContinueIcon from '../../assets/continue.svg';
@@ -41,7 +41,7 @@ const iconMap = {
 
 const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
   // Extract all the values we need from appProps
-  const { mcpClientStates } = appProps;
+  const { mcpClientStates, updateMCPClientStates } = appProps;
 
   if (!mcpClientStates) {
     return (
@@ -53,6 +53,9 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
   }
 
   const [copyButtonText, setCopyButtonText] = useState('Copy');
+  useEffect(() => {
+    updateMCPClientStates();
+  }, []);
 
   return (
     <Stack sx={CATALOG_LAYOUT_SX} spacing={2}>
@@ -195,10 +198,7 @@ function ClientSetting({
                     });
                   }
                 }}
-                disabled={
-                  buttonsLoading[name] ||
-                  Boolean(mcpClientState.preventAutoConnectMessage)
-                }
+                disabled={buttonsLoading[name]}
                 color="warning"
                 size="small"
               >
@@ -235,10 +235,7 @@ function ClientSetting({
                     });
                   }
                 }}
-                disabled={
-                  buttonsLoading[name] ||
-                  Boolean(mcpClientState.preventAutoConnectMessage)
-                }
+                disabled={buttonsLoading[name]}
                 color="primary"
                 size="small"
               >
