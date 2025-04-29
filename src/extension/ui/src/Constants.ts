@@ -1,4 +1,3 @@
-export const POLL_INTERVAL = 1000 * 30;
 export const MCP_POLICY_NAME = "MCP=*";
 export const DD_BUILD_WITH_SECRET_SUPPORT = 184396;
 export const CATALOG_URL =
