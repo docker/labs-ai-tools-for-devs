@@ -404,7 +404,7 @@
          :out-chan-factory io-chan/mcp-output-stream->output-chan})))))
 
 (defn run-socket-server! [opts server-opts]
-  (logger/info "Starting socket server on" (:port opts))
+  (logger/info (format "Starting socket server (docker version %s) on port %s" (:appVersion (docker/get-versions {})) (:port opts)))
   (socket-server/server (merge opts server-opts)))
 
 (defn run-server! [opts server-opts]
@@ -414,7 +414,7 @@
                   server-opts
                   {:in (or (:in opts) System/in)
                    :out System/out}))]
-     (logger/info "Starting server...")
+     (logger/info (format "Starting server (docker version %s)..." (:appVersion (docker/get-versions {}))))
      ;; only on lsp.server/start will the stdio channels start being used
      (let [server-id (swap! jsonrpc.state/server-counter inc)
            {:keys [producer] :as context}

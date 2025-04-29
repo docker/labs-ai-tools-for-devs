@@ -106,6 +106,12 @@
    {:raw-args ["--unix-socket" (get-backend-socket)]
     :throw false}))
 
+(defn backend-get-version [_]
+  (curl/get
+   "http://localhost/versions"
+   {:raw-args ["--unix-socket" (get-backend-socket)]
+    :throw false}))
+
 (comment
   (let [pat (string/trim (slurp "/Users/slim/.secrets/dockerhub-pat-ai-tools-for-devs.txt"))]
     (pull-image {:image "vonwig/go-linguist:latest"
@@ -116,8 +122,13 @@
 (defn list-containers [m]
   (curl/get
    "http://localhost/containers/json"
-   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
-    :throw false}))
+   {:raw-args ["--unix-socket" (let [f (fs/file "/var/run/docker.raw.sock")
+                                     macos (fs/file (format "%s/Library/Containers/com.docker.docker/Data/docker.raw.sock" (System/getenv "HOME")))]
+                                 (cond (.exists f) "/var/run/docker.raw.sock"
+                                       (.exists macos) (format "%s/Library/Containers/com.docker.docker/Data/docker.raw.sock" (System/getenv "HOME"))
+                                       :else "/var/run/docker.sock"))]
+    :throw false
+    :query-params {:filters (json/generate-string m)}}))
 
 (defn list-images [m]
   (curl/get
@@ -172,6 +183,7 @@
 ;; Tty wraps the process in a pseudo terminal
 ;; StdinOnce closes the stdin after the first client detaches
 ;; OpenStdin just opens stdin
+(declare secrets-get)
 (defn create-container [{:keys [image entrypoint workdir command host-dir
                                 environment thread-id opts mounts volumes
                                 ports network_mode secrets labels]
@@ -188,9 +200,10 @@
                   {:Labels  (->> (concat
                                   (->> secrets
                                        keys
-                                       (map (fn [secret-key]
-                                              (let [s (name secret-key)]
-                                                [(format "x-secret:%s" s) (string/trim (format "/secret/%s" s))]))))
+                                       (mapcat (fn [secret-key]
+                                                 (let [s (name secret-key)]
+                                                   (when (secrets-get (name secret-key))
+                                                     [[(format "x-secret:%s" s) (string/trim (format "/secret/%s" s))]])))))
                                   (seq labels))
                                  (into {}))}
                   {:HostConfig
@@ -296,6 +309,12 @@
    {:raw-args ["--unix-socket" "/var/run/docker.sock"]
     :throw false}))
 
+(defn stop-container [{:keys [Id]}]
+  (curl/post
+   (format "http://localhost/containers/%s/stop" Id)
+   {:raw-args ["--unix-socket" "/var/run/docker.sock"]
+    :throw false}))
+
 (defn ->json [response]
   (json/parse-string (:body response) keyword))
 
@@ -308,6 +327,7 @@
 (def is-logged-in? (comp ->json (status? 200 "backend-is-logged-in") backend-is-logged-in?))
 (def get-token (comp ->json (status? 200 "backend-get-token") backend-get-token))
 (def get-login-info (comp ->json (status? 200 "backend-login-info") backend-login-info))
+(def get-versions (comp ->json (status? 200 "backend-get-versions") backend-get-version))
 (def create (comp ->json (status? 201 "create-container") create-container))
 (def thread-volume (comp (status? 201 "create-volume") create-volume))
 (def delete-thread-volume (comp (status? 204 "remove-volume") remove-volume))
