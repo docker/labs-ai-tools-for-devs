@@ -36,16 +36,18 @@ let user: string | null = null;
 
 export const getUser = async (client: v1.DockerDesktopClient) => {
   if (user == null) {
-    const result = await tryRunImageSync(client, [
-      "--rm",
-      "-e",
-      "USER",
-      BUSYBOX,
-      "/bin/echo",
-      "$USER",
-    ]);
-    user = result.trim();
+    try {
+      const result = await client.extension.host?.cli.exec("host-binary", ["current-user"]);
+      if (result) {
+        user = result.stdout.trim();
+        return user;
+      }
+    } catch { }
+
+    client.desktopUI.toast.error("Unable to get current user");
+    return ""
   }
+
   return user;
 };
 
@@ -53,20 +55,14 @@ export const readFileInPromptsVolume = async (
   client: v1.DockerDesktopClient,
   path: string
 ) => {
-  return tryRunImageSync(
-    client,
-    [
-      "--rm",
-      "-v",
-      "docker-prompts:/docker-prompts",
-      "-w",
-      "/docker-prompts",
-      BUSYBOX,
-      "/bin/cat",
-      `${path}`,
-    ],
-    true
-  );
+  try {
+    const result = await client.extension.host?.cli.exec("host-binary", ["read-from-volume", path]);
+    if (result) {
+      return result.stdout;
+    }
+  } catch { }
+
+  return ""
 };
 
 export const writeToPromptsVolume = async (
@@ -74,19 +70,16 @@ export const writeToPromptsVolume = async (
   filename: string,
   content: string
 ) => {
-  return tryRunImageSync(client, [
-    "--rm",
-    "-v",
-    "docker-prompts:/workdir",
-    "-w",
-    "/workdir",
-    BUSYBOX,
-    "/bin/sh",
-    "-c",
-    client.host.platform === "win32"
-      ? `\"echo ${encode(content)} | base64 -d > ${filename}\"`
-      : `'echo ${encode(content)} | base64 -d > ${filename}'`,
-  ]);
+  try {
+    await client.extension.host?.cli.exec("host-binary", ["write-to-volume", filename, encode(content)]);
+  } catch (e) {
+    if (e instanceof Error) {
+      client.desktopUI.toast.error(e.message);
+    }
+    if ((e as ExecResult).stderr) {
+      client.desktopUI.toast.error(JSON.stringify(e));
+    }
+  }
 };
 
 export const writeToMount = async (
@@ -99,6 +92,7 @@ export const writeToMount = async (
     "--rm",
     "--mount",
     mount,
+    "--network=none",
     BUSYBOX,
     "/bin/sh",
     "-c",

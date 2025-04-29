@@ -9,3 +9,7 @@ func GetSecretsApiSocketPath() (string, error) {
 func GetToolsApiSocketPath() (string, error) {
 	return `//./pipe/dockerTools`, nil
 }
+
+func GetVolumeContentsSocketPath() (string, error) {
+	return `//./pipe/dockerVolumeContents`, nil
+}

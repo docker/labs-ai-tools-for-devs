@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
-	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
-	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
-	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
 	"slices"
 	"syscall"
+
+	"github.com/docker/labs-ai-tools-for-devs/cmd/commands"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/client"
+	secretsapi "github.com/docker/labs-ai-tools-for-devs/pkg/generated/go/client/secrets"
+	"github.com/docker/labs-ai-tools-for-devs/pkg/paths"
+	"github.com/spf13/cobra"
 )
 
 func main() {
@@ -25,6 +27,9 @@ func main() {
 	cmd.AddCommand(UnauthorizeApp(ctx))
 	cmd.AddCommand(ListOAuthApps(ctx))
 	cmd.AddCommand(DeriveSecret(ctx))
+	cmd.AddCommand(commands.CurrentUser(ctx))
+	cmd.AddCommand(commands.ReadFromVolume(ctx))
+	cmd.AddCommand(commands.WriteToVolume(ctx))
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
