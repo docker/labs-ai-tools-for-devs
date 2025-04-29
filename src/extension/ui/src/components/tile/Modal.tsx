@@ -45,7 +45,7 @@ import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
 import { isEmpty } from 'lodash-es';
-import CatalogIconPath from '../../utils/CatalogIconPath';
+import getCatalogIconPath from '../../utils/getCatalogIconPath';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -177,7 +177,7 @@ const ConfigurationModal = ({
             // TODO: Figure out if catalog icon is actually optional, and if so, find a good fallback.
             catalogItem.icon && <Avatar
               variant="square"
-              src={CatalogIconPath(catalogItem.icon)}
+              src={getCatalogIconPath(catalogItem.icon)}
               alt={catalogItem.name}
               sx={{
                 width: 40,
