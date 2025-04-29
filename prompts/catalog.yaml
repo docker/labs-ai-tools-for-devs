@@ -479,7 +479,6 @@ registry:
     description: "Provides PostgreSQL database management capabilities. \nThis server assists with analyzing existing PostgreSQL setups, providing implementation guidance, debugging database issues, managing schemas, migrating data, and monitoring database performance.\n"
     title: PostgreSQL
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/mcp/postgresql.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/postgres.md
     icon: https://avatars.githubusercontent.com/u/177543?s=200&v=4
     tools:
       - name: analyze_database
