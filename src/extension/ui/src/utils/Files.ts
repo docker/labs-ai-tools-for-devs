@@ -5,7 +5,6 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { ExecResult } from "@docker/extension-api-client-types/dist/v0";
 import { encode } from "js-base64";
-
 import { BUSYBOX } from "../Constants";
 
 export const tryRunImageSync = async (
@@ -13,10 +12,12 @@ export const tryRunImageSync = async (
   args: string[],
   ignoreError = false
 ) => {
-  const showError = ignoreError ? () => {} : client.desktopUI.toast.error;
+  const showError = ignoreError ? () => { } : client.desktopUI.toast.error;
   try {
     const result = await client.docker.cli.exec("run", args);
-    if (result.code !== undefined && result.code != 0 && result.stderr) {
+    if (result.stderr && result.stderr.includes("shell operators are not allowed")) {
+      // This shouldn't happen: it means we have our escaping wrong.
+      // And there's no way to check that failure other than by looking at stderr's content...
       showError(result.stderr);
     }
     return result.stdout || "";
