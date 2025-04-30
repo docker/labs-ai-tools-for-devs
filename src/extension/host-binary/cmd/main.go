@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -164,8 +165,9 @@ func runUnauthorizeApp(ctx context.Context, opts unauthorizeOptions) error {
 }
 
 type addOptions struct {
-	Name  string
-	Value string
+	Name   string
+	Value  string
+	Base64 bool
 }
 
 type deleteOptions struct {
@@ -187,6 +189,7 @@ func AddSecret(ctx context.Context) *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	flags.StringVarP(&opts.Value, "value", "v", "", "Value of the secret")
 	_ = cmd.MarkFlagRequired("value")
+	flags.BoolVar(&opts.Base64, "base64", false, "Is the value base64 encoded")
 	return cmd
 }
 
@@ -228,7 +231,17 @@ func runAddSecret(ctx context.Context, opts addOptions) error {
 	if err := assertMcpPolicyExists(ctx, c); err != nil {
 		return err
 	}
-	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Name, Value: opts.Value, Policies: []string{mcpPolicyName}})
+
+	value := opts.Value
+	if opts.Base64 {
+		decodedValue, err := base64.StdEncoding.DecodeString(value)
+		if err != nil {
+			return fmt.Errorf("failed to decode base64 value: %w", err)
+		}
+		value = string(decodedValue)
+	}
+
+	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Name, Value: value, Policies: []string{mcpPolicyName}})
 }
 
 func runListSecrets(ctx context.Context) error {
