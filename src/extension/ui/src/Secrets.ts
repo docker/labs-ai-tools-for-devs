@@ -3,6 +3,7 @@
 import { v1 } from "@docker/extension-api-client-types";
 import { CatalogItemWithName } from "./types/catalog";
 import { Secret } from "./types/secrets";
+import { encode } from "js-base64";
 
 namespace Secrets {
   export async function getSecrets(
@@ -29,11 +30,13 @@ namespace Secrets {
     secret: Secret
   ): Promise<void> {
     try {
+      const base64Value = encode(secret.value ?? '');
       const response = await client.extension.host?.cli.exec("host-binary", [
         "--name",
         secret.name,
+        "--base64",
         "--value",
-        client.host.platform === "win32" ? `\"${secret.value}\"` : `'${secret.value}'`,
+        client.host.platform === "win32" ? `\"${base64Value}\"` : `'${base64Value}'`,
       ]);
       if (!response) {
         client.desktopUI.toast.error(
