@@ -20,8 +20,13 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `config_helper`|This tool helps analyze and validate and fix CircleCI configuration files.|
+`create_prompt_template`|About this tool:
+  - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 `find_flaky_tests`|This tool retrieves information about flaky tests in a CircleCI project.|
 `get_build_failure_logs`|This tool helps debug CircleCI build failures by retrieving failure logs.|
+`get_latest_pipeline_status`|This tool retrieves the status of the latest pipeline for a CircleCI project.|
+`recommend_prompt_template_tests`|About this tool:
+  - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 
 ---
 ## Tools Details
@@ -49,6 +54,36 @@ orbs:
   Tool output instructions:
     - If the config is invalid, the tool will return the errors and the original config. Use the errors to fix the config.
     - If the config is valid, do nothing.
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`create_prompt_template`**
+About this tool:
+  - This tool is part of a tool chain that generates and provides test cases for a prompt template.
+  - This tool helps an AI assistant to generate a prompt template based on feature requirements defined by a user.
+  - This tool should be triggered whenever the user provides requirements for a new AI-enabled application or a new feature of an existing AI-enabled application (i.e. one that requires a prompt request to an LLM or any AI model).
+  - This tool will return a structured prompt template (e.g. `template`) along with a context schema (e.g. `contextSchema`) that defines the expected input parameters for the prompt template.
+
+  Parameters:
+  - params: object
+    - prompt: string (the feature requirements that will be used to generate a prompt template)
+
+  Example usage:
+  {
+    "params": {
+      "prompt": "Create an app that takes any topic and an age (in years), then renders a 1-minute bedtime story for a person of that age."
+    }
+  }
+
+  The tool will return a structured prompt template that can be used to guide an AI assistant's response, along with a context schema that defines the expected input parameters.
+
+  Tool output instructions:
+  - The tool will return...
+    - a `template` that reformulates the user's prompt into a more structured format.
+    - a `contextSchema` that defines the expected input parameters for the template.
+  - The tool output -- both the `template` and `contextSchema` -- will also be used as input to the `recommend_prompt_template_tests` tool to generate a list of recommended tests that can be used to test the prompt template.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
@@ -118,6 +153,70 @@ This tool helps debug CircleCI build failures by retrieving failure logs.
     - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
     - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
     - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`get_latest_pipeline_status`**
+This tool retrieves the status of the latest pipeline for a CircleCI project. It can be used to check pipeline status, get latest build status, or view current pipeline state.
+
+    Common use cases:
+    - Check latest pipeline status
+    - Get current build status
+    - View pipeline state
+    - Check build progress
+    - Get pipeline information
+
+    Input options (EXACTLY ONE of these two options must be used):
+
+    Option 1 - Direct URL (provide ONE of these):
+    - projectURL: The URL of the CircleCI project in any of these formats:
+      * Project URL: https://app.circleci.com/pipelines/gh/organization/project
+      * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
+      * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
+      * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
+
+    Option 2 - Project Detection (ALL of these must be provided together):
+    - workspaceRoot: The absolute path to the workspace root
+    - gitRemoteURL: The URL of the git remote repository
+    - branch: The name of the current branch
+
+    Additional Requirements:
+    - Never call this tool with incomplete parameters
+    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`recommend_prompt_template_tests`**
+About this tool:
+  - This tool is part of a tool chain that generates and provides test cases for a prompt template.
+  - This tool generates an array of recommended tests for a given prompt template.
+
+  Parameters:
+  - params: object
+    - promptTemplate: string (the prompt template to be tested)
+    - contextSchema: object (the context schema that defines the expected input parameters for the prompt template)
+
+  Example usage:
+  {
+    "params": {
+      "promptTemplate": "The user wants a bedtime story about {{topic}} for a person of age {{age}} years old. Please craft a captivating tale that captivates their imagination and provides a delightful bedtime experience.",
+      "contextSchema": {
+        "topic": "string",
+        "age": "number"
+      }
+    }
+  }
+
+  The tool will return a structured array of test cases that can be used to test the prompt template.
+
+  Tool output instructions:
+    - The tool will return a `recommendedTests` array that can be used to test the prompt template.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|

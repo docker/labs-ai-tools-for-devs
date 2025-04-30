@@ -10,8 +10,8 @@ Attribute|Details|
 **Image Source**|Official Image
 **Docker Image**|[mcp/neon](https://hub.docker.com/repository/docker/mcp/neon)
 **Author**|[neondatabase-labs](https://github.com/neondatabase-labs)
-**Repository**|https://github.com/neondatabase/mcp-server-neon
-**Dockerfile**|https://github.com/neondatabase/mcp-server-neon/blob/main/Dockerfile
+**Repository**|https://github.com/neondatabase-labs/mcp-server-neon
+**Dockerfile**|https://github.com/neondatabase-labs/mcp-server-neon/blob/dbfa184afd9fc677c0d6b007a62b33194e883821/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/neon)
 **Licence**|MIT License

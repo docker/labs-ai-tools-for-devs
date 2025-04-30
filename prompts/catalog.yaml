@@ -40,7 +40,7 @@ registry:
     prompts: 1
     resources: {}
   qrcode:
-    description: Generate a qrcode for an input text string.
+    description: Generate a QR Code for an input text string.
     title: QR Code
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/examples/qrencode.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/qrencode.md
@@ -402,7 +402,7 @@ registry:
     prompts: 0
     resources: {}
   puppeteer:
-    description: UNDER CONSTRUCTION (support long running browser cache) Browser automation and web scraping using Puppeteer.
+    description: Browser automation and web scraping using Puppeteer.
     title: Puppeteer (Reference)
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/puppeteer.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/puppeteer.md
@@ -1112,13 +1112,25 @@ registry:
       - name: box_ask_ai_tool
       - name: box_ask_ai_tool_multi_file
       - name: box_authorize_app_tool
+      - name: box_docgen_create_batch_tool
+      - name: box_docgen_get_job_tool
+      - name: box_docgen_list_jobs_by_batch_tool
+      - name: box_docgen_list_jobs_tool
+      - name: box_docgen_template_create_tool
+      - name: box_docgen_template_delete_tool
+      - name: box_docgen_template_get_by_id_tool
+      - name: box_docgen_template_list_jobs_tool
+      - name: box_docgen_template_list_tags_tool
+      - name: box_docgen_template_list_tool
       - name: box_download_file_tool
+      - name: box_hubs_ask_ai_tool
       - name: box_list_folder_content_by_folder_id
       - name: box_manage_folder_tool
       - name: box_read_tool
       - name: box_search_folder_by_name
       - name: box_search_tool
-      - name: box_upload_file_tool
+      - name: box_upload_file_from_content_tool
+      - name: box_upload_file_from_path_tool
       - name: box_who_am_i
     secrets:
       - name: box.client_secret
@@ -1567,7 +1579,7 @@ registry:
     title: Neon
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neon.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neon.md
-    source: https://github.com/neondatabase/mcp-server-neon/tree/main
+    source: https://github.com/neondatabase-labs/mcp-server-neon/tree/dbfa184afd9fc677c0d6b007a62b33194e883821
     icon: https://avatars.githubusercontent.com/u/183852044?s=200&v=4
     tools:
       - name: __node_version
@@ -1591,37 +1603,6 @@ registry:
       - name: run_sql_transaction
     secrets:
       - name: neon.api_key
-    prompts: 0
-    resources: {}
-  neondatabase-labs:
-    description: MCP server for interacting with Neon Management API and databases.
-    title: Neon Management
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neondatabase-labs.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neondatabase-labs.md
-    source: https://github.com/neondatabase-labs/mcp-server-neon/tree/main
-    icon: https://avatars.githubusercontent.com/u/183852044?s=200&v=4
-    tools:
-      - name: __node_version
-      - name: complete_database_migration
-      - name: complete_query_tuning
-      - name: create_branch
-      - name: create_project
-      - name: delete_branch
-      - name: delete_project
-      - name: describe_branch
-      - name: describe_project
-      - name: describe_table_schema
-      - name: explain_sql_statement
-      - name: get_connection_string
-      - name: get_database_tables
-      - name: list_projects
-      - name: prepare_database_migration
-      - name: prepare_query_tuning
-      - name: provision_neon_auth
-      - name: run_sql
-      - name: run_sql_transaction
-    secrets:
-      - name: neondatabase-labs.api_key
     prompts: 0
     resources: {}
   opik:
@@ -2234,13 +2215,18 @@ registry:
     tools:
       - name: add_activity_to_incident
       - name: create_incident
+      - name: find_error_pattern_logs
+      - name: find_slow_requests
       - name: get_alert_rule_by_uid
+      - name: get_assertions
       - name: get_current_oncall_users
       - name: get_dashboard_by_uid
       - name: get_datasource_by_name
       - name: get_datasource_by_uid
       - name: get_incident
       - name: get_oncall_shift
+      - name: get_sift_analysis
+      - name: get_sift_investigation
       - name: list_alert_rules
       - name: list_contact_points
       - name: list_datasources
@@ -2254,6 +2240,7 @@ registry:
       - name: list_prometheus_label_values
       - name: list_prometheus_metric_metadata
       - name: list_prometheus_metric_names
+      - name: list_sift_investigations
       - name: query_loki_logs
       - name: query_loki_stats
       - name: query_prometheus
@@ -2323,8 +2310,11 @@ registry:
     icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
     tools:
       - name: config_helper
+      - name: create_prompt_template
       - name: find_flaky_tests
       - name: get_build_failure_logs
+      - name: get_latest_pipeline_status
+      - name: recommend_prompt_template_tests
     secrets:
       - name: circleci.token
     prompts: 0
@@ -2660,9 +2650,13 @@ registry:
     tools:
       - name: create_order
       - name: create_payment_link
+      - name: create_refund
+      - name: fetch_all_orders
       - name: fetch_order
       - name: fetch_payment
       - name: fetch_payment_link
+      - name: fetch_refund
+      - name: update_refund
     secrets:
       - name: razorpay.key_secret
     prompts: 0

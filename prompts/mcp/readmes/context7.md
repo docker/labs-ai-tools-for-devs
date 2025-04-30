@@ -1,6 +1,6 @@
 # Context7 MCP Server
 
-Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors.
+Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

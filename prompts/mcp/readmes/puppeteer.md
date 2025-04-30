@@ -1,8 +1,6 @@
 # Puppeteer (Reference) MCP Server
 
-UNDER CONSTRUCTION (support long running browser cache)
 Browser automation and web scraping using Puppeteer.
-.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 
