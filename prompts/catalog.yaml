@@ -698,11 +698,18 @@ registry:
     tools:
       - name: retrieve_from_aws_kb
     secrets:
-      - name: aws.access_key_id
       - name: aws.secret_access_key
-      - name: aws.region
     prompts: 0
     resources: {}
+    config:
+      - name: aws-kb-retrieval-server
+        description: Configure the connection to AWS
+        type: object
+        properties:
+          access_key_id:
+            type: string
+          region:
+            type: string
   everart:
     description: Image generation server using EverArt's API.
     title: EverArt (Reference)
@@ -1114,7 +1121,6 @@ registry:
       - name: box_upload_file_tool
       - name: box_who_am_i
     secrets:
-      - name: box.client_id
       - name: box.client_secret
     prompts: 0
     resources: {}
@@ -1733,7 +1739,6 @@ registry:
       - name: get-task-by-id
       - name: get-tasks
     secrets:
-      - name: redis-cloud.api_key
       - name: redis-cloud.secret_key
     prompts: 0
     resources: {}
@@ -2067,7 +2072,6 @@ registry:
       - name: translate
       - name: update_memory
     secrets:
-      - name: lara.key_id
       - name: lara.key_secret
     prompts: 0
     resources: {}
