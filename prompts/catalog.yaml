@@ -1124,6 +1124,13 @@ registry:
       - name: box.client_secret
     prompts: 0
     resources: {}
+    config:
+      - name: box
+        description: Configure the connection to Box
+        type: object
+        properties:
+          client_id:
+            type: string
   chroma:
     description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma.
     title: Chroma
@@ -1742,6 +1749,13 @@ registry:
       - name: redis-cloud.secret_key
     prompts: 0
     resources: {}
+    config:
+      - name: redis-cloud
+        description: Configure the connection to Redis Cloud
+        type: object
+        properties:
+          api_key:
+            type: string
   scrapegraph:
     description: ScapeGraph MCP Server.
     title: ScrapeGraph
@@ -2075,6 +2089,13 @@ registry:
       - name: lara.key_secret
     prompts: 0
     resources: {}
+    config:
+      - name: lara
+        description: Configure the connection to Lara Translate
+        type: object
+        properties:
+          key_id:
+            type: string
   wolfram-alpha:
     description: Connect your chat repl to wolfram alpha computational intelligence.
     title: WolframAlpha
@@ -2442,7 +2463,7 @@ registry:
           url:
             type: string
   context7:
-    description: Context7 MCP Server -- Up-to-date documentation for LLMs and AI code editors.
+    description: Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors.
     title: Context7
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/context7.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/context7.md
