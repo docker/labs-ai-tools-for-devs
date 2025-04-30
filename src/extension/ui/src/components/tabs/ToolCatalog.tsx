@@ -6,6 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { CATALOG_LAYOUT_SX } from '../../Constants';
 import { useCatalogAll } from '../../queries/useCatalog';
 import Tile from '../tile/Index';
+import ConfigurationModal from '../tile/Modal';
+import { CatalogItemRichened } from '../../types';
 
 interface ToolCatalogProps {
   search: string;
@@ -13,14 +15,19 @@ interface ToolCatalogProps {
   sort: 'name-asc' | 'name-desc';
 }
 
-const ToolCatalog: React.FC<ToolCatalogProps> = ({
-  search,
-  client,
-  sort,
-}) => {
+const ToolCatalog: React.FC<ToolCatalogProps> = ({ search, client, sort }) => {
   const { catalogItems, registryLoading } = useCatalogAll(client);
-  const [expandedEnabled, setExpandedEnabled] = useState(localStorage.getItem('expandedEnabled') !== 'false');
-  const [expandedNotEnabled, setExpandedNotEnabled] = useState(localStorage.getItem('expandedNotEnabled') !== 'false');
+  const [expandedEnabled, setExpandedEnabled] = useState(
+    localStorage.getItem('expandedEnabled') !== 'false',
+  );
+  const [expandedNotEnabled, setExpandedNotEnabled] = useState(
+    localStorage.getItem('expandedNotEnabled') !== 'false',
+  );
+
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<CatalogItemRichened | null>(
+    null,
+  );
 
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const all = useMemo(() => {
@@ -30,31 +37,54 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
 
     return sort === 'name-asc'
       ? filteredItems.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      })
+          return a.name.localeCompare(b.name);
+        })
       : sort === 'name-desc'
         ? filteredItems.sort((a, b) => {
-          return b.name.localeCompare(a.name);
-        })
+            return b.name.localeCompare(a.name);
+          })
         : filteredItems;
   }, [catalogItems, search, sort]);
   const enabled = all.filter((item) => item.registered);
 
   return (
     <>
-      {(enabled.length > 0) && (
+      {selectedItem !== null && (
+        <ConfigurationModal
+          open={showConfigModal}
+          onClose={() => setShowConfigModal(false)}
+          catalogItem={selectedItem}
+          client={client}
+          registryLoading={registryLoading}
+        />
+      )}
+      {enabled.length > 0 && (
         <>
           <Typography
-            variant='subtitle2'
-            sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
+            variant="subtitle2"
+            sx={{
+              color: 'text.secondary',
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              width: 'fit-content',
+            }}
             onClick={() => {
-              const newExpanded = !expandedEnabled
+              const newExpanded = !expandedEnabled;
               setExpandedEnabled(newExpanded);
-              localStorage.setItem('expandedEnabled', JSON.stringify(newExpanded));
-            }}>
+              localStorage.setItem(
+                'expandedEnabled',
+                JSON.stringify(newExpanded),
+              );
+            }}
+          >
             {`Enabled (${enabled.length})`}
-            {expandedEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
-          </Typography >
+            {expandedEnabled ? (
+              <KeyboardArrowDownIcon fontSize="small" />
+            ) : (
+              <KeyboardArrowRightIcon fontSize="small" />
+            )}
+          </Typography>
 
           <Collapse in={expandedEnabled}>
             <Grid2 container spacing={1} sx={CATALOG_LAYOUT_SX}>
@@ -65,6 +95,8 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
                       item={catalogItem}
                       client={client}
                       registryLoading={registryLoading}
+                      setSelectedItem={setSelectedItem}
+                      setShowConfigModal={setShowConfigModal}
                     />
                   </Grid2>
                 );
@@ -75,15 +107,29 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
       )}
 
       <Typography
-        variant='subtitle2'
-        sx={{ color: "text.secondary", display: "flex", alignItems: "center", cursor: "pointer", width: 'fit-content' }}
+        variant="subtitle2"
+        sx={{
+          color: 'text.secondary',
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          width: 'fit-content',
+        }}
         onClick={() => {
-          const newExpanded = !expandedNotEnabled
+          const newExpanded = !expandedNotEnabled;
           setExpandedNotEnabled(newExpanded);
-          localStorage.setItem('expandedNotEnabled', JSON.stringify(newExpanded));
-        }}>
+          localStorage.setItem(
+            'expandedNotEnabled',
+            JSON.stringify(newExpanded),
+          );
+        }}
+      >
         {`All (${all.length})`}
-        {expandedNotEnabled ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowRightIcon fontSize="small" />}
+        {expandedNotEnabled ? (
+          <KeyboardArrowDownIcon fontSize="small" />
+        ) : (
+          <KeyboardArrowRightIcon fontSize="small" />
+        )}
       </Typography>
 
       <Collapse in={expandedNotEnabled}>
@@ -95,6 +141,8 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
                   item={catalogItem}
                   client={client}
                   registryLoading={registryLoading}
+                  setSelectedItem={setSelectedItem}
+                  setShowConfigModal={setShowConfigModal}
                 />
               </Grid2>
             );
