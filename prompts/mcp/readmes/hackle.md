@@ -20,6 +20,10 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `active-user-series`|Retrieves time-series data of active users.|
+`analytics-chart-detail`|fetch analytics chart detail.|
+`analytics-chart-list`|fetch data analytics chart list.|
+`data-report-detail`|fetch data report detail.|
+`data-report-list`|fetch data report list.|
 `experiment-detail`|Retrieves detailed information for a specific A/B test experiment.|
 `experiment-list`|Fetches a paginated list of A/B test experiments with search functionality.|
 `in-app-message-detail`|Retrieves detailed information for a specific in-app message.|
@@ -37,9 +41,36 @@ Retrieves time-series data of active users. Available in daily, weekly, and mont
 Parameters|Type|Description
 -|-|-
 `unit`|`string`|
-`date`|`string` *optional*|
+`date`|`string` *optional*|End date in YYYY-MM-DD format.
 
 ---
+#### Tool: **`analytics-chart-detail`**
+fetch analytics chart detail. You can visualize the chart using this tool's result.
+Parameters|Type|Description
+-|-|-
+`chartId`|`number`|Chart id
+`chartType`|`string`|Type of the chart. Will throw an error if given chartId's chart type is different from chartType.
+
+---
+#### Tool: **`analytics-chart-list`**
+fetch data analytics chart list.
+Parameters|Type|Description
+-|-|-
+`chartType`|`string` *optional*|
+`pageNumber`|`number` *optional*|
+`pageSize`|`number` *optional*|
+`searchKeyword`|`string` *optional*|
+
+---
+#### Tool: **`data-report-detail`**
+fetch data report detail.
+Parameters|Type|Description
+-|-|-
+`dataReportId`|`number`|
+
+---
+#### Tool: **`data-report-list`**
+fetch data report list.
 #### Tool: **`experiment-detail`**
 Retrieves detailed information for a specific A/B test experiment.
 Parameters|Type|Description
@@ -53,7 +84,7 @@ Parameters|Type|Description
 -|-|-
 `pageNumber`|`number` *optional*|
 `pageSize`|`number` *optional*|
-`searchKeyword`|`string` *optional*|
+`searchKeyword`|`string` *optional*|name, description, or experimentKey of an experiment.
 
 ---
 #### Tool: **`in-app-message-detail`**
@@ -69,7 +100,7 @@ Parameters|Type|Description
 -|-|-
 `pageNumber`|`number` *optional*|
 `pageSize`|`number` *optional*|
-`searchKeyword`|`string` *optional*|
+`searchKeyword`|`string` *optional*|name, description, or campaignKey of an in-app message.
 
 ---
 #### Tool: **`push-message-detail`**
@@ -85,7 +116,7 @@ Parameters|Type|Description
 -|-|-
 `pageNumber`|`number` *optional*|
 `pageSize`|`number` *optional*|
-`searchKeyword`|`string` *optional*|
+`searchKeyword`|`string` *optional*|name, description, or campaignKey of a push message.
 
 ---
 #### Tool: **`retention-series`**
@@ -93,7 +124,7 @@ Retrieves time-series data of user retention. Available in daily, weekly, and mo
 Parameters|Type|Description
 -|-|-
 `unit`|`string`|
-`date`|`string` *optional*|
+`date`|`string` *optional*|End date in YYYY-MM-DD format.
 
 ---
 #### Tool: **`stickiness-series`**
@@ -101,7 +132,7 @@ Retrieves time-series data of user stickiness (return visit frequency). Availabl
 Parameters|Type|Description
 -|-|-
 `unit`|`string`|
-`date`|`string` *optional*|
+`date`|`string` *optional*|End date in YYYY-MM-DD format.
 
 ---
 ## Use this MCP Server

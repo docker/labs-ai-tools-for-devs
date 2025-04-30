@@ -1,6 +1,6 @@
 # Dappier MCP Server
 
-Dappier MCP server connects any AI to proprietary, real-time data — including web search, news, sports, stock market data, and premium publisher content.
+Enable fast, free real-time web search and access premium data from trusted media brands—news, financial markets, sports, entertainment, weather, and more. Build powerful AI agents with Dappier.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

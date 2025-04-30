@@ -47,15 +47,15 @@ Parameters|Type|Description
         "-e",
         "AWS_ACCESS_KEY_ID",
         "-e",
-        "AWS_SECRET_ACCESS_KEY",
-        "-e",
         "AWS_REGION",
+        "-e",
+        "AWS_SECRET_ACCESS_KEY",
         "mcp/aws-kb-retrieval-server"
       ],
       "env": {
         "AWS_ACCESS_KEY_ID": "YOUR_ACCESS_KEY_HERE",
-        "AWS_SECRET_ACCESS_KEY": "YOUR_SECRET_ACCESS_KEY_HERE",
-        "AWS_REGION": "YOUR_AWS_REGION_HERE"
+        "AWS_REGION": "YOUR_AWS_REGION_HERE",
+        "AWS_SECRET_ACCESS_KEY": "YOUR_SECRET_ACCESS_KEY_HERE"
       }
     }
   }
