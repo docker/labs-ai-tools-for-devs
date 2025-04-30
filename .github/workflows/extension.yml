@@ -33,5 +33,5 @@ jobs:
           file: src/extension/Dockerfile
           context: src/extension
           build-contexts: |
-            prompts=../../prompts
+            prompts=prompts
           
