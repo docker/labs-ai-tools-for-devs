@@ -12,11 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Host Binary
-        run: |
-          cd src/extension
-          make cross
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -37,3 +32,6 @@ jobs:
           tags: docker/labs-ai-tools-for-devs:${{ github.event.release.tag_name }}
           file: src/extension/Dockerfile
           context: src/extension
+          build-contexts: |
+            prompts=../../prompts
+          
