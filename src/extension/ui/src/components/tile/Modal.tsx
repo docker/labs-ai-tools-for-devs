@@ -123,6 +123,15 @@ const ConfigurationModal = ({
     }
   }, [catalogItem.canRegister]);
 
+  const [image, setImage] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (catalogItem.icon) {
+      getCatalogIconPath(catalogItem.icon).then((icon) => {
+        setImage(icon);
+      });
+    }
+  }, [catalogItem.icon]);
+
   const toolChipStyle = {
     padding: '2px 8px',
     justifyContent: 'center',
@@ -177,7 +186,7 @@ const ConfigurationModal = ({
             // TODO: Figure out if catalog icon is actually optional, and if so, find a good fallback.
             catalogItem.icon && <Avatar
               variant="square"
-              src={getCatalogIconPath(catalogItem.icon)}
+              src={image}
               alt={catalogItem.name}
               sx={{
                 width: 40,

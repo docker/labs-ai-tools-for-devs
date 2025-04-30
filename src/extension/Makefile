@@ -13,15 +13,8 @@ bin:
 cross:
 	cd host-binary && $(MAKE) cross
 
-pull-catalog-images: ## Pull all icons from the catalog into static-assets with base16 filename safe for paths and urls alike
-	cat ../../prompts/catalog.yaml | yq -r '.registry[].icon' | while read -r iconUrl; do \
-		iconName=$$( echo "$$iconUrl" | xxd -p -u | tr -d '\n' ); \
-		iconPath="ui/static-assets/$$iconName.png"; \
-		[ -f "$$iconPath" ] || curl -o "$$iconPath" "$$iconUrl"; \
-	done
-
-build-extension: cross pull-catalog-images ## Build service image to be deployed as a desktop extension
-	docker buildx build --load --tag=$(IMAGE):$(TAG) .
+build-extension: cross ## Build service image to be deployed as a desktop extension
+	docker buildx build --build-context prompts=../../prompts --load --tag=$(IMAGE):$(TAG) .
 	
 install-extension: build-extension ## Install the extension
 	echo y | docker extension install $(IMAGE):$(TAG)
@@ -33,7 +26,7 @@ prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
 
 push-extension: prepare-buildx cross ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker pull $(IMAGE):$(TAG) && echo "Failure: Tag already exists" || docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64,linux/arm64 --build-arg TAG=$(TAG) --tag=$(IMAGE):$(TAG) .
+	docker pull $(IMAGE):$(TAG) && echo "Failure: Tag already exists" || docker buildx build --build-context prompts=../../prompts --push --builder=$(BUILDER) --platform=linux/amd64,linux/arm64 --build-arg TAG=$(TAG) --tag=$(IMAGE):$(TAG) .
 
 help: ## Show this help
 	@echo Please specify a build target. The choices are:

@@ -21,7 +21,14 @@ export default function Top({ item, onToggleRegister }: TopProps) {
     setToggled(item.registered);
   }, [item.registered]);
 
-  const url = getCatalogIconPath(item.icon || '');
+  const [image, setImage] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (item.icon) {
+      getCatalogIconPath(item.icon).then((icon) => {
+        setImage(icon);
+      });
+    }
+  }, [item.icon]);
 
   return (
     <CardHeader
@@ -29,7 +36,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
       avatar={
         <Avatar
           variant="square"
-          src={url}
+          src={image}
           alt={item.name}
           sx={{
             width: 24,
