@@ -5,7 +5,6 @@ class ClaudeDesktopClient implements MCPClient {
   name = "Claude Desktop";
   url = "https://claude.ai/download";
   manualConfigSteps = [
-    "Open Claude Desktop",
     "Select <strong>Claude Settings</strong>",
     "Click on the <strong>Developer</strong> tab",
     "Click on the <strong>Edit Config</strong> button",
