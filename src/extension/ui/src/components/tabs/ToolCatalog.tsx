@@ -25,16 +25,16 @@ const ToolCatalog: React.FC<ToolCatalogProps> = ({
   // Memoize the filtered catalog items to prevent unnecessary recalculations
   const all = useMemo(() => {
     const filteredItems = catalogItems.filter((item) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
+      return item.title.toLowerCase().includes(search.toLowerCase());
     });
 
     return sort === 'name-asc'
       ? filteredItems.sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.title.localeCompare(b.title);
       })
       : sort === 'name-desc'
         ? filteredItems.sort((a, b) => {
-          return b.name.localeCompare(a.name);
+          return b.title.localeCompare(a.title);
         })
         : filteredItems;
   }, [catalogItems, search, sort]);

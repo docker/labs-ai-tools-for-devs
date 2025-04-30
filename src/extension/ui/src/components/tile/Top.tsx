@@ -52,7 +52,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             color: 'text.primary',
           }}
         >
-          {item.title ?? item.name}
+          {item.title}
         </Typography>
       }
       action={

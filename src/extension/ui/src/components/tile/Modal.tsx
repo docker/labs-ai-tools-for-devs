@@ -195,7 +195,7 @@ const ConfigurationModal = ({
               }}
             />
           }
-          {catalogItem.title ?? catalogItem.name}
+          {catalogItem.title}
           <Tooltip
             placement="right"
             title={
