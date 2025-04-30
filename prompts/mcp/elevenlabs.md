@@ -5,6 +5,7 @@ mcp:
       workdir: /app
       environment:
         ELEVENLABS_MCP_BASE_PATH: "/elevenlabs"
+        HOME: "/elevenlabs"
       volumes:
         - "{{elevenlabs.base_path}}:/elevenlabs"
       secrets:
