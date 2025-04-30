@@ -33,7 +33,7 @@ namespace Secrets {
         "--name",
         secret.name,
         "--value",
-        `'${secret.value}'`,
+        client.host.platform === "win32" ? `\"${secret.value}\"` : `'${secret.value}'`,
       ]);
       if (!response) {
         client.desktopUI.toast.error(
