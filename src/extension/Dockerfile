@@ -12,12 +12,12 @@ RUN npm run build
 FROM alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
 ARG TARGETARCH
 LABEL org.opencontainers.image.title="Docker MCP Toolkit" \
-    org.opencontainers.image.description="Docker MCP Toolkit is a Docker Desktop Extension allowing to connect dockerized MCP servers to MCP Clients" \
+    org.opencontainers.image.description="Docker MCP Toolkit is a Docker Desktop Extension allowing to connect dockerized MCP servers to MCP clients" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot1.png"}, {"alt":"Screenshot of Tile configuration", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot2.png"}, {"alt":"Screenshot of MCP Client configuration", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot3.png"}]' \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/ui/src/assets/extension-icon.png" \
-    com.docker.extension.detailed-description="Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client" \
+    com.docker.extension.detailed-description="Browse and connect Dockerized MCP servers to your favorite MCP clients" \
     com.docker.extension.publisher-url="https://www.docker.com/" \
     com.docker.extension.additional-urls="" \
     com.docker.extension.categories="utility-tools" \
