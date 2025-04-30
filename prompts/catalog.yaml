@@ -336,7 +336,6 @@ registry:
     description: Git repository interaction and automation.
     title: Git
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/git.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/git.md
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/git.md
     icon: https://avatars.githubusercontent.com/u/18133?s=200&v=4
     tools:
@@ -397,7 +396,7 @@ registry:
     description: Use the Docker CLI.
     title: Docker
     ref: github:docker/labs-ai-tools-for-devs?path=prompts/examples/docker.md
-    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/docker.svg
+    icon: https://avatars.githubusercontent.com/u/5429470?s=200&v=4
     tools:
       - name: docker
     prompts: 0
@@ -860,6 +859,7 @@ registry:
     icon: https://avatars.githubusercontent.com/u/9919?s=200&v=4
     tools:
       - name: add_issue_comment
+      - name: add_pull_request_review_comment
       - name: create_branch
       - name: create_issue
       - name: create_or_update_file
@@ -868,6 +868,7 @@ registry:
       - name: create_repository
       - name: fork_repository
       - name: get_code_scanning_alert
+      - name: get_commit
       - name: get_file_contents
       - name: get_issue
       - name: get_issue_comments
@@ -877,10 +878,13 @@ registry:
       - name: get_pull_request_files
       - name: get_pull_request_reviews
       - name: get_pull_request_status
+      - name: get_secret_scanning_alert
+      - name: list_branches
       - name: list_code_scanning_alerts
       - name: list_commits
       - name: list_issues
       - name: list_pull_requests
+      - name: list_secret_scanning_alerts
       - name: merge_pull_request
       - name: push_files
       - name: search_code
@@ -888,6 +892,7 @@ registry:
       - name: search_repositories
       - name: search_users
       - name: update_issue
+      - name: update_pull_request
       - name: update_pull_request_branch
     secrets:
       - name: github.personal_access_token
@@ -2344,7 +2349,7 @@ registry:
     resources: {}
   doit:
     description: DoiT official MCP Server.
-    title: DOiT
+    title: DoiT
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/doit.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/doit.md
     source: https://github.com/doitintl/doit-mcp-server/tree/main
@@ -2396,7 +2401,7 @@ registry:
     prompts: 0
     resources: {}
   dappier:
-    description: Dappier MCP server connects any AI to proprietary, real-time data — including web search, news, sports, stock market data, and premium publisher content.
+    description: Enable fast, free real-time web search and access premium data from trusted media brands—news, financial markets, sports, entertainment, weather, and more. Build powerful AI agents with Dappier.
     title: Dappier
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/dappier.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/dappier.md
@@ -2526,6 +2531,10 @@ registry:
     icon: https://avatars.githubusercontent.com/u/65485327?v=4
     tools:
       - name: active-user-series
+      - name: analytics-chart-detail
+      - name: analytics-chart-list
+      - name: data-report-detail
+      - name: data-report-list
       - name: experiment-detail
       - name: experiment-list
       - name: in-app-message-detail
