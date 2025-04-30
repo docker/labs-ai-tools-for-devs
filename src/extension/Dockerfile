@@ -1,47 +1,45 @@
-## syntax=docker/dockerfile:1.4
-#FROM golang:1.24-alpine AS builder
-#ENV CGO_ENABLED=0
-#WORKDIR /backend
-#COPY backend/go.* .
-#RUN --mount=type=cache,target=/go/pkg/mod \
-#--mount=type=cache,target=/root/.cache/go-build \
-#go mod download
-#COPY backend/. .
-#RUN --mount=type=cache,target=/go/pkg/mod \
-#--mount=type=cache,target=/root/.cache/go-build \
-#go build -trimpath -ldflags="-s -w" -o bin/service
+# syntax=docker/dockerfile:1
 
-FROM --platform=$BUILDPLATFORM node:23-alpine3.20 AS client-builder
+FROM alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c AS alpine
+
+FROM --platform=$BUILDPLATFORM node:23-alpine3.21@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS client-builder
 WORKDIR /ui
 COPY ui/package.json ui/package-lock.json ./
-RUN --mount=type=cache,target=/usr/src/app/.npm \
-    npm set cache /usr/src/app/.npm && \
-    npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY ui/. .
-RUN npm run build
+RUN --mount=type=cache,target=/root/.npm npm run build
 
-FROM alpine:3.20
+FROM alpine AS pull-catalog-images
+RUN apk add --no-cache curl yq
+COPY --from=prompts catalog.yaml /
+RUN <<EOT
+    set -eo pipefail
+
+    mkdir -p /icons
+    cat /catalog.yaml | yq -r '.registry[].icon' | while read -r iconUrl; do
+        name=$(echo -n "$iconUrl" | md5sum | cut -d' ' -f1)
+        echo "${iconUrl} -> ${name}"
+        curl -fSl "$iconUrl" -o "/icons/${name}"
+    done
+EOT
+
+FROM alpine
 ARG TARGETARCH
 LABEL org.opencontainers.image.title="Docker MCP Toolkit" \
-    org.opencontainers.image.description="Docker MCP Toolkit is a Docker Desktop Extension allowing to connect dockerized MCP servers to MCP Clients" \
+    org.opencontainers.image.description="Docker MCP Toolkit is a Docker Desktop Extension allowing to connect dockerized MCP servers to MCP clients" \
     org.opencontainers.image.vendor="Docker Inc" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots='[{"alt":"screenshot of the extension UI", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot1.png"}, {"alt":"Screenshot of Tile configuration", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot2.png"}, {"alt":"Screenshot of MCP Client configuration", "url":"https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/src/extension/ui/src/assets/screenshots/screenshot3.png"}]' \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/ui/src/assets/extension-icon.png" \
-    com.docker.extension.detailed-description="Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client" \
+    com.docker.extension.detailed-description="Browse and connect Dockerized MCP servers to your favorite MCP clients" \
     com.docker.extension.publisher-url="https://www.docker.com/" \
     com.docker.extension.additional-urls="https://hub.docker.com/catalogs/mcp" \
     com.docker.extension.categories="utility-tools" \
     com.docker.extension.changelog="Added MCP catalog"
 
-#COPY --from=builder /backend/bin/service /
-COPY docker-compose.yaml .
-COPY metadata.json .
-COPY extension-icon.svg /extension-icon.svg
+COPY docker-compose.yaml metadata.json extension-icon.svg /
 COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary.exe
 COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
 COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
+COPY --from=pull-catalog-images /icons ui/static-assets
 COPY --from=client-builder /ui/build ui
-#COPY data /data
-
-#CMD ["/service", "-socket", "/run/guest-services/backend.sock"]

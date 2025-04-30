@@ -45,6 +45,7 @@ import { useSecrets } from '../../queries/useSecrets';
 import { CatalogItemRichened } from '../../types/catalog';
 import ConfigEditor from './ConfigEditor';
 import { isEmpty } from 'lodash-es';
+import getCatalogIconPath from '../../utils/getCatalogIconPath';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -122,6 +123,15 @@ const ConfigurationModal = ({
     }
   }, [catalogItem.canRegister]);
 
+  const [image, setImage] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (catalogItem.icon) {
+      getCatalogIconPath(catalogItem.icon).then((icon) => {
+        setImage(icon);
+      });
+    }
+  }, [catalogItem.icon]);
+
   const toolChipStyle = {
     padding: '2px 8px',
     justifyContent: 'center',
@@ -172,16 +182,19 @@ const ConfigurationModal = ({
             alignItems: 'center',
           }}
         >
-          <Avatar
-            variant="square"
-            src={catalogItem.icon}
-            alt={catalogItem.name}
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: 1,
-            }}
-          />
+          {
+            // TODO: Figure out if catalog icon is actually optional, and if so, find a good fallback.
+            catalogItem.icon && <Avatar
+              variant="square"
+              src={image}
+              alt={catalogItem.name}
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 1,
+              }}
+            />
+          }
           {catalogItem.title ?? catalogItem.name}
           <Tooltip
             placement="right"
@@ -386,7 +399,7 @@ const ConfigurationModal = ({
                               const secretEdited =
                                 (secret.assigned &&
                                   localSecrets[secret.name] !==
-                                    ASSIGNED_SECRET_PLACEHOLDER) ||
+                                  ASSIGNED_SECRET_PLACEHOLDER) ||
                                 (!secret.assigned &&
                                   localSecrets[secret.name] !== '');
                               return (
