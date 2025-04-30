@@ -1,2 +1,5 @@
 ui/node_modules
 dist/install/_internal
+/**/dist/*
+/**/bin/host-binary
+/**/Makefile
