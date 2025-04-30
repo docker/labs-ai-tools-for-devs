@@ -217,11 +217,11 @@ const ConfigurationModal = ({
               />
             </span>
           </Tooltip>
+          {catalogItem.missingConfig && (
+            <Chip label="Requires parameters" color="warning" />
+          )}
           {catalogItem.missingSecrets && (
             <Chip label="Requires secrets" color="warning" />
-          )}
-          {catalogItem.missingConfig && (
-            <Chip label="Requires configuration" color="warning" />
           )}
         </Stack>
       </DialogTitle>
