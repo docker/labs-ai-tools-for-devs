@@ -200,7 +200,7 @@ const ConfigurationModal = ({
             placement="right"
             title={
               !catalogItem.canRegister
-                ? 'You must assign all secrets and configure the item before it can be used.'
+                ? 'You must configure the item before it can be used.'
                 : ''
             }
           >
