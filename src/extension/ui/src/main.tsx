@@ -11,12 +11,6 @@ import { App } from './App';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Keep data in cache for 5 minutes
-      gcTime: 5 * 60 * 1000,
-      // Treat data as fresh for 30 seconds
-      staleTime: 30 * 1000,
-      // Don't refetch on window focus by default
-      refetchOnWindowFocus: false,
       // Retry failed queries 3 times
       retry: 3
     }
