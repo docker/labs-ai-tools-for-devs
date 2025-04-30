@@ -14,4 +14,6 @@ tools:
       image: docker:latest
       command:
         - "{{args|into}}"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
 ---
