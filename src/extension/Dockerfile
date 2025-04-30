@@ -23,11 +23,9 @@ LABEL org.opencontainers.image.title="Docker MCP Toolkit" \
     com.docker.extension.categories="utility-tools" \
     com.docker.extension.changelog="Added MCP catalog"
 
-COPY docker-compose.yaml .
-COPY metadata.json .
-COPY extension-icon.svg /extension-icon.svg
+COPY docker-compose.yaml metadata.json extension-icon.svg /
+COPY ui/static-assets ui/static-assets
 COPY host-binary/dist/windows-${TARGETARCH}/host-binary.exe /windows/host-binary.exe
 COPY host-binary/dist/darwin-${TARGETARCH}/host-binary /darwin/host-binary
 COPY host-binary/dist/linux-${TARGETARCH}/host-binary /linux/host-binary
 COPY --from=client-builder /ui/build ui
-COPY ui/static-assets ui/static-assets
