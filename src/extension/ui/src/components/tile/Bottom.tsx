@@ -7,6 +7,7 @@ import hammerIcon from './hammer.svg';
 
 type BottomProps = {
   item: CatalogItem;
+  needsConfiguration: boolean;
 };
 
 const Bottom = ({ item }: BottomProps) => {
