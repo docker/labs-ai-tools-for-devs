@@ -30,7 +30,7 @@ LABEL org.opencontainers.image.title="Docker MCP Toolkit" \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/main/src/extension/ui/src/assets/extension-icon.png" \
     com.docker.extension.detailed-description="Browse the Docker MCP Catalog and connect Dockerized MCP servers to your favorite MCP Client" \
     com.docker.extension.publisher-url="https://www.docker.com/" \
-    com.docker.extension.additional-urls="" \
+    com.docker.extension.additional-urls="https://hub.docker.com/catalogs/mcp" \
     com.docker.extension.categories="utility-tools" \
     com.docker.extension.changelog="Added MCP catalog"
 
