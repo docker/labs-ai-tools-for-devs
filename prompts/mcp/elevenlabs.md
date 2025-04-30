@@ -6,7 +6,7 @@ mcp:
       environment:
         ELEVENLABS_MCP_BASE_PATH: "/elevenlabs"
       volumes:
-        - "{{elevenlabs.base_path}}/elevenlabs"
+        - "{{elevenlabs.base_path}}:/elevenlabs"
       secrets:
         elevenlabs.api_key: ELEVENLABS_API_KEY
     source:
