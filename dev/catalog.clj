@@ -78,8 +78,8 @@
   (spit "servers.edn" (pr-str (into [] (map name (keys (:registry catalog))))))
   (string/join "," (->> (:registry catalog) keys (map name)))
 
-  (->> (-> catalog :registry vals) 
-       (map :config )
+  (->> (-> catalog :registry vals)
+       (map :config)
        (filter seq)
        count)
 
@@ -105,9 +105,9 @@
                                (fs/file (:path k))
                                (git/ref-map->prompt-file k))}))))
 
-  (f->prompt (fs/file "prompts/mcp/notion.md") )
-  (f->prompt (fs/file "prompts/mcp/multiversx-mx.md") )
-  (f->prompt (fs/file "prompts/mcp/elasticsearch.md") )
+  (f->prompt (fs/file "prompts/mcp/notion.md"))
+  (f->prompt (fs/file "prompts/mcp/multiversx-mx.md"))
+  (f->prompt (fs/file "prompts/mcp/elasticsearch.md"))
 
   ;; parse all of the current git prompts
   (def local-prompt-files-parsed
@@ -125,6 +125,23 @@
          (map (fn [m] [(-> m :ref :ref-string) (secrets (:prompt m))]))
          (into {})))
 
+  (first local-prompt-files-parsed)
+  (def volume-summary
+    (->> local-prompt-files-parsed
+         (filter #(or (->> % :prompt :metadata :mcp (some (fn [x] (-> x :container :volumes))))
+                      (->> % :prompt :functions (some (fn [x] (-> x :function :container :volumes))))))
+         (map (fn [m] [(-> m :ref :ref-string)
+                       (->> m :prompt ((fn [prompt]
+                                          (cond
+                                            (-> prompt :metadata :mcp) (->> prompt
+                                                                            :metadata
+                                                                            :mcp
+                                                                            (map (fn [x] (-> x :container :volumes))))
+                                            (-> prompt :functions) (->> prompt
+                                                                        :functions
+                                                                        (map (fn [x] (-> x :function :container :volumes))))))))]))
+         (into {})))
+
   ;; secret summary
   (def secrets
     (->> container-summary
@@ -132,13 +149,12 @@
          (mapcat #(->> % (map (comp :secrets :container))))
          (filter seq)))
 
-  (->> secrets 
+  (->> secrets
        (mapcat keys)
        (map name)
-       (string/join ",")
-       )
+       (string/join ","))
 
-  ;; summary
+;; summary
   (->> container-summary
        (mapcat (fn [[k v]] (->> v (map (fn [m]
                                          {:image (-> m :container :image)

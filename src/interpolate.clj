@@ -57,8 +57,8 @@
              (dissoc defaults :functions)
              (when (-> definition :container :command)
                {:command (interpolate-coll
-                           (-> definition :container :command)
-                           arg-context)})
+                          (-> definition :container :command)
+                          arg-context)})
              (when (-> definition :container :entrypoint)
                {:entrypoint (->> (-> definition :container :entrypoint)
                                  (map (fn [s] (first (interpolate arg-context s))))

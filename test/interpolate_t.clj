@@ -16,3 +16,4 @@
           "NO" "{{data.no}}"}}} 
        {} 
        (json/generate-string {:data {:yes "yes"}})))))
+
