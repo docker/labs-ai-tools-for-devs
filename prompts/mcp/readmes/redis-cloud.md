@@ -14,6 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/redis/mcp-redis-cloud/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/redis-cloud)
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/redis-cloud --key https://registry.scout.docker.com/keyring/dhi/latest`
 **Licence**|MIT License
 
 ## Available Tools

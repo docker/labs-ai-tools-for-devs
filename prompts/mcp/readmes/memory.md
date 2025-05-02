@@ -14,6 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/modelcontextprotocol/servers/blob/2025.4.24/src/memory/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/memory)
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/memory --key https://registry.scout.docker.com/keyring/dhi/latest`
 **Licence**|MIT License
 
 ## Available Tools

@@ -14,6 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/e2b-dev/mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/e2b)
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/e2b --key https://registry.scout.docker.com/keyring/dhi/latest`
 **Licence**|Apache License 2.0
 
 ## Available Tools

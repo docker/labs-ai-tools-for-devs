@@ -11,56 +11,59 @@ Attribute|Details|
 **Docker Image**|[mcp/github-mcp-server](https://hub.docker.com/repository/docker/mcp/github-mcp-server)
 **Author**|[github](https://github.com/github)
 **Repository**|https://github.com/github/github-mcp-server
-**Dockerfile**|https://github.com/docker/labs-ai-tools-for-devs/blob/main/functions/github-mcp-server/Dockerfile
+**Dockerfile**|https://github.com/dgageot/github-mcp-server/blob/temp-fix/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/github-mcp-server)
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/github-mcp-server --key https://registry.scout.docker.com/keyring/dhi/latest`
 **Licence**|MIT License
 
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`add_issue_comment`|Add a comment to an existing issue|
-`add_pull_request_review_comment`|Add a review comment to a pull request|
+`add_issue_comment`|Add a comment to a specific issue in a GitHub repository.|
+`add_pull_request_review_comment`|Add a review comment to a pull request.|
 `create_branch`|Create a new branch in a GitHub repository|
-`create_issue`|Create a new issue in a GitHub repository|
-`create_or_update_file`|Create or update a single file in a GitHub repository|
-`create_pull_request`|Create a new pull request in a GitHub repository|
-`create_pull_request_review`|Create a review on a pull request|
+`create_issue`|Create a new issue in a GitHub repository.|
+`create_or_update_file`|Create or update a single file in a GitHub repository.|
+`create_pull_request`|Create a new pull request in a GitHub repository.|
+`create_pull_request_review`|Create a review for a pull request.|
 `create_repository`|Create a new GitHub repository in your account|
 `fork_repository`|Fork a GitHub repository to your account or specified organization|
 `get_code_scanning_alert`|Get details of a specific code scanning alert in a GitHub repository.|
 `get_commit`|Get details for a commit from a GitHub repository|
 `get_file_contents`|Get the contents of a file or directory from a GitHub repository|
-`get_issue`|Get details of a specific issue in a GitHub repository|
-`get_issue_comments`|Get comments for a GitHub issue|
+`get_issue`|Get details of a specific issue in a GitHub repository.|
+`get_issue_comments`|Get comments for a specific issue in a GitHub repository.|
 `get_me`|Get details of the authenticated GitHub user.|
-`get_pull_request`|Get details of a specific pull request|
-`get_pull_request_comments`|Get the review comments on a pull request|
-`get_pull_request_files`|Get the list of files changed in a pull request|
-`get_pull_request_reviews`|Get the reviews on a pull request|
-`get_pull_request_status`|Get the combined status of all status checks for a pull request|
+`get_pull_request`|Get details of a specific pull request in a GitHub repository.|
+`get_pull_request_comments`|Get comments for a specific pull request.|
+`get_pull_request_files`|Get the files changed in a specific pull request.|
+`get_pull_request_reviews`|Get reviews for a specific pull request.|
+`get_pull_request_status`|Get the status of a specific pull request.|
 `get_secret_scanning_alert`|Get details of a specific secret scanning alert in a GitHub repository.|
+`get_tag`|Get details about a specific git tag in a GitHub repository|
 `list_branches`|List branches in a GitHub repository|
 `list_code_scanning_alerts`|List code scanning alerts in a GitHub repository.|
 `list_commits`|Get list of commits of a branch in a GitHub repository|
-`list_issues`|List issues in a GitHub repository with filtering options|
-`list_pull_requests`|List and filter repository pull requests|
+`list_issues`|List issues in a GitHub repository.|
+`list_pull_requests`|List pull requests in a GitHub repository.|
 `list_secret_scanning_alerts`|List secret scanning alerts in a GitHub repository.|
-`merge_pull_request`|Merge a pull request|
+`list_tags`|List git tags in a GitHub repository|
+`merge_pull_request`|Merge a pull request in a GitHub repository.|
 `push_files`|Push multiple files to a GitHub repository in a single commit|
 `search_code`|Search for code across GitHub repositories|
-`search_issues`|Search for issues and pull requests across GitHub repositories|
+`search_issues`|Search for issues in GitHub repositories.|
 `search_repositories`|Search for GitHub repositories|
 `search_users`|Search for GitHub users|
-`update_issue`|Update an existing issue in a GitHub repository|
-`update_pull_request`|Update an existing pull request in a GitHub repository|
-`update_pull_request_branch`|Update a pull request branch with the latest changes from the base branch|
+`update_issue`|Update an existing issue in a GitHub repository.|
+`update_pull_request`|Update an existing pull request in a GitHub repository.|
+`update_pull_request_branch`|Update the branch of a pull request with the latest changes from the base branch.|
 
 ---
 ## Tools Details
 
 #### Tool: **`add_issue_comment`**
-Add a comment to an existing issue
+Add a comment to a specific issue in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `body`|`string`|Comment content
@@ -70,7 +73,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`add_pull_request_review_comment`**
-Add a review comment to a pull request
+Add a review comment to a pull request.
 Parameters|Type|Description
 -|-|-
 `body`|`string`|The text of the review comment
@@ -98,7 +101,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`create_issue`**
-Create a new issue in a GitHub repository
+Create a new issue in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -111,7 +114,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`create_or_update_file`**
-Create or update a single file in a GitHub repository
+Create or update a single file in a GitHub repository. If updating, you must provide the SHA of the file you want to update.
 Parameters|Type|Description
 -|-|-
 `branch`|`string`|Branch to create/update the file in
@@ -124,7 +127,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`create_pull_request`**
-Create a new pull request in a GitHub repository
+Create a new pull request in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `base`|`string`|Branch to merge into
@@ -138,7 +141,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`create_pull_request_review`**
-Create a review on a pull request
+Create a review for a pull request.
 Parameters|Type|Description
 -|-|-
 `event`|`string`|Review action to perform
@@ -200,7 +203,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_issue`**
-Get details of a specific issue in a GitHub repository
+Get details of a specific issue in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `issue_number`|`number`|The number of the issue
@@ -209,7 +212,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_issue_comments`**
-Get comments for a GitHub issue
+Get comments for a specific issue in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `issue_number`|`number`|Issue number
@@ -227,7 +230,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_pull_request`**
-Get details of a specific pull request
+Get details of a specific pull request in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -236,7 +239,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_pull_request_comments`**
-Get the review comments on a pull request
+Get comments for a specific pull request.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -245,7 +248,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_pull_request_files`**
-Get the list of files changed in a pull request
+Get the files changed in a specific pull request.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -254,7 +257,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_pull_request_reviews`**
-Get the reviews on a pull request
+Get reviews for a specific pull request.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -263,7 +266,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`get_pull_request_status`**
-Get the combined status of all status checks for a pull request
+Get the status of a specific pull request.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -278,6 +281,15 @@ Parameters|Type|Description
 `alertNumber`|`number`|The number of the alert.
 `owner`|`string`|The owner of the repository.
 `repo`|`string`|The name of the repository.
+
+---
+#### Tool: **`get_tag`**
+Get details about a specific git tag in a GitHub repository
+Parameters|Type|Description
+-|-|-
+`owner`|`string`|Repository owner
+`repo`|`string`|Repository name
+`tag`|`string`|Tag name
 
 ---
 #### Tool: **`list_branches`**
@@ -314,7 +326,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`list_issues`**
-List issues in a GitHub repository with filtering options
+List issues in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -329,7 +341,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`list_pull_requests`**
-List and filter repository pull requests
+List pull requests in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -354,8 +366,18 @@ Parameters|Type|Description
 `state`|`string` *optional*|Filter by state
 
 ---
+#### Tool: **`list_tags`**
+List git tags in a GitHub repository
+Parameters|Type|Description
+-|-|-
+`owner`|`string`|Repository owner
+`repo`|`string`|Repository name
+`page`|`number` *optional*|Page number for pagination (min 1)
+`perPage`|`number` *optional*|Results per page for pagination (min 1, max 100)
+
+---
 #### Tool: **`merge_pull_request`**
-Merge a pull request
+Merge a pull request in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -389,7 +411,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`search_issues`**
-Search for issues and pull requests across GitHub repositories
+Search for issues in GitHub repositories.
 Parameters|Type|Description
 -|-|-
 `q`|`string`|Search query using GitHub issues search syntax
@@ -420,7 +442,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`update_issue`**
-Update an existing issue in a GitHub repository
+Update an existing issue in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `issue_number`|`number`|Issue number to update
@@ -435,7 +457,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`update_pull_request`**
-Update an existing pull request in a GitHub repository
+Update an existing pull request in a GitHub repository.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner
@@ -449,7 +471,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`update_pull_request_branch`**
-Update a pull request branch with the latest changes from the base branch
+Update the branch of a pull request with the latest changes from the base branch.
 Parameters|Type|Description
 -|-|-
 `owner`|`string`|Repository owner

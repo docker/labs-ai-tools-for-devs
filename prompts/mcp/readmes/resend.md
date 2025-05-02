@@ -14,6 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-send-email/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/resend)
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/resend --key https://registry.scout.docker.com/keyring/dhi/latest`
 **Licence**|
 
 ## Available Tools

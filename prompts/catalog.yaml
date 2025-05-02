@@ -865,7 +865,7 @@ registry:
     title: GitHub Official
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/github-official.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/github-official.md
-    source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/functions/github-mcp-server
+    source: https://github.com/dgageot/github-mcp-server/tree/temp-fix
     icon: https://avatars.githubusercontent.com/u/9919?s=200&v=4
     tools:
       - name: add_issue_comment
@@ -889,12 +889,14 @@ registry:
       - name: get_pull_request_reviews
       - name: get_pull_request_status
       - name: get_secret_scanning_alert
+      - name: get_tag
       - name: list_branches
       - name: list_code_scanning_alerts
       - name: list_commits
       - name: list_issues
       - name: list_pull_requests
       - name: list_secret_scanning_alerts
+      - name: list_tags
       - name: merge_pull_request
       - name: push_files
       - name: search_code
