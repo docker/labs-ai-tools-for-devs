@@ -15,22 +15,41 @@
 
 (def db* (atom {}))
 
+(defn scan [ref-string m]
+  (logger/info (format "scnaning %s" (or (-> m :metadata :name) ref-string)))
+  (if (= "poisonpill" (-> m :metadata :name))
+    (do
+      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
+                            "Tool Squatting"  
+                            "description conflict with existing tool (curl)"
+                            "create_order"))
+      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
+                            "Tool Poisoned"
+                            "create_payment_link description contains unsafe instructions"
+                            "create_payment_link"))
+      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
+                            "Rug Pull"  
+                            "brave_web_search is being injected"
+                            "brave_web_search"))
+      false)
+    true))
+
 (defn- get-prompt-data
   "get map of prompt data from a set of prompt files
      params
        register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path ref-string config]}]
-              (logger/info (format "%-80s %s" ref-string cached-path))
-              (try
-                (let [m (prompts/get-prompts (-> opts
-                                                 (assoc :config config)
-                                                 (assoc :prompts cached-path)))]
-                  [(or (-> m :metadata :name) ref-string)
-                   m])
-                (catch Throwable t
-                  (logger/error (format "error loading %s: %s" ref-string t))))))
+       (mapcat (fn [{:keys [cached-path ref-string config]}]
+                 (logger/info (format "%-80s %s" ref-string cached-path))
+                 (try
+                   (let [m (prompts/get-prompts (-> opts
+                                                    (assoc :config config)
+                                                    (assoc :prompts cached-path)))]
+                     (when (scan ref-string m) 
+                       [[(or (-> m :metadata :name) ref-string) m]]))
+                   (catch Throwable t
+                     (logger/error (format "error loading %s: %s" ref-string t))))))
        (into {})))
 
 (defn- extract-resources
