@@ -52,7 +52,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             color: 'text.primary',
           }}
         >
-          {item.title ?? item.name}
+          {item.title}
         </Typography>
       }
       action={
@@ -74,7 +74,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
             />
           </Tooltip>
         ) : (
-          <Tooltip title={`Enabling ${item.name} requires configuration`}>
+          <Tooltip title={`Enabling ${item.title} requires configuration`}>
             <span>
               <Switch checked={false} disabled />
             </span>

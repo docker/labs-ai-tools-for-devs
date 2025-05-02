@@ -195,12 +195,12 @@ const ConfigurationModal = ({
               }}
             />
           }
-          {catalogItem.title ?? catalogItem.name}
+          {catalogItem.title}
           <Tooltip
             placement="right"
             title={
               !catalogItem.canRegister
-                ? 'You must assign all secrets and configure the item before it can be used.'
+                ? 'You must configure the item before it can be used.'
                 : ''
             }
           >
@@ -217,11 +217,11 @@ const ConfigurationModal = ({
               />
             </span>
           </Tooltip>
+          {catalogItem.missingConfig && (
+            <Chip label="Requires parameters" color="warning" />
+          )}
           {catalogItem.missingSecrets && (
             <Chip label="Requires secrets" color="warning" />
-          )}
-          {catalogItem.missingConfig && (
-            <Chip label="Requires configuration" color="warning" />
           )}
         </Stack>
       </DialogTitle>

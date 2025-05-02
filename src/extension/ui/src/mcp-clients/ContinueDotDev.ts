@@ -6,9 +6,9 @@ class ContinueDotDev implements MCPClient {
   name = "Continue.dev";
   url = "https://continue.dev/";
   manualConfigSteps = [
-    "Open <strong>Continue.dev Settings </strong>",
-    "in your global .continue folder (~/.continue on Mac, %USERPROFILE%.continue) within .continue/assistants. The name of the file will be used as the display name of the assistant, e.g. My Assistant.yaml",
-    "Add block mcpServers:",
+    "Open <strong>Continue.dev Settings</strong>",
+    "In your global .continue folder (~/.continue on Mac/Linux, %USERPROFILE%.continue on Windows), within .continue/assistants. The name of the file will be used as the display name of the assistant, e.g. My Assistant.yaml",
+    "Add block <code>mcpServers</code>:",
     stringify(SAMPLE_MCP_CONFIG),
   ];
   expectedConfigPath = {
