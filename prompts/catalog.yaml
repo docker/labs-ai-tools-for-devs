@@ -421,7 +421,7 @@ registry:
   filesystem:
     description: Local filesystem access with configurable allowed paths.
     title: Filesystem (Reference)
-    ref: github:docker/labs-ai-tools-for-devs?ref=slim/0.0.17&path=prompts/mcp/filesystem.md
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/filesystem.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/filesystem.md
     source: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
