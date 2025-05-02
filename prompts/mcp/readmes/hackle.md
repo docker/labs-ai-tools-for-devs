@@ -30,6 +30,8 @@ Tools provided by this Server|Short Description
 `in-app-message-list`|Fetches a paginated list of in-app messages with search functionality.|
 `push-message-detail`|Retrieves detailed information for a specific push message.|
 `push-message-list`|Fetches a paginated list of push messages with search functionality.|
+`remote-config-detail`|Fetch remote config detail.|
+`remote-config-list`|Fetch Remote Config list.|
 `retention-series`|Retrieves time-series data of user retention.|
 `stickiness-series`|Retrieves time-series data of user stickiness (return visit frequency).|
 
@@ -117,6 +119,23 @@ Parameters|Type|Description
 `pageNumber`|`number` *optional*|
 `pageSize`|`number` *optional*|
 `searchKeyword`|`string` *optional*|name, description, or campaignKey of a push message.
+
+---
+#### Tool: **`remote-config-detail`**
+Fetch remote config detail.
+Parameters|Type|Description
+-|-|-
+`remoteConfigId`|`number`|Remote config's id. You can get this information by using Remote Config List Tool.
+
+---
+#### Tool: **`remote-config-list`**
+Fetch Remote Config list.
+Parameters|Type|Description
+-|-|-
+`pageNumber`|`number` *optional*|
+`pageSize`|`number` *optional*|
+`searchKeyword`|`string` *optional*|
+`status`|`string` *optional*|
 
 ---
 #### Tool: **`retention-series`**

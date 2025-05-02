@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/azure](https://hub.docker.com/repository/docker/mcp/azure)
 **Author**|[Azure](https://github.com/Azure)
 **Repository**|https://github.com/Azure/azure-mcp
-**Dockerfile**|https://github.com/Azure/azure-mcp/blob/refs/pull/16/merge/Dockerfile
+**Dockerfile**|https://github.com/Azure/azure-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/azure)
 **Licence**|MIT License
@@ -36,6 +36,10 @@ Tools provided by this Server|Short Description
 `azmcp-monitor-log-query`|Execute a KQL query against a Log Analytics workspace.|
 `azmcp-monitor-table-list`|List all tables in a Log Analytics workspace.|
 `azmcp-monitor-workspace-list`|List Log Analytics workspaces in a subscription.|
+`azmcp-search-index-describe`|Get the full definition of an Azure AI Search index.|
+`azmcp-search-index-list`|List all indexes in an Azure AI Search service.|
+`azmcp-search-index-query`|Query an Azure AI Search index.|
+`azmcp-search-service-list`|List all Azure AI Search services in a subscription.|
 `azmcp-storage-account-list`|List all Storage accounts in a subscription.|
 `azmcp-storage-blob-container-details`|Get detailed properties of a storage container including metadata, lease status, and access level.|
 `azmcp-storage-blob-container-list`|List all containers in a Storage account.|
@@ -349,6 +353,81 @@ Parameters|Type|Description
 List Log Analytics workspaces in a subscription. This command retrieves all Log Analytics workspaces 
 available in the specified Azure subscription, displaying their names, IDs, and other key properties. 
 Use this command to identify workspaces before querying their logs or tables.
+Parameters|Type|Description
+-|-|-
+`subscription`|`string`|The Azure subscription ID or name. This can be either the GUID identifier or the display name of the Azure subscription to use.
+`auth-method`|`string` *optional*|Authentication method to use. Options: 'credential' (Azure CLI/managed identity), 'key' (access key), or 'connectionString'.
+`retry-delay`|`string` *optional*|Initial delay in seconds between retry attempts. For exponential backoff, this value is used as the base.
+`retry-max-delay`|`string` *optional*|Maximum delay in seconds between retries, regardless of the retry strategy.
+`retry-max-retries`|`string` *optional*|Maximum number of retry attempts for failed operations before giving up.
+`retry-mode`|`string` *optional*|Retry strategy to use. 'fixed' uses consistent delays, 'exponential' increases delay between attempts.
+`retry-network-timeout`|`string` *optional*|Network operation timeout in seconds. Operations taking longer than this will be cancelled.
+`tenant`|`string` *optional*|The Azure Active Directory tenant ID or name. This can be either the GUID identifier or the display name of your Azure AD tenant.
+
+---
+#### Tool: **`azmcp-search-index-describe`**
+Get the full definition of an Azure AI Search index. Returns the complete index configuration including 
+fields, analyzers, suggesters, scoring profiles, and other settings.
+
+Required arguments:
+- service-name: The name of the Azure AI Search service
+- index-name: The name of the search index to retrieve
+Parameters|Type|Description
+-|-|-
+`index-name`|`string`|The name of the search index within the Azure AI Search service.
+`service-name`|`string`|The name of the Azure AI Search service (e.g., my-search-service).
+`auth-method`|`string` *optional*|Authentication method to use. Options: 'credential' (Azure CLI/managed identity), 'key' (access key), or 'connectionString'.
+`retry-delay`|`string` *optional*|Initial delay in seconds between retry attempts. For exponential backoff, this value is used as the base.
+`retry-max-delay`|`string` *optional*|Maximum delay in seconds between retries, regardless of the retry strategy.
+`retry-max-retries`|`string` *optional*|Maximum number of retry attempts for failed operations before giving up.
+`retry-mode`|`string` *optional*|Retry strategy to use. 'fixed' uses consistent delays, 'exponential' increases delay between attempts.
+`retry-network-timeout`|`string` *optional*|Network operation timeout in seconds. Operations taking longer than this will be cancelled.
+`tenant`|`string` *optional*|The Azure Active Directory tenant ID or name. This can be either the GUID identifier or the display name of your Azure AD tenant.
+
+---
+#### Tool: **`azmcp-search-index-list`**
+List all indexes in an Azure AI Search service.
+
+Required arguments:
+- service-name
+Parameters|Type|Description
+-|-|-
+`service-name`|`string`|The name of the Azure AI Search service (e.g., my-search-service).
+`auth-method`|`string` *optional*|Authentication method to use. Options: 'credential' (Azure CLI/managed identity), 'key' (access key), or 'connectionString'.
+`retry-delay`|`string` *optional*|Initial delay in seconds between retry attempts. For exponential backoff, this value is used as the base.
+`retry-max-delay`|`string` *optional*|Maximum delay in seconds between retries, regardless of the retry strategy.
+`retry-max-retries`|`string` *optional*|Maximum number of retry attempts for failed operations before giving up.
+`retry-mode`|`string` *optional*|Retry strategy to use. 'fixed' uses consistent delays, 'exponential' increases delay between attempts.
+`retry-network-timeout`|`string` *optional*|Network operation timeout in seconds. Operations taking longer than this will be cancelled.
+`tenant`|`string` *optional*|The Azure Active Directory tenant ID or name. This can be either the GUID identifier or the display name of your Azure AD tenant.
+
+---
+#### Tool: **`azmcp-search-index-query`**
+Query an Azure AI Search index. Returns search results matching the specified query.
+
+Required arguments:
+- service-name: The name of the Azure AI Search service
+- index-name: The name of the search index to query
+- query: The search text to query with
+Parameters|Type|Description
+-|-|-
+`index-name`|`string`|The name of the search index within the Azure AI Search service.
+`query`|`string`|The search query to execute against the Azure AI Search index.
+`service-name`|`string`|The name of the Azure AI Search service (e.g., my-search-service).
+`auth-method`|`string` *optional*|Authentication method to use. Options: 'credential' (Azure CLI/managed identity), 'key' (access key), or 'connectionString'.
+`retry-delay`|`string` *optional*|Initial delay in seconds between retry attempts. For exponential backoff, this value is used as the base.
+`retry-max-delay`|`string` *optional*|Maximum delay in seconds between retries, regardless of the retry strategy.
+`retry-max-retries`|`string` *optional*|Maximum number of retry attempts for failed operations before giving up.
+`retry-mode`|`string` *optional*|Retry strategy to use. 'fixed' uses consistent delays, 'exponential' increases delay between attempts.
+`retry-network-timeout`|`string` *optional*|Network operation timeout in seconds. Operations taking longer than this will be cancelled.
+`tenant`|`string` *optional*|The Azure Active Directory tenant ID or name. This can be either the GUID identifier or the display name of your Azure AD tenant.
+
+---
+#### Tool: **`azmcp-search-service-list`**
+List all Azure AI Search services in a subscription.
+
+Required arguments:
+- subscription
 Parameters|Type|Description
 -|-|-
 `subscription`|`string`|The Azure subscription ID or name. This can be either the GUID identifier or the display name of the Azure subscription to use.

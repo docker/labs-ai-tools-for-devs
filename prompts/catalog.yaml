@@ -166,7 +166,7 @@ registry:
     title: Redis
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/redis.md
-    source: https://github.com/redis/mcp-redis/tree/main
+    source: https://github.com/redis/mcp-redis/tree/refs/pull/8/merge
     icon: https://avatars.githubusercontent.com/u/1529926?v=4
     tools:
       - name: client_list
@@ -573,9 +573,11 @@ registry:
     source: https://github.com/sooperset/mcp-atlassian/tree/main
     icon: https://avatars.githubusercontent.com/u/43281909?s=200&v=4
     tools:
+      - name: confluence_add_label
       - name: confluence_create_page
       - name: confluence_delete_page
       - name: confluence_get_comments
+      - name: confluence_get_labels
       - name: confluence_get_page
       - name: confluence_get_page_ancestors
       - name: confluence_get_page_children
@@ -584,6 +586,7 @@ registry:
       - name: jira_add_comment
       - name: jira_add_worklog
       - name: jira_batch_create_issues
+      - name: jira_batch_get_changelogs
       - name: jira_create_issue
       - name: jira_create_issue_link
       - name: jira_create_sprint
@@ -2313,6 +2316,7 @@ registry:
       - name: create_prompt_template
       - name: find_flaky_tests
       - name: get_build_failure_logs
+      - name: get_job_test_results
       - name: get_latest_pipeline_status
       - name: recommend_prompt_template_tests
     secrets:
@@ -2469,7 +2473,7 @@ registry:
     title: Azure
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/azure.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/azure.md
-    source: https://github.com/Azure/azure-mcp/tree/refs/pull/16/merge
+    source: https://github.com/Azure/azure-mcp/tree/main
     icon: https://avatars.githubusercontent.com/u/6844498?s=200&v=4
     tools:
       - name: azmcp-appconfig-account-list
@@ -2489,6 +2493,10 @@ registry:
       - name: azmcp-monitor-log-query
       - name: azmcp-monitor-table-list
       - name: azmcp-monitor-workspace-list
+      - name: azmcp-search-index-describe
+      - name: azmcp-search-index-list
+      - name: azmcp-search-index-query
+      - name: azmcp-search-service-list
       - name: azmcp-storage-account-list
       - name: azmcp-storage-blob-container-details
       - name: azmcp-storage-blob-container-list
@@ -2556,6 +2564,8 @@ registry:
       - name: in-app-message-list
       - name: push-message-detail
       - name: push-message-list
+      - name: remote-config-detail
+      - name: remote-config-list
       - name: retention-series
       - name: stickiness-series
     secrets:

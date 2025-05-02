@@ -24,6 +24,7 @@ Tools provided by this Server|Short Description
   - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 `find_flaky_tests`|This tool retrieves information about flaky tests in a CircleCI project.|
 `get_build_failure_logs`|This tool helps debug CircleCI build failures by retrieving failure logs.|
+`get_job_test_results`|This tool retrieves test metadata for a CircleCI job.|
 `get_latest_pipeline_status`|This tool retrieves the status of the latest pipeline for a CircleCI project.|
 `recommend_prompt_template_tests`|About this tool:
   - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
@@ -151,6 +152,54 @@ This tool helps debug CircleCI build failures by retrieving failure logs.
     Additional Requirements:
     - Never call this tool with incomplete parameters
     - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`get_job_test_results`**
+This tool retrieves test metadata for a CircleCI job.
+
+    PRIORITY USE CASE:
+    - When asked "are tests passing in CI?" or similar questions about test status
+    - When asked to "fix failed tests in CI" or help with CI test failures
+    - Use this tool to check if tests are passing in CircleCI and identify failed tests
+
+    Common use cases:
+    - Get test metadata for a specific job
+    - Get test metadata for all jobs in a project
+    - Get test metadata for a specific branch
+    - Get test metadata for a specific pipeline
+    - Get test metadata for a specific workflow
+    - Get test metadata for a specific job
+
+    CRITICAL REQUIREMENTS:
+    1. Truncation Handling (HIGHEST PRIORITY):
+       - ALWAYS check for <MCPTruncationWarning> in the output
+       - When present, you MUST start your response with:
+         "WARNING: The test results have been truncated. Only showing the most recent entries. Some test data may not be visible."
+       - Only proceed with test result analysis after acknowledging the truncation
+
+    Input options (EXACTLY ONE of these two options must be used):
+
+    Option 1 - Direct URL (provide ONE of these):
+    - projectURL: The URL of the CircleCI job in any of these formats:
+      * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/789
+      * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
+      * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
+
+    Option 2 - Project Detection (ALL of these must be provided together):
+    - workspaceRoot: The absolute path to the workspace root
+    - gitRemoteURL: The URL of the git remote repository
+    - branch: The name of the current branch
+
+    For simple test status checks (e.g., "are tests passing in CI?") or fixing failed tests, prefer Option 1 with a recent pipeline URL if available.
+
+    Additional Requirements:
+    - Never call this tool with incomplete parameters
+    - If using Option 1, the URL MUST be provided by the user - do not attempt to construct or guess URLs
     - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
     - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description

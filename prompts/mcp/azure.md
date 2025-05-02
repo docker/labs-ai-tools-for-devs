@@ -7,5 +7,5 @@ mcp:
         - "server"
         - "start"
     source:
-      url: https://github.com/Azure/azure-mcp/tree/refs/pull/16/merge
+      url: https://github.com/Azure/azure-mcp/tree/main
 ---

@@ -17,5 +17,5 @@ mcp:
         REDIS_CA_CERTS: "{{redis.ca_certs}}"
         REDIS_CLUSTER_MODE: "{{redis.cluster_mode}}"
     source:
-      url: https://github.com/redis/mcp-redis/tree/main
+      url: https://github.com/redis/mcp-redis/tree/refs/pull/8/merge
 ---

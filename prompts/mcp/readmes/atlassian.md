@@ -19,9 +19,11 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
+`confluence_add_label`|Add label to an existing Confluence page|
 `confluence_create_page`|Create a new Confluence page|
 `confluence_delete_page`|Delete an existing Confluence page|
 `confluence_get_comments`|Get comments for a specific Confluence page|
+`confluence_get_labels`|Get labels for a specific Confluence page|
 `confluence_get_page`|Get content of a specific Confluence page by ID|
 `confluence_get_page_ancestors`|Get ancestor (parent) pages of a specific Confluence page|
 `confluence_get_page_children`|Get child pages of a specific Confluence page|
@@ -30,6 +32,7 @@ Tools provided by this Server|Short Description
 `jira_add_comment`|Add a comment to a Jira issue|
 `jira_add_worklog`|Add a worklog entry to a Jira issue|
 `jira_batch_create_issues`|Create multiple Jira issues in a batch|
+`jira_batch_get_changelogs`|Get changelogs for multiple Jira issues (Cloud only)|
 `jira_create_issue`|Create a new Jira issue with optional Epic link or parent for subtasks|
 `jira_create_issue_link`|Create a link between two Jira issues|
 `jira_create_sprint`|Create Jira sprint for a board|
@@ -56,6 +59,14 @@ Tools provided by this Server|Short Description
 ---
 ## Tools Details
 
+#### Tool: **`confluence_add_label`**
+Add label to an existing Confluence page
+Parameters|Type|Description
+-|-|-
+`name`|`string`|The name of the label
+`page_id`|`string`|The ID of the page to update
+
+---
 #### Tool: **`confluence_create_page`**
 Create a new Confluence page
 Parameters|Type|Description
@@ -75,6 +86,13 @@ Parameters|Type|Description
 ---
 #### Tool: **`confluence_get_comments`**
 Get comments for a specific Confluence page
+Parameters|Type|Description
+-|-|-
+`page_id`|`string`|Confluence page ID (numeric ID, can be parsed from URL, e.g. from 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title' -> '123456789')
+
+---
+#### Tool: **`confluence_get_labels`**
+Get labels for a specific Confluence page
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be parsed from URL, e.g. from 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title' -> '123456789')
@@ -175,6 +193,15 @@ Example: [
   {"project_key": "PROJ", "summary": "Issue 2", "issue_type": "Bug", "components": ["Frontend"]}
 ]
 `validate_only`|`boolean` *optional*|If true, only validates the issues without creating them
+
+---
+#### Tool: **`jira_batch_get_changelogs`**
+Get changelogs for multiple Jira issues (Cloud only)
+Parameters|Type|Description
+-|-|-
+`issue_ids_or_keys`|`array`|List of Jira issue IDs or keys, e.g. ['PROJ-123', 'PROJ-124']
+`fields`|`array` *optional*|Filter the changelogs by fields, e.g. ['status', 'assignee']. Default to [] for all fields.
+`limit`|`integer` *optional*|Maximum number of changelogs to return in result for each issue. Default to -1 for all changelogs. Notice that it only limits the results in the response, the function will still fetch all the data.
 
 ---
 #### Tool: **`jira_create_issue`**
