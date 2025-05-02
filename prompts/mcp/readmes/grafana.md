@@ -21,13 +21,18 @@ Tools provided by this Server|Short Description
 -|-
 `add_activity_to_incident`|Add a note (userNote activity) to an existing incident's timeline using its ID.|
 `create_incident`|Create a new Grafana incident.|
+`find_error_pattern_logs`|Searches Loki logs for elevated error patterns compared to the last day's average, waits for the analysis to complete, and returns the results including any patterns found.|
+`find_slow_requests`|Searches relevant Tempo datasources for slow requests, waits for the analysis to complete, and returns the results.|
 `get_alert_rule_by_uid`|Retrieves the full configuration and detailed status of a specific Grafana alert rule identified by its unique ID (UID).|
+`get_assertions`|Get assertion summary for a given entity with its type, name, env, site, namespace, and a time range|
 `get_current_oncall_users`|Get the list of users currently on-call for a specific Grafana OnCall schedule ID.|
 `get_dashboard_by_uid`|Retrieves the complete dashboard, including panels, variables, and settings, for a specific dashboard identified by its UID.|
 `get_datasource_by_name`|Retrieves detailed information about a specific datasource using its name.|
 `get_datasource_by_uid`|Retrieves detailed information about a specific datasource using its UID.|
 `get_incident`|Get a single incident by ID.|
 `get_oncall_shift`|Get detailed information for a specific Grafana OnCall shift using its ID.|
+`get_sift_analysis`|Retrieves a specific analysis from an investigation by its UUID.|
+`get_sift_investigation`|Retrieves an existing Sift investigation by its UUID.|
 `list_alert_rules`|Lists Grafana alert rules, returning a summary including UID, title, current state (e.g., 'pending', 'firing', 'inactive'), and labels.|
 `list_contact_points`|Lists Grafana notification contact points, returning a summary including UID, name, and type for each.|
 `list_datasources`|List available Grafana datasources.|
@@ -41,6 +46,7 @@ Tools provided by this Server|Short Description
 `list_prometheus_label_values`|Get the values for a specific label name in Prometheus.|
 `list_prometheus_metric_metadata`|List Prometheus metric metadata.|
 `list_prometheus_metric_names`|List metric names in a Prometheus datasource.|
+`list_sift_investigations`|Retrieves a list of Sift investigations with an optional limit.|
 `query_loki_logs`|Executes a LogQL query against a Loki datasource to retrieve log entries or metric values.|
 `query_loki_stats`|Retrieves statistics about log streams matching a given LogQL *selector* within a Loki datasource and time range.|
 `query_prometheus`|Query Prometheus using a PromQL expression.|
@@ -73,11 +79,44 @@ Parameters|Type|Description
 `title`|`string` *optional*|The title of the incident
 
 ---
+#### Tool: **`find_error_pattern_logs`**
+Searches Loki logs for elevated error patterns compared to the last day's average, waits for the analysis to complete, and returns the results including any patterns found.
+Parameters|Type|Description
+-|-|-
+`labels`|`object`|Labels to scope the analysis
+`name`|`string`|The name of the investigation
+`end`|`string` *optional*|End time for the investigation. Defaults to now if not specified.
+`start`|`string` *optional*|Start time for the investigation. Defaults to 30 minutes ago if not specified.
+
+---
+#### Tool: **`find_slow_requests`**
+Searches relevant Tempo datasources for slow requests, waits for the analysis to complete, and returns the results.
+Parameters|Type|Description
+-|-|-
+`labels`|`object`|Labels to scope the analysis
+`name`|`string`|The name of the investigation
+`end`|`string` *optional*|End time for the investigation. Defaults to now if not specified.
+`start`|`string` *optional*|Start time for the investigation. Defaults to 30 minutes ago if not specified.
+
+---
 #### Tool: **`get_alert_rule_by_uid`**
 Retrieves the full configuration and detailed status of a specific Grafana alert rule identified by its unique ID (UID). The response includes fields like title, condition, query data, folder UID, rule group, state settings (no data, error), evaluation interval, annotations, and labels.
 Parameters|Type|Description
 -|-|-
 `uid`|`string`|The uid of the alert rule
+
+---
+#### Tool: **`get_assertions`**
+Get assertion summary for a given entity with its type, name, env, site, namespace, and a time range
+Parameters|Type|Description
+-|-|-
+`endTime`|`string`|The end time in RFC3339 format
+`startTime`|`string`|The start time in RFC3339 format
+`entityName`|`string` *optional*|The name of the entity to list
+`entityType`|`string` *optional*|The type of the entity to list (e.g. Service, Node, Pod, etc.)
+`env`|`string` *optional*|The env of the entity to list
+`namespace`|`string` *optional*|The namespace of the entity to list
+`site`|`string` *optional*|The site of the entity to list
 
 ---
 #### Tool: **`get_current_oncall_users`**
@@ -120,6 +159,21 @@ Get detailed information for a specific Grafana OnCall shift using its ID. A shi
 Parameters|Type|Description
 -|-|-
 `shiftId`|`string`|The ID of the shift to get details for
+
+---
+#### Tool: **`get_sift_analysis`**
+Retrieves a specific analysis from an investigation by its UUID. The investigation ID and analysis ID should be provided as strings in UUID format.
+Parameters|Type|Description
+-|-|-
+`analysisId`|`string`|The UUID of the specific analysis to retrieve
+`investigationId`|`string`|The UUID of the investigation as a string (e.g. '02adab7c-bf5b-45f2-9459-d71a2c29e11b')
+
+---
+#### Tool: **`get_sift_investigation`**
+Retrieves an existing Sift investigation by its UUID. The ID should be provided as a string in UUID format (e.g. '02adab7c-bf5b-45f2-9459-d71a2c29e11b').
+Parameters|Type|Description
+-|-|-
+`id`|`string`|The UUID of the investigation as a string (e.g. '02adab7c-bf5b-45f2-9459-d71a2c29e11b')
 
 ---
 #### Tool: **`list_alert_rules`**
@@ -240,6 +294,13 @@ Parameters|Type|Description
 `limit`|`integer` *optional*|The maximum number of results to return
 `page`|`integer` *optional*|The page number to return
 `regex`|`string` *optional*|The regex to match against the metric names
+
+---
+#### Tool: **`list_sift_investigations`**
+Retrieves a list of Sift investigations with an optional limit. If no limit is specified, defaults to 10 investigations.
+Parameters|Type|Description
+-|-|-
+`limit`|`integer` *optional*|Maximum number of investigations to return. Defaults to 10 if not specified.
 
 ---
 #### Tool: **`query_loki_logs`**
