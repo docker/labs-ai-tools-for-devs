@@ -52,12 +52,12 @@
   (let [change-events-channel (async/chan)
         debounced (debounce-by change-events-channel content)]
     (doseq [container (docker/containers {:label ["com.docker.desktop.extension=true"
-                                                  "com.docker.mcp.watch-service=true"]
-                                          :name ["com.docker.mcp.watch-service"]})]
-      (logger/info "shutting down previous vonwig/inotifywait container" (:name container))
+                                                  "com.docker.mcp.watch-service=true"]})]
+      (logger/info "shutting down previous vonwig/inotifywait container" container)
       (try
         (docker/stop-container container)
         (docker/kill-container container)
+        (docker/delete container)
         (catch Throwable _
           (logger/warn "unable to kill conainer " (:Id container)))))
     ;; debounce the change event channel

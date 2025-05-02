@@ -128,7 +128,8 @@
                                        (.exists macos) (format "%s/Library/Containers/com.docker.docker/Data/docker.raw.sock" (System/getenv "HOME"))
                                        :else "/var/run/docker.sock"))]
     :throw false
-    :query-params {:filters (json/generate-string m)}}))
+    :query-params {:filters (json/generate-string m)
+                   :all "true"}}))
 
 (defn list-images [m]
   (curl/get
