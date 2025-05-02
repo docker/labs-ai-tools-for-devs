@@ -72,11 +72,11 @@
 
   ;; merges client-info capabilities and client protocol-version
   (swap! db* assoc-in [:servers server-id] params)
-  {:protocol-version "2024-11-05"
+  {:protocolVersion "2024-11-05"
    :capabilities {:prompts {:listChanged true}
                   :tools {:listChanged true}
                   :resources {:listChanged true}}
-   :server-info {:name "docker-mcp-server"
+   :serverInfo {:name "docker-mcp-server"
                  :version "0.0.1"}})
 
 (defmethod lsp.server/receive-notification "notifications/initialized" [_ {:keys [db* server server-id]} _]
@@ -207,7 +207,7 @@
 
 (defmethod lsp.server/receive-request "resources/subscribe" [_ _ params]
   (logger/info "resources/subscribe" params)
-  {:resource-templates []})
+  {:resourceTemplates []})
 
 ;; -----------------
 ;; MCP Tools
@@ -343,6 +343,12 @@
       (apply log-wrapper-fn log-args)
       (recur))))
 
+(defn ^:private monitor-audit-logs [audit-ch]
+  (async/go-loop []
+    (when-let [log-args (async/<! audit-ch)]
+      (apply log-wrapper-fn log-args)
+      (recur))))
+
 (defn initialize-prompts [opts]
   ;; initialize mcp cache
   (client/initialize-cache)
@@ -366,7 +372,8 @@
    (let [timbre-logger (logger/->TimbreLogger)
          log-path (logger/setup timbre-logger)
          db* db/db*
-         log-ch (async/chan (async/sliding-buffer 20))]
+         log-ch (async/chan (async/sliding-buffer 20))
+         audit-ch (async/chan)]
      ;; add option map and log-path to the db
      (swap! db* merge {:log-path log-path} (dissoc opts :in))
      ;; initialize shutdown hook
@@ -381,12 +388,14 @@
       jsonrpc.prompt-change-events/markdown-tool-updated)
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
+     (monitor-audit-logs audit-ch)
      ;; this won't do anything if nrepl is not present
      (nrepl/setup-nrepl)
      ;; common server opts
      (merge
       {;:keyword-function identity
        :log-ch log-ch
+       :audit-ch audit-ch
        :trace-ch log-ch
        :trace-level trace-level
        :keyword-function keyword
