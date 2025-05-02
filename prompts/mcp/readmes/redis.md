@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/redis](https://hub.docker.com/repository/docker/mcp/redis)
 **Author**|[redis](https://github.com/redis)
 **Repository**|https://github.com/redis/mcp-redis
-**Dockerfile**|https://github.com/redis/mcp-redis/blob/refs/pull/8/merge/Dockerfile
+**Dockerfile**|https://github.com/redis/mcp-redis/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/redis)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/redis --key https://registry.scout.docker.com/keyring/dhi/latest`

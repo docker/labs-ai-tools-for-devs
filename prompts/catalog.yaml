@@ -166,7 +166,7 @@ registry:
     title: Redis
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/redis.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/redis.md
-    source: https://github.com/redis/mcp-redis/tree/refs/pull/8/merge
+    source: https://github.com/redis/mcp-redis/tree/main
     icon: https://avatars.githubusercontent.com/u/1529926?v=4
     tools:
       - name: client_list
