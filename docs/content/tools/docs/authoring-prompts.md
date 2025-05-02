@@ -195,3 +195,11 @@ parameter-values:
   user: slimslenderslacks
 ---
 ```
+
+### volumes
+
+* easist is to use docker volumes
+* using `"{{config|volume|into}}"`
+    * needs `"{{config|volume-target|into}}"` for wsl2 - to send the mappings
+* using combination of `volume` and `environment` when the app supports it
+

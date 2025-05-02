@@ -2,6 +2,7 @@
   (:require
    [cheshire.core :as json]
    [clojure.edn :as edn]
+   [clojure.string :as string]
    [selmer.filters :as filters]
    [selmer.parser :as selmer]))
 
@@ -12,20 +13,31 @@
                                [:safe [:coll (into [] v)]]
                                v)))
 
+(defn parse-path [s]
+  (when s
+    (if-let [[_ drive path] (re-find #"(\p{Alpha}):(.*)" s)]
+      {:source s
+       :target (format "/drive/%s%s" (string/lower-case drive) (string/replace path #"\\" "/"))}
+      {:source s
+       :target s})))
+
+(defn format-volume [{:keys [source target]}]
+  (format "%s:%s" source target))
+
 (filters/add-filter! :volume (fn [v]
                                (if (coll? v)
-                                 (->> v (map #(format "%s:%s" % %)) (into []))
-                                 (format "%s:%s" v v))))
+                                 (->> v (map parse-path) (map format-volume) (into []))
+                                 (-> v parse-path format-volume))))
+
+(filters/add-filter! :volume-target (fn [v]
+                                      (if (coll? v)
+                                        (->> v (map parse-path) (map :target) (into []))
+                                        (-> v parse-path :target))))
 
 (filters/add-filter! :or (fn [v s]
                            (if (or (nil? v) (= "" v))
                              []
                              v)))
-
-(comment
-  "this allows us to expand strings into lists of strings to be spread into container definitions"
-  (selmer/render "{{hello.you|volume|into}}" {:hello {:you ["yes" "no"]}})
-  (selmer/render "{{hello.you|volume|into}}" {}))
 
 (defn interpolate [m template]
   (when-let [s (selmer/render template m {})]
@@ -57,8 +69,8 @@
              (dissoc defaults :functions)
              (when (-> definition :container :command)
                {:command (interpolate-coll
-                           (-> definition :container :command)
-                           arg-context)})
+                          (-> definition :container :command)
+                          arg-context)})
              (when (-> definition :container :entrypoint)
                {:entrypoint (->> (-> definition :container :entrypoint)
                                  (map (fn [s] (first (interpolate arg-context s))))
