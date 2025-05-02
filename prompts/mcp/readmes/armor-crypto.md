@@ -36,9 +36,7 @@ Tools provided by this Server|Short Description
 `get_armor_mcp_version`|Get the current Armor Wallet version|
 `get_current_time`|Gets the current time and date|
 `get_stake_balances`|Get the balance of staked SOL (jupSOL).|
-`get_token_address`|Get the token address for a token symbol or name.|
 `get_token_candle_data`|Get candle data about any token for analysis.|
-`get_token_details`|Search and retrieve details about multiple tokens|
 `get_top_trending_tokens`|Get the top trending tokens in a particular time frame.|
 `get_wallet_token_balance`|Get the balance for a list of wallet/token pairs.|
 `list_dca_orders`|List all DCA orders.|
@@ -46,6 +44,8 @@ Tools provided by this Server|Short Description
 `list_single_group`|Retrieve details for a single wallet group.|
 `remove_wallets_from_group`|Remove wallets from a specified group.|
 `rename_wallets`|Rename wallets.|
+`search_official_token_address`|Get the official token address and symbol for a token symbol or token address.|
+`search_token_details`|Search and retrieve details about single token.|
 `send_key_to_telegram`|Send the mnemonic or private key to telegram.|
 `stake_quote`|Retrieve a stake quote.|
 `stake_transaction`|Execute a stake transaction.|
@@ -190,13 +190,6 @@ Gets the current time and date
 Get the balance of staked SOL (jupSOL).
 
     Returns a StakeBalanceResponse.
-#### Tool: **`get_token_address`**
-Get the token address for a token symbol or name.
-Parameters|Type|Description
--|-|-
-`token_details_requests`|`string`|
-
----
 #### Tool: **`get_token_candle_data`**
 Get candle data about any token for analysis.
 
@@ -204,15 +197,6 @@ Get candle data about any token for analysis.
 Parameters|Type|Description
 -|-|-
 `candle_stick_requests`|`string`|
-
----
-#### Tool: **`get_token_details`**
-Search and retrieve details about multiple tokens
-
-    Expects a TokenDetailsRequestContainer, returns a list of TokenDetailsResponse.
-Parameters|Type|Description
--|-|-
-`token_search_requests`|`string`|
 
 ---
 #### Tool: **`get_top_trending_tokens`**
@@ -271,6 +255,26 @@ Rename wallets.
 Parameters|Type|Description
 -|-|-
 `rename_wallet_requests`|`string`|
+
+---
+#### Tool: **`search_official_token_address`**
+Get the official token address and symbol for a token symbol or token address.
+    Try to use this first to get address and symbol of coin. If not found, use search_token_details to get details.
+
+    Expects a TokenDetailsRequestContainer, returns a TokenDetailsResponseContainer.
+Parameters|Type|Description
+-|-|-
+`token_details_requests`|`string`|
+
+---
+#### Tool: **`search_token_details`**
+Search and retrieve details about single token.
+    If only address or symbol is needed, use get_official_token_address first.
+
+    Expects a TokenSearchRequest, returns a list of TokenDetailsResponse.
+Parameters|Type|Description
+-|-|-
+`token_search_requests`|`string`|
 
 ---
 #### Tool: **`send_key_to_telegram`**

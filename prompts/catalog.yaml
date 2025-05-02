@@ -934,9 +934,7 @@ registry:
       - name: get_armor_mcp_version
       - name: get_current_time
       - name: get_stake_balances
-      - name: get_token_address
       - name: get_token_candle_data
-      - name: get_token_details
       - name: get_top_trending_tokens
       - name: get_wallet_token_balance
       - name: list_dca_orders
@@ -944,6 +942,8 @@ registry:
       - name: list_single_group
       - name: remove_wallets_from_group
       - name: rename_wallets
+      - name: search_official_token_address
+      - name: search_token_details
       - name: send_key_to_telegram
       - name: stake_quote
       - name: stake_transaction
@@ -2699,3 +2699,23 @@ registry:
       - name: fibery.api_token
     prompts: 0
     resources: {}
+  husqvarna-automower:
+    description: MCP Server for huqsvarna automower.
+    title: Husqvarna Automower
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/husqvarna-automower.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/husqvarna-automower.md
+    source: https://github.com/jeanlaurent/mcp-husqvarna-automower/tree/main
+    icon: https://avatars.githubusercontent.com/u/17142631?v=4
+    tools:
+      - name: Husqvarna Automowers Status
+    secrets:
+      - name: husqvarna.client.secret
+    prompts: 0
+    resources: {}
+    config:
+      - name: husqvarna-automower
+        description: Configure the connection to Husqvarna Automower
+        type: object
+        properties:
+          client_id:
+            type: string

@@ -21,7 +21,7 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `get-library-docs`|Fetches up-to-date documentation for a library.|
-`resolve-library-id`|Required first step: Resolves a general package name into a Context7-compatible library ID.|
+`resolve-library-id`|Resolves a package name to a Context7-compatible library ID and returns a list of matching libraries.|
 
 ---
 ## Tools Details
@@ -31,12 +31,22 @@ Fetches up-to-date documentation for a library. You must call 'resolve-library-i
 Parameters|Type|Description
 -|-|-
 `context7CompatibleLibraryID`|`string`|Exact Context7-compatible library ID (e.g., 'mongodb/docs', 'vercel/nextjs') retrieved from 'resolve-library-id'.
-`tokens`|`number` *optional*|Maximum number of tokens of documentation to retrieve (default: 5000). Higher values provide more context but consume more tokens.
+`tokens`|`number` *optional*|Maximum number of tokens of documentation to retrieve (default: 10000). Higher values provide more context but consume more tokens.
 `topic`|`string` *optional*|Topic to focus documentation on (e.g., 'hooks', 'routing').
 
 ---
 #### Tool: **`resolve-library-id`**
-Required first step: Resolves a general package name into a Context7-compatible library ID. Must be called before using 'get-library-docs' to retrieve a valid Context7-compatible library ID.
+Resolves a package name to a Context7-compatible library ID and returns a list of matching libraries.
+
+You MUST call this function before 'get-library-docs' to obtain a valid Context7-compatible library ID.
+
+When selecting the best match, consider:
+- Name similarity to the query
+- Description relevance
+- Code Snippet count (documentation coverage)
+- GitHub Stars (popularity)
+
+Return the selected library ID and explain your choice. If there are multiple good matches, mention this but proceed with the most relevant one.
 Parameters|Type|Description
 -|-|-
 `libraryName`|`string`|Library name to search for and retrieve a Context7-compatible library ID.
