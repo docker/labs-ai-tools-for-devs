@@ -1,7 +1,7 @@
 export const MCP_POLICY_NAME = "MCP=*";
 export const DD_BUILD_WITH_SECRET_SUPPORT = 184396;
-export const CATALOG_URL =
-  "https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml";
+// export const CATALOG_URL = "http://localhost:8811/catalog.yaml";
+export const CATALOG_URL = "https://raw.githubusercontent.com/docker/labs-ai-tools-for-devs/refs/heads/main/prompts/catalog.yaml";
 
 export const getUnsupportedSecretMessage = (ddVersion: {
   version: string;
