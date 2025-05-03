@@ -14,7 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-openapi-schema/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/openapi-schema)
-**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/openapi-schema --key https://registry.scout.docker.com/keyring/dhi/latest`
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/openapi-schema --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|
 
 ## Available Tools

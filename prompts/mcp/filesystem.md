@@ -6,7 +6,7 @@ mcp:
       volumes:
         - "{{filesystem.paths|volume|into}}"
       command:
-        - "{{filesystem.paths|volume-target|into}}"
+        - "{{filesystem.paths|into}}"
     source:
       url: https://github.com/modelcontextprotocol/servers/tree/2025.4.6
 parameter-values:

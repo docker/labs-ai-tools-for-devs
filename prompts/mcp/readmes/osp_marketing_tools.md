@@ -14,7 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/open-strategy-partners/osp_marketing_tools/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/osp_marketing_tools)
-**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/osp_marketing_tools --key https://registry.scout.docker.com/keyring/dhi/latest`
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/osp_marketing_tools --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|Creative Commons Attribution Share Alike 4.0 International
 
 ## Available Tools

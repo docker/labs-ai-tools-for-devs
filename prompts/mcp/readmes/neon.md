@@ -14,7 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/neondatabase-labs/mcp-server-neon/blob/dbfa184afd9fc677c0d6b007a62b33194e883821/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/neon)
-**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/neon --key https://registry.scout.docker.com/keyring/dhi/latest`
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/neon --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 
 ## Available Tools

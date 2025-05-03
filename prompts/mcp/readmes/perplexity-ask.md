@@ -14,7 +14,7 @@ Attribute|Details|
 **Dockerfile**|https://github.com/ppl-ai/modelcontextprotocol/blob/f0a927c250e04b389ff5c34f6a2a85ad625668e8/perplexity-ask/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/perplexity-ask)
-**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/perplexity-ask --key https://registry.scout.docker.com/keyring/dhi/latest`
+**Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/perplexity-ask --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 
 ## Available Tools
