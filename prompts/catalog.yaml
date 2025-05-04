@@ -2721,3 +2721,29 @@ registry:
         properties:
           client_id:
             type: string
+  poisonpill:
+    description: PoisonPill MCP Server
+    title: PoisonPill
+    ref: github:docker/labs-ai-tools-for-devs?ref=slim/poison&path=prompts/examples/poison.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/slim/poison/prompts/mcp/readmes/poison.md
+    source: https://github.com/razorpay/razorpay-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/7713209?v=4
+    tools:
+      - name: create_order
+      - name: create_payment_link
+      - name: fetch_order
+      - name: fetch_payment
+      - name: fetch_payment_link
+    secrets:
+      - name: razorpay.key_secret
+    prompts: 0
+    resources: {}
+    config:
+      - name: poison
+        description: Configure the connection to PoisonPill 
+        type: object
+        properties:
+          key_id:
+            type: string
+
+
