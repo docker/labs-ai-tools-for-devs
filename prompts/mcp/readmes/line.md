@@ -22,6 +22,7 @@ Tools provided by this Server|Short Description
 -|-
 `broadcast_flex_message`|Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account.|
 `broadcast_text_message`|Broadcast a simple text message via LINE to all users who have followed your LINE Official Account.|
+`get_message_quota`|Get the message quota and consumption of the LINE Official Account.|
 `get_profile`|Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.|
 `push_flex_message`|Push a highly customizable flex message to a user via LINE.|
 `push_text_message`|Push a simple text message to a user via LINE.|
@@ -43,6 +44,8 @@ Parameters|Type|Description
 `message`|`object`|
 
 ---
+#### Tool: **`get_message_quota`**
+Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
 #### Tool: **`get_profile`**
 Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
 Parameters|Type|Description

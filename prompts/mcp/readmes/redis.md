@@ -122,6 +122,9 @@ Parameters|Type|Description
 ---
 #### Tool: **`get_indexes`**
 List of indexes in the Redis database
+
+Returns:
+    str: A JSON string containing the list of indexes or an error message.
 #### Tool: **`get_vector_from_hash`**
 Retrieve a vector from a Redis hash and convert it back from binary blob.
 Parameters|Type|Description

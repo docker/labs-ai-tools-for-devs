@@ -25,6 +25,7 @@ Tools provided by this Server|Short Description
 `browser_console_messages`|Returns all console messages|
 `browser_drag`|Perform drag and drop between two elements|
 `browser_file_upload`|Upload one or multiple files|
+`browser_generate_playwright_test`|Generate a Playwright test for given scenario|
 `browser_handle_dialog`|Handle a dialog|
 `browser_hover`|Hover over element on page|
 `browser_install`|Install the browser specified in the config.|
@@ -75,6 +76,15 @@ Upload one or multiple files
 Parameters|Type|Description
 -|-|-
 `paths`|`array`|The absolute paths to the files to upload. Can be a single file or multiple files.
+
+---
+#### Tool: **`browser_generate_playwright_test`**
+Generate a Playwright test for given scenario
+Parameters|Type|Description
+-|-|-
+`description`|`string`|The description of the test
+`name`|`string`|The name of the test
+`steps`|`array`|The steps of the test
 
 ---
 #### Tool: **`browser_handle_dialog`**

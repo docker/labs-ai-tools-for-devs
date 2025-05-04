@@ -2517,6 +2517,7 @@ registry:
     tools:
       - name: broadcast_flex_message
       - name: broadcast_text_message
+      - name: get_message_quota
       - name: get_profile
       - name: push_flex_message
       - name: push_text_message
@@ -2631,6 +2632,7 @@ registry:
       - name: browser_console_messages
       - name: browser_drag
       - name: browser_file_upload
+      - name: browser_generate_playwright_test
       - name: browser_handle_dialog
       - name: browser_hover
       - name: browser_install
