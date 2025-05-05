@@ -5,8 +5,10 @@ mcp:
       workdir: /app
       secrets:
         obsidian.api_key: OBSIDIAN_API_KEY
+      environment:
+        OBSIDIAN_HOST: "host.docker.internal"
     source:
-      url: https://github.com/slimslenderslacks/mcp-obsidian/tree/slim/docker
+      url: https://github.com/docker/mcp-obsidian/tree/docker-support
 ---
 
 # Configuration
