@@ -2721,3 +2721,50 @@ registry:
         properties:
           client_id:
             type: string
+  neo4j-memory:
+    description: Model Context Protocol with Neo4j.
+    title: Neo4j Memory
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neo4j-memory.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neo4j-memory.md
+    source: https://github.com/slimslenderslacks/mcp-neo4j/tree/main/servers/mcp-neo4j-memory
+    icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
+    tools:
+      - name: add_observations
+      - name: create_entities
+      - name: create_relations
+      - name: delete_entities
+      - name: delete_observations
+      - name: delete_relations
+      - name: find_nodes
+      - name: read_graph
+      - name: search_nodes
+    secrets:
+      - name: neo4j.password
+    prompts: 0
+    resources: {}
+    config:
+      - name: neo4j-memory
+        description: Configure the connection to Neo4j
+        type: object
+        properties:
+          url:
+            type: string
+          username:
+            type: string
+        required:
+          - url
+          - username
+  rudra-ravi/wikipedia-mcp:
+    description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs
+    title: Wikipedia
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
+    source: https://github.com/Rudra-ravi/wikipedia-mcp
+    icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
+    tools:
+      - name: get_related_topics
+      - name: get_summary
+      - name: get_article
+      - name: search_wikipedia
+    prompts: 0
+    resources: {}
