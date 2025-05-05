@@ -267,6 +267,11 @@
             :command ["server" "start"] }}]
     :local-get-tools -get-tools})
 
+  (get-mcp-tools-from-prompt
+   {:mcp [{:container
+           {:image "mcp/wikipedia-mcp" }}]
+    :local-get-tools -get-tools})
+
   (docker/run-container
    (docker/inject-secret-transform
     {:image "mcp/time:latest"
