@@ -2724,7 +2724,7 @@ registry:
   neo4j-memory:
     description: Model Context Protocol with Neo4j.
     title: Neo4j Memory
-    ref: github:docker/labs-ai-tools-for-devs?ref=slim/wikipedia&path=prompts/mcp/neo4j-memory.md
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neo4j-memory.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neo4j-memory.md
     source: https://github.com/slimslenderslacks/mcp-neo4j/tree/main/servers/mcp-neo4j-memory
     icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
@@ -2757,7 +2757,7 @@ registry:
   rudra-ravi/wikipedia-mcp:
     description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs
     title: Wikipedia
-    ref: github:docker/labs-ai-tools-for-devs?ref=slim/wikipedia&path=prompts/mcp/wikipedia-mcp.md
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
     source: https://github.com/Rudra-ravi/wikipedia-mcp
     icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
