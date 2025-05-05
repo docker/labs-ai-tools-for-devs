@@ -8,7 +8,7 @@ mcp:
       environment:
         OBSIDIAN_HOST: "host.docker.internal"
     source:
-      url: https://github.com/cmrigney/mcp-obsidian/tree/docker-support
+      url: https://github.com/docker/mcp-obsidian/tree/docker-support
 ---
 
 # Configuration
