@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/obsidian](https://hub.docker.com/repository/docker/mcp/obsidian)
 **Author**|[MarkusPfundstein](https://github.com/MarkusPfundstein)
 **Repository**|https://github.com/MarkusPfundstein/mcp-obsidian
-**Dockerfile**|https://github.com/slimslenderslacks/mcp-obsidian/blob/slim/docker/Dockerfile
+**Dockerfile**|https://github.com/cmrigney/mcp-obsidian/blob/docker-support/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/obsidian)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/obsidian --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
@@ -141,10 +141,13 @@ Parameters|Type|Description
         "-i",
         "--rm",
         "-e",
+        "OBSIDIAN_HOST",
+        "-e",
         "OBSIDIAN_API_KEY",
         "mcp/obsidian"
       ],
       "env": {
+        "OBSIDIAN_HOST": "host.docker.internal",
         "OBSIDIAN_API_KEY": "YOUR_OBSIDIAN_API_KEY"
       }
     }
