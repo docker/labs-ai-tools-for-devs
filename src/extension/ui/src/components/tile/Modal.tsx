@@ -418,7 +418,7 @@ const ConfigurationModal = ({
                                     }
                                     disabled={secret.assigned}
                                     key={secret.name}
-                                    label={secret.name}
+                                    label={`${secret.name} (required)`}
                                     value={localSecrets[secret.name]}
                                     fullWidth
                                     onChange={(e) => {
