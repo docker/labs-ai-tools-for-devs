@@ -44,7 +44,7 @@ function useCatalog(client: v1.DockerDesktopClient) {
       // Check if any required parameters are not configured
       const missingConfig =
         !isEmpty(item.config) &&
-        (neverOnceConfigured ||
+        ((neverOnceConfigured && requiredParameters.length !== 0) ||
           requiredParameters.some((key) => {
             const isMissing = isEqual(
               itemConfigValue[key],
