@@ -1,13 +1,19 @@
 import { v1 } from '@docker/extension-api-client-types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isEmpty, isEqual } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { parse, stringify } from 'yaml';
+
 import { CATALOG_URL, REGISTRY_YAML } from '../Constants';
 import { getRegistry, syncRegistryWithConfig } from '../Registry';
 import Secrets from '../Secrets';
 import { CatalogItemRichened, CatalogItemWithName } from '../types/catalog';
 import { writeToPromptsVolume } from '../utils/Files';
-import { getTemplateForItem, useConfig } from './useConfig';
+import {
+  getRequiredParameters,
+  getTemplateForItem,
+  useConfig,
+} from './useConfig';
 import { useSecrets } from './useSecrets';
 
 const STORAGE_KEYS = {
@@ -33,11 +39,18 @@ function useCatalog(client: v1.DockerDesktopClient) {
       );
       const configTemplate = getTemplateForItem(item, itemConfigValue);
       const baseConfigTemplate = getTemplateForItem(item, {});
-      const unConfigured =
-        Boolean(item.config) &&
-        (neverOnceConfigured ||
-          JSON.stringify(itemConfigValue) ===
-            JSON.stringify(baseConfigTemplate));
+      const requiredParameters = getRequiredParameters(item);
+
+      // Check if any required parameters are not configured
+      const missingConfig =
+        !isEmpty(item.config) &&
+        requiredParameters.some((key) => {
+          const isMissing = isEqual(
+            itemConfigValue[key],
+            baseConfigTemplate[key],
+          );
+          return isMissing;
+        });
 
       const missingASecret = secretsWithAssignment.some(
         (secret) => !secret.assigned,
@@ -48,10 +61,10 @@ function useCatalog(client: v1.DockerDesktopClient) {
         configValue: itemConfigValue,
         configSchema: item.config || {},
         configTemplate,
-        missingConfig: unConfigured,
+        missingConfig,
         missingSecrets: missingASecret,
         registered: !!registryItems?.[item.name],
-        canRegister: !missingASecret && !unConfigured,
+        canRegister: !missingASecret && !missingConfig,
         name: item.name,
       };
       return enrichedItem;
