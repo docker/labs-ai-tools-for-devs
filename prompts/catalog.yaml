@@ -581,7 +581,6 @@ registry:
       - name: confluence_get_comments
       - name: confluence_get_labels
       - name: confluence_get_page
-      - name: confluence_get_page_ancestors
       - name: confluence_get_page_children
       - name: confluence_search
       - name: confluence_update_page
@@ -596,7 +595,6 @@ registry:
       - name: jira_download_attachments
       - name: jira_get_agile_boards
       - name: jira_get_board_issues
-      - name: jira_get_epic_issues
       - name: jira_get_issue
       - name: jira_get_link_types
       - name: jira_get_project_issues
@@ -1722,6 +1720,7 @@ registry:
     source: https://github.com/redis/mcp-redis-cloud/tree/main
     icon: https://avatars.githubusercontent.com/u/1529926?s=200&v=4
     tools:
+      - name: create-essential-database
       - name: create-essential-subscription
       - name: create-pro-database
       - name: create-pro-subscription
@@ -1729,6 +1728,7 @@ registry:
       - name: get-current-account
       - name: get-current-payment-methods
       - name: get-database-modules
+      - name: get-essential-databases
       - name: get-essential-subscription-by-id
       - name: get-essential-subscriptions
       - name: get-essentials-plans
@@ -2489,7 +2489,7 @@ registry:
     title: Azure
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/azure.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/azure.md
-    source: https://github.com/Azure/azure-mcp/tree/main
+    source: https://github.com/Azure/azure-mcp/tree/1ea702cb489ba95c5d9bea8d41fc18e9343703f8
     icon: https://avatars.githubusercontent.com/u/6844498?s=200&v=4
     tools:
       - name: azmcp-appconfig-account-list
@@ -2739,47 +2739,6 @@ registry:
         properties:
           client_id:
             type: string
-  wikipedia-mcp:
-    description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs.
-    title: Wikipedia
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
-    source: https://github.com/Rudra-ravi/wikipedia-mcp/tree/main
-    icon: https://avatars.githubusercontent.com/u/56668?s=200&v=4
-    tools:
-      - name: get_article
-      - name: get_related_topics
-      - name: get_summary
-      - name: search_wikipedia
-    prompts: 0
-    resources: {}
-  neo4j-cypher:
-    description: Interact with Neo4j using Cypher graph queries.
-    title: Neo4j Cypher
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neo4j-cypher.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neo4j-cypher.md
-    source: https://github.com/neo4j-contrib/mcp-neo4j/tree/main/servers/mcp-neo4j-cypher
-    icon: https://avatars.githubusercontent.com/u/916372?s=200&v=4
-    tools:
-      - name: get_neo4j_schema
-      - name: read_neo4j_cypher
-      - name: write_neo4j_cypher
-    secrets:
-      - name: neo4j.password
-    prompts: 0
-    resources: {}
-    config:
-      - name: neo4j-cypher
-        description: Configure the connection to Neo4j
-        type: object
-        properties:
-          url:
-            type: string
-          username:
-            type: string
-        required:
-          - url
-          - username
   neo4j-memory:
     description: Provide persistent memory capabilities through Neo4j graph database integration.
     title: Neo4j Memory
@@ -2803,6 +2762,33 @@ registry:
     resources: {}
     config:
       - name: neo4j-memory
+        description: Configure the connection to Neo4j
+        type: object
+        properties:
+          url:
+            type: string
+          username:
+            type: string
+        required:
+          - url
+          - username
+  neo4j-cypher:
+    description: Interact with Neo4j using Cypher graph queries.
+    title: Neo4j Cypher
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neo4j-cypher.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neo4j-cypher.md
+    source: https://github.com/neo4j-contrib/mcp-neo4j/tree/main/servers/mcp-neo4j-cypher
+    icon: https://avatars.githubusercontent.com/u/916372?s=200&v=4
+    tools:
+      - name: get_neo4j_schema
+      - name: read_neo4j_cypher
+      - name: write_neo4j_cypher
+    secrets:
+      - name: neo4j.password
+    prompts: 0
+    resources: {}
+    config:
+      - name: neo4j-cypher
         description: Configure the connection to Neo4j
         type: object
         properties:
@@ -2846,3 +2832,17 @@ registry:
             type: string
         required:
           - client_id
+  wikipedia-mcp:
+    description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs.
+    title: Wikipedia
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
+    source: https://github.com/Rudra-ravi/wikipedia-mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/56668?s=200&v=4
+    tools:
+      - name: get_article
+      - name: get_related_topics
+      - name: get_summary
+      - name: search_wikipedia
+    prompts: 0
+    resources: {}

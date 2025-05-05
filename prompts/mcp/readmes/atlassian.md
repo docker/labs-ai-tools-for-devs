@@ -20,48 +20,46 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`confluence_add_label`|Add label to an existing Confluence page|
-`confluence_create_page`|Create a new Confluence page|
-`confluence_delete_page`|Delete an existing Confluence page|
-`confluence_get_comments`|Get comments for a specific Confluence page|
-`confluence_get_labels`|Get labels for a specific Confluence page|
-`confluence_get_page`|Get content of a specific Confluence page by ID|
-`confluence_get_page_ancestors`|Get ancestor (parent) pages of a specific Confluence page|
-`confluence_get_page_children`|Get child pages of a specific Confluence page|
-`confluence_search`|Search Confluence content using simple terms or CQL|
-`confluence_update_page`|Update an existing Confluence page|
-`jira_add_comment`|Add a comment to a Jira issue|
-`jira_add_worklog`|Add a worklog entry to a Jira issue|
-`jira_batch_create_issues`|Create multiple Jira issues in a batch|
-`jira_batch_get_changelogs`|Get changelogs for multiple Jira issues (Cloud only)|
-`jira_create_issue`|Create a new Jira issue with optional Epic link or parent for subtasks|
-`jira_create_issue_link`|Create a link between two Jira issues|
-`jira_create_sprint`|Create Jira sprint for a board|
-`jira_delete_issue`|Delete an existing Jira issue|
-`jira_download_attachments`|Download attachments from a Jira issue|
-`jira_get_agile_boards`|Get jira agile boards by name, project key, or type|
-`jira_get_board_issues`|Get all issues linked to a specific board|
-`jira_get_epic_issues`|Get all issues linked to a specific epic|
-`jira_get_issue`|Get details of a specific Jira issue including its Epic links and relationship information|
-`jira_get_link_types`|Get all available issue link types|
-`jira_get_project_issues`|Get all issues for a specific Jira project|
-`jira_get_sprint_issues`|Get jira issues from sprint|
-`jira_get_sprints_from_board`|Get jira sprints from board by state|
-`jira_get_transitions`|Get available status transitions for a Jira issue|
-`jira_get_worklog`|Get worklog entries for a Jira issue|
-`jira_link_to_epic`|Link an existing issue to an epic|
-`jira_remove_issue_link`|Remove a link between two Jira issues|
-`jira_search`|Search Jira issues using JQL (Jira Query Language)|
-`jira_search_fields`|Search Jira fields by keyword with fuzzy match|
-`jira_transition_issue`|Transition a Jira issue to a new status|
+`confluence_add_label`|Add label to an existing Confluence page.|
+`confluence_create_page`|Create a new Confluence page.|
+`confluence_delete_page`|Delete an existing Confluence page.|
+`confluence_get_comments`|Get comments for a specific Confluence page.|
+`confluence_get_labels`|Get labels for a specific Confluence page.|
+`confluence_get_page`|Get content of a specific Confluence page by ID.|
+`confluence_get_page_children`|Get child pages of a specific Confluence page.|
+`confluence_search`|Search Confluence content using simple terms or CQL.|
+`confluence_update_page`|Update an existing Confluence page.|
+`jira_add_comment`|Add a comment to a Jira issue.|
+`jira_add_worklog`|Add a worklog entry to a Jira issue.|
+`jira_batch_create_issues`|Create multiple Jira issues in a batch.|
+`jira_batch_get_changelogs`|Get changelogs for multiple Jira issues (Cloud only).|
+`jira_create_issue`|Create a new Jira issue with optional Epic link or parent for subtasks.|
+`jira_create_issue_link`|Create a link between two Jira issues.|
+`jira_create_sprint`|Create Jira sprint for a board.|
+`jira_delete_issue`|Delete an existing Jira issue.|
+`jira_download_attachments`|Download attachments from a Jira issue.|
+`jira_get_agile_boards`|Get jira agile boards by name, project key, or type.|
+`jira_get_board_issues`|Get all issues linked to a specific board filtered by JQL.|
+`jira_get_issue`|Get details of a specific Jira issue including its Epic links and relationship information.|
+`jira_get_link_types`|Get all available issue link types.|
+`jira_get_project_issues`|Get all issues for a specific Jira project.|
+`jira_get_sprint_issues`|Get jira issues from sprint.|
+`jira_get_sprints_from_board`|Get jira sprints from board by state.|
+`jira_get_transitions`|Get available status transitions for a Jira issue.|
+`jira_get_worklog`|Get worklog entries for a Jira issue.|
+`jira_link_to_epic`|Link an existing issue to an epic.|
+`jira_remove_issue_link`|Remove a link between two Jira issues.|
+`jira_search`|Search Jira issues using JQL (Jira Query Language).|
+`jira_search_fields`|Search Jira fields by keyword with fuzzy match.|
+`jira_transition_issue`|Transition a Jira issue to a new status.|
 `jira_update_issue`|Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.|
-`jira_update_sprint`|Update jira sprint|
+`jira_update_sprint`|Update jira sprint.|
 
 ---
 ## Tools Details
 
 #### Tool: **`confluence_add_label`**
-Add label to an existing Confluence page
+Add label to an existing Confluence page.
 Parameters|Type|Description
 -|-|-
 `name`|`string`|The name of the label
@@ -69,7 +67,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`confluence_create_page`**
-Create a new Confluence page
+Create a new Confluence page.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The content of the page in Markdown format. Supports headings, lists, tables, code blocks, and other Markdown syntax
@@ -79,28 +77,28 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`confluence_delete_page`**
-Delete an existing Confluence page
+Delete an existing Confluence page.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|The ID of the page to delete
 
 ---
 #### Tool: **`confluence_get_comments`**
-Get comments for a specific Confluence page
+Get comments for a specific Confluence page.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be parsed from URL, e.g. from 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title' -> '123456789')
 
 ---
 #### Tool: **`confluence_get_labels`**
-Get labels for a specific Confluence page
+Get labels for a specific Confluence page.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be parsed from URL, e.g. from 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title' -> '123456789')
 
 ---
 #### Tool: **`confluence_get_page`**
-Get content of a specific Confluence page by ID
+Get content of a specific Confluence page by ID.
 Parameters|Type|Description
 -|-|-
 `page_id`|`string`|Confluence page ID (numeric ID, can be found in the page URL). For example, in the URL 'https://example.atlassian.net/wiki/spaces/TEAM/pages/123456789/Page+Title', the page ID is '123456789'
@@ -108,25 +106,20 @@ Parameters|Type|Description
 `include_metadata`|`boolean` *optional*|Whether to include page metadata such as creation date, last update, version, and labels
 
 ---
-#### Tool: **`confluence_get_page_ancestors`**
-Get ancestor (parent) pages of a specific Confluence page
-Parameters|Type|Description
--|-|-
-`page_id`|`string`|The ID of the page whose ancestors you want to retrieve
-
----
 #### Tool: **`confluence_get_page_children`**
-Get child pages of a specific Confluence page
+Get child pages of a specific Confluence page.
 Parameters|Type|Description
 -|-|-
 `parent_id`|`string`|The ID of the parent page whose children you want to retrieve
+`convert_to_markdown`|`boolean` *optional*|Whether to convert page content to markdown (true) or keep it in raw HTML format (false). Only relevant if include_content is true.
 `expand`|`string` *optional*|Fields to expand in the response (e.g., 'version', 'body.storage')
 `include_content`|`boolean` *optional*|Whether to include the page content in the response
-`limit`|`number` *optional*|Maximum number of child pages to return (1-50)
+`limit`|`integer` *optional*|Maximum number of child pages to return (1-50)
+`start`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`confluence_search`**
-Search Confluence content using simple terms or CQL
+Search Confluence content using simple terms or CQL.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Search query - can be either a simple text (e.g. 'project documentation') or a CQL query string. Simple queries use 'siteSearch' by default, to mimic the WebUI search, with an automatic fallback to 'text' search if not supported. Examples of CQL:
@@ -144,12 +137,12 @@ Parameters|Type|Description
 - Exact phrase in content: 'text ~ "\"Urgent Review Required\"" AND label = "pending-approval"'
 - Title wildcards: 'title ~ "Minutes*" AND (space = "HR" OR space = "Marketing")'
 Note: Special identifiers need proper quoting in CQL: personal space keys (e.g., "~username"), reserved words, numeric IDs, and identifiers with special characters.
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `spaces_filter`|`string` *optional*|Comma-separated list of space keys to filter results by. Overrides the environment variable CONFLUENCE_SPACES_FILTER if provided.
 
 ---
 #### Tool: **`confluence_update_page`**
-Update an existing Confluence page
+Update an existing Confluence page.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|The new content of the page in Markdown format
@@ -161,7 +154,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`jira_add_comment`**
-Add a comment to a Jira issue
+Add a comment to a Jira issue.
 Parameters|Type|Description
 -|-|-
 `comment`|`string`|Comment text in Markdown format
@@ -169,17 +162,19 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`jira_add_worklog`**
-Add a worklog entry to a Jira issue
+Add a worklog entry to a Jira issue.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `time_spent`|`string`|Time spent in Jira format. Examples: '1h 30m' (1 hour and 30 minutes), '1d' (1 day), '30m' (30 minutes), '4h' (4 hours)
 `comment`|`string` *optional*|Optional comment for the worklog in Markdown format
+`original_estimate`|`string` *optional*|Optional new value for the original estimate
+`remaining_estimate`|`string` *optional*|Optional new value for the remaining estimate
 `started`|`string` *optional*|Optional start time in ISO format. If not provided, the current time will be used. Example: '2023-08-01T12:00:00.000+0000'
 
 ---
 #### Tool: **`jira_batch_create_issues`**
-Create multiple Jira issues in a batch
+Create multiple Jira issues in a batch.
 Parameters|Type|Description
 -|-|-
 `issues`|`string`|JSON array of issue objects. Each object should contain:
@@ -197,45 +192,45 @@ Example: [
 
 ---
 #### Tool: **`jira_batch_get_changelogs`**
-Get changelogs for multiple Jira issues (Cloud only)
+Get changelogs for multiple Jira issues (Cloud only).
 Parameters|Type|Description
 -|-|-
 `issue_ids_or_keys`|`array`|List of Jira issue IDs or keys, e.g. ['PROJ-123', 'PROJ-124']
-`fields`|`array` *optional*|Filter the changelogs by fields, e.g. ['status', 'assignee']. Default to [] for all fields.
+`fields`|`string` *optional*|Filter the changelogs by fields, e.g. ['status', 'assignee']. Default to [] for all fields.
 `limit`|`integer` *optional*|Maximum number of changelogs to return in result for each issue. Default to -1 for all changelogs. Notice that it only limits the results in the response, the function will still fetch all the data.
 
 ---
 #### Tool: **`jira_create_issue`**
-Create a new Jira issue with optional Epic link or parent for subtasks
+Create a new Jira issue with optional Epic link or parent for subtasks.
 Parameters|Type|Description
 -|-|-
 `issue_type`|`string`|Issue type (e.g. 'Task', 'Bug', 'Story', 'Epic', 'Subtask'). The available types depend on your project configuration. For subtasks, use 'Subtask' (not 'Sub-task') and include parent in additional_fields.
 `project_key`|`string`|The JIRA project key (e.g. 'PROJ', 'DEV', 'SUPPORT'). This is the prefix of issue keys in your project. Never assume what it might be, always ask the user.
 `summary`|`string`|Summary/title of the issue
-`additional_fields`|`string` *optional*|Optional JSON string of additional fields to set. Examples:
-- Set priority: {"priority": {"name": "High"}}
-- Add labels: {"labels": ["frontend", "urgent"]}
-- Link to parent (for any issue type): {"parent": "PROJ-123"}
-- Set Fix Version/s: {"fixVersions": [{"id": "10020"}]}
-- Custom fields: {"customfield_10010": "value"}
+`additional_fields`|`string` *optional*|Optional dictionary of additional fields to set. Examples:
+- Set priority: {'priority': {'name': 'High'}}
+- Add labels: {'labels': ['frontend', 'urgent']}
+- Link to parent (for any issue type): {'parent': 'PROJ-123'}
+- Set Fix Version/s: {'fixVersions': [{'id': '10020'}]}
+- Custom fields: {'customfield_10010': 'value'}
 `assignee`|`string` *optional*|Assignee of the ticket (accountID, full name or e-mail)
 `components`|`string` *optional*|Comma-separated list of component names to assign (e.g., 'Frontend,API')
 `description`|`string` *optional*|Issue description
 
 ---
 #### Tool: **`jira_create_issue_link`**
-Create a link between two Jira issues
+Create a link between two Jira issues.
 Parameters|Type|Description
 -|-|-
 `inward_issue_key`|`string`|The key of the inward issue (e.g., 'PROJ-123')
 `link_type`|`string`|The type of link to create (e.g., 'Duplicate', 'Blocks', 'Relates to')
 `outward_issue_key`|`string`|The key of the outward issue (e.g., 'PROJ-456')
 `comment`|`string` *optional*|Optional comment to add to the link
-`comment_visibility`|`object` *optional*|Optional visibility settings for the comment
+`comment_visibility`|`string` *optional*|Optional visibility settings for the comment (e.g., {'type': 'group', 'value': 'jira-users'})
 
 ---
 #### Tool: **`jira_create_sprint`**
-Create Jira sprint for a board
+Create Jira sprint for a board.
 Parameters|Type|Description
 -|-|-
 `board_id`|`string`|The id of board (e.g., '1000')
@@ -246,14 +241,14 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`jira_delete_issue`**
-Delete an existing Jira issue
+Delete an existing Jira issue.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g. PROJ-123)
 
 ---
 #### Tool: **`jira_download_attachments`**
-Download attachments from a Jira issue
+Download attachments from a Jira issue.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
@@ -261,18 +256,18 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`jira_get_agile_boards`**
-Get jira agile boards by name, project key, or type
+Get jira agile boards by name, project key, or type.
 Parameters|Type|Description
 -|-|-
 `board_name`|`string` *optional*|The name of board, support fuzzy search
 `board_type`|`string` *optional*|The type of jira board (e.g., 'scrum', 'kanban')
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `project_key`|`string` *optional*|Jira project key (e.g., 'PROJ-123')
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_board_issues`**
-Get all issues linked to a specific board
+Get all issues linked to a specific board filtered by JQL.
 Parameters|Type|Description
 -|-|-
 `board_id`|`string`|The id of the board (e.g., '1001')
@@ -284,80 +279,71 @@ Parameters|Type|Description
 - Find recently updated: "updated >= -7d AND project = PROJ"
 - Find by label: "labels = frontend AND project = PROJ"
 - Find by priority: "priority = High AND project = PROJ"
-`expand`|`string` *optional*|Fields to expand in the response (e.g., 'version', 'body.storage')
+`expand`|`string` *optional*|Optional fields to expand in the response (e.g., 'changelog').
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
-
----
-#### Tool: **`jira_get_epic_issues`**
-Get all issues linked to a specific epic
-Parameters|Type|Description
--|-|-
-`epic_key`|`string`|The key of the epic (e.g., 'PROJ-123')
-`limit`|`number` *optional*|Maximum number of issues to return (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_issue`**
-Get details of a specific Jira issue including its Epic links and relationship information
+Get details of a specific Jira issue including its Epic links and relationship information.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `comment_limit`|`integer` *optional*|Maximum number of comments to include (0 or null for no comments)
 `expand`|`string` *optional*|Optional fields to expand. Examples: 'renderedFields' (for rendered content), 'transitions' (for available status transitions), 'changelog' (for history)
-`fields`|`string` *optional*|Fields to return. Can be a comma-separated list (e.g., 'summary,status,customfield_10010'), '*all' for all fields (including custom fields), or omitted for essential fields only
+`fields`|`string` *optional*|Fields to return. Can be a comma-separated list (e.g., 'summary,status,customfield_10010'), '*all' for all fields (including custom fields), or omitted for essential fields only.
 `properties`|`string` *optional*|A comma-separated list of issue properties to return
 `update_history`|`boolean` *optional*|Whether to update the issue view history for the requesting user
 
 ---
 #### Tool: **`jira_get_link_types`**
-Get all available issue link types
+Get all available issue link types.
 #### Tool: **`jira_get_project_issues`**
-Get all issues for a specific Jira project
+Get all issues for a specific Jira project.
 Parameters|Type|Description
 -|-|-
 `project_key`|`string`|The project key
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_sprint_issues`**
-Get jira issues from sprint
+Get jira issues from sprint.
 Parameters|Type|Description
 -|-|-
 `sprint_id`|`string`|The id of sprint (e.g., '10001')
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_get_sprints_from_board`**
-Get jira sprints from board by state
+Get jira sprints from board by state.
 Parameters|Type|Description
 -|-|-
-`board_id`|`string` *optional*|The id of board (e.g., '1000')
-`limit`|`number` *optional*|Maximum number of results (1-50)
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`board_id`|`string`|The id of board (e.g., '1000')
+`limit`|`integer` *optional*|Maximum number of results (1-50)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 `state`|`string` *optional*|Sprint state (e.g., 'active', 'future', 'closed')
 
 ---
 #### Tool: **`jira_get_transitions`**
-Get available status transitions for a Jira issue
+Get available status transitions for a Jira issue.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
 #### Tool: **`jira_get_worklog`**
-Get worklog entries for a Jira issue
+Get worklog entries for a Jira issue.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
 #### Tool: **`jira_link_to_epic`**
-Link an existing issue to an epic
+Link an existing issue to an epic.
 Parameters|Type|Description
 -|-|-
 `epic_key`|`string`|The key of the epic to link to (e.g., 'PROJ-456')
@@ -365,14 +351,14 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`jira_remove_issue_link`**
-Remove a link between two Jira issues
+Remove a link between two Jira issues.
 Parameters|Type|Description
 -|-|-
 `link_id`|`string`|The ID of the link to remove
 
 ---
 #### Tool: **`jira_search`**
-Search Jira issues using JQL (Jira Query Language)
+Search Jira issues using JQL (Jira Query Language).
 Parameters|Type|Description
 -|-|-
 `jql`|`string`|JQL query string (Jira Query Language). Examples:
@@ -383,43 +369,44 @@ Parameters|Type|Description
 - Find recently updated: "updated >= -7d AND project = PROJ"
 - Find by label: "labels = frontend AND project = PROJ"
 - Find by priority: "priority = High AND project = PROJ"
+`expand`|`string` *optional*|Optional fields to expand. Examples: 'renderedFields', 'transitions', 'changelog'
 `fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
-`limit`|`number` *optional*|Maximum number of results (1-50)
+`limit`|`integer` *optional*|Maximum number of results (1-50)
 `projects_filter`|`string` *optional*|Comma-separated list of project keys to filter results by. Overrides the environment variable JIRA_PROJECTS_FILTER if provided.
-`startAt`|`number` *optional*|Starting index for pagination (0-based)
+`start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
 #### Tool: **`jira_search_fields`**
-Search Jira fields by keyword with fuzzy match
+Search Jira fields by keyword with fuzzy match.
 Parameters|Type|Description
 -|-|-
 `keyword`|`string` *optional*|Keyword for fuzzy search. If left empty, lists the first 'limit' available fields in their default order.
-`limit`|`number` *optional*|Maximum number of results
+`limit`|`integer` *optional*|Maximum number of results
 `refresh`|`boolean` *optional*|Whether to force refresh the field list
 
 ---
 #### Tool: **`jira_transition_issue`**
-Transition a Jira issue to a new status
+Transition a Jira issue to a new status.
 Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `transition_id`|`string`|ID of the transition to perform. Use the jira_get_transitions tool first to get the available transition IDs for the issue. Example values: '11', '21', '31'
 `comment`|`string` *optional*|Comment to add during the transition (optional). This will be visible in the issue history.
-`fields`|`string` *optional*|JSON string of fields to update during the transition. Some transitions require specific fields to be set. Example: '{"resolution": {"name": "Fixed"}}'
+`fields`|`string` *optional*|Optional dictionary of fields to update during the transition. Some transitions require specific fields to be set (e.g., resolution). Example: {'resolution': {'name': 'Fixed'}}
 
 ---
 #### Tool: **`jira_update_issue`**
 Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.
 Parameters|Type|Description
 -|-|-
-`fields`|`string`|A valid JSON object of fields to update as a string. Example: '{"summary": "New title", "description": "Updated description", "priority": {"name": "High"}, "assignee": "john.doe"}'
+`fields`|`object`|A valid dictionary of fields to update. Example: {'summary': 'New title', 'description': 'Updated description', 'priority': {'name': 'High'}, 'assignee': 'john.doe'}
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
-`additional_fields`|`string` *optional*|Optional JSON string of additional fields to update. Use this for custom fields or more complex updates.
-`attachments`|`string` *optional*|Optional JSON string or comma-separated list of file paths to attach to the issue. Example: "/path/to/file1.txt,/path/to/file2.txt" or "["/path/to/file1.txt","/path/to/file2.txt"]"
+`additional_fields`|`string` *optional*|Optional dictionary of additional fields to update. Use this for custom fields or more complex updates.
+`attachments`|`string` *optional*|Optional JSON string array or comma-separated list of file paths to attach to the issue. Example: '/path/to/file1.txt,/path/to/file2.txt' or ['/path/to/file1.txt','/path/to/file2.txt']
 
 ---
 #### Tool: **`jira_update_sprint`**
-Update jira sprint
+Update jira sprint.
 Parameters|Type|Description
 -|-|-
 `sprint_id`|`string`|The id of sprint (e.g., '10001')
