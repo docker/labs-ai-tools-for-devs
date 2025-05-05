@@ -37,7 +37,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
         <Avatar
           variant="square"
           src={image}
-          alt={item.name}
+          alt={item.title}
           sx={{
             width: 24,
             height: 24,
@@ -59,7 +59,7 @@ export default function Top({ item, onToggleRegister }: TopProps) {
         item.canRegister ? (
           <Tooltip
             title={
-              item.registered ? `Disable ${item.name}` : `Enable ${item.name}`
+              item.registered ? `Disable ${item.title}` : `Enable ${item.title}`
             }
           >
             <Switch
