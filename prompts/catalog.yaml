@@ -2727,7 +2727,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/neo4j-memory.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/neo4j-memory.md
     source: https://github.com/slimslenderslacks/mcp-neo4j/tree/main/servers/mcp-neo4j-memory
-    icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: add_observations
       - name: create_entities
@@ -2760,7 +2760,7 @@ registry:
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
     source: https://github.com/Rudra-ravi/wikipedia-mcp
-    icon: https://avatars.githubusercontent.com/u/26607840?s=200&v=4
+    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: get_related_topics
       - name: get_summary
