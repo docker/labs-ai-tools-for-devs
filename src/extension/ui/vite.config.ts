@@ -1,22 +1,22 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "./",
+  base: './',
   build: {
-    outDir: "build",
+    outDir: 'build',
     chunkSizeWarningLimit: 100,
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ["react", "react-dom"],
-          "ui-libs": ["@mui/material", "@emotion/react", "@emotion/styled"],
+          vendor: ['react', 'react-dom'],
+          'ui-libs': ['@mui/material', '@emotion/react', '@emotion/styled'],
         },
       },
       onwarn(warning, warn) {
-        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
           return;
         }
         warn(warning);
@@ -26,6 +26,12 @@ export default defineConfig({
   assetsInclude: ['./static-assets/**/*'],
   server: {
     port: 3000,
-    strictPort: true,
+    proxy: {
+      '/catalog': {
+        target: 'https://desktop.docker.com/mcp/catalog/catalog.yaml',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/catalog/, ''),
+      },
+    },
   },
 });
