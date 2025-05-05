@@ -10,14 +10,21 @@ import { writeToPromptsVolume } from '../utils/Files';
 
 export const getTemplateForItem = (
   item: CatalogItemWithName,
-  existingConfigForItem: { [key: string]: any } = {}
+  existingConfigForItem: { [key: string]: any } = {},
 ) => {
   const config = item.config;
   if (!config) return {};
   const schema = new JsonSchemaLibrary.Draft2019(config[0]);
-  const template = schema.getTemplate(existingConfigForItem);
+  const template = schema.getTemplate(existingConfigForItem) ?? {};
   return template;
 };
+
+export function getRequiredParameters(item: CatalogItemWithName): string[] {
+  const config = item.config;
+  if (!config) return [];
+  const schema = new JsonSchemaLibrary.Draft2019(config[0]);
+  return (schema.rootSchema.required || []) as string[];
+}
 
 export function useConfig(client: v1.DockerDesktopClient) {
   const queryClient = useQueryClient();
@@ -59,7 +66,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
         await writeToPromptsVolume(
           client,
           CONFIG_YAML,
-          stringify(updatedConfig)
+          stringify(updatedConfig),
         );
 
         const updatedConfigRef = JSON.parse(JSON.stringify(updatedConfig));
@@ -91,7 +98,7 @@ export function useConfig(client: v1.DockerDesktopClient) {
 
   const saveConfig = async (
     itemName: string,
-    newConfig: { [key: string]: any }
+    newConfig: { [key: string]: any },
   ) => {
     try {
       await saveConfigMutation.mutateAsync({ itemName, newConfig });
