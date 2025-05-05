@@ -309,26 +309,30 @@ function ClientSetting({
                 {mcpClientState.client.url}
               </Link>
             </Stack>
-            <Typography sx={{ fontWeight: 'bold' }}>
-              Expected Config Path
-            </Typography>
-            <Typography
-              component="pre"
-              sx={{
-                color: 'text.primary',
-                fontFamily: 'monospace',
-                whiteSpace: 'nowrap',
-                overflow: 'auto',
-                backgroundColor: 'background.default',
-                padding: 1,
-                borderRadius: 1,
-                fontSize: '12px',
-              }}
-            >
-              {mcpClientState.client.expectedConfigPath?.[
-                client.host.platform as 'win32' | 'darwin' | 'linux'
-              ] || 'N/A'}
-            </Typography>
+            {mcpClientState.client.expectedConfigPath && (
+              <>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  Expected Config Path
+                </Typography>
+                <Typography
+                  component="pre"
+                  sx={{
+                    color: 'text.primary',
+                    fontFamily: 'monospace',
+                    whiteSpace: 'nowrap',
+                    overflow: 'auto',
+                    backgroundColor: 'background.default',
+                    padding: 1,
+                    borderRadius: 1,
+                    fontSize: '12px',
+                  }}
+                >
+                  {mcpClientState.client.expectedConfigPath?.[
+                    client.host.platform as 'win32' | 'darwin' | 'linux'
+                  ] || 'N/A'}
+                </Typography>
+              </>
+            )}
             <Typography sx={{ fontWeight: 'bold' }}>
               Manual configuration
             </Typography>
