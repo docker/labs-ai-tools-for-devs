@@ -2772,17 +2772,17 @@ registry:
         required:
           - url
           - username
-  rudra-ravi/wikipedia-mcp:
-    description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs
+  wikipedia-mcp:
+    description: A Model Context Protocol (MCP) server that retrieves information from Wikipedia to provide context to LLMs.
     title: Wikipedia
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/wikipedia-mcp.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/wikipedia-mcp.md
-    source: https://github.com/Rudra-ravi/wikipedia-mcp
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
+    source: https://github.com/Rudra-ravi/wikipedia-mcp/tree/main
+    icon: https://avatars.githubusercontent.com/u/56668?s=200&v=4
     tools:
+      - name: get_article
       - name: get_related_topics
       - name: get_summary
-      - name: get_article
       - name: search_wikipedia
     prompts: 0
     resources: {}
