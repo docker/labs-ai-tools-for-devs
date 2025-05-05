@@ -161,6 +161,8 @@ registry:
             type: string
           channel_ids:
             type: string
+        required:
+          - team_id
   redis:
     description: Access to Redis database operations.
     title: Redis
@@ -711,8 +713,8 @@ registry:
         properties:
           access_key_id:
             type: string
-          region:
-            type: string
+        required:
+          - access_key_id
   everart:
     description: Image generation server using EverArt's API.
     title: EverArt (Reference)
@@ -860,6 +862,9 @@ registry:
           sender:
             type: string
             description: sender email address
+        required:
+          - reply_to
+          - sender
   github-official:
     description: Official GitHub MCP Server, by GitHub. Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.
     title: GitHub Official
@@ -1148,6 +1153,8 @@ registry:
         properties:
           client_id:
             type: string
+        required:
+          - client_id
   chroma:
     description: A Model Context Protocol (MCP) server implementation that provides database capabilities for Chroma.
     title: Chroma
@@ -1742,6 +1749,8 @@ registry:
         properties:
           api_key:
             type: string
+        required:
+          - api_key
   scrapegraph:
     description: ScapeGraph MCP Server.
     title: ScrapeGraph
@@ -2082,6 +2091,8 @@ registry:
         properties:
           key_id:
             type: string
+        required:
+          - key_id
   wolfram-alpha:
     description: Connect your chat repl to wolfram alpha computational intelligence.
     title: WolframAlpha
@@ -2210,6 +2221,9 @@ registry:
             type: string
           type:
             type: string
+        required:
+          - host
+          - type
   grafana:
     description: MCP server for Grafana.
     title: Grafana
@@ -2532,6 +2546,8 @@ registry:
         properties:
           user_id:
             type: string
+        required:
+          - user_id
   gyazo:
     description: Official Model Context Protocol server for Gyazo.
     title: Gyazo
@@ -2682,6 +2698,8 @@ registry:
         properties:
           key_id:
             type: string
+        required:
+          - key_id
   fibery:
     description: Interact with your Fibery workspace.
     title: Fibery
