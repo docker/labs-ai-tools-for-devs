@@ -1,9 +1,9 @@
+import { S3_CATALOG_URL } from '../urls';
+
 export const MCP_POLICY_NAME = 'MCP=*';
 export const DD_BUILD_WITH_SECRET_SUPPORT = 184396;
 // export const CATALOG_URL = "http://localhost:9911/catalog.yaml";
-export const CATALOG_URL = import.meta.env.DEV
-  ? '/catalog'
-  : 'https://desktop.docker.com/mcp/catalog/catalog.yaml';
+export const CATALOG_URL = import.meta.env.DEV ? '/catalog' : S3_CATALOG_URL;
 
 export const getUnsupportedSecretMessage = (ddVersion: {
   version: string;

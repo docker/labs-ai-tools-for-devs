@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { S3_CATALOG_URL } from './urls';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -28,7 +30,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/catalog': {
-        target: 'https://desktop.docker.com/mcp/catalog/catalog.yaml',
+        target: S3_CATALOG_URL,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/catalog/, ''),
       },
