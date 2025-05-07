@@ -77,7 +77,7 @@
                   :tools {:listChanged true}
                   :resources {:listChanged true}}
    :serverInfo {:name "docker-mcp-server"
-                 :version "0.0.1"}})
+                 :version "0.1.0"}})
 
 (defmethod lsp.server/receive-notification "notifications/initialized" [_ {:keys [db* server server-id]} _]
   (logger/info "Initialized! " (-> @db* :servers (get server-id)))
