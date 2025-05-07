@@ -20,14 +20,14 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.17"
+VERSION="0.0.18"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag mcp/docker:$VERSION \
+    --tag vonwig/gateway:$VERSION \
     --file Dockerfile \
     --push .
-docker pull mcp/docker:$VERSION
+docker pull vonwig/gateway:$VERSION
 ```
 
 ```sh
