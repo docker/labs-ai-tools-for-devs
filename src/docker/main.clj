@@ -9,6 +9,7 @@
    graph
    [http-server]
    jsonrpc
+   [jsonrpc.logger :as logger]
    jsonrpc.producer
    jsonrpc.server
    [logging :refer [warn]]
@@ -85,7 +86,10 @@
 
 (defn command [opts & [c :as args]]
   (fn []
-    (http-server/start)))
+    (let [server-opts (jsonrpc.server/server-context opts)]
+      (jsonrpc.server/run-socket-server! opts server-opts)
+      (logger/info "start tools service")
+      (http-server/start server-opts))))
 
 (defn -main [& args]
   (try

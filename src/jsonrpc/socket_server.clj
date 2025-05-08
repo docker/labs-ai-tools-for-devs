@@ -19,10 +19,13 @@
   connection, then returns a chan-server which communicates over the socket."
   ([{:keys [address port server-context-factory] :as opts}]
    (let [socket (ServerSocket. (if (string? port) (Long/valueOf ^String port) port) 0)] ;; bind to the port
-     (loop [connection (.accept socket)]
-       (logger/info "accepted connection")
-       (server opts connection server-context-factory)
-       (recur (.accept socket)))))
+     (.start
+       (Thread.
+         (fn []
+           (loop [connection (.accept socket)]
+             (logger/info "accepted connection")
+             (server opts connection server-context-factory)
+             (recur (.accept socket))))))))
   ([opts ^Socket connection component-factory] ;; this arity is mostly for tests
    ;; chan servers have on-close callbacks
    ;; connections have both input and output streams

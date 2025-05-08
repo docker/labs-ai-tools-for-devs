@@ -24,10 +24,10 @@ VERSION="0.0.18"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
-    --tag vonwig/gateway:$VERSION \
+    --tag mcp/docker:$VERSION \
     --file Dockerfile \
     --push .
-docker pull vonwig/gateway:$VERSION
+docker pull mcp/docker:$VERSION
 ```
 
 ```sh

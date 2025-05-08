@@ -1,8 +1,9 @@
 services:
   mcp_docker:
-    image: mcp/docker:0.0.17
+    image: mcp/docker:0.0.18
     ports:
-      - 8811:8811
+      - 8800-8900:8800-8900
+      - 3000:3000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/var/run/docker.raw.sock:/var/run/docker.raw.sock"
