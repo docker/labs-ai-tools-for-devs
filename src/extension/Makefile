@@ -1,4 +1,4 @@
-IMAGE?=docker/labs-ai-tools-for-devs
+IMAGE?=vonwig/labs-ai-tools-for-devs
 TAG?=1.0.1
 
 BUILDER=buildx-multi-arch

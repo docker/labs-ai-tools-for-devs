@@ -213,15 +213,18 @@
 ;; MCP Tools
 ;; -----------------
 
-(defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
-  ;; TODO cursors
-  {:tools (->> (:mcp.prompts/registry @db*)
-               (vals)
-               (mapcat :functions)
-               (map (fn [m] (-> (:function m)
-                                (select-keys [:name :description])
-                                (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
-               (into []))})
+(defmethod lsp.server/receive-request "tools/list" [_ {:keys [db* server-id]} _]
+  (let [tool-filter (-> @db* :tool/filters (get server-id))]
+    (logger/info "tools/list for " tool-filter)
+    ;; TODO cursors
+    {:tools (->> (:mcp.prompts/registry @db*)
+                 (vals)
+                 (mapcat :functions)
+                 (map (fn [m] (-> (:function m)
+                                  (select-keys [:name :description])
+                                  (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
+                 (filter (comp tool-filter :name))
+                 (into []))}))
 
 (defn resource-uri [db-resources uri]
   ((->> db-resources
