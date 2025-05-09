@@ -1,5 +1,6 @@
 (ns jsonrpc.socket-server
   (:require
+   [jsonrpc.db :as db]
    [jsonrpc.logger :as logger]
    jsonrpc.state
    [lsp4clj.io-server :as io-server]
@@ -17,7 +18,7 @@
 
   Starts listening on the socket, blocks until a client establishes a
   connection, then returns a chan-server which communicates over the socket."
-  ([{:keys [address port server-context-factory] :as opts}]
+  ([{:keys [port server-context-factory] :as opts}]
    (let [socket (ServerSocket. (if (string? port) (Long/valueOf ^String port) port) 0)] ;; bind to the port
      (.start
        (Thread.
@@ -39,5 +40,8 @@
                                     :in connection
                                     :out connection
                                     :on-close on-close))]
+     (when (:tools opts) 
+       (logger/info (format "starting server %d using tool filter %s" server-id (:tools opts)))
+       (swap! db/db* assoc-in [:tool/filters server-id] (:tools opts)))
      (server/start s (component-factory s server-id)))))
 
