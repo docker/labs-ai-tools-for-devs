@@ -6,7 +6,6 @@
    [clojure.tools.cli :as cli]
    docker
    git
-   graph
    [http-server]
    jsonrpc
    [jsonrpc.logger :as logger]
@@ -15,9 +14,7 @@
    [logging :refer [warn]]
    prompts
    schema
-   state
    trace
-   user-loop
    volumes)
   (:gen-class))
 
@@ -35,7 +32,7 @@
                [nil "--host-dir DIR" "Project directory (on host filesystem)"]
                ;; required if not using positional args
                [nil "--platform PLATFORM" "current host platform"
-                :validate [#(#{"darwin" "linux" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
+                :validate [#(#{"darwin" "linukjx" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
                [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
                 :id :prompts
                 :validate [#(fs/exists? (fs/file %)) "prompts dir does not a valid directory"]

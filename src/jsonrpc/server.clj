@@ -10,7 +10,6 @@
    [docker]
    [git]
    [jsonrpc.db :as db]
-   [jsonrpc.extras]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
    [jsonrpc.prompt-change-events]
@@ -223,7 +222,7 @@
                  (map (fn [m] (-> (:function m)
                                   (select-keys [:name :description])
                                   (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
-                 (filter (comp tool-filter :name))
+                 (filter (constantly true) #_(comp tool-filter :name))
                  (into []))}))
 
 (defn resource-uri [db-resources uri]

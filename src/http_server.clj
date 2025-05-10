@@ -3,6 +3,7 @@
    [babashka.curl :as curl]
    [compojure.core :refer [POST routes]]
    [compojure.route :as route]
+   [jsonrpc.db :as db]
    [jsonrpc.logger :as logger]
    [jsonrpc.server]
    [ring.adapter.jetty :as jetty]
@@ -28,11 +29,13 @@
            port (if-let [next-port ((:tools->port @next-port) tool-set)]
                   next-port 
                   (:port (swap! next-port get-next-port tool-set)))]
+       (swap! db/db* assoc-in [:tool/filters port] tool-set)
        (logger/info "Received JSON body:" body)
        (logger/info "Create new endpoint on port: " port)
        (jsonrpc.server/run-socket-server! {:port port} (merge server-opts {:tools tool-set}))
        (response {:port port
-                  :host "host.docker.internal"})))
+                  :host "host.docker.internal"
+                  :sse (format "http://host.docker.internal:3000/mcp/%s" port)})))
 
    ;; Handle 404 Not Found
    (route/not-found "Not Found")))
