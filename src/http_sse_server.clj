@@ -32,26 +32,44 @@
   (let [in (async/chan)
         out (async/chan 1 (map format-event))
         server-id (or tools-id (swap! jsonrpc.state/server-counter inc))
+        message (json/parse-string (slurp body) keyword)
         s (lsp.server/chan-server
-           {:input-ch in
-            :output-ch out
-            :on-close (fn []
-                        (logger/info "closing SSE processor")
-                        (async/close! out))})]
+           (merge
+            server-opts
+            {:input-ch in
+             :output-ch out
+             :on-close (fn []
+                         (logger/info "closing SSE processor")
+                         (async/close! out))}))]
     ;; construct a chan server
-    (lsp.server/start s ((:server-context-factory server-opts) s server-id))
-    (logger/info (format "starting server %d using tool filter %s" tools-id (or (-> @db/db* :tool/filters server-id) [])))
-    ;; push in all of the messages and then close
-    (async/go
-      (if (coll? body)
-        (doseq [m body]
-          (async/>! in m))
-        (async/>! in body))
-      (async/close! in))
-    ;; return the SSE stream
-    {:status 200
-     :headers {"content-type" "text/event-stream"}
-     :body (s/->source (:ouptut-ch s))}))
+    (logger/info (format "starting chan server %s" server-id))
+    (try
+      (lsp.server/start s ((:server-context-factory server-opts) s server-id))
+
+      (logger/info
+       (format "starting server %s using tool filter %s" server-id (or (-> @db/db* :tool/filters (get server-id)) [])))
+      ;; push in all of the messages and then close
+      (logger/info "message " message)
+      (async/go
+        (cond
+          (map? message)
+          (do
+            (logger/info "sending" (str message))
+            (async/>! in message))
+          (coll? message)
+          (doseq [m message]
+            (async/>! in m))
+          :else
+          (logger/info "dropped messasge " message))
+        #_(async/close! in))
+      ;; return the SSE stream
+      {:status 200
+       :headers {"content-type" "text/event-stream"}
+       :body (s/->source (:output-ch s))}
+      (catch Throwable t
+        (logger/error t)
+        {:status 500
+         :body (str "Errot: " t)}))))
 
 (defn create-app
   "Return a ring handler that will route /events to the SSE handler
@@ -59,13 +77,9 @@
   [server-opts]
   (ring/ring-handler
    (ring/router
-    [["/mcp/:id" {:post {:handler (partial mcp-endpoint server-opts)}
+    [["/mcp/:id" {:post {:handler (partial #'mcp-endpoint server-opts)}
                   :get {:handler mcp-endpoint-get}}]])))
 
-((ring/ring-handler (ring/router [["/mcp/:id" {:post {:handler identity}}]]) "/mcp/1")
- {:request-method :post
-  :uri "/mcp/1"
-  :body "content"})
 ;; Web server maangement code to make it easy to start and stop a server
     ;; after changesto router or handlers
 (def server_ (atom nil))
@@ -81,12 +95,22 @@
                      (.close s)))))
 (comment
   (import [java.io BufferedInputStream])
-  (require '[clj-http.client :as client]
-           '[clojure.java.io :as io])
+  (require
+   '[clojure.java.io :as io]
+   '[babashka.curl :as curl]
+   'jsonrpc.server)
 
-  (start-server! {})
+  (start-server! (jsonrpc.server/server-context {:trace-level "verbose"}))
 
-  (def response (client/get "http://localhost:8080/mcp" {:as :stream}))
+  (def response (curl/post "http://localhost:9011/mcp/1"
+                           {:body (json/generate-string
+                                   {:jsonrpc "2.0"
+                                    :method "initialize"
+                                    :id 1
+                                    :params {:protocolVersion "2024-11-05"
+                                             :capabilities {}
+                                             :clientInfo {:name "SSE Client" :version "0.1"}}})
+                            :as :stream}))
 
   (.start
    (Thread.
