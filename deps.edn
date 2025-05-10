@@ -21,7 +21,8 @@
         ring/ring-jetty-adapter {:mvn/version "1.14.1"}
         compojure/compojure {:mvn/version "1.7.1"}
         ring/ring-json {:mvn/version "0.5.1"}
-        metosin/reitit {:mvn/version "0.7.0-alpha5"}}
+        metosin/reitit {:mvn/version "0.7.0-alpha5"}
+        aleph/aleph {:mvn/version "0.8.3"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}
            :build {:ns-default build
                    :deps {io.github.clojure/tools.build {:git/tag "v0.10.8" :git/sha "2fdfd66bc3e8e78fde810515c9b8e7e21f638949"}}}
