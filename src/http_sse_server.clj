@@ -72,7 +72,7 @@
 
 (defn start-server! [server-opts]
   (reset! server_ (http/start-server (create-app server-opts)
-                                     {:port 3000
+                                     {:port 9011
                                       :join? false})))
 
 (defn stop-server! []

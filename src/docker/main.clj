@@ -7,6 +7,7 @@
    docker
    git
    [http-server]
+   [http-sse-server]
    jsonrpc
    [jsonrpc.logger :as logger]
    jsonrpc.producer
@@ -85,6 +86,7 @@
   (fn []
     (let [server-opts (jsonrpc.server/server-context opts)]
       (jsonrpc.server/run-socket-server! opts server-opts)
+      (http-sse-server/start-server! server-opts)
       (logger/info "start tools service")
       (http-server/start server-opts))))
 
