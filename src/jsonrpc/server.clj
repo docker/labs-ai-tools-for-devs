@@ -67,7 +67,7 @@
   {})
 
 (defmethod lsp.server/receive-request "initialize" [_ {:keys [db* server-id]} params]
-  (logger/info (format "Initializing server id %d %s" server-id params))
+  (logger/info (format "Initializing server id %s %s" server-id params))
 
   ;; merges client-info capabilities and client protocol-version
   (swap! db* assoc-in [:servers server-id] params)
