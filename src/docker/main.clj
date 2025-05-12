@@ -86,9 +86,7 @@
   (fn []
     (let [server-opts (jsonrpc.server/server-context opts)]
       (jsonrpc.server/run-socket-server! opts server-opts)
-      (http-sse-server/start-server! server-opts)
-      (logger/info "start tools service")
-      (http-server/start server-opts))))
+      (http-sse-server/start-server-and-wait! server-opts))))
 
 (defn -main [& args]
   (try

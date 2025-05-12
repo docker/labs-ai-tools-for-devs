@@ -5,10 +5,44 @@
    [clojure.core.async :as async]
    [jsonrpc.db :as db]
    [jsonrpc.logger :as logger]
+   [jsonrpc.server]
    [jsonrpc.state :as state]
    [lsp4clj.server :as lsp.server]
    [manifold.stream :as s]
    [reitit.ring :as ring]))
+
+(def http-port 9011)
+
+(def next-port
+  (atom {:tools->port {}
+         :port 8811}))
+
+(defn get-next-port [state tool-set]
+  (let [port (inc (:port state))]
+    (-> state
+        (assoc :port port)
+        (update :tools->port assoc tool-set port))))
+
+(defn mcp-put-tool-definition [{{tool-name :name} :path-params}]
+  {:status 201
+   :headers {"Location" (format "/mcp/tools/%s" tool-name)
+             :content-type "application/json"}
+   :body (json/generate-string {:url (format "http://host.docker.internal:%s/mcp/tools/%s" http-port tool-name)})})
+
+(defn mcp-delete-tool-endpoint [{{tool-name :name} :path-params}]
+  {:status 200})
+
+(defn mcp-put-tool-endpoint [server-opts {body :body {tool-id :id} :path-params}]
+  (let [body (json/parse-string (slurp body) keyword)
+        tool-set (into #{} (:tools body))
+        url (format "http://host.docker.internal:%s/mcp/%s" http-port tool-id) ]
+    (swap! db/db* assoc-in [:tool/filters tool-id] tool-set)
+    (logger/info "Received JSON body:" body)
+    (logger/info "Virtual MCP server: " url)
+    {:status 201
+     :headers {:content-type "application/json"}
+     :body (json/generate-string
+            {:url url})}))
 
 (defn format-event
   "Return a properly formatted event payload"
@@ -16,7 +50,7 @@
   (str "data: " (json/generate-string body) "\n\n"))
 
 ;; this is for starting an SSE stream without an initial payload
-(defn mcp-endpoint-get [_req]
+(defn mcp-endpoint-get [{body :body {tool-id :id} :path-params}]
   {:status 200
    :headers {"content-type" "text/event-stream"}
    :body (let [c (async/chan 1 (map format-event))]
@@ -69,7 +103,7 @@
       (catch Throwable t
         (logger/error t)
         {:status 500
-         :body (str "Errot: " t)}))))
+         :body (str "Error: " t)}))))
 
 (defn create-app
   "Return a ring handler that will route /events to the SSE handler
@@ -78,7 +112,10 @@
   (ring/ring-handler
    (ring/router
     [["/mcp/:id" {:post {:handler (partial #'mcp-endpoint server-opts)}
-                  :get {:handler mcp-endpoint-get}}]])))
+                  :get {:handler mcp-endpoint-get}
+                  :put {:handler (partial #'mcp-put-tool-endpoint server-opts)}
+                  :delete {:handler #'mcp-delete-tool-endpoint}}]
+     ["/mcp/tool/:name" {:put {:handler #'mcp-put-tool-definition}}]])))
 
 ;; Web server maangement code to make it easy to start and stop a server
     ;; after changesto router or handlers
@@ -86,40 +123,16 @@
 
 (defn start-server! [server-opts]
   (reset! server_ (http/start-server (create-app server-opts)
-                                     {:port 9011
+                                     {:port http-port
                                       :join? false})))
 
 (defn stop-server! []
   (swap! server_ (fn [s]
                    (when s
                      (.close s)))))
-(comment
-  (import [java.io BufferedInputStream])
-  (require
-   '[clojure.java.io :as io]
-   '[babashka.curl :as curl]
-   'jsonrpc.server)
 
-  (start-server! (jsonrpc.server/server-context {:trace-level "verbose"}))
-
-  (def response (curl/post "http://localhost:9011/mcp/1"
-                           {:body (json/generate-string
-                                   {:jsonrpc "2.0"
-                                    :method "initialize"
-                                    :id 1
-                                    :params {:protocolVersion "2024-11-05"
-                                             :capabilities {}
-                                             :clientInfo {:name "SSE Client" :version "0.1"}}})
-                            :as :stream}))
-
-  (.start
-   (Thread.
-    (fn []
-      (loop []
-        (when-let [line (.readLine (io/reader (BufferedInputStream. (:body response))))]
-          (do
-            (println line)
-            (recur)))))))
-
-  (stop-server!))
-
+(defn start-server-and-wait! [server-opts]
+  (logger/info "Server starting on port " http-port)
+  (http/start-server (create-app server-opts)
+                     {:port http-port
+                      :join? true}))
