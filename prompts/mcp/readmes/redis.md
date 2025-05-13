@@ -232,6 +232,9 @@ Parameters|Type|Description
 ---
 #### Tool: **`lrange`**
 Get elements from a Redis list within a specific range.
+
+Returns:
+str: A JSON string containing the list of elements or an error message.
 Parameters|Type|Description
 -|-|-
 `name`|`string`|

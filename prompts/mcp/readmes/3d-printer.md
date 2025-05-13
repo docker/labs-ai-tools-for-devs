@@ -11,7 +11,7 @@ Attribute|Details|
 **Docker Image**|[mcp/3d-printer](https://hub.docker.com/repository/docker/mcp/3d-printer)
 **Author**|[DMontgomery40](https://github.com/DMontgomery40)
 **Repository**|https://github.com/DMontgomery40/mcp-3D-printer-server
-**Dockerfile**|https://github.com/DMontgomery40/mcp-3D-printer-server/blob/refs/pull/3/merge/Dockerfile
+**Dockerfile**|https://github.com/DMontgomery40/mcp-3D-printer-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
 **Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/3d-printer)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/3d-printer --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`

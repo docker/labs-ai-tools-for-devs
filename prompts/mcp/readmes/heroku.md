@@ -1,6 +1,6 @@
 # Heroku MCP Server
 
-Heroku Platform MCP Server.
+Heroku Platform MCP Server using the Heroku CLI.
 
 [What is an MCP Server?](https://www.anthropic.com/news/model-context-protocol)
 

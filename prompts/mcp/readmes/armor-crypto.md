@@ -303,7 +303,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`swap_quote`**
-Retrieve a swap quote.
+Retrieve a swap quote. Be sure to add slippage!
 
     Expects a SwapQuoteRequestContainer, returns a list of SwapQuoteResponse.
 Parameters|Type|Description

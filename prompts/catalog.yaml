@@ -7,12 +7,12 @@ registry:
     source: https://github.com/docker/labs-ai-tools-for-devs/tree/main/prompts/examples/mcp-sqlite.md
     icon: https://avatars.githubusercontent.com/u/48680494?v=4
     tools:
-      - name: read_query
-      - name: write_query
-      - name: create_table
-      - name: list_tables
-      - name: describe_table
-      - name: append_insight
+      - name: read-query
+      - name: write-query
+      - name: create-table
+      - name: list-tables
+      - name: describe-table
+      - name: append-insight
     prompts: 1
     resources: {}
   curl:
@@ -100,6 +100,8 @@ registry:
     source: https://github.com/stripe/agent-toolkit/tree/main/modelcontextprotocol
     icon: https://avatars.githubusercontent.com/u/856813?s=200&v=4
     tools:
+      - name: cancel_subscription
+      - name: create_coupon
       - name: create_customer
       - name: create_invoice
       - name: create_invoice_item
@@ -108,12 +110,16 @@ registry:
       - name: create_product
       - name: create_refund
       - name: finalize_invoice
+      - name: list_coupons
       - name: list_customers
+      - name: list_disputes
       - name: list_payment_intents
       - name: list_prices
       - name: list_products
+      - name: list_subscriptions
       - name: retrieve_balance
-      - name: search_documentation
+      - name: update_dispute
+      - name: update_subscription
     secrets:
       - name: stripe.secret_key
     prompts: 0
@@ -601,6 +607,7 @@ registry:
       - name: jira_get_sprint_issues
       - name: jira_get_sprints_from_board
       - name: jira_get_transitions
+      - name: jira_get_user_profile
       - name: jira_get_worklog
       - name: jira_link_to_epic
       - name: jira_remove_issue_link
@@ -1399,7 +1406,7 @@ registry:
     prompts: 0
     resources: {}
   heroku:
-    description: Heroku Platform MCP Server.
+    description: Heroku Platform MCP Server using the Heroku CLI.
     title: Heroku
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/heroku.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/heroku.md
@@ -2188,7 +2195,7 @@ registry:
     title: 3D Printer
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/3d-printer.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/3d-printer.md
-    source: https://github.com/DMontgomery40/mcp-3D-printer-server/tree/refs/pull/3/merge
+    source: https://github.com/DMontgomery40/mcp-3D-printer-server/tree/main
     icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
     tools:
       - name: center_model
@@ -2240,6 +2247,7 @@ registry:
       - name: get_assertions
       - name: get_current_oncall_users
       - name: get_dashboard_by_uid
+      - name: get_dashboard_panel_queries
       - name: get_datasource_by_name
       - name: get_datasource_by_uid
       - name: get_incident
@@ -2335,6 +2343,7 @@ registry:
       - name: get_job_test_results
       - name: get_latest_pipeline_status
       - name: recommend_prompt_template_tests
+      - name: run_pipeline
     secrets:
       - name: circleci.token
     prompts: 0
@@ -2667,7 +2676,7 @@ registry:
       - name: browser_tab_select
       - name: browser_take_screenshot
       - name: browser_type
-      - name: browser_wait
+      - name: browser_wait_for
     prompts: 0
     resources: {}
   razorpay:
@@ -2678,14 +2687,42 @@ registry:
     source: https://github.com/razorpay/razorpay-mcp-server/tree/main
     icon: https://avatars.githubusercontent.com/u/7713209?v=4
     tools:
+      - name: capture_payment
+      - name: close_qr_code
+      - name: create_instant_settlement
       - name: create_order
       - name: create_payment_link
+      - name: create_qr_code
       - name: create_refund
+      - name: fetch_all_instant_settlements
       - name: fetch_all_orders
+      - name: fetch_all_payment_links
+      - name: fetch_all_payments
+      - name: fetch_all_payouts
+      - name: fetch_all_qr_codes
+      - name: fetch_all_refunds
+      - name: fetch_all_settlements
+      - name: fetch_instant_settlement_with_id
+      - name: fetch_multiple_refunds_for_payment
       - name: fetch_order
+      - name: fetch_order_payments
       - name: fetch_payment
+      - name: fetch_payment_card_details
       - name: fetch_payment_link
+      - name: fetch_payments_for_qr_code
+      - name: fetch_payout_with_id
+      - name: fetch_qr_code
+      - name: fetch_qr_codes_by_customer_id
+      - name: fetch_qr_codes_by_payment_id
       - name: fetch_refund
+      - name: fetch_settlement_recon_details
+      - name: fetch_settlement_with_id
+      - name: fetch_specific_refund_for_payment
+      - name: payment_link_notify
+      - name: payment_link_upi.create
+      - name: update_order
+      - name: update_payment
+      - name: update_payment_link
       - name: update_refund
     secrets:
       - name: razorpay.key_secret

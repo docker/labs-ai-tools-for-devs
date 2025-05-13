@@ -10,5 +10,5 @@ mcp:
         PRINTER_HOST: "{{3d-printer.host|safe}}"
         PRINTER_TYPE: "{{3d-printer.type}}"
     source:
-      url: https://github.com/DMontgomery40/mcp-3D-printer-server/tree/refs/pull/3/merge
+      url: https://github.com/DMontgomery40/mcp-3D-printer-server/tree/main
 ---

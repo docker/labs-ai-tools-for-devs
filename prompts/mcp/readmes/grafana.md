@@ -28,6 +28,7 @@ Tools provided by this Server|Short Description
 `get_assertions`|Get assertion summary for a given entity with its type, name, env, site, namespace, and a time range|
 `get_current_oncall_users`|Get the list of users currently on-call for a specific Grafana OnCall schedule ID.|
 `get_dashboard_by_uid`|Retrieves the complete dashboard, including panels, variables, and settings, for a specific dashboard identified by its UID.|
+`get_dashboard_panel_queries`|Get the title, query string, and datasource information for each panel in a dashboard.|
 `get_datasource_by_name`|Retrieves detailed information about a specific datasource using its name.|
 `get_datasource_by_uid`|Retrieves detailed information about a specific datasource using its UID.|
 `get_incident`|Get a single incident by ID.|
@@ -129,6 +130,13 @@ Parameters|Type|Description
 ---
 #### Tool: **`get_dashboard_by_uid`**
 Retrieves the complete dashboard, including panels, variables, and settings, for a specific dashboard identified by its UID.
+Parameters|Type|Description
+-|-|-
+`uid`|`string`|The UID of the dashboard
+
+---
+#### Tool: **`get_dashboard_panel_queries`**
+Get the title, query string, and datasource information for each panel in a dashboard. The datasource is an object with fields `uid` (which may be a concrete UID or a template variable like "$datasource") and `type`. If the datasource UID is a template variable, it won't be usable directly for queries. Returns an array of objects, each representing a panel, with fields: title, query, and datasource (an object with uid and type).
 Parameters|Type|Description
 -|-|-
 `uid`|`string`|The UID of the dashboard

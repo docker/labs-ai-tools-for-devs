@@ -29,6 +29,7 @@ Tools provided by this Server|Short Description
 `get_latest_pipeline_status`|This tool retrieves the status of the latest pipeline for a CircleCI project.|
 `recommend_prompt_template_tests`|About this tool:
   - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
+`run_pipeline`|This tool triggers a new CircleCI pipeline and returns the URL to monitor its progress.|
 
 ---
 ## Tools Details
@@ -218,7 +219,7 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
     - Check build progress
     - Get pipeline information
 
-    Input options (EXACTLY ONE of these two options must be used):
+    Input options (EXACTLY ONE of these two options must be used. Before performing the tool call, ensure that the user has provided the correct inputs.):
 
     Option 1 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
@@ -226,6 +227,7 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
       * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
+      * Legacy Job URL: https://circleci.com/gh/organization/project/123
 
     Option 2 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
@@ -234,7 +236,7 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
 
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct, reconstruct or guess URLs.
     - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
     - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
@@ -267,6 +269,42 @@ About this tool:
 
   Tool output instructions:
     - The tool will return a `recommendedTests` array that can be used to test the prompt template.
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`run_pipeline`**
+This tool triggers a new CircleCI pipeline and returns the URL to monitor its progress.
+
+    Input options (EXACTLY ONE of these two options must be used):
+
+    Option 1 - Direct URL (provide ONE of these):
+    - projectURL: The URL of the CircleCI project in any of these formats:
+      * Project URL with branch: https://app.circleci.com/pipelines/gh/organization/project?branch=feature-branch
+      * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
+      * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
+      * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
+
+    Option 2 - Project Detection (ALL of these must be provided together):
+    - workspaceRoot: The absolute path to the workspace root
+    - gitRemoteURL: The URL of the git remote repository
+    - branch: The name of the current branch
+
+    Pipeline Selection:
+    - If the project has multiple pipeline definitions, the tool will return a list of available pipelines
+    - You must then make another call with the chosen pipeline name using the pipelineChoiceName parameter
+    - The pipelineChoiceName must exactly match one of the pipeline names returned by the tool
+    - If the project has only one pipeline definition, pipelineChoiceName is not needed
+
+    Additional Requirements:
+    - Never call this tool with incomplete parameters
+    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+
+    Returns:
+    - A URL to the newly triggered pipeline that can be used to monitor its progress
 Parameters|Type|Description
 -|-|-
 `params`|`object`|

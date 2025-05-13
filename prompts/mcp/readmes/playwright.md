@@ -44,7 +44,7 @@ Tools provided by this Server|Short Description
 `browser_tab_select`|Select a tab by index|
 `browser_take_screenshot`|Take a screenshot of the current page.|
 `browser_type`|Type text into editable element|
-`browser_wait`|Wait for a specified time in seconds|
+`browser_wait_for`|Wait for text to appear or disappear or a specified time to pass|
 
 ---
 ## Tools Details
@@ -120,6 +120,11 @@ Go forward to the next page
 Returns all network requests since loading the page
 #### Tool: **`browser_pdf_save`**
 Save page as PDF
+Parameters|Type|Description
+-|-|-
+`filename`|`string` *optional*|File name to save the pdf to. Defaults to `page-{timestamp}.pdf` if not specified.
+
+---
 #### Tool: **`browser_press_key`**
 Press a key on the keyboard
 Parameters|Type|Description
@@ -174,6 +179,7 @@ Take a screenshot of the current page. You can't perform actions based on the sc
 Parameters|Type|Description
 -|-|-
 `element`|`string` *optional*|Human-readable element description used to obtain permission to screenshot the element. If not provided, the screenshot will be taken of viewport. If element is provided, ref must be provided too.
+`filename`|`string` *optional*|File name to save the screenshot to. Defaults to `page-{timestamp}.{png|jpeg}` if not specified.
 `raw`|`boolean` *optional*|Whether to return without compression (in PNG format). Default is false, which returns a JPEG image.
 `ref`|`string` *optional*|Exact target element reference from the page snapshot. If not provided, the screenshot will be taken of viewport. If ref is provided, element must be provided too.
 
@@ -189,11 +195,13 @@ Parameters|Type|Description
 `submit`|`boolean` *optional*|Whether to submit entered text (press Enter after)
 
 ---
-#### Tool: **`browser_wait`**
-Wait for a specified time in seconds
+#### Tool: **`browser_wait_for`**
+Wait for text to appear or disappear or a specified time to pass
 Parameters|Type|Description
 -|-|-
-`time`|`number`|The time to wait in seconds
+`text`|`string` *optional*|The text to wait for
+`textGone`|`string` *optional*|The text to wait for to disappear
+`time`|`number` *optional*|The time to wait in seconds
 
 ---
 ## Use this MCP Server

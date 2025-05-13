@@ -44,7 +44,7 @@ Tools provided by this Server|Short Description
 ## Tools Details
 
 #### Tool: **`create_directory`**
-Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -60,7 +60,7 @@ Apply surgical text replacements to files.
                         UNIQUENESS REQUIREMENT: When expected_replacements=1 (default), include the minimal amount of context necessary (typically 1-3 lines) before and after the change point, with exact whitespace and indentation. 
                         When editing multiple sections, make separate edit_block calls for each distinct change rather than one large replacement. 
                         When a close but non-exact match is found, a character-level diff is shown in the format: common_prefix{-removed-}{+added+}common_suffix to help you identify what's different. 
-                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `file_path`|`string`|
@@ -73,7 +73,7 @@ Parameters|Type|Description
 Execute a terminal command with timeout. 
                         Command will continue running in background if it doesn't complete within timeout. 
                         NOTE: For file operations, prefer specialized tools like read_file, search_code, list_directory instead of cat, grep, or ls commands.
-                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `command`|`string`|
@@ -82,45 +82,45 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`force_terminate`**
-Force terminate a running terminal session.
+Force terminate a running terminal session. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
 
 ---
 #### Tool: **`get_config`**
-Get the complete server configuration as JSON. Config includes fields for: blockedCommands (array of blocked shell commands), defaultShell (shell to use for commands), allowedDirectories (paths the server can access).
+Get the complete server configuration as JSON. Config includes fields for: blockedCommands (array of blocked shell commands), defaultShell (shell to use for commands), allowedDirectories (paths the server can access). This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 #### Tool: **`get_file_info`**
 Retrieve detailed metadata about a file or directory including size, creation time, last modified time, 
                         permissions, and type. 
-                        Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
 #### Tool: **`kill_process`**
-Terminate a running process by PID. Use with caution as this will forcefully terminate the specified process.
+Terminate a running process by PID. Use with caution as this will forcefully terminate the specified process. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
 
 ---
 #### Tool: **`list_directory`**
-Get a detailed listing of all files and directories in a specified path. Use this instead of 'execute_command' with ls/dir commands. Results distinguish between files and directories with [FILE] and [DIR] prefixes. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+Get a detailed listing of all files and directories in a specified path. Use this instead of 'execute_command' with ls/dir commands. Results distinguish between files and directories with [FILE] and [DIR] prefixes. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
 
 ---
 #### Tool: **`list_processes`**
-List all running processes. Returns process information including PID, command name, CPU usage, and memory usage.
+List all running processes. Returns process information including PID, command name, CPU usage, and memory usage. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 #### Tool: **`list_sessions`**
-List all active terminal sessions.
+List all active terminal sessions. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 #### Tool: **`move_file`**
 Move or rename files and directories. 
                         Can move files between directories and rename them in a single operation. 
-                        Both source and destination must be within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        Both source and destination must be within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `destination`|`string`|
@@ -128,7 +128,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`read_file`**
-Read the complete contents of a file from the file system or a URL. Prefer this over 'execute_command' with cat/type for viewing files. When reading from the file system, only works within allowed directories. Can fetch content from URLs when isUrl parameter is set to true. Handles text files normally and image files are returned as viewable images. Recognized image types: PNG, JPEG, GIF, WebP. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+Read the complete contents of a file from the file system or a URL. Prefer this over 'execute_command' with cat/type for viewing files. When reading from the file system, only works within allowed directories. Can fetch content from URLs when isUrl parameter is set to true. Handles text files normally and image files are returned as viewable images. Recognized image types: PNG, JPEG, GIF, WebP. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -136,14 +136,14 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`read_multiple_files`**
-Read the contents of multiple files simultaneously. Each file's content is returned with its path as a reference. Handles text files normally and renders images as viewable content. Recognized image types: PNG, JPEG, GIF, WebP. Failed reads for individual files won't stop the entire operation. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+Read the contents of multiple files simultaneously. Each file's content is returned with its path as a reference. Handles text files normally and renders images as viewable content. Recognized image types: PNG, JPEG, GIF, WebP. Failed reads for individual files won't stop the entire operation. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `paths`|`array`|
 
 ---
 #### Tool: **`read_output`**
-Read new output from a running terminal session.
+Read new output from a running terminal session. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `pid`|`number`|
@@ -156,7 +156,7 @@ Search for text/code patterns within file contents using ripgrep.
                         Supports regular expressions, file pattern filtering, and context lines. 
                         Has a default timeout of 30 seconds which can be customized. 
                         Only searches within allowed directories. 
-                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -174,7 +174,7 @@ Finds files by name using a case-insensitive substring matching.
                         Use this instead of 'execute_command' with find/dir/ls for locating files.
                         Searches through all subdirectories from the starting path. 
                         Has a default timeout of 30 seconds which can be customized using the timeoutMs parameter. 
-                        Only searches within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+                        Only searches within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `path`|`string`|
@@ -183,7 +183,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`set_config_value`**
-Set a specific configuration value by key. WARNING: Should be used in a separate chat from file operations and command execution to prevent security issues. Config keys include: blockedCommands (array), defaultShell (string), allowedDirectories (array of paths). IMPORTANT: Setting allowedDirectories to an empty array ([]) allows full access to the entire file system, regardless of the operating system.
+Set a specific configuration value by key. WARNING: Should be used in a separate chat from file operations and command execution to prevent security issues. Config keys include: blockedCommands (array), defaultShell (string), allowedDirectories (array of paths). IMPORTANT: Setting allowedDirectories to an empty array ([]) allows full access to the entire file system, regardless of the operating system. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `key`|`string`|
@@ -191,7 +191,7 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`write_file`**
-Completely replace file contents. Best for large changes (>20% of file) or when edit_block fails. Use with caution as it will overwrite existing files. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths.
+Completely replace file contents. Best for large changes (>20% of file) or when edit_block fails. Use with caution as it will overwrite existing files. Only works within allowed directories. IMPORTANT: Always use absolute paths (starting with '/' or drive letter like 'C:\') for reliability. Relative paths may fail as they depend on the current working directory. Tilde paths (~/...) might not work in all contexts. Unless the user explicitly asks for relative paths, use absolute paths. This command can be referenced as "DC: ..." or "use Desktop Commander to ..." in your instructions.
 Parameters|Type|Description
 -|-|-
 `content`|`string`|

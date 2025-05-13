@@ -46,6 +46,7 @@ Tools provided by this Server|Short Description
 `jira_get_sprint_issues`|Get jira issues from sprint.|
 `jira_get_sprints_from_board`|Get jira sprints from board by state.|
 `jira_get_transitions`|Get available status transitions for a Jira issue.|
+`jira_get_user_profile`|Retrieve profile information for a specific Jira user.|
 `jira_get_worklog`|Get worklog entries for a Jira issue.|
 `jira_link_to_epic`|Link an existing issue to an epic.|
 `jira_remove_issue_link`|Remove a link between two Jira issues.|
@@ -73,7 +74,7 @@ Parameters|Type|Description
 `content`|`string`|The content of the page in Markdown format. Supports headings, lists, tables, code blocks, and other Markdown syntax
 `space_key`|`string`|The key of the space to create the page in (usually a short uppercase code like 'DEV', 'TEAM', or 'DOC')
 `title`|`string`|The title of the page
-`parent_id`|`string` *optional*|Optional parent page ID. If provided, this page will be created as a child of the specified page
+`parent_id`|`string` *optional*|(Optional) parent page ID. If provided, this page will be created as a child of the specified page
 
 ---
 #### Tool: **`confluence_delete_page`**
@@ -138,7 +139,7 @@ Parameters|Type|Description
 - Title wildcards: 'title ~ "Minutes*" AND (space = "HR" OR space = "Marketing")'
 Note: Special identifiers need proper quoting in CQL: personal space keys (e.g., "~username"), reserved words, numeric IDs, and identifiers with special characters.
 `limit`|`integer` *optional*|Maximum number of results (1-50)
-`spaces_filter`|`string` *optional*|Comma-separated list of space keys to filter results by. Overrides the environment variable CONFLUENCE_SPACES_FILTER if provided.
+`spaces_filter`|`string` *optional*|(Optional) Comma-separated list of space keys to filter results by. Overrides the environment variable CONFLUENCE_SPACES_FILTER if provided.
 
 ---
 #### Tool: **`confluence_update_page`**
@@ -167,10 +168,10 @@ Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `time_spent`|`string`|Time spent in Jira format. Examples: '1h 30m' (1 hour and 30 minutes), '1d' (1 day), '30m' (30 minutes), '4h' (4 hours)
-`comment`|`string` *optional*|Optional comment for the worklog in Markdown format
-`original_estimate`|`string` *optional*|Optional new value for the original estimate
-`remaining_estimate`|`string` *optional*|Optional new value for the remaining estimate
-`started`|`string` *optional*|Optional start time in ISO format. If not provided, the current time will be used. Example: '2023-08-01T12:00:00.000+0000'
+`comment`|`string` *optional*|(Optional) Comment for the worklog in Markdown format
+`original_estimate`|`string` *optional*|(Optional) New value for the original estimate
+`remaining_estimate`|`string` *optional*|(Optional) New value for the remaining estimate
+`started`|`string` *optional*|(Optional) Start time in ISO format. If not provided, the current time will be used. Example: '2023-08-01T12:00:00.000+0000'
 
 ---
 #### Tool: **`jira_batch_create_issues`**
@@ -196,7 +197,7 @@ Get changelogs for multiple Jira issues (Cloud only).
 Parameters|Type|Description
 -|-|-
 `issue_ids_or_keys`|`array`|List of Jira issue IDs or keys, e.g. ['PROJ-123', 'PROJ-124']
-`fields`|`string` *optional*|Filter the changelogs by fields, e.g. ['status', 'assignee']. Default to [] for all fields.
+`fields`|`array` *optional*|(Optional) Filter the changelogs by fields, e.g. ['status', 'assignee']. Default to [] for all fields.
 `limit`|`integer` *optional*|Maximum number of changelogs to return in result for each issue. Default to -1 for all changelogs. Notice that it only limits the results in the response, the function will still fetch all the data.
 
 ---
@@ -207,14 +208,14 @@ Parameters|Type|Description
 `issue_type`|`string`|Issue type (e.g. 'Task', 'Bug', 'Story', 'Epic', 'Subtask'). The available types depend on your project configuration. For subtasks, use 'Subtask' (not 'Sub-task') and include parent in additional_fields.
 `project_key`|`string`|The JIRA project key (e.g. 'PROJ', 'DEV', 'SUPPORT'). This is the prefix of issue keys in your project. Never assume what it might be, always ask the user.
 `summary`|`string`|Summary/title of the issue
-`additional_fields`|`string` *optional*|Optional dictionary of additional fields to set. Examples:
+`additional_fields`|`object` *optional*|(Optional) Dictionary of additional fields to set. Examples:
 - Set priority: {'priority': {'name': 'High'}}
 - Add labels: {'labels': ['frontend', 'urgent']}
 - Link to parent (for any issue type): {'parent': 'PROJ-123'}
 - Set Fix Version/s: {'fixVersions': [{'id': '10020'}]}
 - Custom fields: {'customfield_10010': 'value'}
-`assignee`|`string` *optional*|Assignee of the ticket (accountID, full name or e-mail)
-`components`|`string` *optional*|Comma-separated list of component names to assign (e.g., 'Frontend,API')
+`assignee`|`string` *optional*|(Optional) Assignee's user identifier (string): Email, display name, or account ID (e.g., 'user@example.com', 'John Doe', 'accountid:...')
+`components`|`string` *optional*|(Optional) Comma-separated list of component names to assign (e.g., 'Frontend,API')
 `description`|`string` *optional*|Issue description
 
 ---
@@ -225,8 +226,8 @@ Parameters|Type|Description
 `inward_issue_key`|`string`|The key of the inward issue (e.g., 'PROJ-123')
 `link_type`|`string`|The type of link to create (e.g., 'Duplicate', 'Blocks', 'Relates to')
 `outward_issue_key`|`string`|The key of the outward issue (e.g., 'PROJ-456')
-`comment`|`string` *optional*|Optional comment to add to the link
-`comment_visibility`|`string` *optional*|Optional visibility settings for the comment (e.g., {'type': 'group', 'value': 'jira-users'})
+`comment`|`string` *optional*|(Optional) Comment to add to the link
+`comment_visibility`|`object` *optional*|(Optional) Visibility settings for the comment (e.g., {'type': 'group', 'value': 'jira-users'})
 
 ---
 #### Tool: **`jira_create_sprint`**
@@ -237,7 +238,7 @@ Parameters|Type|Description
 `end_date`|`string`|End time for sprint (ISO 8601 format)
 `sprint_name`|`string`|Name of the sprint (e.g., 'Sprint 1')
 `start_date`|`string`|Start time for sprint (ISO 8601 format)
-`goal`|`string` *optional*|Goal of the sprint
+`goal`|`string` *optional*|(Optional) Goal of the sprint
 
 ---
 #### Tool: **`jira_delete_issue`**
@@ -259,10 +260,10 @@ Parameters|Type|Description
 Get jira agile boards by name, project key, or type.
 Parameters|Type|Description
 -|-|-
-`board_name`|`string` *optional*|The name of board, support fuzzy search
-`board_type`|`string` *optional*|The type of jira board (e.g., 'scrum', 'kanban')
+`board_name`|`string` *optional*|(Optional) The name of board, support fuzzy search
+`board_type`|`string` *optional*|(Optional) The type of jira board (e.g., 'scrum', 'kanban')
 `limit`|`integer` *optional*|Maximum number of results (1-50)
-`project_key`|`string` *optional*|Jira project key (e.g., 'PROJ-123')
+`project_key`|`string` *optional*|(Optional) Jira project key (e.g., 'PROJ-123')
 `start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
@@ -291,9 +292,9 @@ Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `comment_limit`|`integer` *optional*|Maximum number of comments to include (0 or null for no comments)
-`expand`|`string` *optional*|Optional fields to expand. Examples: 'renderedFields' (for rendered content), 'transitions' (for available status transitions), 'changelog' (for history)
-`fields`|`string` *optional*|Fields to return. Can be a comma-separated list (e.g., 'summary,status,customfield_10010'), '*all' for all fields (including custom fields), or omitted for essential fields only.
-`properties`|`string` *optional*|A comma-separated list of issue properties to return
+`expand`|`string` *optional*|(Optional) Fields to expand. Examples: 'renderedFields' (for rendered content), 'transitions' (for available status transitions), 'changelog' (for history)
+`fields`|`string` *optional*|(Optional) Comma-separated list of fields to return (e.g., 'summary,status,customfield_10010'). You may also provide a single field as a string (e.g., 'duedate'). Use '*all' for all fields (including custom fields), or omit for essential fields only.
+`properties`|`string` *optional*|(Optional) A comma-separated list of issue properties to return
 `update_history`|`boolean` *optional*|Whether to update the issue view history for the requesting user
 
 ---
@@ -335,6 +336,13 @@ Parameters|Type|Description
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 
 ---
+#### Tool: **`jira_get_user_profile`**
+Retrieve profile information for a specific Jira user.
+Parameters|Type|Description
+-|-|-
+`user_identifier`|`string`|Identifier for the user (e.g., email address 'user@example.com', username 'johndoe', account ID 'accountid:...', or key for Server/DC).
+
+---
 #### Tool: **`jira_get_worklog`**
 Get worklog entries for a Jira issue.
 Parameters|Type|Description
@@ -369,10 +377,10 @@ Parameters|Type|Description
 - Find recently updated: "updated >= -7d AND project = PROJ"
 - Find by label: "labels = frontend AND project = PROJ"
 - Find by priority: "priority = High AND project = PROJ"
-`expand`|`string` *optional*|Optional fields to expand. Examples: 'renderedFields', 'transitions', 'changelog'
-`fields`|`string` *optional*|Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
+`expand`|`string` *optional*|(Optional) fields to expand. Examples: 'renderedFields', 'transitions', 'changelog'
+`fields`|`string` *optional*|(Optional) Comma-separated fields to return in the results. Use '*all' for all fields, or specify individual fields like 'summary,status,assignee,priority'
 `limit`|`integer` *optional*|Maximum number of results (1-50)
-`projects_filter`|`string` *optional*|Comma-separated list of project keys to filter results by. Overrides the environment variable JIRA_PROJECTS_FILTER if provided.
+`projects_filter`|`string` *optional*|(Optional) Comma-separated list of project keys to filter results by. Overrides the environment variable JIRA_PROJECTS_FILTER if provided.
 `start_at`|`integer` *optional*|Starting index for pagination (0-based)
 
 ---
@@ -391,18 +399,18 @@ Parameters|Type|Description
 -|-|-
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
 `transition_id`|`string`|ID of the transition to perform. Use the jira_get_transitions tool first to get the available transition IDs for the issue. Example values: '11', '21', '31'
-`comment`|`string` *optional*|Comment to add during the transition (optional). This will be visible in the issue history.
-`fields`|`string` *optional*|Optional dictionary of fields to update during the transition. Some transitions require specific fields to be set (e.g., resolution). Example: {'resolution': {'name': 'Fixed'}}
+`comment`|`string` *optional*|(Optional) Comment to add during the transition. This will be visible in the issue history.
+`fields`|`object` *optional*|(Optional) Dictionary of fields to update during the transition. Some transitions require specific fields to be set (e.g., resolution). Example: {'resolution': {'name': 'Fixed'}}
 
 ---
 #### Tool: **`jira_update_issue`**
 Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.
 Parameters|Type|Description
 -|-|-
-`fields`|`object`|A valid dictionary of fields to update. Example: {'summary': 'New title', 'description': 'Updated description', 'priority': {'name': 'High'}, 'assignee': 'john.doe'}
+`fields`|`object`|Dictionary of fields to update. For 'assignee', provide a string identifier (email, name, or accountId). Example: `{'assignee': 'user@example.com', 'summary': 'New Summary'}`
 `issue_key`|`string`|Jira issue key (e.g., 'PROJ-123')
-`additional_fields`|`string` *optional*|Optional dictionary of additional fields to update. Use this for custom fields or more complex updates.
-`attachments`|`string` *optional*|Optional JSON string array or comma-separated list of file paths to attach to the issue. Example: '/path/to/file1.txt,/path/to/file2.txt' or ['/path/to/file1.txt','/path/to/file2.txt']
+`additional_fields`|`object` *optional*|(Optional) Dictionary of additional fields to update. Use this for custom fields or more complex updates.
+`attachments`|`string` *optional*|(Optional) JSON string array or comma-separated list of file paths to attach to the issue. Example: '/path/to/file1.txt,/path/to/file2.txt' or ['/path/to/file1.txt','/path/to/file2.txt']
 
 ---
 #### Tool: **`jira_update_sprint`**
@@ -410,11 +418,11 @@ Update jira sprint.
 Parameters|Type|Description
 -|-|-
 `sprint_id`|`string`|The id of sprint (e.g., '10001')
-`end_date`|`string` *optional*|Optional: New end date for the sprint
-`goal`|`string` *optional*|Optional: New goal for the sprint
-`sprint_name`|`string` *optional*|Optional: New name for the sprint
-`start_date`|`string` *optional*|Optional: New start date for the sprint
-`state`|`string` *optional*|Optional: New state for the sprint (future|active|closed)
+`end_date`|`string` *optional*|(Optional) New end date for the sprint
+`goal`|`string` *optional*|(Optional) New goal for the sprint
+`sprint_name`|`string` *optional*|(Optional) New name for the sprint
+`start_date`|`string` *optional*|(Optional) New start date for the sprint
+`state`|`string` *optional*|(Optional) New state for the sprint (future|active|closed)
 
 ---
 ## Use this MCP Server
