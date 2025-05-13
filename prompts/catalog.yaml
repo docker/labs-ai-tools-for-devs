@@ -2391,28 +2391,6 @@ registry:
       - name: smithery-cli.api_key
     prompts: 0
     resources: {}
-  doit:
-    description: DoiT official MCP Server.
-    title: DoiT
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/doit.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/doit.md
-    source: https://github.com/doitintl/doit-mcp-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/8424863?s=200&v=4
-    tools:
-      - name: get_anomalies
-      - name: get_anomaly
-      - name: get_cloud_incident
-      - name: get_cloud_incidents
-      - name: get_dimension
-      - name: get_report_results
-      - name: list_dimensions
-      - name: list_reports
-      - name: run_query
-      - name: validate_user
-    secrets:
-      - name: doit.api_key
-    prompts: 0
-    resources: {}
   elevenlabs:
     description: The official ElevenLabs MCP server.
     title: ElevenLabs
@@ -2592,8 +2570,12 @@ registry:
       - name: in-app-message-list
       - name: push-message-detail
       - name: push-message-list
+      - name: remote-config-create
       - name: remote-config-detail
       - name: remote-config-list
+      - name: remote-config-update
+      - name: remote-config-update-description
+      - name: remote-config-update-user-identifier-criteria
       - name: retention-series
       - name: stickiness-series
     secrets:
@@ -2791,6 +2773,7 @@ registry:
       - name: delete_observations
       - name: delete_relations
       - name: find_nodes
+      - name: open_nodes
       - name: read_graph
       - name: search_nodes
     secrets:

@@ -31,8 +31,12 @@ Tools provided by this Server|Short Description
 `in-app-message-list`|Fetches a paginated list of in-app messages with search functionality.|
 `push-message-detail`|Retrieves detailed information for a specific push message.|
 `push-message-list`|Fetches a paginated list of push messages with search functionality.|
+`remote-config-create`|Creates an empty remote config.|
 `remote-config-detail`|Fetch remote config detail.|
 `remote-config-list`|Fetch Remote Config list.|
+`remote-config-update`|Updates remote config's content.|
+`remote-config-update-description`|Updates remote config's description.|
+`remote-config-update-user-identifier-criteria`|Updates remote config's user identifier criteria.|
 `retention-series`|Retrieves time-series data of user retention.|
 `stickiness-series`|Retrieves time-series data of user stickiness (return visit frequency).|
 
@@ -122,6 +126,13 @@ Parameters|Type|Description
 `searchKeyword`|`string` *optional*|name, description, or campaignKey of a push message.
 
 ---
+#### Tool: **`remote-config-create`**
+Creates an empty remote config. It is recommended to update an existing RC first if there is an associated RC with the one you want to create since the total number of RC is limited.
+Parameters|Type|Description
+-|-|-
+`body`|`object`|
+
+---
 #### Tool: **`remote-config-detail`**
 Fetch remote config detail.
 Parameters|Type|Description
@@ -137,6 +148,30 @@ Parameters|Type|Description
 `pageSize`|`number` *optional*|
 `searchKeyword`|`string` *optional*|
 `status`|`string` *optional*|
+
+---
+#### Tool: **`remote-config-update`**
+Updates remote config's content.
+Parameters|Type|Description
+-|-|-
+`body`|`object`|
+`remoteConfigId`|`number`|Remote config's id.
+
+---
+#### Tool: **`remote-config-update-description`**
+Updates remote config's description. The change will be applied to both production and development environment.
+Parameters|Type|Description
+-|-|-
+`body`|`object`|
+`remoteConfigId`|`number`|Remote config's id.
+
+---
+#### Tool: **`remote-config-update-user-identifier-criteria`**
+Updates remote config's user identifier criteria. The change will be applied to both production and development environment.
+Parameters|Type|Description
+-|-|-
+`body`|`object`|
+`remoteConfigId`|`number`|Remote config's id.
 
 ---
 #### Tool: **`retention-series`**

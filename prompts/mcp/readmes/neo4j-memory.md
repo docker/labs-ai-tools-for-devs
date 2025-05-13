@@ -26,7 +26,8 @@ Tools provided by this Server|Short Description
 `delete_entities`|Delete multiple entities and their associated relations from the knowledge graph|
 `delete_observations`|Delete specific observations from entities in the knowledge graph|
 `delete_relations`|Delete multiple relations from the knowledge graph|
-`find_nodes`|Open specific nodes in the knowledge graph by their names|
+`find_nodes`|Find specific nodes in the knowledge graph by their names|
+`open_nodes`|Open specific nodes in the knowledge graph by their names|
 `read_graph`|Read the entire knowledge graph|
 `search_nodes`|Search for nodes in the knowledge graph based on a query|
 
@@ -76,6 +77,13 @@ Parameters|Type|Description
 
 ---
 #### Tool: **`find_nodes`**
+Find specific nodes in the knowledge graph by their names
+Parameters|Type|Description
+-|-|-
+`names`|`array`|An array of entity names to retrieve
+
+---
+#### Tool: **`open_nodes`**
 Open specific nodes in the knowledge graph by their names
 Parameters|Type|Description
 -|-|-
