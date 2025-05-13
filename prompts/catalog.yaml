@@ -2866,3 +2866,19 @@ registry:
       - name: search_wikipedia
     prompts: 0
     resources: {}
+  node-code-sandbox:
+    description: A Node.js–based Model Context Protocol server that spins up disposable Docker containers to execute arbitrary JavaScript.
+    title: Node.js Sandbox
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/node-code-sandbox.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/node-code-sandbox.md
+    source: https://github.com/alfonsograziano/node-code-sandbox-mcp/tree/master
+    icon: https://cdn.jsdelivr.net/npm/simple-icons@v7/icons/nodedotjs.svg
+    tools:
+      - name: get_dependency_types
+      - name: run_js
+      - name: run_js_ephemeral
+      - name: sandbox_exec
+      - name: sandbox_initialize
+      - name: sandbox_stop
+    prompts: 0
+    resources: {}
