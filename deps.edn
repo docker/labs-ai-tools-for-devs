@@ -17,10 +17,6 @@
         io.github.slimslenderslacks/lsp4clj {:git/sha "80f8facfadc4933ae12687087d7713d134f45a96"}
         funcool/promesa {:mvn/version "9.0.470"}
         borkdude/dynaload {:mvn/version "0.3.5"}
-        ring/ring-core {:mvn/version "1.14.0"}
-        ring/ring-jetty-adapter {:mvn/version "1.14.1"}
-        compojure/compojure {:mvn/version "1.7.1"}
-        ring/ring-json {:mvn/version "0.5.1"}
         metosin/reitit {:mvn/version "0.7.0-alpha5"}
         aleph/aleph {:mvn/version "0.8.3"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}

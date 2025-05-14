@@ -23,19 +23,22 @@
         (assoc :port port)
         (update :tools->port assoc tool-set port))))
 
-(defn mcp-put-tool-definition [{{tool-name :name} :path-params}]
+(defn mcp-put-tool-definition [{{tool-id :id} :path-params}]
   {:status 201
-   :headers {"Location" (format "/mcp/tools/%s" tool-name)
+   :headers {"Location" (format "/mcp/tool/%s" tool-id)
              :content-type "application/json"}
-   :body (json/generate-string {:url (format "http://host.docker.internal:%s/mcp/tools/%s" http-port tool-name)})})
+   :body (json/generate-string {:url (format "http://host.docker.internal:%s/mcp/tool/%s" http-port tool-id)})})
 
-(defn mcp-delete-tool-endpoint [{{tool-name :name} :path-params}]
+(defn mcp-delete-tool-definition [{{tool-id :id} :path-params}]
+  {:status 200}) 
+
+(defn mcp-delete-tool-endpoint [{{tool-id :id} :path-params}]
   {:status 200})
 
 (defn mcp-put-tool-endpoint [server-opts {body :body {tool-id :id} :path-params}]
   (let [body (json/parse-string (slurp body) keyword)
         tool-set (into #{} (:tools body))
-        url (format "http://host.docker.internal:%s/mcp/%s" http-port tool-id) ]
+        url (format "http://host.docker.internal:%s/mcp/%s" http-port tool-id)]
     (swap! db/db* assoc-in [:tool/filters tool-id] tool-set)
     (logger/info "Received JSON body:" body)
     (logger/info "Virtual MCP server: " url)
@@ -115,24 +118,20 @@
                   :get {:handler mcp-endpoint-get}
                   :put {:handler (partial #'mcp-put-tool-endpoint server-opts)}
                   :delete {:handler #'mcp-delete-tool-endpoint}}]
-     ["/mcp/tool/:name" {:put {:handler #'mcp-put-tool-definition}}]])))
+     ["/mcp/tool/:id" {:put {:handler #'mcp-put-tool-definition}
+                       :delete {:handler #'mcp-delete-tool-definition}}]])))
 
 ;; Web server maangement code to make it easy to start and stop a server
     ;; after changesto router or handlers
 (def server_ (atom nil))
 
-(defn start-server! [server-opts]
-  (reset! server_ (http/start-server (create-app server-opts)
-                                     {:port http-port
-                                      :join? false})))
+(defn start-server! [server-opts p]
+  (reset! server_ {:server (http/start-server (create-app server-opts)
+                                              {:port http-port})
+                   :p p}))
 
 (defn stop-server! []
-  (swap! server_ (fn [s]
-                   (when s
-                     (.close s)))))
-
-(defn start-server-and-wait! [server-opts]
-  (logger/info "Server starting on port " http-port)
-  (http/start-server (create-app server-opts)
-                     {:port http-port
-                      :join? true}))
+  (swap! server_ (fn [{:keys [server p]}]
+                   (when server
+                     {:server (.close server)
+                      :p (deliver p :done)}))))
