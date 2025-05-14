@@ -9,7 +9,6 @@
    [http-server]
    [http-sse-server]
    jsonrpc
-   [jsonrpc.logger :as logger]
    jsonrpc.producer
    jsonrpc.server
    [logging :refer [warn]]
@@ -84,9 +83,11 @@
 
 (defn command [opts & [c :as args]]
   (fn []
-    (let [server-opts (jsonrpc.server/server-context opts)]
+    (let [server-opts (jsonrpc.server/server-context opts)
+          p (promise)]
       (jsonrpc.server/run-socket-server! opts server-opts)
-      (http-sse-server/start-server-and-wait! server-opts))))
+      (http-sse-server/start-server! server-opts p)
+      @p)))
 
 (defn -main [& args]
   (try
