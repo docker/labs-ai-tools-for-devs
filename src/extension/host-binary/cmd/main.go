@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"slices"
 	"syscall"
@@ -228,10 +229,14 @@ func runAddSecret(ctx context.Context, opts addOptions) error {
 	if err != nil {
 		return err
 	}
-	if err := assertMcpPolicyExists(ctx, c); err != nil {
-		return err
+	if isOldVersion(ctx, c) {
+		if err := assertMcpPolicyExists(ctx, c); err != nil {
+			return err
+		}
+	} else {
+		cmd := exec.Command("docker", "mcp", "policy", "set", "* allows any-process")
+		_ = cmd.Run()
 	}
-
 	value := opts.Value
 	if opts.Base64 {
 		decodedValue, err := base64.StdEncoding.DecodeString(value)
@@ -242,6 +247,11 @@ func runAddSecret(ctx context.Context, opts addOptions) error {
 	}
 
 	return c.SetSecret(ctx, secretsapi.Secret{Name: opts.Name, Value: value, Policies: []string{mcpPolicyName}})
+}
+
+func isOldVersion(ctx context.Context, apiClient client.ApiClient) bool {
+	_, err := apiClient.ListPolicies(ctx) // This endpoint has been removed on the new API -> if it exists, it must be the old
+	return err == nil
 }
 
 func runListSecrets(ctx context.Context) error {
