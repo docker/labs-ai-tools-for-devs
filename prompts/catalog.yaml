@@ -1246,25 +1246,6 @@ registry:
             type: string
         required:
           - client_id
-  basic-memory:
-    description: Basic Memory is a knowledge management system that allows you to build a persistent semantic graph from conversations with AI assistants, stored in standard Markdown files on your computer. Integrates directly with Obsidan.md.
-    title: Basic Memory
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/basic-memory.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/basic-memory.md
-    source: https://github.com/basicmachines-co/basic-memory/tree/main
-    icon: https://avatars.githubusercontent.com/u/88632318?s=200&v=4
-    tools:
-      - name: build_context
-      - name: canvas
-      - name: delete_note
-      - name: project_info
-      - name: read_content
-      - name: read_note
-      - name: recent_activity
-      - name: search_notes
-      - name: write_note
-    prompts: 0
-    resources: {}
   bitrefill:
     description: A Model Context Protocol Server connector for Bitrefill public API, to enable AI agents to search and shop on Bitrefill.
     title: Bitrefill
@@ -2112,47 +2093,6 @@ registry:
       - name: webflow.token
     prompts: 0
     resources: {}
-  3d-printer:
-    description: Connects MCP to major 3D printer APIs (Orca, Bambu, OctoPrint, Klipper, Duet, Repetier, Prusa, Creality). Control prints, monitor status, and perform advanced STL operations like scaling, rotation, sectional editing, and base extension. Includes slicing and visualization.
-    title: 3D Printer
-    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/3d-printer.md
-    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/3d-printer.md
-    source: https://github.com/DMontgomery40/mcp-3D-printer-server/tree/main
-    icon: https://avatars.githubusercontent.com/u/182288589?s=200&v=4
-    tools:
-      - name: center_model
-      - name: confirm_temperatures
-      - name: extend_stl_base
-      - name: generate_stl_visualization
-      - name: get_printer_status
-      - name: get_stl_info
-      - name: lay_flat
-      - name: merge_vertices
-      - name: modify_stl_section
-      - name: print_3mf
-      - name: process_and_print_stl
-      - name: rotate_stl
-      - name: scale_stl
-      - name: slice_stl
-      - name: translate_stl
-    secrets:
-      - name: 3d-printer-server.token
-    prompts: 0
-    resources: {}
-    config:
-      - name: 3d-printer
-        description: Configure the connection to your 3D printer
-        type: object
-        properties:
-          host:
-            type: string
-          serial:
-            type: string
-          type:
-            type: string
-        required:
-          - host
-          - type
   circleci:
     description: A specialized server implementation for the Model Context Protocol (MCP) designed to integrate with CircleCI's development workflow. This project serves as a bridge between CircleCI's infrastructure and the Model Context Protocol, enabling enhanced AI-powered development experiences.
     title: CircleCI

@@ -144,9 +144,9 @@ This tool helps debug CircleCI build failures by retrieving failure logs.
 
     Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Project Slug and optional branch:
+    Option 1 - Project Slug and branch (BOTH required):
     - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
-    - branch: The name of the branch to retrieve logs for (optional)
+    - branch: The name of the branch (required when using projectSlug)
 
     Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
@@ -209,9 +209,9 @@ This tool retrieves test metadata for a CircleCI job.
 
     Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Project Slug and optional branch:
+    Option 1 - Project Slug and branch (BOTH required):
     - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
-    - branch: The name of the branch to retrieve test results for (optional)
+    - branch: The name of the branch (required when using projectSlug)
 
     Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI job in any of these formats:
@@ -249,9 +249,9 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
 
     Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Project Slug and optional branch:
+    Option 1 - Project Slug and branch (BOTH required):
     - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
-    - branch: The name of the branch to retrieve pipeline status for (optional)
+    - branch: The name of the branch (required when using projectSlug)
 
     Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
@@ -343,9 +343,9 @@ This tool triggers a new CircleCI pipeline and returns the URL to monitor its pr
 
     Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Project Slug (BOTH of these must be provided together):
+    Option 1 - Project Slug and branch (BOTH required):
     - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
-    - branch: The name of the branch to retrieve logs for
+    - branch: The name of the branch (required when using projectSlug)
 
     Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
