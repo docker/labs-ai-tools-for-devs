@@ -20,12 +20,30 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
+`tavily-crawl`|A powerful web crawler that initiates a structured web crawl starting from a specified base URL.|
 `tavily-extract`|A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.|
+`tavily-map`|A powerful web mapping tool that creates a structured map of website URLs, allowing you to discover and analyze site structure, content organization, and navigation paths.|
 `tavily-search`|A powerful web search tool that provides comprehensive, real-time results using Tavily's AI search engine.|
 
 ---
 ## Tools Details
 
+#### Tool: **`tavily-crawl`**
+A powerful web crawler that initiates a structured web crawl starting from a specified base URL. The crawler expands from that point like a tree, following internal links across pages. You can control how deep and wide it goes, and guide it to focus on specific sections of the site.
+Parameters|Type|Description
+-|-|-
+`url`|`string`|The root URL to begin the crawl
+`allow_external`|`boolean` *optional*|Whether to allow following links that go to external domains
+`categories`|`array` *optional*|Filter URLs using predefined categories like documentation, blog, api, etc
+`extract_depth`|`string` *optional*|Advanced extraction retrieves more data, including tables and embedded content, with higher success but may increase latency
+`limit`|`integer` *optional*|Total number of links the crawler will process before stopping
+`max_breadth`|`integer` *optional*|Max number of links to follow per level of the tree (i.e., per page)
+`max_depth`|`integer` *optional*|Max depth of the crawl. Defines how far from the base URL the crawler can explore.
+`query`|`string` *optional*|Natural language instructions for the crawler
+`select_domains`|`array` *optional*|Regex patterns to select crawling to specific domains or subdomains (e.g., ^docs\.example\.com$)
+`select_paths`|`array` *optional*|Regex patterns to select only URLs with specific path patterns (e.g., /docs/.*, /api/v1.*)
+
+---
 #### Tool: **`tavily-extract`**
 A powerful web content extraction tool that retrieves and processes raw content from specified URLs, ideal for data collection, content analysis, and research tasks.
 Parameters|Type|Description
@@ -33,6 +51,21 @@ Parameters|Type|Description
 `urls`|`array`|List of URLs to extract content from
 `extract_depth`|`string` *optional*|Depth of extraction - 'basic' or 'advanced', if usrls are linkedin use 'advanced' or if explicitly told to use advanced
 `include_images`|`boolean` *optional*|Include a list of images extracted from the urls in the response
+
+---
+#### Tool: **`tavily-map`**
+A powerful web mapping tool that creates a structured map of website URLs, allowing you to discover and analyze site structure, content organization, and navigation paths. Perfect for site audits, content discovery, and understanding website architecture.
+Parameters|Type|Description
+-|-|-
+`url`|`string`|The root URL to begin the mapping
+`allow_external`|`boolean` *optional*|Whether to allow following links that go to external domains
+`categories`|`array` *optional*|Filter URLs using predefined categories like documentation, blog, api, etc
+`limit`|`integer` *optional*|Total number of links the crawler will process before stopping
+`max_breadth`|`integer` *optional*|Max number of links to follow per level of the tree (i.e., per page)
+`max_depth`|`integer` *optional*|Max depth of the mapping. Defines how far from the base URL the crawler can explore
+`query`|`string` *optional*|Natural language instructions for the crawler
+`select_domains`|`array` *optional*|Regex patterns to select crawling to specific domains or subdomains (e.g., ^docs\.example\.com$)
+`select_paths`|`array` *optional*|Regex patterns to select only URLs with specific path patterns (e.g., /docs/.*, /api/v1.*)
 
 ---
 #### Tool: **`tavily-search`**

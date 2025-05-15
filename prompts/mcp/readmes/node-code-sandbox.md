@@ -1,4 +1,4 @@
-# Node-code-sandbox MCP Server
+# Node.js Sandbox MCP Server
 
 A Node.js–based Model Context Protocol server that spins up disposable Docker containers to execute arbitrary JavaScript.
 

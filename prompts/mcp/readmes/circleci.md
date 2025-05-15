@@ -27,6 +27,7 @@ Tools provided by this Server|Short Description
 `get_build_failure_logs`|This tool helps debug CircleCI build failures by retrieving failure logs.|
 `get_job_test_results`|This tool retrieves test metadata for a CircleCI job.|
 `get_latest_pipeline_status`|This tool retrieves the status of the latest pipeline for a CircleCI project.|
+`list_followed_projects`|This tool lists all projects that the user is following on CircleCI.|
 `recommend_prompt_template_tests`|About this tool:
   - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 `run_pipeline`|This tool triggers a new CircleCI pipeline and returns the URL to monitor its progress.|
@@ -104,24 +105,28 @@ This tool retrieves information about flaky tests in a CircleCI project.
          "WARNING: The logs have been truncated. Only showing the most recent entries. Earlier build failures may not be visible."
        - Only proceed with log analysis after acknowledging the truncation
 
-    Input options (EXACTLY ONE of these two options must be used):
+    Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Direct URL (provide ONE of these):
+    Option 1 - Project Slug:
+    - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
+
+    Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
       * Project URL: https://app.circleci.com/pipelines/gh/organization/project
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
       * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
 
-    Option 2 - Project Detection (ALL of these must be provided together):
+    Option 3 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
     - gitRemoteURL: The URL of the git remote repository
 
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
-    - If using Option 2, BOTH parameters (workspaceRoot, gitRemoteURL) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+    - If using Option 1, make sure to extract the projectSlug exactly as provided by listFollowedProjects
+    - If using Option 2, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 3, BOTH parameters (workspaceRoot, gitRemoteURL) must be provided
+    - If none of the options can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
@@ -137,25 +142,36 @@ This tool helps debug CircleCI build failures by retrieving failure logs.
          "WARNING: The logs have been truncated. Only showing the most recent entries. Earlier build failures may not be visible."
        - Only proceed with log analysis after acknowledging the truncation
 
-    Input options (EXACTLY ONE of these two options must be used):
+    Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Direct URL (provide ONE of these):
+    Option 1 - Project Slug and optional branch:
+    - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
+    - branch: The name of the branch to retrieve logs for (optional)
+
+    Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
       * Project URL: https://app.circleci.com/pipelines/gh/organization/project
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
+      * Legacy Job URL: https://circleci.com/pipelines/gh/organization/project/123
       * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
 
-    Option 2 - Project Detection (ALL of these must be provided together):
+    Option 3 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
     - gitRemoteURL: The URL of the git remote repository
     - branch: The name of the current branch
 
+    Recommended Workflow:
+    1. Use listFollowedProjects tool to get a list of projects
+    2. Extract the projectSlug from the chosen project (format: "gh/organization/project")
+    3. Use that projectSlug with a branch name for this tool
+
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
-    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+    - If using Option 1, make sure to extract the projectSlug exactly as provided by listFollowedProjects
+    - If using Option 2, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 3, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If none of the options can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
@@ -184,15 +200,26 @@ This tool retrieves test metadata for a CircleCI job.
          "WARNING: The test results have been truncated. Only showing the most recent entries. Some test data may not be visible."
        - Only proceed with test result analysis after acknowledging the truncation
 
-    Input options (EXACTLY ONE of these two options must be used):
+    2. Test Result Filtering:
+       - Use filterByTestsResult parameter to filter test results:
+         * filterByTestsResult: 'failure' - Show only failed tests
+         * filterByTestsResult: 'success' - Show only successful tests
+       - When looking for failed tests, ALWAYS set filterByTestsResult to 'failure'
+       - When checking if tests are passing, set filterByTestsResult to 'success'
 
-    Option 1 - Direct URL (provide ONE of these):
+    Input options (EXACTLY ONE of these THREE options must be used):
+
+    Option 1 - Project Slug and optional branch:
+    - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
+    - branch: The name of the branch to retrieve test results for (optional)
+
+    Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI job in any of these formats:
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/789
       * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
 
-    Option 2 - Project Detection (ALL of these must be provided together):
+    Option 3 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
     - gitRemoteURL: The URL of the git remote repository
     - branch: The name of the current branch
@@ -201,9 +228,10 @@ This tool retrieves test metadata for a CircleCI job.
 
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URL MUST be provided by the user - do not attempt to construct or guess URLs
-    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+    - If using Option 1, make sure to extract the projectSlug exactly as provided by listFollowedProjects and include the branch parameter
+    - If using Option 2, the URL MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 3, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If none of the options can be fully satisfied, ask the user for the missing information before making the tool call
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
@@ -219,9 +247,13 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
     - Check build progress
     - Get pipeline information
 
-    Input options (EXACTLY ONE of these two options must be used. Before performing the tool call, ensure that the user has provided the correct inputs.):
+    Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Direct URL (provide ONE of these):
+    Option 1 - Project Slug and optional branch:
+    - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
+    - branch: The name of the branch to retrieve pipeline status for (optional)
+
+    Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
       * Project URL: https://app.circleci.com/pipelines/gh/organization/project
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
@@ -229,16 +261,48 @@ This tool retrieves the status of the latest pipeline for a CircleCI project. It
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
       * Legacy Job URL: https://circleci.com/gh/organization/project/123
 
-    Option 2 - Project Detection (ALL of these must be provided together):
+    Option 3 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
     - gitRemoteURL: The URL of the git remote repository
     - branch: The name of the current branch
 
+    Recommended Workflow:
+    1. Use listFollowedProjects tool to get a list of projects
+    2. Extract the projectSlug from the chosen project (format: "gh/organization/project")
+    3. Use that projectSlug with a branch name for this tool
+
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct, reconstruct or guess URLs.
-    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+    - If using Option 1, make sure to extract the projectSlug exactly as provided by listFollowedProjects
+    - If using Option 2, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 3, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If none of the options can be fully satisfied, ask the user for the missing information before making the tool call
+Parameters|Type|Description
+-|-|-
+`params`|`object`|
+
+---
+#### Tool: **`list_followed_projects`**
+This tool lists all projects that the user is following on CircleCI.
+
+    Common use cases:
+    - Identify which CircleCI projects are available to the user
+    - Select a project for subsequent operations
+    - Obtain the projectSlug needed for other CircleCI tools
+
+    Returns:
+    - A list of projects that the user is following on CircleCI
+    - Each entry includes the project name and its projectSlug
+
+    Workflow:
+    1. Run this tool to see available projects
+    2. User selects a project from the list
+    3. The LLM should extract and use the projectSlug (not the project name) from the selected project for subsequent tool calls
+    4. The projectSlug is required for many other CircleCI tools, and will be used for those tool calls after a project is selected
+
+    Note: If pagination limits are reached, the tool will indicate that not all projects could be displayed.
+
+    IMPORTANT: Do not automatically run any additional tools after this tool is called. Wait for explicit user instruction before executing further tool calls. The LLM MUST NOT invoke any other CircleCI tools until receiving a clear instruction from the user about what to do next, even if the user selects a project. It is acceptable to list out tool call options for the user to choose from, but do not execute them until instructed.
 Parameters|Type|Description
 -|-|-
 `params`|`object`|
@@ -277,16 +341,20 @@ Parameters|Type|Description
 #### Tool: **`run_pipeline`**
 This tool triggers a new CircleCI pipeline and returns the URL to monitor its progress.
 
-    Input options (EXACTLY ONE of these two options must be used):
+    Input options (EXACTLY ONE of these THREE options must be used):
 
-    Option 1 - Direct URL (provide ONE of these):
+    Option 1 - Project Slug (BOTH of these must be provided together):
+    - projectSlug: The project slug obtained from listFollowedProjects tool (e.g., "gh/organization/project")
+    - branch: The name of the branch to retrieve logs for
+
+    Option 2 - Direct URL (provide ONE of these):
     - projectURL: The URL of the CircleCI project in any of these formats:
       * Project URL with branch: https://app.circleci.com/pipelines/gh/organization/project?branch=feature-branch
       * Pipeline URL: https://app.circleci.com/pipelines/gh/organization/project/123
       * Workflow URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def
       * Job URL: https://app.circleci.com/pipelines/gh/organization/project/123/workflows/abc-def/jobs/xyz
 
-    Option 2 - Project Detection (ALL of these must be provided together):
+    Option 3 - Project Detection (ALL of these must be provided together):
     - workspaceRoot: The absolute path to the workspace root
     - gitRemoteURL: The URL of the git remote repository
     - branch: The name of the current branch
@@ -299,9 +367,10 @@ This tool triggers a new CircleCI pipeline and returns the URL to monitor its pr
 
     Additional Requirements:
     - Never call this tool with incomplete parameters
-    - If using Option 1, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
-    - If using Option 2, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
-    - If neither option can be fully satisfied, ask the user for the missing information before making the tool call
+    - If using Option 1, make sure to extract the projectSlug exactly as provided by listFollowedProjects
+    - If using Option 2, the URLs MUST be provided by the user - do not attempt to construct or guess URLs
+    - If using Option 3, ALL THREE parameters (workspaceRoot, gitRemoteURL, branch) must be provided
+    - If none of the options can be fully satisfied, ask the user for the missing information before making the tool call
 
     Returns:
     - A URL to the newly triggered pipeline that can be used to monitor its progress

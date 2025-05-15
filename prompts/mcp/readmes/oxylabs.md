@@ -20,80 +20,202 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`oxylabs_amazon_product_scraper`|Scrape Amazon Products using Oxylabs Web API|
-`oxylabs_amazon_search_scraper`|Scrape Amazon Search results using Oxylabs Web API|
-`oxylabs_google_search_scraper`|Scrape Google Search results using Oxylabs Web API|
-`oxylabs_universal_scraper`|Scrape url using Oxylabs Web API with universal scraper|
-`oxylabs_web_unblocker`|Scrape url using Oxylabs Web Unblocker|
+`amazon_product_scraper`|Scrape Amazon products.|
+`amazon_search_scraper`|Scrape Amazon search results.|
+`google_search_scraper`|Scrape Google Search results.|
+`universal_scraper`|Get a content of any webpage.|
 
 ---
 ## Tools Details
 
-#### Tool: **`oxylabs_amazon_product_scraper`**
-Scrape Amazon Products using Oxylabs Web API
+#### Tool: **`amazon_product_scraper`**
+Scrape Amazon products.
+
+    Supports content parsing, different user agent types, domain,
+    geolocation, locale parameters and different output formats.
+    Supports Amazon specific parameters such as currency and getting
+    more accurate pricing data with auto select variant.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
-`autoselect_variant`|`boolean` *optional*|To get accurate pricing/buybox data, set this parameter to true (which tells us to append the th=1&psc=1 URL parameters to the end of the product URL).
-`currency`|`string` *optional*|Currency that will be used to display the prices. See: https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FzrXw45naRpCZ0Ku9AjY1%2Fuploads%2FIAHLazcDOwZSiZ6s8IJt%2FAmazon_search_currency_values.json?alt=media&token=b72b5c4d-3820-42a6-8e74-78ea6b44e93f
-`domain`|`string` *optional*|Domain localization for Google. See: https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FiwDdoZGfMbUe5cRL2417%2Fuploads%2FS6e9iUtXb5YkRLlfQdm6%2Flocale.json?alt=media&token=435886ac-6223-42d4-8204-1e7d53512a42
-`geo_location`|`string` *optional*|The geographical location that the result should be adapted for. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/serp-localization#google
-`locale`|`string` *optional*|'Accept-Language' header value which changes your Google search page web interface language. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/domain-locale-results-language#locale-1
-`parse`|`boolean` *optional*|Should result be parsed. If result should not be parsed then html will be stripped and converted to markdown file.
-`render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
-`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
+`autoselect_variant`|`boolean` *optional*|To get accurate pricing/buybox data, set this parameter to true.
+`currency`|`string` *optional*|Currency that will be used to display the prices.
+`domain`|`string` *optional*|
+        Domain localization for Google.
+        Use country top level domains.
+        For example:
+            - 'co.uk' for United Kingdom
+            - 'us' for United States
+            - 'fr' for France
+        
+`geo_location`|`string` *optional*|
+        The geographical location that the result should be adapted for.
+        Use ISO-3166 country codes.
+        Examples:
+            - 'California, United States'
+            - 'Mexico'
+            - 'US' for United States
+            - 'DE' for Germany
+            - 'FR' for France
+        
+`locale`|`string` *optional*|
+        Set 'Accept-Language' header value which changes your Google search page web interface language.
+        Examples:
+            - 'en-US' for English, United States
+            - 'de-AT' for German, Austria
+            - 'fr-FR' for French, France
+        
+`output_format`|`string` *optional*|
+        The format of the output. Works only when parse parameter is false.
+            - links - Most efficient when the goal is navigation or finding specific URLs. Use this first when you need to locate a specific page within a website.
+            - md - Best for extracting and reading visible content once you've found the right page. Use this to get structured content that's easy to read and process.
+            - html - Should be used sparingly only when you need the raw HTML structure, JavaScript code, or styling information.
+        
+`parse`|`boolean` *optional*|Should result be parsed. If the result is not parsed, the output_format parameter is applied.
+`render`|`string` *optional*|
+        Whether a headless browser should be used to render the page.
+        For example:
+            - 'html' when browser is required to render the page.
+        
+`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value.
 
 ---
-#### Tool: **`oxylabs_amazon_search_scraper`**
-Scrape Amazon Search results using Oxylabs Web API
+#### Tool: **`amazon_search_scraper`**
+Scrape Amazon search results.
+
+    Supports content parsing, different user agent types, pagination,
+    domain, geolocation, locale parameters and different output formats.
+    Supports Amazon specific parameters such as category id, merchant id, currency.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|Keyword to search for.
 `category_id`|`string` *optional*|Search for items in a particular browse node (product category).
-`currency`|`string` *optional*|Currency that will be used to display the prices. See: https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FzrXw45naRpCZ0Ku9AjY1%2Fuploads%2FIAHLazcDOwZSiZ6s8IJt%2FAmazon_search_currency_values.json?alt=media&token=b72b5c4d-3820-42a6-8e74-78ea6b44e93f
-`domain`|`string` *optional*|Domain localization for Google. See: https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FiwDdoZGfMbUe5cRL2417%2Fuploads%2FS6e9iUtXb5YkRLlfQdm6%2Flocale.json?alt=media&token=435886ac-6223-42d4-8204-1e7d53512a42
-`geo_location`|`string` *optional*|The geographical location that the result should be adapted for. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/serp-localization#google
-`locale`|`string` *optional*|'Accept-Language' header value which changes your Google search page web interface language. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/domain-locale-results-language#locale-1
+`currency`|`string` *optional*|Currency that will be used to display the prices.
+`domain`|`string` *optional*|
+        Domain localization for Google.
+        Use country top level domains.
+        For example:
+            - 'co.uk' for United Kingdom
+            - 'us' for United States
+            - 'fr' for France
+        
+`geo_location`|`string` *optional*|
+        The geographical location that the result should be adapted for.
+        Use ISO-3166 country codes.
+        Examples:
+            - 'California, United States'
+            - 'Mexico'
+            - 'US' for United States
+            - 'DE' for Germany
+            - 'FR' for France
+        
+`locale`|`string` *optional*|
+        Set 'Accept-Language' header value which changes your Google search page web interface language.
+        Examples:
+            - 'en-US' for English, United States
+            - 'de-AT' for German, Austria
+            - 'fr-FR' for French, France
+        
 `merchant_id`|`string` *optional*|Search for items sold by a particular seller.
+`output_format`|`string` *optional*|
+        The format of the output. Works only when parse parameter is false.
+            - links - Most efficient when the goal is navigation or finding specific URLs. Use this first when you need to locate a specific page within a website.
+            - md - Best for extracting and reading visible content once you've found the right page. Use this to get structured content that's easy to read and process.
+            - html - Should be used sparingly only when you need the raw HTML structure, JavaScript code, or styling information.
+        
 `pages`|`integer` *optional*|Number of pages to retrieve.
-`parse`|`boolean` *optional*|Should result be parsed. If result should not be parsed then html will be stripped and converted to markdown file.
-`render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
+`parse`|`boolean` *optional*|Should result be parsed. If the result is not parsed, the output_format parameter is applied.
+`render`|`string` *optional*|
+        Whether a headless browser should be used to render the page.
+        For example:
+            - 'html' when browser is required to render the page.
+        
 `start_page`|`integer` *optional*|Starting page number.
-`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
+`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value.
 
 ---
-#### Tool: **`oxylabs_google_search_scraper`**
-Scrape Google Search results using Oxylabs Web API
+#### Tool: **`google_search_scraper`**
+Scrape Google Search results.
+
+    Supports content parsing, different user agent types, pagination,
+    domain, geolocation, locale parameters and different output formats.
 Parameters|Type|Description
 -|-|-
 `query`|`string`|URL-encoded keyword to search for.
-`ad_mode`|`boolean` *optional*|If true will use the Google Ads source optimized for the paid ads. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/google/ads
-`domain`|`string` *optional*|Domain localization for Google. See: https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FiwDdoZGfMbUe5cRL2417%2Fuploads%2FS6e9iUtXb5YkRLlfQdm6%2Flocale.json?alt=media&token=435886ac-6223-42d4-8204-1e7d53512a42
-`geo_location`|`string` *optional*|The geographical location that the result should be adapted for. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/serp-localization#google
+`ad_mode`|`boolean` *optional*|If true will use the Google Ads source optimized for the paid ads.
+`domain`|`string` *optional*|
+        Domain localization for Google.
+        Use country top level domains.
+        For example:
+            - 'co.uk' for United Kingdom
+            - 'us' for United States
+            - 'fr' for France
+        
+`geo_location`|`string` *optional*|
+        The geographical location that the result should be adapted for.
+        Use ISO-3166 country codes.
+        Examples:
+            - 'California, United States'
+            - 'Mexico'
+            - 'US' for United States
+            - 'DE' for Germany
+            - 'FR' for France
+        
 `limit`|`integer` *optional*|Number of results to retrieve in each page.
-`locale`|`string` *optional*|'Accept-Language' header value which changes your Google search page web interface language. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/domain-locale-results-language#locale-1
+`locale`|`string` *optional*|
+        Set 'Accept-Language' header value which changes your Google search page web interface language.
+        Examples:
+            - 'en-US' for English, United States
+            - 'de-AT' for German, Austria
+            - 'fr-FR' for French, France
+        
+`output_format`|`string` *optional*|
+        The format of the output. Works only when parse parameter is false.
+            - links - Most efficient when the goal is navigation or finding specific URLs. Use this first when you need to locate a specific page within a website.
+            - md - Best for extracting and reading visible content once you've found the right page. Use this to get structured content that's easy to read and process.
+            - html - Should be used sparingly only when you need the raw HTML structure, JavaScript code, or styling information.
+        
 `pages`|`integer` *optional*|Number of pages to retrieve.
-`parse`|`boolean` *optional*|Should result be parsed. If result should not be parsed then html will be stripped and converted to markdown file.
-`render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
+`parse`|`boolean` *optional*|Should result be parsed. If the result is not parsed, the output_format parameter is applied.
+`render`|`string` *optional*|
+        Whether a headless browser should be used to render the page.
+        For example:
+            - 'html' when browser is required to render the page.
+        
 `start_page`|`integer` *optional*|Starting page number.
-`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/user-agent-type
+`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value.
 
 ---
-#### Tool: **`oxylabs_universal_scraper`**
-Scrape url using Oxylabs Web API with universal scraper
-Parameters|Type|Description
--|-|-
-`url`|`string`|Url to scrape with web scraper.
-`parse`|`boolean` *optional*|Should result be parsed. If result should not be parsed then html will be stripped and converted to markdown file.
-`render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
+#### Tool: **`universal_scraper`**
+Get a content of any webpage.
 
----
-#### Tool: **`oxylabs_web_unblocker`**
-Scrape url using Oxylabs Web Unblocker
+    Supports browser rendering, parsing of certain webpages
+    and different output formats.
 Parameters|Type|Description
 -|-|-
-`url`|`string`|Url to scrape with web scraper.
-`render`|`string` *optional*|Whether a headless browser should be used to render the page. See: https://developers.oxylabs.io/scraper-apis/web-scraper-api/features/javascript-rendering `html` will return rendered html page `None` will not use render for scraping.
+`url`|`string`|Website url to scrape.
+`geo_location`|`string` *optional*|
+        The geographical location that the result should be adapted for.
+        Use ISO-3166 country codes.
+        Examples:
+            - 'California, United States'
+            - 'Mexico'
+            - 'US' for United States
+            - 'DE' for Germany
+            - 'FR' for France
+        
+`output_format`|`string` *optional*|
+        The format of the output. Works only when parse parameter is false.
+            - links - Most efficient when the goal is navigation or finding specific URLs. Use this first when you need to locate a specific page within a website.
+            - md - Best for extracting and reading visible content once you've found the right page. Use this to get structured content that's easy to read and process.
+            - html - Should be used sparingly only when you need the raw HTML structure, JavaScript code, or styling information.
+        
+`render`|`string` *optional*|
+        Whether a headless browser should be used to render the page.
+        For example:
+            - 'html' when browser is required to render the page.
+        
+`user_agent_type`|`string` *optional*|Device type and browser that will be used to determine User-Agent header value.
 
 ---
 ## Use this MCP Server
