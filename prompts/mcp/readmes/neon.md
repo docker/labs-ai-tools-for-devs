@@ -34,15 +34,11 @@ Tools provided by this Server|Short Description
 `get_connection_string`|Get a PostgreSQL connection string for a Neon database with all parameters being optional|
 `get_database_tables`|Get all tables in a Neon database|
 `list_projects`|List all Neon projects in your account.|
-`prepare_database_migration`|<use_case>
-    This tool performs database schema migrations by automatically generating and executing DDL statements.|
-`prepare_query_tuning`|<use_case>
-    This tool helps developers improve PostgreSQL query performance for slow queries or DML statements by analyzing execution plans and suggesting optimizations.|
+`prepare_database_migration`|<use_case> This tool performs database schema migrations by automatically generating and executing DDL statements.|
+`prepare_query_tuning`|<use_case> This tool helps developers improve PostgreSQL query performance for slow queries or DML statements by analyzing execution plans and suggesting optimizations.|
 `provision_neon_auth`|This tool provisions authentication for a Neon project.|
-`run_sql`|<use_case>
-      Use this tool to execute a single SQL statement against a Neon database.|
-`run_sql_transaction`|<use_case>
-      Use this tool to execute a SQL transaction against a Neon database, should be used for multiple SQL statements.|
+`run_sql`|<use_case> Use this tool to execute a single SQL statement against a Neon database.|
+`run_sql_transaction`|<use_case> Use this tool to execute a SQL transaction against a Neon database, should be used for multiple SQL statements.|
 
 ---
 ## Tools Details

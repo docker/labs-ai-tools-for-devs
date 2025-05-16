@@ -25,12 +25,8 @@ Tools provided by this Server|Short Description
 `API-delete-a-block`|Delete a block|
 `API-get-block-children`|Retrieve block children|
 `API-get-self`|Retrieve your token's bot user|
-`API-get-user`|Retrieve a user
-Error Responses:
-400: 400|
-`API-get-users`|List all users
-Error Responses:
-400: 400|
+`API-get-user`|Retrieve a user|
+`API-get-users`|List all users|
 `API-patch-block-children`|Append block children|
 `API-patch-page`|Update page properties|
 `API-post-database-query`|Query a database|

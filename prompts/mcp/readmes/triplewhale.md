@@ -20,8 +20,7 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`moby`|<background>
-  moby tool helps users access e-commerce performance data.|
+`moby`|<background> moby tool helps users access e-commerce performance data.|
 
 ---
 ## Tools Details

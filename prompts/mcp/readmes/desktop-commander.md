@@ -25,8 +25,7 @@ Tools provided by this Server|Short Description
 `execute_command`|Execute a terminal command with timeout.|
 `force_terminate`|Force terminate a running terminal session.|
 `get_config`|Get the complete server configuration as JSON.|
-`get_file_info`|Retrieve detailed metadata about a file or directory including size, creation time, last modified time, 
-                        permissions, and type.|
+`get_file_info`|Retrieve detailed metadata about a file or directory including size, creation time, last modified time, permissions, and type.|
 `kill_process`|Terminate a running process by PID.|
 `list_directory`|Get a detailed listing of all files and directories in a specified path.|
 `list_processes`|List all running processes.|

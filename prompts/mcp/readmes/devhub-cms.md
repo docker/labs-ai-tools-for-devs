@@ -22,14 +22,14 @@ Tools provided by this Server|Short Description
 -|-
 `create_blog_post`|Create a new blog post|
 `get_blog_post`|Get a single blog post|
-`get_businesses`|Get all businesses within the DevHub account|
-`get_hours_of_operation`|Get the hours of operation for a DevHub location|
-`get_locations`|Get all locations for a business|
+`get_businesses`|Get all businesses within the DevHub account Returns a list of businesses with the following fields: - id: Business ID that can be used in the other tools - business_name: Business name If only one business exists in the account, you can assume that the user wants to use that business for any business_id related tools.|
+`get_hours_of_operation`|Get the hours of operation for a DevHub location Returns a list of items representing days of the week Except for the special case formatting, this object is a list of 7 items which represent each day.|
+`get_locations`|Get all locations for a business Returns a list of locations with the following fields: - id: Location ID that can be used in the other tools - location_name: Location name - location_url: Location URL in DevHub - street: Street address - city: City - state: State - country: Country - postal_code: Postal code - lat: Latitude - lon: Longitude|
 `get_nearest_location`|Get the nearest DevHub location|
 `site_from_url`|Get the DevHub site ID from a URL.|
 `update_blog_post`|Update a single blog post|
-`update_hours`|Update the hours of operation for a DevHub location|
-`upload_image`|Upload an image to the DevHub media gallery|
+`update_hours`|Update the hours of operation for a DevHub location Send a list of items representing days of the week Except for the special case formatting, this object is a list of 7 items which represent each day.|
+`upload_image`|Upload an image to the DevHub media gallery Supports webp, jpeg and png images|
 
 ---
 ## Tools Details

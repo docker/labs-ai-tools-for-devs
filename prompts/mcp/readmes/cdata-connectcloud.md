@@ -1,4 +1,4 @@
-# Cdata-connectcloud MCP Server
+# CData Connect Cloud MCP Server
 
 This full functional MCP Server allows you to connect to any data source in Connect Cloud from Claude Desktop. .
 

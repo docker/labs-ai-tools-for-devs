@@ -21,7 +21,7 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `dappier_ai_recommendations`|Fetch AI-powered recommendations from Dappier by processing the provided query with a selected data model that tailors results to specific interests.|
-`dappier_real_time_search`|Retrieve real-time search data from Dappier by processing an AI model that supports two key capabilities:|
+`dappier_real_time_search`|Retrieve real-time search data from Dappier by processing an AI model that supports two key capabilities: - Real-Time Web Search: Access the latest news, stock market data, weather, travel information, deals, and more using model `am_01j06ytn18ejftedz6dyhz2b15`.|
 
 ---
 ## Tools Details

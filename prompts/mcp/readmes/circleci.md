@@ -21,15 +21,13 @@ Attribute|Details|
 Tools provided by this Server|Short Description
 -|-
 `config_helper`|This tool helps analyze and validate and fix CircleCI configuration files.|
-`create_prompt_template`|About this tool:
-  - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
+`create_prompt_template`|About this tool: - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 `find_flaky_tests`|This tool retrieves information about flaky tests in a CircleCI project.|
 `get_build_failure_logs`|This tool helps debug CircleCI build failures by retrieving failure logs.|
 `get_job_test_results`|This tool retrieves test metadata for a CircleCI job.|
 `get_latest_pipeline_status`|This tool retrieves the status of the latest pipeline for a CircleCI project.|
 `list_followed_projects`|This tool lists all projects that the user is following on CircleCI.|
-`recommend_prompt_template_tests`|About this tool:
-  - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
+`recommend_prompt_template_tests`|About this tool: - This tool is part of a tool chain that generates and provides test cases for a prompt template.|
 `run_pipeline`|This tool triggers a new CircleCI pipeline and returns the URL to monitor its progress.|
 
 ---

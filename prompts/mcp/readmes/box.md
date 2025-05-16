@@ -20,8 +20,7 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`box_ai_extract_data`|"
-Extract data from a single file in Box using AI.|
+`box_ai_extract_data`|" Extract data from a single file in Box using AI.|
 `box_ask_ai_tool`|Ask box ai about a file in Box.|
 `box_ask_ai_tool_multi_file`|Use Box AI to analyze and respond to a prompt based on the content of multiple files.|
 `box_authorize_app_tool`|Authorize the Box application.|

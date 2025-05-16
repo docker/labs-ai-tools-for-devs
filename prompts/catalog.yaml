@@ -2238,7 +2238,7 @@ registry:
     prompts: 0
     resources: {}
   azure:
-    description: This repository is for development of the Azure MCP Server, bringing the power of Azure to your agents.
+    description: The Azure MCP Server, bringing the power of Azure to your agents.
     title: Azure
     ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/azure.md
     readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/azure.md
@@ -2911,3 +2911,35 @@ registry:
             type: string
         required:
           - username
+  mongodb:
+    description: A Model Context Protocol server to connect to MongoDB databases and MongoDB Atlas Clusters.
+    title: MongoDB
+    ref: github:docker/labs-ai-tools-for-devs?ref=main&path=prompts/mcp/mongodb.md
+    readme: https://github.com/docker/labs-ai-tools-for-devs/blob/main/prompts/mcp/readmes/mongodb.md
+    source: https://github.com/mongodb-js/mongodb-mcp-server/tree/main
+    icon: https://avatars.githubusercontent.com/u/11214950?v=4
+    tools:
+      - name: aggregate
+      - name: collection-indexes
+      - name: collection-schema
+      - name: collection-storage-size
+      - name: count
+      - name: create-collection
+      - name: create-index
+      - name: db-stats
+      - name: delete-many
+      - name: drop-collection
+      - name: drop-database
+      - name: explain
+      - name: find
+      - name: insert-many
+      - name: list-collections
+      - name: list-databases
+      - name: mongodb-logs
+      - name: rename-collection
+      - name: switch-connection
+      - name: update-many
+    secrets:
+      - name: mongodb.connection_string
+    prompts: 0
+    resources: {}

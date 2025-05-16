@@ -20,9 +20,7 @@ Attribute|Details|
 ## Available Tools
 Tools provided by this Server|Short Description
 -|-
-`get_dependency_types`|Given an array of npm package names (and optional versions), 
-  fetch whether each package ships its own TypeScript definitions 
-  or has a corresponding @types/… package, and return the raw .d.ts text.|
+`get_dependency_types`|Given an array of npm package names (and optional versions), fetch whether each package ships its own TypeScript definitions or has a corresponding @types/… package, and return the raw .d.ts text.|
 `run_js`|Install npm dependencies and run JavaScript code inside a running sandbox container.|
 `run_js_ephemeral`|Run a JavaScript snippet in a temporary disposable container with optional npm dependencies, then automatically clean up.|
 `sandbox_exec`|Execute one or more shell commands inside a running sandbox container.|
