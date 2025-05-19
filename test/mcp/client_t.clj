@@ -189,6 +189,15 @@
 
   (get-mcp-tools-from-prompt
    {:mcp [{:container
+           {:image "mcp/notion:latest"
+            ;:workdir "/app"
+            :secrets {:notion.internal_integration_token "INTERNAL_INTEGRATION_TOKEN"}
+            :environment {}
+            }}]
+    :local-get-tools -get-tools})
+
+  (get-mcp-tools-from-prompt
+   {:mcp [{:container
            {:image "mcp/discordmcp:latest"
             :workdir "/app"
             :secrets {:discord.token "DISCORD_TOKEN"}}}]
