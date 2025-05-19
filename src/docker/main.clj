@@ -6,7 +6,6 @@
    [clojure.tools.cli :as cli]
    docker
    git
-   [http-server]
    [http-sse-server]
    jsonrpc
    jsonrpc.producer
