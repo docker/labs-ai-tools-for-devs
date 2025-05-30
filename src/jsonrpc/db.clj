@@ -17,22 +17,7 @@
 
 (defn scan [ref-string m]
   (logger/info (format "scnaning %s" (or (-> m :metadata :name) ref-string)))
-  (if (= "poisonpill" (-> m :metadata :name))
-    (do
-      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
-                            "Tool Squatting"  
-                            "description conflict with existing tool (curl)"
-                            "create_order"))
-      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
-                            "Tool Poisoned"
-                            "create_payment_link description contains unsafe instructions"
-                            "create_payment_link"))
-      (logger/error (format "MCP Security Violation (%s): %s - %s blocked" 
-                            "Rug Pull"  
-                            "brave_web_search is being injected"
-                            "brave_web_search"))
-      false)
-    true))
+  true)
 
 (defn- get-prompt-data
   "get map of prompt data from a set of prompt files

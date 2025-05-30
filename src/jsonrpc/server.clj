@@ -214,7 +214,7 @@
 
 (defmethod lsp.server/receive-request "tools/list" [_ {:keys [db* server-id]} _]
   (let [tool-filter (-> @db* :tool/filters (get server-id))]
-    (logger/info "tools/list for " tool-filter)
+    (logger/info "tools/list for filter " tool-filter)
     ;; TODO cursors
     {:tools (->> (:mcp.prompts/registry @db*)
                  (vals)
@@ -222,7 +222,7 @@
                  (map (fn [m] (-> (:function m)
                                   (select-keys [:name :description])
                                   (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
-                 (filter (constantly true) #_(comp tool-filter :name))
+                 (filter (comp (or tool-filter (constantly true)) :name))
                  (into []))}))
 
 (defn resource-uri [db-resources uri]
@@ -321,10 +321,12 @@
   params - tools/call mcp params"
   [{:keys [db* server-id] :as components} params]
   (if (poci? components params)
-    (volumes/with-volume
-      (fn [thread-id]
-        (let [response (make-tool-calls components params {:thread-id thread-id})]
-          (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
+    (do
+      (logger/info "poci tool call, not using mcp")
+      (volumes/with-volume
+        (fn [thread-id]
+          (let [response (make-tool-calls components params {:thread-id thread-id})]
+            (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components)))))))
     (make-tool-calls components params {})))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]

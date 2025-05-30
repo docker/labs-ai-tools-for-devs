@@ -12,7 +12,6 @@ build-gateway:
           --file Dockerfile \
           --push . && \
         docker pull mcp/docker:0.0.18
-
 start-local:
 	clj -M:main-repl serve --mcp --port 8811
 
