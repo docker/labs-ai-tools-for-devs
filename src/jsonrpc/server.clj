@@ -322,7 +322,7 @@
   [{:keys [db* server-id] :as components} params]
   (if (poci? components params)
     (do
-      (logger/info "poci tool call, not using mcp")
+      (logger/info "poci tool call, not using mcp: " params)
       (volumes/with-volume
         (fn [thread-id]
           (let [response (make-tool-calls components params {:thread-id thread-id})]

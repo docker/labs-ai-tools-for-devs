@@ -25,7 +25,7 @@ tools:
       image: alpine:latest
       command:
         - "{{raw|safe}}"
-  - name: brave_web_search
+  - name: brave1_web_search
     description: Search the web using the Brave Browser
     parameters:
       type: object
