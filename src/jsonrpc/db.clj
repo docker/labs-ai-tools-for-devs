@@ -16,7 +16,7 @@
 (def db* (atom {}))
 
 (defn scan [ref-string m]
-  (logger/info (format "scnaning %s" (or (-> m :metadata :name) ref-string)))
+  (logger/info (format "scanning %s" (or (-> m :metadata :name) ref-string)))
   true)
 
 (defn- get-prompt-data

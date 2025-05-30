@@ -76,7 +76,7 @@
                   :tools {:listChanged true}
                   :resources {:listChanged true}}
    :serverInfo {:name "docker-mcp-server"
-                 :version "0.1.0"}})
+                :version "0.1.0"}})
 
 (defmethod lsp.server/receive-notification "notifications/initialized" [_ {:keys [db* server server-id]} _]
   (logger/info "Initialized! " (-> @db* :servers (get server-id)))
@@ -321,12 +321,10 @@
   params - tools/call mcp params"
   [{:keys [db* server-id] :as components} params]
   (if (poci? components params)
-    (do
-      (logger/info "poci tool call, not using mcp: " params)
-      (volumes/with-volume
-        (fn [thread-id]
-          (let [response (make-tool-calls components params {:thread-id thread-id})]
-            (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components)))))))
+    (volumes/with-volume
+      (fn [thread-id]
+        (let [response (make-tool-calls components params {:thread-id thread-id})]
+          (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
     (make-tool-calls components params {})))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]
