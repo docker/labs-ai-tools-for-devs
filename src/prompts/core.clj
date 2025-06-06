@@ -16,10 +16,6 @@
 (defn get-prompts-dir []
   (prompts-cache))
 
-;; old registry.edn for backward compatibility
-;; DEPRECATED
-(defn registry-file [] (fs/file (get-prompts-dir) "registry.edn"))
-
 ;; current registry.yaml
 (defn registry [] (fs/file (get-prompts-dir) "registry.yaml"))
 

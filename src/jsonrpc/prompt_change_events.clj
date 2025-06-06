@@ -77,7 +77,7 @@
                         "com.docker.mcp.watch-service" "true"
                         "com.docker.compose.project" "docker_labs-ai-tools-for-devs-desktop-extension"
                         "com.docker.compose.service" "registry-watcher"}
-               :volumes ["docker-prompts:/prompts"]
+               :volumes [(format "%s:/prompts" (or (prompts.core/prompts-cache) "docker-prompts"))]
                :command ["-e" "create" "-e" "modify" "-e" "delete" "-q" "-m" "/prompts"]}
               (fn [line]
                 (let [[_dir _event f] (string/split line #"\s+")]

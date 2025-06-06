@@ -13,7 +13,7 @@
 (def stdout-logger
   (reify ILogger
     (setup [this]
-      (let [log-path (str (fs/file "./log/docker-mcp-server.log"))]
+      (let [log-path (str (fs/file "./log/docker-mcp-server.out"))]
         (timbre/merge-config! {:middleware [#(assoc % :hostname_ "")]
                                :appenders {:println {:enabled? true}
                                            :spit (appenders/spit-appender {:fname log-path})}})

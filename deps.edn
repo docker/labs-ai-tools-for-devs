@@ -16,7 +16,9 @@
         com.taoensso/timbre {:mvn/version "5.2.1"}
         io.github.slimslenderslacks/lsp4clj {:git/sha "80f8facfadc4933ae12687087d7713d134f45a96"}
         funcool/promesa {:mvn/version "9.0.470"}
-        borkdude/dynaload {:mvn/version "0.3.5"}}
+        borkdude/dynaload {:mvn/version "0.3.5"}
+        metosin/reitit {:mvn/version "0.7.0-alpha5"}
+        aleph/aleph {:mvn/version "0.8.3"}}
  :aliases {:main {:main-opts ["-m" "docker.main"]}
            :build {:ns-default build
                    :deps {io.github.clojure/tools.build {:git/tag "v0.10.8" :git/sha "2fdfd66bc3e8e78fde810515c9b8e7e21f638949"}}}

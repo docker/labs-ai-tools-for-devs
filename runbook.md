@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.17"
+VERSION="0.0.18"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
@@ -60,4 +60,9 @@ socat STDIO TCP:127.0.0.1:8811
 ```sh
 docker x policy set my-policy '*'
 docker x secret set 'stripe.api_key=....' --policy my-policy
+```
+
+```sh
+docker container create --name docker-prompts -v docker-prompts:/prompts hello-world
+docker cp ~/.prompts-cache/registry.yaml docker-prompts:/prompts
 ```
