@@ -134,6 +134,12 @@
        :metadata
        :parameter-values))
 
+(defn config-registry-refs [m]
+  (->>
+   m
+   (vals)
+   (map (fn [m] (assoc m :type :dynamic)))))
+
 ;; the registry.yaml file is a list of refs selected from our catalog
 (defn registry-refs
   "parse refs from the registry.yaml file - these are dynamic"

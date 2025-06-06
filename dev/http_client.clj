@@ -6,6 +6,15 @@
   (:import
    [java.io BufferedInputStream]))
 
+(comment
+  (curl/put "http://localhost:9011/mcp/researcher"
+            {:headers {"Content-Type" "application/json"}
+             :body (json/generate-string {:tools ["brave_web_search"
+                                                  "get_article"
+                                                  "get_summary"
+                                                  "send-email"
+                                                  "get_related_topics"]})}))
+
 (def connect-response
   (curl/get "https://gitmcp.io/docker/labs-ai-tools-for-devs/sse"
             {:headers {"Accept" "text/event-stream"

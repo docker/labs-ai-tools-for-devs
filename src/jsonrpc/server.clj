@@ -1,6 +1,7 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
+   [babashka.curl :as curl]
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core :as c]
@@ -315,17 +316,47 @@
     {:content (create-tool-outputs tool-outputs)
      :is-error false}))
 
+(defn span [span f]
+  (let [start (System/nanoTime)
+        result (f)
+        duration (- (System/nanoTime) start)]
+    (async/thread
+      (try
+        (let [payload (assoc span :duration duration)]
+          (logger/info (format "span %s" payload))
+          (curl/post "http://localhost:9411/api/v2/spans"
+                     {:body (json/generate-string [payload])}))
+        (catch Throwable ex 
+          (logger/error "Failed to send span" ex))))
+    result))
+
+(defn random-zipkin-id [] (apply str (take 16 (repeatedly #(rand-nth "0123456789abcdef")))))
+(def traces (atom {}))
+(defn trace-id [server-id] 
+  (or (contains? @traces server-id) (swap! traces assoc server-id (random-zipkin-id))) 
+  (get @traces server-id))
+
 (defn mcp-tool-calls
   " params
   db* - uses mcp.prompts/registry and host-dir
   params - tools/call mcp params"
   [{:keys [db* server-id] :as components} params]
-  (if (poci? components params)
-    (volumes/with-volume
-      (fn [thread-id]
-        (let [response (make-tool-calls components params {:thread-id thread-id})]
-          (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
-    (make-tool-calls components params {})))
+  (span
+   {:id (random-zipkin-id)
+    :traceId (trace-id server-id)
+    :name "tool-call"
+                        ; epoch microsseconds
+    :timestamp (* 1000 (System/currentTimeMillis))
+                        ; microseconds
+    :localEndpoint {:serviceName "gateway"}
+    :remoteEndpoint {:serviceName (:name params)}}
+   (fn []
+     (if (poci? components params)
+       (volumes/with-volume
+         (fn [thread-id]
+           (let [response (make-tool-calls components params {:thread-id thread-id})]
+             (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
+       (make-tool-calls components params {})))))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]
   (logger/info "tools/call")
@@ -365,7 +396,9 @@
                 (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
            (when (fs/exists? (registry))
-             (db/registry-refs (registry))))))
+             (db/registry-refs (registry)))
+           (when-let [m (-> opts :gateway :registry)]
+             (db/config-registry-refs m)))))
 
 (defn server-context
   "create chan server options for any io chan server that we build"
@@ -384,10 +417,11 @@
      ;; initialize prompts
      (initialize-prompts opts)
      ;; watch dynamic prompts in background
-     (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
-      opts
-      jsonrpc.prompt-change-events/registry-updated
-      jsonrpc.prompt-change-events/markdown-tool-updated)
+     (when (:gateway opts)
+       (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
+         opts
+         jsonrpc.prompt-change-events/registry-updated
+         jsonrpc.prompt-change-events/markdown-tool-updated))
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
      (monitor-audit-logs audit-ch)

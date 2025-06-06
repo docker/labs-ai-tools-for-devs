@@ -2,12 +2,14 @@
   (:require
    [babashka.fs :as fs]
    [cheshire.core :as json]
+   [clj-yaml.core :as yaml]
    [clojure.string :as string]
    [clojure.tools.cli :as cli]
    docker
    git
    [http-sse-server]
    jsonrpc
+   [jsonrpc.logger :as logger]
    jsonrpc.producer
    jsonrpc.server
    [logging :refer [warn]]
@@ -68,7 +70,8 @@
                [nil "--port PORT" "run a socket server"
                 :parse-fn #(Long/parseLong %)]
                [nil "--debug" "add debug logging"]
-               [nil "--help" "print option summary"]])
+               [nil "--help" "print option summary"]
+               [nil "--config CONFIG" "gateway configuration"]])
 
 (def output-handler (fn [x]
                       (jsonrpc/notify
@@ -82,9 +85,18 @@
 
 (defn command [opts & [c :as args]]
   (fn []
-    (let [server-opts (jsonrpc.server/server-context opts)
+    (let [server-opts (jsonrpc.server/server-context
+                       (merge
+                        (dissoc opts :config)
+                        (when (:config opts)
+                          (try
+                            (let [m (yaml/parse-string (:config opts))]
+                              {:gateway m})
+                            (catch Throwable t
+                              (println "Error parsing gateway config" t))))))
           p (promise)]
-      (jsonrpc.server/run-socket-server! opts server-opts)
+      (when (:port opts)
+        (jsonrpc.server/run-socket-server! opts server-opts))
       (http-sse-server/start-server! server-opts p)
       @p)))
 

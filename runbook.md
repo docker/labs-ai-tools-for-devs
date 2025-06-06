@@ -61,3 +61,8 @@ socat STDIO TCP:127.0.0.1:8811
 docker x policy set my-policy '*'
 docker x secret set 'stripe.api_key=....' --policy my-policy
 ```
+
+```sh
+docker container create --name docker-prompts -v docker-prompts:/prompts hello-world
+docker cp ~/.prompts-cache/registry.yaml docker-prompts:/prompts
+```

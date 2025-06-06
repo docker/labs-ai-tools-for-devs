@@ -17,8 +17,11 @@
 
 (def http-port 9011)
 (def sse-sessions (atom {}))
+(def cors-headers
+  {"Access-Control-Allow-Origin" "*"
+   "Access-Control-Allow-Methods" "GET, POST, PUT, DELETE"
+   "Access-Control-Allow-Headers" "Content-Type, Accept, Origin, Connection"})
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; manage tool definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -29,13 +32,15 @@
     (logger/info (format "%s registers \n %s" tool-id tool-definition))
     (spit (fs/file (prompts/get-prompts-dir) (format "%s.md" tool-id)) tool-definition))
   {:status 201
-   :headers {"Location" (format "/mcp/tool/%s" tool-id)
-             :content-type "application/json"}
+   :headers (merge cors-headers
+                   {"Location" (format "/mcp/tool/%s" tool-id)
+                    :content-type "application/json"})
    :body (json/generate-string {:url (format "http://host.docker.internal:%s/mcp/tool/%s" http-port tool-id)})})
 
 ;; DELETE /mcp/tool/:id
 (defn mcp-delete-tool-definition [{{tool-id :id} :path-params}]
-  {:status 200})
+  {:headers cors-headers
+   :status 200})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; manage endpoints for streaming clients
@@ -43,7 +48,8 @@
 
 ;; DELETE /mcp/:id
 (defn mcp-delete-tool-endpoint [{{tool-id :id} :path-params}]
-  {:status 200})
+  {:heders cors-headers
+   :status 200})
 
 ;; PUT /mcp/:id
 (defn mcp-put-tool-endpoint [server-opts {body :body {tool-id :id} :path-params}]
@@ -51,7 +57,9 @@
         tool-set (into #{} (:tools body))]
     (swap! db/db* assoc-in [:tool/filters tool-id] tool-set)
     {:status 201
-     :headers {:content-type "application/json"}
+     :headers (merge 
+                cors-headers
+                {:content-type "application/json"})
      :body (json/generate-string
             {:streaming (format "http://host.docker.internal:%s/mcp/%s" http-port tool-id)
              :sse (format "http://host.docker.internal:%s/sse/%s" http-port tool-id)})}))
@@ -77,7 +85,9 @@
 ;; GET /mcp/:id
 (defn mcp-endpoint-get [{body :body {tool-id :id} :path-params}]
   {:status 200
-   :headers {"content-type" "text/event-stream"}
+   :headers (merge 
+              cors-headers
+              {"content-type" "text/event-stream"})
    :body (let [c (async/chan 1 (map format-event))]
            (s/->source c))})
 
@@ -110,7 +120,7 @@
       (async/go
         (cond
           (map? message)
-          (async/>! in message) 
+          (async/>! in message)
           (coll? message)
           (doseq [m message]
             (async/>! in m))
@@ -119,7 +129,9 @@
         #_(async/close! in))
       ;; return the SSE stream
       {:status 200
-       :headers {"content-type" "text/event-stream"}
+       :headers (merge 
+                  cors-headers
+                  {"content-type" "text/event-stream"})
        :body (s/->source (:output-ch s))}
       (catch Throwable t
         (logger/error t)
@@ -151,7 +163,9 @@
     (swap! sse-sessions assoc session-id {:input-channel in
                                           :tools-id tools-id})
     {:status 200
-     :headers {"content-type" "text/event-stream"}
+     :headers (merge 
+                cors-headers
+                {"content-type" "text/event-stream"})
      :body (s/->source out)}))
 
 ;; POST /sse/:id/:sessionid
@@ -173,13 +187,13 @@
                   :get {:handler mcp-endpoint-get}
                   :put {:handler (partial #'mcp-put-tool-endpoint server-opts)}
                   :delete {:handler #'mcp-delete-tool-endpoint}}]
-     
+
      ;; create tool urls
      ["/mcp/tool/:id" {:put {:handler #'mcp-put-tool-definition}
                        :delete {:handler #'mcp-delete-tool-definition}}]
      ;; connect http/sse
      ["/sse/:id" {:get {:handler (partial #'mcp-sse-stream-endpoint server-opts)}}]
-     ["/sse/:id/:session-id" {:post {:handler #'mcp-sse-write-endpoint}}] ])))
+     ["/sse/:id/:session-id" {:post {:handler #'mcp-sse-write-endpoint}}]])))
 
 ;; Web server maangement code to make it easy to start and stop a server
     ;; after changesto router or handlers
