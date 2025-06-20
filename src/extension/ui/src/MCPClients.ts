@@ -3,6 +3,7 @@ import ClaudeDesktop from "./mcp-clients/ClaudeDesktop";
 import ContinueDotDev from "./mcp-clients/ContinueDotDev";
 import Cursor from "./mcp-clients/Cursor";
 import Gordon from "./mcp-clients/Gordon";
+import VSCode from "./mcp-clients/VSCode";
 import { MCPClient } from "./types/mcp";
 
 export type MCPClientState = {
@@ -27,6 +28,9 @@ export const getMCPClientStates = async (ddClient: v1.DockerDesktopClient) => {
             }
             if (fromCLI["cursor"]) {
                 mcpClientStates[Cursor.name] = toState(Cursor, fromCLI["cursor"]);
+            }
+            if (fromCLI["vscode"]) {
+                mcpClientStates[VSCode.name] = toState(VSCode, fromCLI["vscode"]);
             }
             if (fromCLI["continue"]) {
                 mcpClientStates[ContinueDotDev.name] = toState(ContinueDotDev, fromCLI["continue"]);
