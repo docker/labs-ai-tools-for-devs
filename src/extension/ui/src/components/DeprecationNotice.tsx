@@ -37,7 +37,7 @@ export function DeprecationNotice({ onClose }: { onClose: () => void }) {
                 `wavy underline ${theme.palette.primary.main}`,
             }}
           >
-            integrated with Docker Desktop!
+            integrated with Docker Desktop
           </Typography>
         </Box>
         <Box sx={{ position: 'relative' }}>
@@ -63,25 +63,23 @@ export function DeprecationNotice({ onClose }: { onClose: () => void }) {
           >
             <Box>
               <Typography variant="body1">
-                We wanted to extend our sincere gratitude to you for being an
-                integral part of our beta testing program.
+                We want to say thank you for being an integral part of our beta
+                testing program.
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>
-                  Your valuable feedback and usage of our beta feature have been
-                  immensely beneficial.
+                  Your feedback and use of the beta feature have been
+                  instrumental in shaping its development.
                 </strong>
               </Typography>
 
               <Typography variant="body2" gutterBottom>
-                As we continue to work on further enhancements for this feature
-                based on your feedback, please don't hesitate to reach out if
-                you have any additional comments, suggestions, or encounter any
-                issues.
+                We're continuing to improve this feature based on your feedback.
+                If you have more input or run into issues, let us know.
               </Typography>
 
               <ExternalLink href="https://dockercommunity.slack.com/signup#/domain-signup">
-                Send Feedback
+                Send feedback
               </ExternalLink>
             </Box>
             <Box
@@ -128,10 +126,9 @@ export function DeprecationNotice({ onClose }: { onClose: () => void }) {
             We recommend keeping the MCP Toolkit extension installed until
             you've confirmed that everything is accessible and working as
             expected in the new Docker Desktop integration. In most cases, your
-            servers, configurations, secrets, and clients will appear
-            automatically. Once you've verified that everything is in place, you
-            can uninstall the extension and continue using the integrated
-            experience.
+            servers, configurations, secrets, and clients appear automatically.
+            Once you've verified that everything is in place, you can uninstall
+            the extension and continue using the integrated experience.
             <Box>
               <Button onClick={onClose} variant="outlined">
                 Continue using the extension

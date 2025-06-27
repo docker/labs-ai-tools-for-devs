@@ -104,7 +104,7 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
             }
           >
             Docker MCP Toolkit is now{' '}
-            <strong>integrated and generally available</strong> with Docker
+            <strong>generally available and integrated</strong> with Docker
             Desktop 4.42 and later.
           </Alert>
           {hasOutOfCatalog && (
