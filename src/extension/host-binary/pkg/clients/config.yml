@@ -38,6 +38,20 @@ system:
       list: '.mcpServers | to_entries | map(.value + {"name": .key})'
       set: .mcpServers[$NAME] = $JSON
       del: del(.mcpServers[$NAME])
+  vscode:
+    displayName: VS Code
+    installCheckPaths:
+    - /Applications/Visual Studio Code.app
+    - $ProgramFiles/Microsoft VS Code/
+    - $USERPROFILE/AppData/Local/Programs/Microsoft VS Code/
+    paths:
+      linux: $HOME/.config/Code/User/settings.json
+      darwin: $HOME/Library/Application Support/Code/User/settings.json
+      windows: $APPDATA/Code/User/settings.json
+    yq:
+      list: '.mcp.servers | to_entries | map(.value + {"name": .key})'
+      set: .mcp.servers[$NAME] = $JSON+{"type":"stdio"}
+      del: del(.mcp.servers[$NAME])
 project:
   cursor:
     displayname: Cursor

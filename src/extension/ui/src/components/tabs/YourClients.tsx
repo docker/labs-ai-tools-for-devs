@@ -15,7 +15,7 @@ import {
   ListItem,
   ListItemText,
   Stack,
-  Typography
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +23,7 @@ import ClaudeIcon from '../../assets/claude-ai-icon.svg';
 import ContinueIcon from '../../assets/continue.svg';
 import CursorIcon from '../../assets/cursor.svg';
 import GordonIcon from '../../assets/gordon-icon.png';
+import VSCodeIcon from '../../assets/vscode.svg';
 import { CATALOG_LAYOUT_SX, DOCKER_MCP_COMMAND } from '../../Constants';
 
 // Initialize the Docker Desktop client
@@ -37,6 +38,7 @@ const iconMap = {
   Gordon: GordonIcon,
   Cursor: CursorIcon,
   'Continue.dev': ContinueIcon,
+  'VS Code': VSCodeIcon,
 };
 
 const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
@@ -70,7 +72,7 @@ const MCPClientSettings = ({ appProps }: MCPClientSettingsProps) => {
                 appProps={appProps}
               />
             );
-          }
+          },
         )}
       </Stack>
 
@@ -210,10 +212,10 @@ function ClientSetting({
                       </Typography>
                     </>
                   )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Disconnect
-                      </Typography>
-                    )}
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Disconnect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
@@ -246,10 +248,10 @@ function ClientSetting({
                       </Typography>
                     </>
                   )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Connect
-                      </Typography>
-                    )}
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Connect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
@@ -281,10 +283,10 @@ function ClientSetting({
                       </Typography>
                     </>
                   )) || (
-                      <Typography sx={{ fontSize: 12, width: 90 }}>
-                        Connect
-                      </Typography>
-                    )}
+                    <Typography sx={{ fontSize: 12, width: 90 }}>
+                      Connect
+                    </Typography>
+                  )}
                 </Stack>
               </Button>
             )}
@@ -342,7 +344,7 @@ function ClientSetting({
                     primary={<div dangerouslySetInnerHTML={{ __html: step }} />}
                   />
                 </ListItem>
-              )
+              ),
             )}
           </List>
         </CardContent>
