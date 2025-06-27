@@ -5,6 +5,8 @@ tools:
 ---
 -->
 
+### :warning: Deprecation Notice: This repository is now deprecated and is no longer under active development. Please use the [integrated MCP Toolkit in Docker Desktop](https://docs.docker.com/go/mcp-toolkit) instead.
+
 **This README is an agentic workflow**
 
 # AI Tools for Developers

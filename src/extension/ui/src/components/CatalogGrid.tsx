@@ -24,6 +24,7 @@ import { CatalogItemRichened } from '../types/catalog';
 import OAuthProviders from './tabs/OAuthProviders';
 import ToolCatalog from './tabs/ToolCatalog';
 import YourClients from './tabs/YourClients';
+import { DeprecationNotice } from './DeprecationNotice';
 
 // Initialize the Docker Desktop client
 const client = createDockerDesktopClient();
@@ -35,6 +36,10 @@ interface CatalogGridProps {
 export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
   // Extract all the values we need from appProps
   const { catalogItems, registryItems } = appProps;
+
+  const [hasSeenDeprecationNotice, setHasSeenDeprecationNotice] = useState(
+    localStorage.getItem('extensionDeprecationNotice') === 'true',
+  );
 
   const [search, setSearch] = useState<string>('');
   const [tab, setTab] = useState<number>(0);
@@ -78,168 +83,201 @@ export const CatalogGrid: React.FC<CatalogGridProps> = ({ appProps }) => {
       >
         <Typography variant="h3">Docker MCP Toolkit</Typography>
         <Typography sx={{ color: 'text.secondary' }}>
-          Browse and connect Dockerized MCP servers to your favorite MCP clients.
+          Browse and connect Dockerized MCP servers to your favorite MCP
+          clients.
         </Typography>
       </Stack>
-      {hasOutOfCatalog && (
-        <Alert
-          action={
-            <Button
-              startIcon={<FolderOpenRounded />}
-              variant="outlined"
-              color="secondary"
-              onClick={() => {
-                client.desktopUI.navigate.viewVolume('docker-prompts');
+
+      {!hasSeenDeprecationNotice ? (
+        <DeprecationNotice onClose={() => setHasSeenDeprecationNotice(true)} />
+      ) : (
+        <>
+          <Alert
+            severity="info"
+            action={
+              <Button
+                variant="outlined"
+                onClick={() => setHasSeenDeprecationNotice(false)}
+              >
+                See the notice
+              </Button>
+            }
+          >
+            Docker MCP Toolkit is now{' '}
+            <strong>integrated and generally available</strong> with Docker
+            Desktop 4.42 and later.
+          </Alert>
+          {hasOutOfCatalog && (
+            <Alert
+              action={
+                <Button
+                  startIcon={<FolderOpenRounded />}
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => {
+                    client.desktopUI.navigate.viewVolume('docker-prompts');
+                  }}
+                >
+                  registry.yaml
+                </Button>
+              }
+              severity="info"
+            >
+              <Typography sx={{ width: '100%' }}>
+                You have some prompts registered which are not available in the
+                catalog.
+              </Typography>
+            </Alert>
+          )}
+
+          <Stack spacing={2} sx={{ width: 'fit-content', alignSelf: 'center' }}>
+            <Box
+              sx={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
+                backgroundColor: 'background.default',
               }}
             >
-              registry.yaml
-            </Button>
-          }
-          severity="info"
-        >
-          <Typography sx={{ width: '100%' }}>
-            You have some prompts registered which are not available in the
-            catalog.
-          </Typography>
-        </Alert>
-      )}
-
-      <Stack spacing={2} sx={{ width: 'fit-content', alignSelf: 'center' }}>
-        <Box
-          sx={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1000,
-            backgroundColor: 'background.default',
-          }}
-        >
-          <Tabs
-            value={tab}
-            onChange={(_, newValue) => setTab(newValue)}
-            sx={CATALOG_LAYOUT_SX}
-          >
-            <Tab label="MCP Servers" />
-            <Tab label="MCP Clients" />
-            {/* <Tab label="OAuth Providers" /> */}
-          </Tabs>
-          {tab === 0 && (
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{ mt: 1, py: 1, ...CATALOG_LAYOUT_SX }}
-            >
-              <FormGroup>
+              <Tabs
+                value={tab}
+                onChange={(_, newValue) => setTab(newValue)}
+                sx={CATALOG_LAYOUT_SX}
+              >
+                <Tab label="MCP Servers" />
+                <Tab label="MCP Clients" />
+                {/* <Tab label="OAuth Providers" /> */}
+              </Tabs>
+              {tab === 0 && (
                 <Stack
                   direction="row"
                   spacing={1}
                   alignItems="center"
-                  justifyContent="space-evenly"
+                  sx={{ mt: 1, py: 1, ...CATALOG_LAYOUT_SX }}
                 >
-                  <OutlinedInput
-                    startAdornment={<SearchIcon color="secondary" />}
-                    size="small"
-                    type="search"
-                    placeholder="Search"
-                    sx={{ width: 380 }}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <IconButton
-                    size="small"
-                    id="demo-customized-button"
-                    aria-controls={
-                      openMenus['demo-customized-menu']
-                        ? 'demo-customized-menu'
-                        : undefined
+                  <FormGroup>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      justifyContent="space-evenly"
+                    >
+                      <OutlinedInput
+                        startAdornment={<SearchIcon color="secondary" />}
+                        size="small"
+                        type="search"
+                        placeholder="Search"
+                        sx={{ width: 380 }}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                      />
+                      <IconButton
+                        size="small"
+                        id="demo-customized-button"
+                        aria-controls={
+                          openMenus['demo-customized-menu']
+                            ? 'demo-customized-menu'
+                            : undefined
+                        }
+                        aria-haspopup="true"
+                        aria-expanded={
+                          openMenus['demo-customized-menu'] ? 'true' : undefined
+                        }
+                        onClick={(e) =>
+                          setOpenMenus({
+                            ...openMenus,
+                            'demo-customized-menu': {
+                              anchorEl: e.currentTarget,
+                              open: !openMenus['demo-customized-menu'].open,
+                            },
+                          })
+                        }
+                      >
+                        <SwapVert fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  </FormGroup>
+
+                  <Menu
+                    id="demo-customized-menu"
+                    MenuListProps={{
+                      'aria-labelledby': 'demo-customized-button',
+                    }}
+                    anchorEl={
+                      openMenus['demo-customized-menu'].anchorEl || undefined
                     }
-                    aria-haspopup="true"
-                    aria-expanded={
-                      openMenus['demo-customized-menu'] ? 'true' : undefined
-                    }
-                    onClick={(e) =>
+                    open={openMenus['demo-customized-menu'].open}
+                    onClose={() =>
                       setOpenMenus({
                         ...openMenus,
-                        'demo-customized-menu': {
-                          anchorEl: e.currentTarget,
-                          open: !openMenus['demo-customized-menu'].open,
-                        },
+                        'demo-customized-menu': { anchorEl: null, open: false },
                       })
                     }
                   >
-                    <SwapVert fontSize="small" />
-                  </IconButton>
+                    <MenuItem
+                      sx={{
+                        fontWeight: sort === 'name-asc' ? 'bold' : 'normal',
+                      }}
+                      onClick={() => {
+                        setOpenMenus({
+                          ...openMenus,
+                          'demo-customized-menu': {
+                            anchorEl: null,
+                            open: false,
+                          },
+                        });
+                        setSort('name-asc');
+                      }}
+                      disableRipple
+                    >
+                      Name (A-Z)
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        fontWeight: sort === 'name-desc' ? 'bold' : 'normal',
+                      }}
+                      onClick={() => {
+                        setOpenMenus({
+                          ...openMenus,
+                          'demo-customized-menu': {
+                            anchorEl: null,
+                            open: false,
+                          },
+                        });
+                        setSort('name-desc');
+                      }}
+                      disableRipple
+                    >
+                      Name (Z-A)
+                    </MenuItem>
+                  </Menu>
                 </Stack>
-              </FormGroup>
-
-              <Menu
-                id="demo-customized-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'demo-customized-button',
-                }}
-                anchorEl={
-                  openMenus['demo-customized-menu'].anchorEl || undefined
-                }
-                open={openMenus['demo-customized-menu'].open}
-                onClose={() =>
-                  setOpenMenus({
-                    ...openMenus,
-                    'demo-customized-menu': { anchorEl: null, open: false },
-                  })
-                }
-              >
-                <MenuItem
-                  sx={{ fontWeight: sort === 'name-asc' ? 'bold' : 'normal' }}
-                  onClick={() => {
-                    setOpenMenus({
-                      ...openMenus,
-                      'demo-customized-menu': { anchorEl: null, open: false },
-                    });
-                    setSort('name-asc');
-                  }}
-                  disableRipple
-                >
-                  Name (A-Z)
-                </MenuItem>
-                <MenuItem
-                  sx={{ fontWeight: sort === 'name-desc' ? 'bold' : 'normal' }}
-                  onClick={() => {
-                    setOpenMenus({
-                      ...openMenus,
-                      'demo-customized-menu': { anchorEl: null, open: false },
-                    });
-                    setSort('name-desc');
-                  }}
-                  disableRipple
-                >
-                  Name (Z-A)
-                </MenuItem>
-              </Menu>
-            </Stack>
-          )}
-        </Box>
-        <Suspense
-          fallback={
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
+              )}
             </Box>
-          }
-        >
-          {tab === 0 && (
-            <ToolCatalog search={search} client={client} sort={sort} />
-          )}
-          {tab === 1 && <YourClients appProps={appProps} />}
-        </Suspense>
-        <Suspense
-          fallback={
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
-            </Box>
-          }
-        >
-          {tab === 2 && <OAuthProviders client={client} />}
-        </Suspense>
-      </Stack>
+            <Suspense
+              fallback={
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                  <CircularProgress />
+                </Box>
+              }
+            >
+              {tab === 0 && (
+                <ToolCatalog search={search} client={client} sort={sort} />
+              )}
+              {tab === 1 && <YourClients appProps={appProps} />}
+            </Suspense>
+            <Suspense
+              fallback={
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                  <CircularProgress />
+                </Box>
+              }
+            >
+              {tab === 2 && <OAuthProviders client={client} />}
+            </Suspense>
+          </Stack>
+        </>
+      )}
     </Stack>
   );
 };
