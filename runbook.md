@@ -20,7 +20,7 @@ docker pull mcp/docker:prerelease
 
 ```sh
 # docker:command=build-release
-VERSION="0.0.17"
+VERSION="0.0.19"
 docker buildx build \
     --builder hydrobuild \
     --platform linux/amd64,linux/arm64 \
@@ -50,7 +50,7 @@ docker run --rm -i --pull always -q --init \
            -p 8811:8811 \
            -e "GATEWAY_CONTAINER_RM=false" \
            mcp/docker:0.0.15 \
-           serve --mcp --port 8811
+           serve --port 8811
 ```
 
 ```sh
@@ -60,4 +60,23 @@ socat STDIO TCP:127.0.0.1:8811
 ```sh
 docker x policy set my-policy '*'
 docker x secret set 'stripe.api_key=....' --policy my-policy
+```
+
+```sh
+docker container create --name docker-prompts -v docker-prompts:/prompts hello-world
+docker cp ~/.prompts-cache/registry.yaml docker-prompts:/prompts
+```
+
+```sh
+docker mcp gateway run --additional-catalog /Users/slim/docker/labs-ai-tools-for-devs/catalog.yaml --servers duckduckgo,natural_language
+```
+
+```sh
+docker run -i --rm  \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           -v /run/host-services/backend.sock:/backend.sock \
+           -v /run/guest-services/jfs.sock:/jfs.sock \
+           -v docker-prompts:/prompts \
+           mcp/docker:0.0.19 \
+           serve --transport stdio
 ```

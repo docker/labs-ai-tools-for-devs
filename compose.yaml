@@ -1,16 +1,19 @@
 services:
   mcp_docker:
-    image: mcp/docker
+    image: mcp/docker:0.0.19
     ports:
-      - 8811:8811
+      - 9011:9011
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - '/var/run/docker.raw.sock:/var/run/docker.raw.sock'
+      - '/run/host-services/backend.sock:/backend.sock'
+      - '/run/guest-services/jfs.sock:/jfs.sock'
       - "docker-prompts:/prompts"
     command:
       - serve
-      - --mcp
-      - --port
-      - "8811"
+      - --transport
+      - sse
+      # will default to port 9011 and will run both sse and streaming actually
       - --register
       - github:docker/labs-ai-tools-for-devs?path=prompts/bootstrap.md
 volumes:

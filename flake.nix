@@ -55,18 +55,6 @@
               extraJdkModules = ["java.security.jgss" "java.security.sasl" "jdk.crypto.ec"];
             };
 
-            # create some resources that will need to be copied into the final image
-            registries = pkgs.stdenv.mkDerivation {
-              name = "registries";
-              src = ./.;
-              installPhase = ''
-                mkdir -p $out/extractors
-                mkdir -p $out/functions
-                cp ./extractors/registry.edn $out/extractors
-                cp ./functions/registry.edn $out/functions
-              '';
-            };
-
             # our application makes calls to the curl binary
             #  therefore, wrap the custom-jdk in a script with curl in the PATH
             entrypoint = pkgs.writeShellScriptBin "entrypoint" ''
@@ -78,7 +66,7 @@
             # the final entrypoint
             default = pkgs.buildEnv {
               name = "agent-graph-env";
-              paths = [ entrypoint registries ];
+              paths = [ entrypoint ];
             };
           };
 

@@ -15,22 +15,26 @@
 
 (def db* (atom {}))
 
+(defn scan [ref-string m]
+  (logger/info (format "scanning %s" (or (-> m :metadata :name) ref-string)))
+  true)
+
 (defn- get-prompt-data
   "get map of prompt data from a set of prompt files
      params
        register is a coll of prompt file ref maps"
   [{:keys [register] :as opts}]
   (->> register
-       (map (fn [{:keys [cached-path ref-string config]}]
-              (logger/info (format "%-80s %s" ref-string cached-path))
-              (try
-                (let [m (prompts/get-prompts (-> opts
-                                                 (assoc :config config)
-                                                 (assoc :prompts cached-path)))]
-                  [(or (-> m :metadata :name) ref-string)
-                   m])
-                (catch Throwable t
-                  (logger/error (format "error loading %s: %s" ref-string t))))))
+       (mapcat (fn [{:keys [cached-path ref-string config]}]
+                 (logger/info (format "%-80s %s" ref-string cached-path))
+                 (try
+                   (let [m (prompts/get-prompts (-> opts
+                                                    (assoc :config config)
+                                                    (assoc :prompts cached-path)))]
+                     (when (scan ref-string m) 
+                       [[(or (-> m :metadata :name) ref-string) m]]))
+                   (catch Throwable t
+                     (logger/error (format "error loading %s: %s" ref-string t))))))
        (into {})))
 
 (defn- extract-resources
@@ -129,6 +133,12 @@
        (first)
        :metadata
        :parameter-values))
+
+(defn config-registry-refs [m]
+  (->>
+   m
+   (vals)
+   (map (fn [m] (assoc m :type :dynamic)))))
 
 ;; the registry.yaml file is a list of refs selected from our catalog
 (defn registry-refs

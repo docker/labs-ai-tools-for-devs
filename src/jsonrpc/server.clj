@@ -1,6 +1,7 @@
 (ns jsonrpc.server
   (:refer-clojure :exclude [run!])
   (:require
+   [babashka.curl :as curl]
    [babashka.fs :as fs]
    [cheshire.core :as json]
    [clojure.core :as c]
@@ -10,7 +11,6 @@
    [docker]
    [git]
    [jsonrpc.db :as db]
-   [jsonrpc.extras]
    [jsonrpc.logger :as logger]
    [jsonrpc.producer :as producer]
    [jsonrpc.prompt-change-events]
@@ -68,7 +68,7 @@
   {})
 
 (defmethod lsp.server/receive-request "initialize" [_ {:keys [db* server-id]} params]
-  (logger/info (format "Initializing server id %d %s" server-id params))
+  (logger/info (format "Initializing server id %s %s" server-id params))
 
   ;; merges client-info capabilities and client protocol-version
   (swap! db* assoc-in [:servers server-id] params)
@@ -77,7 +77,7 @@
                   :tools {:listChanged true}
                   :resources {:listChanged true}}
    :serverInfo {:name "docker-mcp-server"
-                 :version "0.0.1"}})
+                :version "0.1.0"}})
 
 (defmethod lsp.server/receive-notification "notifications/initialized" [_ {:keys [db* server server-id]} _]
   (logger/info "Initialized! " (-> @db* :servers (get server-id)))
@@ -213,15 +213,18 @@
 ;; MCP Tools
 ;; -----------------
 
-(defmethod lsp.server/receive-request "tools/list" [_ {:keys [db*]} _]
-  ;; TODO cursors
-  {:tools (->> (:mcp.prompts/registry @db*)
-               (vals)
-               (mapcat :functions)
-               (map (fn [m] (-> (:function m)
-                                (select-keys [:name :description])
-                                (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
-               (into []))})
+(defmethod lsp.server/receive-request "tools/list" [_ {:keys [db* server-id]} _]
+  (let [tool-filter (-> @db* :tool/filters (get server-id))]
+    (logger/info "tools/list for filter " tool-filter)
+    ;; TODO cursors
+    {:tools (->> (:mcp.prompts/registry @db*)
+                 (vals)
+                 (mapcat :functions)
+                 (map (fn [m] (-> (:function m)
+                                  (select-keys [:name :description])
+                                  (assoc :inputSchema (or (-> m :function :parameters) {:type "object" :properties {}})))))
+                 (filter (comp (or tool-filter (constantly true)) :name))
+                 (into []))}))
 
 (defn resource-uri [db-resources uri]
   ((->> db-resources
@@ -313,17 +316,47 @@
     {:content (create-tool-outputs tool-outputs)
      :is-error false}))
 
+(defn span [span f]
+  (let [start (System/nanoTime)
+        result (f)
+        duration (- (System/nanoTime) start)]
+    (async/thread
+      (try
+        (let [payload (assoc span :duration duration)]
+          (logger/info (format "span %s" payload))
+          (curl/post "http://localhost:9411/api/v2/spans"
+                     {:body (json/generate-string [payload])}))
+        (catch Throwable ex
+          (logger/error "Failed to send span" ex))))
+    result))
+
+(defn random-zipkin-id [] (apply str (take 16 (repeatedly #(rand-nth "0123456789abcdef")))))
+(def traces (atom {}))
+(defn trace-id [server-id]
+  (or (contains? @traces server-id) (swap! traces assoc server-id (random-zipkin-id)))
+  (get @traces server-id))
+
 (defn mcp-tool-calls
   " params
   db* - uses mcp.prompts/registry and host-dir
   params - tools/call mcp params"
   [{:keys [db* server-id] :as components} params]
-  (if (poci? components params)
-    (volumes/with-volume
-      (fn [thread-id]
-        (let [response (make-tool-calls components params {:thread-id thread-id})]
-          (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
-    (make-tool-calls components params {})))
+  (span
+   {:id (random-zipkin-id)
+    :traceId (trace-id server-id)
+    :name "tool-call"
+                        ; epoch microsseconds
+    :timestamp (* 1000 (System/currentTimeMillis))
+                        ; microseconds
+    :localEndpoint {:serviceName "gateway"}
+    :remoteEndpoint {:serviceName (:name params)}}
+   (fn []
+     (if (poci? components params)
+       (volumes/with-volume
+         (fn [thread-id]
+           (let [response (make-tool-calls components params {:thread-id thread-id})]
+             (update response :content concat (volumes/pick-up-mcp-resources thread-id (partial update-resources components))))))
+       (make-tool-calls components params {})))))
 
 (defmethod lsp.server/receive-request "tools/call" [_ components params]
   (logger/info "tools/call")
@@ -363,7 +396,9 @@
                 (map (fn [ref] {:type :static :ref ref})))
          ;; register dynamic prompts
            (when (fs/exists? (registry))
-             (db/registry-refs (registry))))))
+             (db/registry-refs (registry)))
+           (when-let [m (-> opts :gateway :registry)]
+             (db/config-registry-refs m)))))
 
 (defn server-context
   "create chan server options for any io chan server that we build"
@@ -382,10 +417,11 @@
      ;; initialize prompts
      (initialize-prompts opts)
      ;; watch dynamic prompts in background
-     (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
-      opts
-      jsonrpc.prompt-change-events/registry-updated
-      jsonrpc.prompt-change-events/markdown-tool-updated)
+     (when (:gateway opts)
+       (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
+        opts
+        jsonrpc.prompt-change-events/registry-updated
+        jsonrpc.prompt-change-events/markdown-tool-updated))
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
      (monitor-audit-logs audit-ch)
@@ -408,9 +444,8 @@
             :producer producer
             :server-id server-id
             :server server}))}
-      (when (:mcp opts)
-        {:in-chan-factory io-chan/mcp-input-stream->input-chan
-         :out-chan-factory io-chan/mcp-output-stream->output-chan})))))
+      {:in-chan-factory io-chan/mcp-input-stream->input-chan
+       :out-chan-factory io-chan/mcp-output-stream->output-chan}))))
 
 (defn run-socket-server! [opts server-opts]
   (logger/info (format "Starting socket server (docker version %s) on port %s" (:appVersion (docker/get-versions {})) (:port opts)))

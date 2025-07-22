@@ -28,7 +28,7 @@
    schema
    shutdown)
   (:import
-   [java.io PipedInputStream PipedOutputStream]
+   [java.io BufferedReader PipedInputStream PipedOutputStream]
    [java.net UnixDomainSocketAddress]
    [java.nio ByteBuffer]
    [java.nio.channels SocketChannel]
@@ -366,7 +366,7 @@
      (when (is-logged-in? m)
        {:jwt (get-token m)
         :user (:id (get-login-info m))})
-     (catch Throwable t
+     (catch Throwable _
        (logger/warn "user is not logged in to Docker Destkop")))))
 
 (defn has-image? [image]
@@ -597,7 +597,7 @@
        (Thread.
         (fn []
           (loop []
-            (when-let [line (.readLine stdout-reader)]
+            (when-let [line (.readLine ^BufferedReader stdout-reader)]
               (async/put! c {:stdout line})
               (recur))))))
       (loop [offset 0]
