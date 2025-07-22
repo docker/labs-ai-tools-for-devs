@@ -22,39 +22,10 @@
 (set! *warn-on-reflection* true)
 
 (def cli-opts [;; optional
-               [nil "--jsonrpc" "Output JSON-RPC notifications"]
-               ;; optional
-               [nil "--url OPENAI_COMPATIBLE_ENDPOINT" "OpenAI compatible endpoint url"]
-               ;; required if not using positional args
-               [nil "--user USER" "The hub user"]
-               ;; optional
-               [nil "--pat PAT" "personal access token"]
-               ;; can not validate this without a host helper
-               [nil "--host-dir DIR" "Project directory (on host filesystem)"]
-               ;; required if not using positional args
-               [nil "--platform PLATFORM" "current host platform"
-                :validate [#(#{"darwin" "linukjx" "windows"} (string/lower-case %)) "valid platforms are Darwin|Linux|Windows"]]
-               [nil "--prompts-dir DIR_PATH" "path to local prompts directory"
-                :id :prompts
-                :validate [#(fs/exists? (fs/file %)) "prompts dir does not a valid directory"]
-                :parse-fn #(fs/file %)]
-               [nil "--prompts-file PROMPTS_FILE" "path to local prompts file"
-                :id :prompts
-                :validate [#(fs/exists? (fs/file %)) "prompts file does not exist"]
-                :parse-fn #(fs/file %)]
-               [nil "--prompts REF" "git ref to remote prompts directory"
-                :id :prompts
-                :validate [git/parse-github-ref "not a valid github ref"
-                           git/prompt-file "could not resolve github ref"]
-                :assoc-fn (fn [m k v] (assoc m k (git/prompt-file v)))]
-               ;; optional
                [nil "--offline" "do not try to pull new images"]
-               ;; optional
-               [nil "--pretty-print-prompts" "pretty print prompts"]
                ;; optional
                [nil "--thread-id THREAD_ID" "use this thread-id for the next conversation"
                 :assoc-fn (fn [m k v] (assoc m k v :save-thread-volume true))]
-               [nil "--model MODEL" "use this model on the openai compatible endpoint"]
                [nil "--stream" "stream responses"
                 :id :stream
                 :default true
@@ -66,10 +37,10 @@
                 :multi true
                 :default []
                 :update-fn conj]
-               [nil "--mcp" "use the mcp jsonrpc protocol"]
                [nil "--port PORT" "run a socket server"
                 :parse-fn #(Long/parseLong %)]
                [nil "--debug" "add debug logging"]
+               [nil "--transport TRANSPORT" "set transport type"]
                [nil "--help" "print option summary"]
                [nil "--config CONFIG" "gateway configuration"]])
 
@@ -95,9 +66,13 @@
                             (catch Throwable t
                               (println "Error parsing gateway config" t))))))
           p (promise)]
-      (when (:port opts)
-        (jsonrpc.server/run-socket-server! opts server-opts))
-      (http-sse-server/start-server! server-opts p)
+      (cond 
+        (:port opts)
+        (jsonrpc.server/run-socket-server! opts server-opts)
+        (= "stdio" (:transport opts))
+        (jsonrpc.server/run-server! opts server-opts)
+        :else
+        (http-sse-server/start-server! server-opts p))
       @p)))
 
 (defn -main [& args]

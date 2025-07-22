@@ -326,14 +326,14 @@
           (logger/info (format "span %s" payload))
           (curl/post "http://localhost:9411/api/v2/spans"
                      {:body (json/generate-string [payload])}))
-        (catch Throwable ex 
+        (catch Throwable ex
           (logger/error "Failed to send span" ex))))
     result))
 
 (defn random-zipkin-id [] (apply str (take 16 (repeatedly #(rand-nth "0123456789abcdef")))))
 (def traces (atom {}))
-(defn trace-id [server-id] 
-  (or (contains? @traces server-id) (swap! traces assoc server-id (random-zipkin-id))) 
+(defn trace-id [server-id]
+  (or (contains? @traces server-id) (swap! traces assoc server-id (random-zipkin-id)))
   (get @traces server-id))
 
 (defn mcp-tool-calls
@@ -419,9 +419,9 @@
      ;; watch dynamic prompts in background
      (when (:gateway opts)
        (jsonrpc.prompt-change-events/init-dynamic-prompt-watcher
-         opts
-         jsonrpc.prompt-change-events/registry-updated
-         jsonrpc.prompt-change-events/markdown-tool-updated))
+        opts
+        jsonrpc.prompt-change-events/registry-updated
+        jsonrpc.prompt-change-events/markdown-tool-updated))
      ;; monitor our log channel (used by all chan servers)
      (monitor-server-logs log-ch)
      (monitor-audit-logs audit-ch)
@@ -444,9 +444,8 @@
             :producer producer
             :server-id server-id
             :server server}))}
-      (when (:mcp opts)
-        {:in-chan-factory io-chan/mcp-input-stream->input-chan
-         :out-chan-factory io-chan/mcp-output-stream->output-chan})))))
+      {:in-chan-factory io-chan/mcp-input-stream->input-chan
+       :out-chan-factory io-chan/mcp-output-stream->output-chan}))))
 
 (defn run-socket-server! [opts server-opts]
   (logger/info (format "Starting socket server (docker version %s) on port %s" (:appVersion (docker/get-versions {})) (:port opts)))

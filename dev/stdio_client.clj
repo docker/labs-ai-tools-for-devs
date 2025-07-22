@@ -29,12 +29,24 @@
                 "--label" "x-secret:google.gcp-oauth.keys.json=/secret/google.gcp-oauth.keys.json"
                 "vonwig/gdrive:latest"))
 
-  (def server (process/process
+  #_(def server (process/process
                 {:out :stream :in :stream}
                 "docker" "run" "-i" "--workdir=/app"
                 "--label=x-secret:stripe.secret_key=/secret/stripe.secret_key"
                 "--entrypoint" "/bin/sh -c \"export STRIPE_SECRET_KEY=$(cat /secret/stripe.secret_key); node /app/dist/index.js --tools=all;\""
                 "mcp/stripe:latest")))
+
+  (def server (process/process
+                {:out :stream :in :stream}
+                "docker" "run" "-i" "--rm"
+                "-v" "/var/run/docker.sock:/var/run/docker.sock"
+                "-v" "/run/host-services/backend.sock:/backend.sock"
+                "-v" "/run/guest-services/jfs.sock:/jfs.sock"
+                "-v" "docker-prompts:/prompts"
+                "mcp/docker:0.0.19"
+                "serve"
+                "--mcp"
+                "--transport" "stdio" "--debug"))
 
   (async/thread
     (loop []
@@ -55,14 +67,14 @@
   (def writer (io/writer (:in server)))
 
   (write writer
-         {:jsonrpc "2.0"
+         {:jsonrpc "1.0"
           :method "initialize"
           :id 0
           :params {:protocolVersion "2024-11-05"
                    :capabilities {}
                    :clientInfo {:name "Stdio Client" :version "0.1"}}})
   (write writer
-         {:jsonrpc "2.0" :method "notifications/initialized" :params {}}))
+         {:jsonrpc "2.0" :method "notifications/initialized" :params {}})
 
 
 (write writer

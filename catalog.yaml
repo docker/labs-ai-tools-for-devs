@@ -1,0 +1,19 @@
+version: 2
+name: custom-slim-catalog
+displayName: Custom Slim Catalog
+registry:
+  natural_language:
+    image: mcp/docker:0.0.19
+    longLived: true
+    command:
+      - serve
+      - --transport
+      - stdio
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '/var/run/docker.raw.sock:/var/run/docker.raw.sock'
+      - 'docker-prompts:/prompts'
+      - '/run/host-services/backend.sock:/backend.sock'
+      - '/run/guest-services/jfs.sock:/jfs.sock'
+    disableNetwork: false
+
