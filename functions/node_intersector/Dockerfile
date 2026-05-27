@@ -6,6 +6,7 @@ WORKDIR /tree-sitter
 ENV PYTHONUNBUFFERED=1
 RUN apk add --update --no-cache python3 make gcc g++ && ln -sf python3 /usr/bin/python
 
+COPY .npmrc .
 RUN npm install tree-sitter tree-sitter-python tree-sitter-typescript tree-sitter-javascript
 
 
