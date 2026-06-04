@@ -7,6 +7,7 @@ ENTRYPOINT ["/lint.sh"]
 
 # Install node modules to /eslint
 WORKDIR /eslint7
+COPY .npmrc .
 RUN npm install --save eslint@7 typescript
 
 WORKDIR /eslint8

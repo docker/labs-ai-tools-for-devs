@@ -6,6 +6,7 @@ RUN apk add --no-cache bash fd jq
 ENTRYPOINT ["/lint-standardjs.sh"]
 
 # Install standard and ts-standard
+COPY .npmrc .
 RUN npm install -g standard ts-standard standard-json
 
 COPY scripts/lint-standardjs.sh /lint-standardjs.sh
