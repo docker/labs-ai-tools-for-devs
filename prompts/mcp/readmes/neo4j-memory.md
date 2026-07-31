@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/neo4j-contrib/mcp-neo4j
 **Dockerfile**|https://github.com/neo4j-contrib/mcp-neo4j/blob/main/servers/mcp-neo4j-memory/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/neo4j-memory)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/neo4j-memory --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

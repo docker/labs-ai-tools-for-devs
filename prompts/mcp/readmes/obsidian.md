@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/MarkusPfundstein/mcp-obsidian
 **Dockerfile**|https://github.com/docker/mcp-obsidian/blob/docker-support/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/obsidian)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/obsidian --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

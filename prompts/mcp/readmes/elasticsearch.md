@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/elastic/mcp-server-elasticsearch
 **Dockerfile**|https://github.com/elastic/mcp-server-elasticsearch/blob/refs/pull/37/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/elasticsearch)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/elasticsearch --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|Apache License 2.0
 

@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/github/github-mcp-server
 **Dockerfile**|https://github.com/dgageot/github-mcp-server/blob/temp-fix/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/github-mcp-server)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/github-mcp-server --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

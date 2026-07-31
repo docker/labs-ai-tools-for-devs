@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/glifxyz/glif-mcp-server
 **Dockerfile**|https://github.com/glifxyz/glif-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/glif)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/glif --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

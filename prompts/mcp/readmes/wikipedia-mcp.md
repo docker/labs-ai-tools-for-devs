@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/Rudra-ravi/wikipedia-mcp
 **Dockerfile**|https://github.com/Rudra-ravi/wikipedia-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/wikipedia-mcp)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/wikipedia-mcp --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

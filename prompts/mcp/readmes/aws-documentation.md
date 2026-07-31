@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/awslabs/mcp
 **Dockerfile**|https://github.com/awslabs/mcp/blob/main/src/aws-documentation-mcp-server/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/aws-documentation)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/aws-documentation --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|Apache License 2.0
 

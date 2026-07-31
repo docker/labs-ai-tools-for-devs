@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/pulumi/mcp-server
 **Dockerfile**|https://github.com/pulumi/mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/pulumi)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/pulumi --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|Apache License 2.0
 

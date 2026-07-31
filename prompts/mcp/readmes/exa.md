@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/exa-labs/exa-mcp-server
 **Dockerfile**|https://github.com/exa-labs/exa-mcp-server/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/exa)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/exa --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

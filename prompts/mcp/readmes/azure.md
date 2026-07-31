@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/Azure/azure-mcp
 **Dockerfile**|https://github.com/Azure/azure-mcp/blob/1ea702cb489ba95c5d9bea8d41fc18e9343703f8/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/azure)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/azure --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 
