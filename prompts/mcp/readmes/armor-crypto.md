@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/armorwallet/armor-crypto-mcp
 **Dockerfile**|https://github.com/armorwallet/armor-crypto-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/armor-crypto)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/armor-crypto --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|GNU General Public License v3.0
 

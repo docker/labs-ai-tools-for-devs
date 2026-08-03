@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/Shopify/dev-mcp
 **Dockerfile**|https://github.com/Shopify/dev-mcp/blob/refs/pull/7/merge/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/shopify)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/shopify --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|ISC License
 

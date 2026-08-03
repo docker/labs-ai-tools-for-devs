@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/hyperspell/hyperspell-mcp
 **Dockerfile**|https://github.com/hyperspell/hyperspell-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/hyperspell)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/hyperspell --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|
 

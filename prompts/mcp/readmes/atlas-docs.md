@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/CartographAI/atlas-docs-mcp
 **Dockerfile**|https://github.com/CartographAI/atlas-docs-mcp/blob/master/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/atlas-docs)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/atlas-docs --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

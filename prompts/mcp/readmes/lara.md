@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/translated/lara-mcp
 **Dockerfile**|https://github.com/translated/lara-mcp/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/lara)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/lara --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

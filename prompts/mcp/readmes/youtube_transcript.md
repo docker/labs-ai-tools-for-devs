@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/jkawamoto/mcp-youtube-transcript
 **Dockerfile**|https://github.com/slimslenderslacks/mcp-youtube-transcript/blob/slim/docker/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/youtube-transcript)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/youtube-transcript --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|MIT License
 

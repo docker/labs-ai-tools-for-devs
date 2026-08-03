@@ -13,7 +13,6 @@ Attribute|Details|
 **Repository**|https://github.com/GannaChernyshova/mcp-jetbrains
 **Dockerfile**|https://github.com/GannaChernyshova/mcp-jetbrains/blob/main/Dockerfile
 **Docker Image built by**|Docker Inc.
-**Docker Scout Health Score**| ![Docker Scout Health Score](https://api.scout.docker.com/v1/policy/insights/org-image-score/badge/mcp/jetbrains)
 **Verify Signature**|`COSIGN_REPOSITORY=mcp/signatures cosign verify mcp/jetbrains --key https://raw.githubusercontent.com/docker/keyring/refs/heads/main/public/mcp/latest.pub`
 **Licence**|Apache License 2.0
 
